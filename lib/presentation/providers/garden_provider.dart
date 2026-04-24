@@ -4,10 +4,21 @@ import 'package:drift/drift.dart';
 import '../../domain/entities/zen_garden.dart';
 import '../../data/datasources/app_database.dart';
 import 'kanji_library_provider.dart';
+import 'study_event_provider.dart';
 
 final gardenProvider = StateNotifierProvider<GardenNotifier, ZenGarden>((ref) {
   final db = ref.watch(databaseProvider);
-  return GardenNotifier(db);
+  final notifier = GardenNotifier(db);
+
+  // ── Reactive cross-tab: listen study events ─────────────
+  // Khi user học xong 1 thẻ ở tab Chữ Hán → Vườn Zen tự cập nhật
+  ref.listen(studyEventStreamProvider, (prev, next) {
+    next.whenData((event) {
+      notifier._onStudyEvent(event);
+    });
+  });
+
+  return notifier;
 });
 
 class GardenNotifier extends StateNotifier<ZenGarden> {
@@ -42,6 +53,34 @@ class GardenNotifier extends StateNotifier<ZenGarden> {
       );
       state = const ZenGarden(water: 10, sunlight: 10);
     }
+  }
+
+  /// Xử lý study event — tăng EXP và thêm plant khi đạt milestone
+  void _onStudyEvent(StudyEvent event) {
+    if (!event.isSuccessful) return;
+
+    // +10 EXP cho mỗi thẻ nhớ thành công
+    final newExp = state.exp + 10;
+
+    // Milestone: cứ 100 EXP → tự động thêm 1 cây mới
+    List<Plant> updatedPlants = [...state.plants];
+    if (newExp ~/ 100 > state.exp ~/ 100) {
+      final types = ['bonsai', 'flower', 'stone', 'bamboo'];
+      final typeIndex = updatedPlants.length % types.length;
+      updatedPlants.add(Plant(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        type: types[typeIndex],
+        x: (updatedPlants.length * 60.0) % 300 + 30,
+        y: (updatedPlants.length * 45.0) % 200 + 80,
+      ));
+    }
+
+    state = state.copyWith(
+      exp: newExp,
+      plants: updatedPlants,
+    );
+
+    _saveToDb();
   }
 
   Future<void> addPlant(String type, double x, double y) async {

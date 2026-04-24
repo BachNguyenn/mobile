@@ -1,24 +1,74 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/kanji_card.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
+import '../../core/theme/app_typography.dart';
+import '../widgets/handwriting_canvas.dart';
+import '../../core/services/handwriting_service.dart';
+import '../providers/kanji_library_provider.dart';
 
-class ReviewScreen extends StatefulWidget {
+class ReviewScreen extends ConsumerStatefulWidget {
   final List<KanjiCard> cards;
 
   const ReviewScreen({super.key, required this.cards});
 
   @override
-  State<ReviewScreen> createState() => _ReviewScreenState();
+  ConsumerState<ReviewScreen> createState() => _ReviewScreenState();
 }
 
-class _ReviewScreenState extends State<ReviewScreen> {
+class _ReviewScreenState extends ConsumerState<ReviewScreen> {
   int _currentIndex = 0;
   bool _showAnswer = false;
+  List<List<Offset>> _currentStrokes = [];
+  String? _recognizedText;
+  final HandwritingService _handwritingService = HandwritingService();
+  final GlobalKey<HandwritingCanvasState> _canvasKey = GlobalKey<HandwritingCanvasState>();
+
+  @override
+  void dispose() {
+    _handwritingService.dispose();
+    super.dispose();
+  }
+
+  void _onDrawingChanged(List<List<Offset>> strokes) {
+    _currentStrokes = strokes;
+  }
+
+  Future<void> _handleCheck() async {
+    final text = await _handwritingService.recognize(_currentStrokes);
+    setState(() {
+      _recognizedText = text;
+      _showAnswer = true;
+    });
+  }
+
+  void _handleRating(int rating) {
+    // Emit event to update SRS (future implementation)
+    ref.read(emitKanjiStudyEventProvider)(widget.cards[_currentIndex].id, rating);
+
+    if (_currentIndex < widget.cards.length - 1) {
+      setState(() {
+        _currentIndex++;
+        _showAnswer = false;
+        _recognizedText = null;
+        _currentStrokes = [];
+      });
+      _canvasKey.currentState?.clear();
+    } else {
+      Navigator.pop(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chúc mừng! Bạn đã hoàn thành bài ôn tập.')),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     if (widget.cards.isEmpty) {
       return Scaffold(
-        appBar: AppBar(),
+        backgroundColor: AppColors.cream,
+        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
         body: const Center(child: Text('Không có thẻ nào để ôn tập')),
       );
     }
@@ -26,65 +76,137 @@ class _ReviewScreenState extends State<ReviewScreen> {
     final card = widget.cards[_currentIndex];
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFCF8),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        title: Text('Ôn tập (${_currentIndex + 1}/${widget.cards.length})'),
+        title: Text('Ôn tập (${_currentIndex + 1}/${widget.cards.length})', style: AppTypography.headingM),
         backgroundColor: Colors.transparent,
         elevation: 0,
+        foregroundColor: AppColors.slateGrey,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(AppSpacing.sp24),
         child: Column(
           children: [
-            Expanded(
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      card.kanji,
-                      style: const TextStyle(fontSize: 120, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 40),
-                    if (_showAnswer) ...[
-                      Text(
-                        card.meanings,
-                        style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 16),
-                      Text('On: ${card.onyomi}'),
-                      Text('Kun: ${card.kunyomi}'),
-                    ] else
-                      const Text('Nhấn để xem đáp án', style: TextStyle(color: Colors.grey)),
-                  ],
-                ),
+            // Target Info
+            Center(
+              child: Column(
+                children: [
+                  Text(
+                    card.meanings,
+                    style: AppTypography.headingL.copyWith(color: AppColors.ink),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.sp8),
+                  Text(
+                    '${card.onyomi} / ${card.kunyomi}',
+                    style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+                  ),
+                ],
               ),
             ),
+            
+            const SizedBox(height: AppSpacing.sp32),
+
+            // Handwriting Area
+            Expanded(
+              child: Stack(
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+                      border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.2)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.02),
+                          blurRadius: 20,
+                          offset: const Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+                      child: HandwritingCanvas(
+                        key: _canvasKey,
+                        onDrawingChanged: _onDrawingChanged,
+                        onClear: () => _currentStrokes = [],
+                      ),
+                    ),
+                  ),
+                  if (_showAnswer)
+                    Positioned.fill(
+                      child: Container(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        child: Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                card.kanji,
+                                style: TextStyle(
+                                  fontSize: 120,
+                                  fontFamily: 'Serif',
+                                  color: (_recognizedText == card.kanji) ? AppColors.mossGreen : AppColors.terracotta,
+                                ),
+                              ),
+                              if (_recognizedText != null)
+                                Text(
+                                  'Bạn viết: $_recognizedText',
+                                  style: AppTypography.bodyM.copyWith(
+                                    color: (_recognizedText == card.kanji) ? AppColors.mossGreen : AppColors.terracotta,
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: IconButton(
+                      icon: const Icon(Icons.refresh_rounded, color: AppColors.slateLight),
+                      onPressed: () => _canvasKey.currentState?.clear(),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: AppSpacing.sp32),
+
+            // Actions
             if (!_showAnswer)
               SizedBox(
                 width: double.infinity,
-                height: 56,
+                height: 60,
                 child: ElevatedButton(
-                  onPressed: () => setState(() => _showAnswer = true),
+                  onPressed: _handleCheck,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF2C3E50),
+                    backgroundColor: AppColors.mossGreen,
                     foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusM)),
+                    elevation: 0,
                   ),
-                  child: const Text('Xem đáp án'),
+                  child: const Text('Kiểm tra & Xem đáp án', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 ),
               )
             else
-              Row(
+              Column(
                 children: [
-                  _buildReviewButton('Lại', Colors.red, 1),
-                  const SizedBox(width: 12),
-                  _buildReviewButton('Khó', Colors.orange, 2),
-                  const SizedBox(width: 12),
-                  _buildReviewButton('Tốt', Colors.green, 3),
-                  const SizedBox(width: 12),
-                  _buildReviewButton('Dễ', Colors.blue, 4),
+                  Text('Bạn thấy chữ này thế nào?', style: AppTypography.bodyS),
+                  const SizedBox(height: AppSpacing.sp16),
+                  Row(
+                    children: [
+                      _buildRatingButton('Quên', AppColors.terracotta, 1),
+                      const SizedBox(width: 8),
+                      _buildRatingButton('Khó', AppColors.sunGold, 2),
+                      const SizedBox(width: 8),
+                      _buildRatingButton('Tốt', AppColors.mossGreen, 3),
+                      const SizedBox(width: 8),
+                      _buildRatingButton('Dễ', AppColors.waterBlue, 4),
+                    ],
+                  ),
                 ],
               ),
           ],
@@ -93,35 +215,23 @@ class _ReviewScreenState extends State<ReviewScreen> {
     );
   }
 
-  Widget _buildReviewButton(String label, Color color, int rating) {
+  Widget _buildRatingButton(String label, Color color, int rating) {
     return Expanded(
       child: SizedBox(
         height: 56,
         child: ElevatedButton(
           onPressed: () => _handleRating(rating),
           style: ElevatedButton.styleFrom(
-            backgroundColor: color,
-            foregroundColor: Colors.white,
+            backgroundColor: color.withValues(alpha: 0.1),
+            foregroundColor: color,
+            elevation: 0,
+            side: BorderSide(color: color.withValues(alpha: 0.3)),
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusS)),
             padding: EdgeInsets.zero,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           ),
-          child: Text(label),
+          child: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
         ),
       ),
     );
-  }
-
-  void _handleRating(int rating) {
-    if (_currentIndex < widget.cards.length - 1) {
-      setState(() {
-        _currentIndex++;
-        _showAnswer = false;
-      });
-    } else {
-      Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Hoàn thành bài học!')),
-      );
-    }
   }
 }

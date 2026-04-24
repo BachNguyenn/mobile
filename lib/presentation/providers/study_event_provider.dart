@@ -1,6 +1,5 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/datasources/app_database.dart';
-import 'package:drift/drift.dart';
 
 /// Sự kiện học tập — được emit mỗi khi user hoàn thành 1 thẻ ôn tập
 ///
@@ -70,39 +69,3 @@ final studyEventStreamProvider = StreamProvider<StudyEvent>((ref) {
 
 /// Provider đếm tổng số thẻ đã học trong session hiện tại
 final sessionStudyCountProvider = StateProvider<int>((ref) => 0);
-
-/// Provider xử lý việc lưu StudyEvent vào Database
-/// 
-/// Provider này cần được watch ở một nơi nào đó (ví dụ: main hoặc home)
-/// để đảm bảo nó luôn lắng nghe và lưu dữ liệu.
-final studyEventPersisterProvider = Provider<void>((ref) {
-  final db = ref.watch(databaseProvider);
-  
-  ref.listen(studyEventStreamProvider, (prev, next) async {
-    final event = next.value;
-    if (event == null) return;
-
-    // 1. Cập nhật session count
-    ref.read(sessionStudyCountProvider.notifier).state++;
-
-    // 2. Lưu vào StudyLogTable (thống kê theo ngày)
-    final date = DateTime(event.timestamp.year, event.timestamp.month, event.timestamp.day);
-    
-    try {
-      final existing = await (db.select(db.studyLogTable)..where((t) => t.date.equals(date))).getSingleOrNull();
-      
-      if (existing == null) {
-        await db.into(db.studyLogTable).insert(StudyLogTableCompanion.insert(
-          date: date,
-          count: const Value(1),
-        ));
-      } else {
-        await (db.update(db.studyLogTable)..where((t) => t.date.equals(date))).write(
-          StudyLogTableCompanion(count: Value(existing.count + 1)),
-        );
-      }
-    } catch (e) {
-      // Log error if needed
-    }
-  });
-});

@@ -40,28 +40,32 @@ class ZenGarden extends Equatable {
   final int sunlight;
   final int exp;
   final List<Plant> plants;
+  final DateTime? lastLogin;
 
   const ZenGarden({
     this.water = 0,
     this.sunlight = 0,
     this.exp = 0,
     this.plants = const [],
+    this.lastLogin,
   });
 
   @override
-  List<Object?> get props => [water, sunlight, exp, plants];
+  List<Object?> get props => [water, sunlight, exp, plants, lastLogin];
 
   ZenGarden copyWith({
     int? water,
     int? sunlight,
     int? exp,
     List<Plant>? plants,
+    DateTime? lastLogin,
   }) {
     return ZenGarden(
       water: water ?? this.water,
       sunlight: sunlight ?? this.sunlight,
       exp: exp ?? this.exp,
       plants: plants ?? this.plants,
+      lastLogin: lastLogin ?? this.lastLogin,
     );
   }
 }

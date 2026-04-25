@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
+import '../providers/auth_provider.dart';
 
 /// Redesigned Login Screen — Japandi Minimalism
 ///
@@ -10,8 +12,15 @@ import '../../core/theme/app_typography.dart';
 /// - Logo + tên app
 /// - Google Sign-In button
 /// - Câu chào tiếng Nhật
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends ConsumerState<LoginScreen> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +83,18 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
-                      onPressed: () {
-                        // TODO: Implement Google Sign-In
+                      onPressed: _isLoading ? null : () async {
+                        setState(() => _isLoading = true);
+                        try {
+                          await ref.read(authRepositoryProvider).signInWithGoogle();
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Đăng nhập Google thất bại: $e')),
+                          );
+                        } finally {
+                          if (mounted) setState(() => _isLoading = false);
+                        }
                       },
                       icon: Container(
                         width: 24,
@@ -118,8 +137,18 @@ class LoginScreen extends StatelessWidget {
                   SizedBox(
                     width: double.infinity,
                     child: OutlinedButton(
-                      onPressed: () {
-                        // TODO: Implement guest mode
+                      onPressed: _isLoading ? null : () async {
+                        setState(() => _isLoading = true);
+                        try {
+                          await ref.read(authRepositoryProvider).signInAnonymously();
+                        } catch (e) {
+                          if (!context.mounted) return;
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Đăng nhập khách thất bại: $e')),
+                          );
+                        } finally {
+                          if (mounted) setState(() => _isLoading = false);
+                        }
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.slateGrey,
@@ -133,12 +162,18 @@ class LoginScreen extends StatelessWidget {
                           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                         ),
                       ),
-                      child: Text(
-                        'Tiếp tục không đăng nhập',
-                        style: AppTypography.bodyM.copyWith(
-                          color: AppColors.slateGrey,
-                        ),
-                      ),
+                      child: _isLoading 
+                          ? const SizedBox(
+                              width: 20, 
+                              height: 20, 
+                              child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.slateGrey)
+                            )
+                          : Text(
+                              'Tiếp tục không đăng nhập',
+                              style: AppTypography.bodyM.copyWith(
+                                color: AppColors.slateGrey,
+                              ),
+                            ),
                     ),
                   ),
 

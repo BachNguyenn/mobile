@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'srs_item.dart';
 
-class KanjiCard extends Equatable {
+class KanjiCard extends Equatable implements SrsItem {
+  @override
   final String id;
   final String kanji;
   final String meanings;
@@ -10,12 +12,19 @@ class KanjiCard extends Equatable {
   final int jlptLevel;
   
   // SRS data
+  @override
   final double stability;
+  @override
   final double difficulty;
+  @override
   final DateTime? lastReview;
+  @override
   final DateTime nextReview;
+  @override
   final int reps;
+  @override
   final int lapses;
+  @override
   final int state; // 0: New, 1: Learning, 2: Review, 3: Relearning
 
   const KanjiCard({

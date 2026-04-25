@@ -1,5 +1,6 @@
 import 'package:drift/drift.dart';
 import '../../domain/entities/kanji_card.dart';
+import '../../domain/entities/srs_item.dart';
 import '../../domain/repositories/kanji_repository.dart';
 import '../datasources/app_database.dart';
 
@@ -15,11 +16,27 @@ class KanjiRepositoryImpl implements KanjiRepository {
   }
 
   @override
-  Future<List<KanjiCard>> getDueCards(DateTime now) async {
+  Future<List<KanjiCard>> getDueCards(DateTime now, {int? jlptLevel, int? limit}) async {
     final query = db.select(db.kanjiCardTable)
-      ..where((t) => t.nextReview.isSmallerThanValue(now));
+      ..where((t) => t.nextReview.isSmallerOrEqualValue(now));
+    
+    if (jlptLevel != null) {
+      query.where((t) => t.jlptLevel.equals(jlptLevel));
+    }
+
+    if (limit != null) {
+      query.limit(limit);
+    }
+
     final rows = await query.get();
     return rows.map((r) => _toEntity(r)).toList();
+  }
+
+  @override
+  Future<KanjiCard?> getCardById(String id) async {
+    final query = db.select(db.kanjiCardTable)..where((t) => t.id.equals(id));
+    final row = await query.getSingleOrNull();
+    return row != null ? _toEntity(row) : null;
   }
 
   @override
@@ -65,41 +82,38 @@ class KanjiRepositoryImpl implements KanjiRepository {
     return rows.map((r) => _toEntity(r)).toList();
   }
 
-  KanjiCard _toEntity(KanjiCardData data) {
-    return KanjiCard(
-      id: data.id,
-      kanji: data.kanji,
-      meanings: data.meanings,
-      onyomi: data.onyomi,
-      kunyomi: data.kunyomi,
-      jlptLevel: data.jlptLevel,
-      nextReview: data.nextReview,
-      stability: data.stability,
-      difficulty: data.difficulty,
-      lastReview: data.lastReview,
-      reps: data.reps,
-      lapses: data.lapses,
-      state: data.state,
-      strokeData: data.strokeData,
+  @override
+  Future<bool> submitReview({
+    required SrsItem updatedItem,
+    required int rating,
+    required int durationMs,
+    required int expGain,
+    required int waterGain,
+    required int sunGain,
+  }) async {
+    return db.submitReview(
+      updatedItem: updatedItem,
+      itemType: 'kanji',
+      rating: rating,
+      durationMs: durationMs,
+      expGain: expGain,
+      waterGain: waterGain,
+      sunGain: sunGain,
     );
   }
 
+  @override
+  Future<KanjiCard?> getCardByKanji(String kanji) async {
+    final query = db.select(db.kanjiCardTable)..where((t) => t.kanji.equals(kanji));
+    final row = await query.getSingleOrNull();
+    return row != null ? _toEntity(row) : null;
+  }
+
+  KanjiCard _toEntity(KanjiCardData data) {
+    return AppDatabase.toEntity(data);
+  }
+
   KanjiCardTableCompanion _toData(KanjiCard card) {
-    return KanjiCardTableCompanion.insert(
-      id: card.id,
-      kanji: card.kanji,
-      meanings: card.meanings,
-      onyomi: card.onyomi,
-      kunyomi: card.kunyomi,
-      jlptLevel: Value(card.jlptLevel),
-      nextReview: card.nextReview,
-      stability: Value(card.stability),
-      difficulty: Value(card.difficulty),
-      lastReview: Value(card.lastReview),
-      reps: Value(card.reps),
-      lapses: Value(card.lapses),
-      state: Value(card.state),
-      strokeData: Value(card.strokeData),
-    );
+    return AppDatabase.fromEntity(card);
   }
 }

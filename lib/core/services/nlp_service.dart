@@ -1,38 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-
-class JapaneseSegment {
-  final String text;
-  final String reading;
-  final String type;
-  final String baseForm;
-  final String explanation;
-  final String? example;
-  final String? usageNote;
-
-  JapaneseSegment({
-    required this.text,
-    required this.reading,
-    required this.type,
-    required this.baseForm,
-    required this.explanation,
-    this.example,
-    this.usageNote,
-  });
-
-  factory JapaneseSegment.fromJson(Map<String, dynamic> json) {
-    return JapaneseSegment(
-      text: json['text'] ?? '',
-      reading: json['reading'] ?? '',
-      type: json['type'] ?? '',
-      baseForm: json['baseForm'] ?? '',
-      explanation: json['explanation'] ?? '',
-      example: json['example'],
-      usageNote: json['usageNote'],
-    );
-  }
-}
+import '../../domain/entities/japanese_segment.dart';
 
 class GrammarParserService {
   Future<List<JapaneseSegment>> parse(String sentence) async {

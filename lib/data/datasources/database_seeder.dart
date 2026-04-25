@@ -17,12 +17,13 @@ class DatabaseSeeder {
         final List<dynamic> data = json.decode(response);
         
         final List<KanjiCard> cards = data.map((json) {
+          final char = json['character'] as String;
           return KanjiCard(
-            id: '${level}_${json['kanji']}',
-            kanji: json['kanji'],
+            id: '${level}_$char',
+            kanji: char,
             meanings: (json['meanings'] as List).join(', '),
-            onyomi: (json['onyomi'] as List).join(', '),
-            kunyomi: (json['kunyomi'] as List).join(', '),
+            onyomi: (json['on_reading'] as List).join(', '),
+            kunyomi: (json['kun_reading'] as List).join(', '),
             jlptLevel: int.parse(level.replaceAll('n', '')),
             nextReview: DateTime.now(),
           );
@@ -30,7 +31,7 @@ class DatabaseSeeder {
         
         await repository.saveAllCards(cards);
       } catch (e) {
-        // Ignore seeding errors for missing files
+        print('Error seeding $level kanji: $e');
       }
     }
   }

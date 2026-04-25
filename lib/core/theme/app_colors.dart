@@ -86,4 +86,18 @@ abstract final class AppColors {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
+
+  // ─── Garden 2D Palette ─────────────────────────────────────
+  /// Sand ground color cho 2D garden
+  static const Color gardenSand = Color(0xFFF0EAD6);
+
+  /// Sand dark — raked pattern lines
+  static const Color gardenSandDark = Color(0xFFDDD5C0);
+
+  /// Bamboo green
+  static const Color bambooGreen = Color(0xFF8FBC8F);
+
+  // ─── Nav Bar ───────────────────────────────────────────────
+  /// Active pill background
+  static Color get navPillBg => mossGreen.withValues(alpha: 0.12);
 }

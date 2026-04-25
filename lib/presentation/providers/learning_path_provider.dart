@@ -6,8 +6,12 @@ import '../../data/datasources/app_database.dart';
 
 final learningPathProvider = StateNotifierProvider<LearningPathNotifier, List<Lesson>>((ref) {
   final db = ref.watch(databaseProvider);
+  // Watch initializer so it reloads when seeding is done
+  ref.watch(databaseInitializerProvider);
   return LearningPathNotifier(db);
 });
+
+final selectedLevelProvider = StateProvider<int>((ref) => 5);
 
 class LearningPathNotifier extends StateNotifier<List<Lesson>> {
   final AppDatabase _db;

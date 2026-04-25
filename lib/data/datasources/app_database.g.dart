@@ -791,6 +791,1165 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
   }
 }
 
+class $VocabularyTableTable extends VocabularyTable
+    with TableInfo<$VocabularyTableTable, VocabularyTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $VocabularyTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _wordMeta = const VerificationMeta('word');
+  @override
+  late final GeneratedColumn<String> word = GeneratedColumn<String>(
+    'word',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _readingMeta = const VerificationMeta(
+    'reading',
+  );
+  @override
+  late final GeneratedColumn<String> reading = GeneratedColumn<String>(
+    'reading',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _meaningMeta = const VerificationMeta(
+    'meaning',
+  );
+  @override
+  late final GeneratedColumn<String> meaning = GeneratedColumn<String>(
+    'meaning',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _jlptLevelMeta = const VerificationMeta(
+    'jlptLevel',
+  );
+  @override
+  late final GeneratedColumn<int> jlptLevel = GeneratedColumn<int>(
+    'jlpt_level',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(5),
+  );
+  static const VerificationMeta _stabilityMeta = const VerificationMeta(
+    'stability',
+  );
+  @override
+  late final GeneratedColumn<double> stability = GeneratedColumn<double>(
+    'stability',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
+  static const VerificationMeta _difficultyMeta = const VerificationMeta(
+    'difficulty',
+  );
+  @override
+  late final GeneratedColumn<double> difficulty = GeneratedColumn<double>(
+    'difficulty',
+    aliasedName,
+    false,
+    type: DriftSqlType.double,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0.0),
+  );
+  static const VerificationMeta _lastReviewMeta = const VerificationMeta(
+    'lastReview',
+  );
+  @override
+  late final GeneratedColumn<DateTime> lastReview = GeneratedColumn<DateTime>(
+    'last_review',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _nextReviewMeta = const VerificationMeta(
+    'nextReview',
+  );
+  @override
+  late final GeneratedColumn<DateTime> nextReview = GeneratedColumn<DateTime>(
+    'next_review',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _repsMeta = const VerificationMeta('reps');
+  @override
+  late final GeneratedColumn<int> reps = GeneratedColumn<int>(
+    'reps',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _lapsesMeta = const VerificationMeta('lapses');
+  @override
+  late final GeneratedColumn<int> lapses = GeneratedColumn<int>(
+    'lapses',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  static const VerificationMeta _stateMeta = const VerificationMeta('state');
+  @override
+  late final GeneratedColumn<int> state = GeneratedColumn<int>(
+    'state',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    word,
+    reading,
+    meaning,
+    jlptLevel,
+    stability,
+    difficulty,
+    lastReview,
+    nextReview,
+    reps,
+    lapses,
+    state,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'vocabulary_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<VocabularyTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('word')) {
+      context.handle(
+        _wordMeta,
+        word.isAcceptableOrUnknown(data['word']!, _wordMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_wordMeta);
+    }
+    if (data.containsKey('reading')) {
+      context.handle(
+        _readingMeta,
+        reading.isAcceptableOrUnknown(data['reading']!, _readingMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_readingMeta);
+    }
+    if (data.containsKey('meaning')) {
+      context.handle(
+        _meaningMeta,
+        meaning.isAcceptableOrUnknown(data['meaning']!, _meaningMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_meaningMeta);
+    }
+    if (data.containsKey('jlpt_level')) {
+      context.handle(
+        _jlptLevelMeta,
+        jlptLevel.isAcceptableOrUnknown(data['jlpt_level']!, _jlptLevelMeta),
+      );
+    }
+    if (data.containsKey('stability')) {
+      context.handle(
+        _stabilityMeta,
+        stability.isAcceptableOrUnknown(data['stability']!, _stabilityMeta),
+      );
+    }
+    if (data.containsKey('difficulty')) {
+      context.handle(
+        _difficultyMeta,
+        difficulty.isAcceptableOrUnknown(data['difficulty']!, _difficultyMeta),
+      );
+    }
+    if (data.containsKey('last_review')) {
+      context.handle(
+        _lastReviewMeta,
+        lastReview.isAcceptableOrUnknown(data['last_review']!, _lastReviewMeta),
+      );
+    }
+    if (data.containsKey('next_review')) {
+      context.handle(
+        _nextReviewMeta,
+        nextReview.isAcceptableOrUnknown(data['next_review']!, _nextReviewMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_nextReviewMeta);
+    }
+    if (data.containsKey('reps')) {
+      context.handle(
+        _repsMeta,
+        reps.isAcceptableOrUnknown(data['reps']!, _repsMeta),
+      );
+    }
+    if (data.containsKey('lapses')) {
+      context.handle(
+        _lapsesMeta,
+        lapses.isAcceptableOrUnknown(data['lapses']!, _lapsesMeta),
+      );
+    }
+    if (data.containsKey('state')) {
+      context.handle(
+        _stateMeta,
+        state.isAcceptableOrUnknown(data['state']!, _stateMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  VocabularyTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return VocabularyTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      word: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}word'],
+      )!,
+      reading: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}reading'],
+      )!,
+      meaning: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}meaning'],
+      )!,
+      jlptLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}jlpt_level'],
+      )!,
+      stability: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}stability'],
+      )!,
+      difficulty: attachedDatabase.typeMapping.read(
+        DriftSqlType.double,
+        data['${effectivePrefix}difficulty'],
+      )!,
+      lastReview: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_review'],
+      ),
+      nextReview: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}next_review'],
+      )!,
+      reps: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}reps'],
+      )!,
+      lapses: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}lapses'],
+      )!,
+      state: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}state'],
+      )!,
+    );
+  }
+
+  @override
+  $VocabularyTableTable createAlias(String alias) {
+    return $VocabularyTableTable(attachedDatabase, alias);
+  }
+}
+
+class VocabularyTableData extends DataClass
+    implements Insertable<VocabularyTableData> {
+  final String id;
+  final String word;
+  final String reading;
+  final String meaning;
+  final int jlptLevel;
+  final double stability;
+  final double difficulty;
+  final DateTime? lastReview;
+  final DateTime nextReview;
+  final int reps;
+  final int lapses;
+  final int state;
+  const VocabularyTableData({
+    required this.id,
+    required this.word,
+    required this.reading,
+    required this.meaning,
+    required this.jlptLevel,
+    required this.stability,
+    required this.difficulty,
+    this.lastReview,
+    required this.nextReview,
+    required this.reps,
+    required this.lapses,
+    required this.state,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['word'] = Variable<String>(word);
+    map['reading'] = Variable<String>(reading);
+    map['meaning'] = Variable<String>(meaning);
+    map['jlpt_level'] = Variable<int>(jlptLevel);
+    map['stability'] = Variable<double>(stability);
+    map['difficulty'] = Variable<double>(difficulty);
+    if (!nullToAbsent || lastReview != null) {
+      map['last_review'] = Variable<DateTime>(lastReview);
+    }
+    map['next_review'] = Variable<DateTime>(nextReview);
+    map['reps'] = Variable<int>(reps);
+    map['lapses'] = Variable<int>(lapses);
+    map['state'] = Variable<int>(state);
+    return map;
+  }
+
+  VocabularyTableCompanion toCompanion(bool nullToAbsent) {
+    return VocabularyTableCompanion(
+      id: Value(id),
+      word: Value(word),
+      reading: Value(reading),
+      meaning: Value(meaning),
+      jlptLevel: Value(jlptLevel),
+      stability: Value(stability),
+      difficulty: Value(difficulty),
+      lastReview: lastReview == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastReview),
+      nextReview: Value(nextReview),
+      reps: Value(reps),
+      lapses: Value(lapses),
+      state: Value(state),
+    );
+  }
+
+  factory VocabularyTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return VocabularyTableData(
+      id: serializer.fromJson<String>(json['id']),
+      word: serializer.fromJson<String>(json['word']),
+      reading: serializer.fromJson<String>(json['reading']),
+      meaning: serializer.fromJson<String>(json['meaning']),
+      jlptLevel: serializer.fromJson<int>(json['jlptLevel']),
+      stability: serializer.fromJson<double>(json['stability']),
+      difficulty: serializer.fromJson<double>(json['difficulty']),
+      lastReview: serializer.fromJson<DateTime?>(json['lastReview']),
+      nextReview: serializer.fromJson<DateTime>(json['nextReview']),
+      reps: serializer.fromJson<int>(json['reps']),
+      lapses: serializer.fromJson<int>(json['lapses']),
+      state: serializer.fromJson<int>(json['state']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'word': serializer.toJson<String>(word),
+      'reading': serializer.toJson<String>(reading),
+      'meaning': serializer.toJson<String>(meaning),
+      'jlptLevel': serializer.toJson<int>(jlptLevel),
+      'stability': serializer.toJson<double>(stability),
+      'difficulty': serializer.toJson<double>(difficulty),
+      'lastReview': serializer.toJson<DateTime?>(lastReview),
+      'nextReview': serializer.toJson<DateTime>(nextReview),
+      'reps': serializer.toJson<int>(reps),
+      'lapses': serializer.toJson<int>(lapses),
+      'state': serializer.toJson<int>(state),
+    };
+  }
+
+  VocabularyTableData copyWith({
+    String? id,
+    String? word,
+    String? reading,
+    String? meaning,
+    int? jlptLevel,
+    double? stability,
+    double? difficulty,
+    Value<DateTime?> lastReview = const Value.absent(),
+    DateTime? nextReview,
+    int? reps,
+    int? lapses,
+    int? state,
+  }) => VocabularyTableData(
+    id: id ?? this.id,
+    word: word ?? this.word,
+    reading: reading ?? this.reading,
+    meaning: meaning ?? this.meaning,
+    jlptLevel: jlptLevel ?? this.jlptLevel,
+    stability: stability ?? this.stability,
+    difficulty: difficulty ?? this.difficulty,
+    lastReview: lastReview.present ? lastReview.value : this.lastReview,
+    nextReview: nextReview ?? this.nextReview,
+    reps: reps ?? this.reps,
+    lapses: lapses ?? this.lapses,
+    state: state ?? this.state,
+  );
+  VocabularyTableData copyWithCompanion(VocabularyTableCompanion data) {
+    return VocabularyTableData(
+      id: data.id.present ? data.id.value : this.id,
+      word: data.word.present ? data.word.value : this.word,
+      reading: data.reading.present ? data.reading.value : this.reading,
+      meaning: data.meaning.present ? data.meaning.value : this.meaning,
+      jlptLevel: data.jlptLevel.present ? data.jlptLevel.value : this.jlptLevel,
+      stability: data.stability.present ? data.stability.value : this.stability,
+      difficulty: data.difficulty.present
+          ? data.difficulty.value
+          : this.difficulty,
+      lastReview: data.lastReview.present
+          ? data.lastReview.value
+          : this.lastReview,
+      nextReview: data.nextReview.present
+          ? data.nextReview.value
+          : this.nextReview,
+      reps: data.reps.present ? data.reps.value : this.reps,
+      lapses: data.lapses.present ? data.lapses.value : this.lapses,
+      state: data.state.present ? data.state.value : this.state,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VocabularyTableData(')
+          ..write('id: $id, ')
+          ..write('word: $word, ')
+          ..write('reading: $reading, ')
+          ..write('meaning: $meaning, ')
+          ..write('jlptLevel: $jlptLevel, ')
+          ..write('stability: $stability, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('lastReview: $lastReview, ')
+          ..write('nextReview: $nextReview, ')
+          ..write('reps: $reps, ')
+          ..write('lapses: $lapses, ')
+          ..write('state: $state')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    word,
+    reading,
+    meaning,
+    jlptLevel,
+    stability,
+    difficulty,
+    lastReview,
+    nextReview,
+    reps,
+    lapses,
+    state,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is VocabularyTableData &&
+          other.id == this.id &&
+          other.word == this.word &&
+          other.reading == this.reading &&
+          other.meaning == this.meaning &&
+          other.jlptLevel == this.jlptLevel &&
+          other.stability == this.stability &&
+          other.difficulty == this.difficulty &&
+          other.lastReview == this.lastReview &&
+          other.nextReview == this.nextReview &&
+          other.reps == this.reps &&
+          other.lapses == this.lapses &&
+          other.state == this.state);
+}
+
+class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
+  final Value<String> id;
+  final Value<String> word;
+  final Value<String> reading;
+  final Value<String> meaning;
+  final Value<int> jlptLevel;
+  final Value<double> stability;
+  final Value<double> difficulty;
+  final Value<DateTime?> lastReview;
+  final Value<DateTime> nextReview;
+  final Value<int> reps;
+  final Value<int> lapses;
+  final Value<int> state;
+  final Value<int> rowid;
+  const VocabularyTableCompanion({
+    this.id = const Value.absent(),
+    this.word = const Value.absent(),
+    this.reading = const Value.absent(),
+    this.meaning = const Value.absent(),
+    this.jlptLevel = const Value.absent(),
+    this.stability = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.lastReview = const Value.absent(),
+    this.nextReview = const Value.absent(),
+    this.reps = const Value.absent(),
+    this.lapses = const Value.absent(),
+    this.state = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  VocabularyTableCompanion.insert({
+    required String id,
+    required String word,
+    required String reading,
+    required String meaning,
+    this.jlptLevel = const Value.absent(),
+    this.stability = const Value.absent(),
+    this.difficulty = const Value.absent(),
+    this.lastReview = const Value.absent(),
+    required DateTime nextReview,
+    this.reps = const Value.absent(),
+    this.lapses = const Value.absent(),
+    this.state = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       word = Value(word),
+       reading = Value(reading),
+       meaning = Value(meaning),
+       nextReview = Value(nextReview);
+  static Insertable<VocabularyTableData> custom({
+    Expression<String>? id,
+    Expression<String>? word,
+    Expression<String>? reading,
+    Expression<String>? meaning,
+    Expression<int>? jlptLevel,
+    Expression<double>? stability,
+    Expression<double>? difficulty,
+    Expression<DateTime>? lastReview,
+    Expression<DateTime>? nextReview,
+    Expression<int>? reps,
+    Expression<int>? lapses,
+    Expression<int>? state,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (word != null) 'word': word,
+      if (reading != null) 'reading': reading,
+      if (meaning != null) 'meaning': meaning,
+      if (jlptLevel != null) 'jlpt_level': jlptLevel,
+      if (stability != null) 'stability': stability,
+      if (difficulty != null) 'difficulty': difficulty,
+      if (lastReview != null) 'last_review': lastReview,
+      if (nextReview != null) 'next_review': nextReview,
+      if (reps != null) 'reps': reps,
+      if (lapses != null) 'lapses': lapses,
+      if (state != null) 'state': state,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  VocabularyTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? word,
+    Value<String>? reading,
+    Value<String>? meaning,
+    Value<int>? jlptLevel,
+    Value<double>? stability,
+    Value<double>? difficulty,
+    Value<DateTime?>? lastReview,
+    Value<DateTime>? nextReview,
+    Value<int>? reps,
+    Value<int>? lapses,
+    Value<int>? state,
+    Value<int>? rowid,
+  }) {
+    return VocabularyTableCompanion(
+      id: id ?? this.id,
+      word: word ?? this.word,
+      reading: reading ?? this.reading,
+      meaning: meaning ?? this.meaning,
+      jlptLevel: jlptLevel ?? this.jlptLevel,
+      stability: stability ?? this.stability,
+      difficulty: difficulty ?? this.difficulty,
+      lastReview: lastReview ?? this.lastReview,
+      nextReview: nextReview ?? this.nextReview,
+      reps: reps ?? this.reps,
+      lapses: lapses ?? this.lapses,
+      state: state ?? this.state,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (word.present) {
+      map['word'] = Variable<String>(word.value);
+    }
+    if (reading.present) {
+      map['reading'] = Variable<String>(reading.value);
+    }
+    if (meaning.present) {
+      map['meaning'] = Variable<String>(meaning.value);
+    }
+    if (jlptLevel.present) {
+      map['jlpt_level'] = Variable<int>(jlptLevel.value);
+    }
+    if (stability.present) {
+      map['stability'] = Variable<double>(stability.value);
+    }
+    if (difficulty.present) {
+      map['difficulty'] = Variable<double>(difficulty.value);
+    }
+    if (lastReview.present) {
+      map['last_review'] = Variable<DateTime>(lastReview.value);
+    }
+    if (nextReview.present) {
+      map['next_review'] = Variable<DateTime>(nextReview.value);
+    }
+    if (reps.present) {
+      map['reps'] = Variable<int>(reps.value);
+    }
+    if (lapses.present) {
+      map['lapses'] = Variable<int>(lapses.value);
+    }
+    if (state.present) {
+      map['state'] = Variable<int>(state.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('VocabularyTableCompanion(')
+          ..write('id: $id, ')
+          ..write('word: $word, ')
+          ..write('reading: $reading, ')
+          ..write('meaning: $meaning, ')
+          ..write('jlptLevel: $jlptLevel, ')
+          ..write('stability: $stability, ')
+          ..write('difficulty: $difficulty, ')
+          ..write('lastReview: $lastReview, ')
+          ..write('nextReview: $nextReview, ')
+          ..write('reps: $reps, ')
+          ..write('lapses: $lapses, ')
+          ..write('state: $state, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
+class $GrammarTableTable extends GrammarTable
+    with TableInfo<$GrammarTableTable, GrammarTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $GrammarTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<String> id = GeneratedColumn<String>(
+    'id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _titleMeta = const VerificationMeta('title');
+  @override
+  late final GeneratedColumn<String> title = GeneratedColumn<String>(
+    'title',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _structureMeta = const VerificationMeta(
+    'structure',
+  );
+  @override
+  late final GeneratedColumn<String> structure = GeneratedColumn<String>(
+    'structure',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _explanationMeta = const VerificationMeta(
+    'explanation',
+  );
+  @override
+  late final GeneratedColumn<String> explanation = GeneratedColumn<String>(
+    'explanation',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _exampleMeta = const VerificationMeta(
+    'example',
+  );
+  @override
+  late final GeneratedColumn<String> example = GeneratedColumn<String>(
+    'example',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _jlptLevelMeta = const VerificationMeta(
+    'jlptLevel',
+  );
+  @override
+  late final GeneratedColumn<int> jlptLevel = GeneratedColumn<int>(
+    'jlpt_level',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(5),
+  );
+  static const VerificationMeta _isLearnedMeta = const VerificationMeta(
+    'isLearned',
+  );
+  @override
+  late final GeneratedColumn<bool> isLearned = GeneratedColumn<bool>(
+    'is_learned',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_learned" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    title,
+    structure,
+    explanation,
+    example,
+    jlptLevel,
+    isLearned,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'grammar_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<GrammarTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    } else if (isInserting) {
+      context.missing(_idMeta);
+    }
+    if (data.containsKey('title')) {
+      context.handle(
+        _titleMeta,
+        title.isAcceptableOrUnknown(data['title']!, _titleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_titleMeta);
+    }
+    if (data.containsKey('structure')) {
+      context.handle(
+        _structureMeta,
+        structure.isAcceptableOrUnknown(data['structure']!, _structureMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_structureMeta);
+    }
+    if (data.containsKey('explanation')) {
+      context.handle(
+        _explanationMeta,
+        explanation.isAcceptableOrUnknown(
+          data['explanation']!,
+          _explanationMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_explanationMeta);
+    }
+    if (data.containsKey('example')) {
+      context.handle(
+        _exampleMeta,
+        example.isAcceptableOrUnknown(data['example']!, _exampleMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_exampleMeta);
+    }
+    if (data.containsKey('jlpt_level')) {
+      context.handle(
+        _jlptLevelMeta,
+        jlptLevel.isAcceptableOrUnknown(data['jlpt_level']!, _jlptLevelMeta),
+      );
+    }
+    if (data.containsKey('is_learned')) {
+      context.handle(
+        _isLearnedMeta,
+        isLearned.isAcceptableOrUnknown(data['is_learned']!, _isLearnedMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  GrammarTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return GrammarTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}id'],
+      )!,
+      title: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}title'],
+      )!,
+      structure: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}structure'],
+      )!,
+      explanation: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}explanation'],
+      )!,
+      example: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}example'],
+      )!,
+      jlptLevel: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}jlpt_level'],
+      )!,
+      isLearned: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_learned'],
+      )!,
+    );
+  }
+
+  @override
+  $GrammarTableTable createAlias(String alias) {
+    return $GrammarTableTable(attachedDatabase, alias);
+  }
+}
+
+class GrammarTableData extends DataClass
+    implements Insertable<GrammarTableData> {
+  final String id;
+  final String title;
+  final String structure;
+  final String explanation;
+  final String example;
+  final int jlptLevel;
+  final bool isLearned;
+  const GrammarTableData({
+    required this.id,
+    required this.title,
+    required this.structure,
+    required this.explanation,
+    required this.example,
+    required this.jlptLevel,
+    required this.isLearned,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<String>(id);
+    map['title'] = Variable<String>(title);
+    map['structure'] = Variable<String>(structure);
+    map['explanation'] = Variable<String>(explanation);
+    map['example'] = Variable<String>(example);
+    map['jlpt_level'] = Variable<int>(jlptLevel);
+    map['is_learned'] = Variable<bool>(isLearned);
+    return map;
+  }
+
+  GrammarTableCompanion toCompanion(bool nullToAbsent) {
+    return GrammarTableCompanion(
+      id: Value(id),
+      title: Value(title),
+      structure: Value(structure),
+      explanation: Value(explanation),
+      example: Value(example),
+      jlptLevel: Value(jlptLevel),
+      isLearned: Value(isLearned),
+    );
+  }
+
+  factory GrammarTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return GrammarTableData(
+      id: serializer.fromJson<String>(json['id']),
+      title: serializer.fromJson<String>(json['title']),
+      structure: serializer.fromJson<String>(json['structure']),
+      explanation: serializer.fromJson<String>(json['explanation']),
+      example: serializer.fromJson<String>(json['example']),
+      jlptLevel: serializer.fromJson<int>(json['jlptLevel']),
+      isLearned: serializer.fromJson<bool>(json['isLearned']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<String>(id),
+      'title': serializer.toJson<String>(title),
+      'structure': serializer.toJson<String>(structure),
+      'explanation': serializer.toJson<String>(explanation),
+      'example': serializer.toJson<String>(example),
+      'jlptLevel': serializer.toJson<int>(jlptLevel),
+      'isLearned': serializer.toJson<bool>(isLearned),
+    };
+  }
+
+  GrammarTableData copyWith({
+    String? id,
+    String? title,
+    String? structure,
+    String? explanation,
+    String? example,
+    int? jlptLevel,
+    bool? isLearned,
+  }) => GrammarTableData(
+    id: id ?? this.id,
+    title: title ?? this.title,
+    structure: structure ?? this.structure,
+    explanation: explanation ?? this.explanation,
+    example: example ?? this.example,
+    jlptLevel: jlptLevel ?? this.jlptLevel,
+    isLearned: isLearned ?? this.isLearned,
+  );
+  GrammarTableData copyWithCompanion(GrammarTableCompanion data) {
+    return GrammarTableData(
+      id: data.id.present ? data.id.value : this.id,
+      title: data.title.present ? data.title.value : this.title,
+      structure: data.structure.present ? data.structure.value : this.structure,
+      explanation: data.explanation.present
+          ? data.explanation.value
+          : this.explanation,
+      example: data.example.present ? data.example.value : this.example,
+      jlptLevel: data.jlptLevel.present ? data.jlptLevel.value : this.jlptLevel,
+      isLearned: data.isLearned.present ? data.isLearned.value : this.isLearned,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GrammarTableData(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('structure: $structure, ')
+          ..write('explanation: $explanation, ')
+          ..write('example: $example, ')
+          ..write('jlptLevel: $jlptLevel, ')
+          ..write('isLearned: $isLearned')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    title,
+    structure,
+    explanation,
+    example,
+    jlptLevel,
+    isLearned,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is GrammarTableData &&
+          other.id == this.id &&
+          other.title == this.title &&
+          other.structure == this.structure &&
+          other.explanation == this.explanation &&
+          other.example == this.example &&
+          other.jlptLevel == this.jlptLevel &&
+          other.isLearned == this.isLearned);
+}
+
+class GrammarTableCompanion extends UpdateCompanion<GrammarTableData> {
+  final Value<String> id;
+  final Value<String> title;
+  final Value<String> structure;
+  final Value<String> explanation;
+  final Value<String> example;
+  final Value<int> jlptLevel;
+  final Value<bool> isLearned;
+  final Value<int> rowid;
+  const GrammarTableCompanion({
+    this.id = const Value.absent(),
+    this.title = const Value.absent(),
+    this.structure = const Value.absent(),
+    this.explanation = const Value.absent(),
+    this.example = const Value.absent(),
+    this.jlptLevel = const Value.absent(),
+    this.isLearned = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  GrammarTableCompanion.insert({
+    required String id,
+    required String title,
+    required String structure,
+    required String explanation,
+    required String example,
+    this.jlptLevel = const Value.absent(),
+    this.isLearned = const Value.absent(),
+    this.rowid = const Value.absent(),
+  }) : id = Value(id),
+       title = Value(title),
+       structure = Value(structure),
+       explanation = Value(explanation),
+       example = Value(example);
+  static Insertable<GrammarTableData> custom({
+    Expression<String>? id,
+    Expression<String>? title,
+    Expression<String>? structure,
+    Expression<String>? explanation,
+    Expression<String>? example,
+    Expression<int>? jlptLevel,
+    Expression<bool>? isLearned,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (title != null) 'title': title,
+      if (structure != null) 'structure': structure,
+      if (explanation != null) 'explanation': explanation,
+      if (example != null) 'example': example,
+      if (jlptLevel != null) 'jlpt_level': jlptLevel,
+      if (isLearned != null) 'is_learned': isLearned,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  GrammarTableCompanion copyWith({
+    Value<String>? id,
+    Value<String>? title,
+    Value<String>? structure,
+    Value<String>? explanation,
+    Value<String>? example,
+    Value<int>? jlptLevel,
+    Value<bool>? isLearned,
+    Value<int>? rowid,
+  }) {
+    return GrammarTableCompanion(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      structure: structure ?? this.structure,
+      explanation: explanation ?? this.explanation,
+      example: example ?? this.example,
+      jlptLevel: jlptLevel ?? this.jlptLevel,
+      isLearned: isLearned ?? this.isLearned,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<String>(id.value);
+    }
+    if (title.present) {
+      map['title'] = Variable<String>(title.value);
+    }
+    if (structure.present) {
+      map['structure'] = Variable<String>(structure.value);
+    }
+    if (explanation.present) {
+      map['explanation'] = Variable<String>(explanation.value);
+    }
+    if (example.present) {
+      map['example'] = Variable<String>(example.value);
+    }
+    if (jlptLevel.present) {
+      map['jlpt_level'] = Variable<int>(jlptLevel.value);
+    }
+    if (isLearned.present) {
+      map['is_learned'] = Variable<bool>(isLearned.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('GrammarTableCompanion(')
+          ..write('id: $id, ')
+          ..write('title: $title, ')
+          ..write('structure: $structure, ')
+          ..write('explanation: $explanation, ')
+          ..write('example: $example, ')
+          ..write('jlptLevel: $jlptLevel, ')
+          ..write('isLearned: $isLearned, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ZenGardenTableTable extends ZenGardenTable
     with TableInfo<$ZenGardenTableTable, ZenGardenTableData> {
   @override
@@ -854,8 +2013,26 @@ class $ZenGardenTableTable extends ZenGardenTable
     requiredDuringInsert: false,
     defaultValue: const Constant('[]'),
   );
+  static const VerificationMeta _lastLoginMeta = const VerificationMeta(
+    'lastLogin',
+  );
   @override
-  List<GeneratedColumn> get $columns => [id, water, sunlight, exp, plantsJson];
+  late final GeneratedColumn<DateTime> lastLogin = GeneratedColumn<DateTime>(
+    'last_login',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    water,
+    sunlight,
+    exp,
+    plantsJson,
+    lastLogin,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -895,6 +2072,12 @@ class $ZenGardenTableTable extends ZenGardenTable
         plantsJson.isAcceptableOrUnknown(data['plants_json']!, _plantsJsonMeta),
       );
     }
+    if (data.containsKey('last_login')) {
+      context.handle(
+        _lastLoginMeta,
+        lastLogin.isAcceptableOrUnknown(data['last_login']!, _lastLoginMeta),
+      );
+    }
     return context;
   }
 
@@ -924,6 +2107,10 @@ class $ZenGardenTableTable extends ZenGardenTable
         DriftSqlType.string,
         data['${effectivePrefix}plants_json'],
       )!,
+      lastLogin: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}last_login'],
+      ),
     );
   }
 
@@ -940,12 +2127,14 @@ class ZenGardenTableData extends DataClass
   final int sunlight;
   final int exp;
   final String plantsJson;
+  final DateTime? lastLogin;
   const ZenGardenTableData({
     required this.id,
     required this.water,
     required this.sunlight,
     required this.exp,
     required this.plantsJson,
+    this.lastLogin,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -955,6 +2144,9 @@ class ZenGardenTableData extends DataClass
     map['sunlight'] = Variable<int>(sunlight);
     map['exp'] = Variable<int>(exp);
     map['plants_json'] = Variable<String>(plantsJson);
+    if (!nullToAbsent || lastLogin != null) {
+      map['last_login'] = Variable<DateTime>(lastLogin);
+    }
     return map;
   }
 
@@ -965,6 +2157,9 @@ class ZenGardenTableData extends DataClass
       sunlight: Value(sunlight),
       exp: Value(exp),
       plantsJson: Value(plantsJson),
+      lastLogin: lastLogin == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastLogin),
     );
   }
 
@@ -979,6 +2174,7 @@ class ZenGardenTableData extends DataClass
       sunlight: serializer.fromJson<int>(json['sunlight']),
       exp: serializer.fromJson<int>(json['exp']),
       plantsJson: serializer.fromJson<String>(json['plantsJson']),
+      lastLogin: serializer.fromJson<DateTime?>(json['lastLogin']),
     );
   }
   @override
@@ -990,6 +2186,7 @@ class ZenGardenTableData extends DataClass
       'sunlight': serializer.toJson<int>(sunlight),
       'exp': serializer.toJson<int>(exp),
       'plantsJson': serializer.toJson<String>(plantsJson),
+      'lastLogin': serializer.toJson<DateTime?>(lastLogin),
     };
   }
 
@@ -999,12 +2196,14 @@ class ZenGardenTableData extends DataClass
     int? sunlight,
     int? exp,
     String? plantsJson,
+    Value<DateTime?> lastLogin = const Value.absent(),
   }) => ZenGardenTableData(
     id: id ?? this.id,
     water: water ?? this.water,
     sunlight: sunlight ?? this.sunlight,
     exp: exp ?? this.exp,
     plantsJson: plantsJson ?? this.plantsJson,
+    lastLogin: lastLogin.present ? lastLogin.value : this.lastLogin,
   );
   ZenGardenTableData copyWithCompanion(ZenGardenTableCompanion data) {
     return ZenGardenTableData(
@@ -1015,6 +2214,7 @@ class ZenGardenTableData extends DataClass
       plantsJson: data.plantsJson.present
           ? data.plantsJson.value
           : this.plantsJson,
+      lastLogin: data.lastLogin.present ? data.lastLogin.value : this.lastLogin,
     );
   }
 
@@ -1025,13 +2225,15 @@ class ZenGardenTableData extends DataClass
           ..write('water: $water, ')
           ..write('sunlight: $sunlight, ')
           ..write('exp: $exp, ')
-          ..write('plantsJson: $plantsJson')
+          ..write('plantsJson: $plantsJson, ')
+          ..write('lastLogin: $lastLogin')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, water, sunlight, exp, plantsJson);
+  int get hashCode =>
+      Object.hash(id, water, sunlight, exp, plantsJson, lastLogin);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -1040,7 +2242,8 @@ class ZenGardenTableData extends DataClass
           other.water == this.water &&
           other.sunlight == this.sunlight &&
           other.exp == this.exp &&
-          other.plantsJson == this.plantsJson);
+          other.plantsJson == this.plantsJson &&
+          other.lastLogin == this.lastLogin);
 }
 
 class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
@@ -1049,12 +2252,14 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
   final Value<int> sunlight;
   final Value<int> exp;
   final Value<String> plantsJson;
+  final Value<DateTime?> lastLogin;
   const ZenGardenTableCompanion({
     this.id = const Value.absent(),
     this.water = const Value.absent(),
     this.sunlight = const Value.absent(),
     this.exp = const Value.absent(),
     this.plantsJson = const Value.absent(),
+    this.lastLogin = const Value.absent(),
   });
   ZenGardenTableCompanion.insert({
     this.id = const Value.absent(),
@@ -1062,6 +2267,7 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
     this.sunlight = const Value.absent(),
     this.exp = const Value.absent(),
     this.plantsJson = const Value.absent(),
+    this.lastLogin = const Value.absent(),
   });
   static Insertable<ZenGardenTableData> custom({
     Expression<int>? id,
@@ -1069,6 +2275,7 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
     Expression<int>? sunlight,
     Expression<int>? exp,
     Expression<String>? plantsJson,
+    Expression<DateTime>? lastLogin,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -1076,6 +2283,7 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
       if (sunlight != null) 'sunlight': sunlight,
       if (exp != null) 'exp': exp,
       if (plantsJson != null) 'plants_json': plantsJson,
+      if (lastLogin != null) 'last_login': lastLogin,
     });
   }
 
@@ -1085,6 +2293,7 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
     Value<int>? sunlight,
     Value<int>? exp,
     Value<String>? plantsJson,
+    Value<DateTime?>? lastLogin,
   }) {
     return ZenGardenTableCompanion(
       id: id ?? this.id,
@@ -1092,6 +2301,7 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
       sunlight: sunlight ?? this.sunlight,
       exp: exp ?? this.exp,
       plantsJson: plantsJson ?? this.plantsJson,
+      lastLogin: lastLogin ?? this.lastLogin,
     );
   }
 
@@ -1113,6 +2323,9 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
     if (plantsJson.present) {
       map['plants_json'] = Variable<String>(plantsJson.value);
     }
+    if (lastLogin.present) {
+      map['last_login'] = Variable<DateTime>(lastLogin.value);
+    }
     return map;
   }
 
@@ -1123,7 +2336,8 @@ class ZenGardenTableCompanion extends UpdateCompanion<ZenGardenTableData> {
           ..write('water: $water, ')
           ..write('sunlight: $sunlight, ')
           ..write('exp: $exp, ')
-          ..write('plantsJson: $plantsJson')
+          ..write('plantsJson: $plantsJson, ')
+          ..write('lastLogin: $lastLogin')
           ..write(')'))
         .toString();
   }
@@ -1551,22 +2765,429 @@ class StudyLogTableCompanion extends UpdateCompanion<StudyLogTableData> {
   }
 }
 
+class $ReviewLogTableTable extends ReviewLogTable
+    with TableInfo<$ReviewLogTableTable, ReviewLogTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ReviewLogTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _itemIdMeta = const VerificationMeta('itemId');
+  @override
+  late final GeneratedColumn<String> itemId = GeneratedColumn<String>(
+    'item_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _itemTypeMeta = const VerificationMeta(
+    'itemType',
+  );
+  @override
+  late final GeneratedColumn<String> itemType = GeneratedColumn<String>(
+    'item_type',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _ratingMeta = const VerificationMeta('rating');
+  @override
+  late final GeneratedColumn<int> rating = GeneratedColumn<int>(
+    'rating',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _reviewTimeMeta = const VerificationMeta(
+    'reviewTime',
+  );
+  @override
+  late final GeneratedColumn<DateTime> reviewTime = GeneratedColumn<DateTime>(
+    'review_time',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _durationMsMeta = const VerificationMeta(
+    'durationMs',
+  );
+  @override
+  late final GeneratedColumn<int> durationMs = GeneratedColumn<int>(
+    'duration_ms',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(0),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    itemId,
+    itemType,
+    rating,
+    reviewTime,
+    durationMs,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'review_log_table';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ReviewLogTableData> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('item_id')) {
+      context.handle(
+        _itemIdMeta,
+        itemId.isAcceptableOrUnknown(data['item_id']!, _itemIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemIdMeta);
+    }
+    if (data.containsKey('item_type')) {
+      context.handle(
+        _itemTypeMeta,
+        itemType.isAcceptableOrUnknown(data['item_type']!, _itemTypeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_itemTypeMeta);
+    }
+    if (data.containsKey('rating')) {
+      context.handle(
+        _ratingMeta,
+        rating.isAcceptableOrUnknown(data['rating']!, _ratingMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_ratingMeta);
+    }
+    if (data.containsKey('review_time')) {
+      context.handle(
+        _reviewTimeMeta,
+        reviewTime.isAcceptableOrUnknown(data['review_time']!, _reviewTimeMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_reviewTimeMeta);
+    }
+    if (data.containsKey('duration_ms')) {
+      context.handle(
+        _durationMsMeta,
+        durationMs.isAcceptableOrUnknown(data['duration_ms']!, _durationMsMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  ReviewLogTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ReviewLogTableData(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      itemId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_id'],
+      )!,
+      itemType: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}item_type'],
+      )!,
+      rating: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}rating'],
+      )!,
+      reviewTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}review_time'],
+      )!,
+      durationMs: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}duration_ms'],
+      )!,
+    );
+  }
+
+  @override
+  $ReviewLogTableTable createAlias(String alias) {
+    return $ReviewLogTableTable(attachedDatabase, alias);
+  }
+}
+
+class ReviewLogTableData extends DataClass
+    implements Insertable<ReviewLogTableData> {
+  final int id;
+  final String itemId;
+  final String itemType;
+  final int rating;
+  final DateTime reviewTime;
+  final int durationMs;
+  const ReviewLogTableData({
+    required this.id,
+    required this.itemId,
+    required this.itemType,
+    required this.rating,
+    required this.reviewTime,
+    required this.durationMs,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    map['item_id'] = Variable<String>(itemId);
+    map['item_type'] = Variable<String>(itemType);
+    map['rating'] = Variable<int>(rating);
+    map['review_time'] = Variable<DateTime>(reviewTime);
+    map['duration_ms'] = Variable<int>(durationMs);
+    return map;
+  }
+
+  ReviewLogTableCompanion toCompanion(bool nullToAbsent) {
+    return ReviewLogTableCompanion(
+      id: Value(id),
+      itemId: Value(itemId),
+      itemType: Value(itemType),
+      rating: Value(rating),
+      reviewTime: Value(reviewTime),
+      durationMs: Value(durationMs),
+    );
+  }
+
+  factory ReviewLogTableData.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ReviewLogTableData(
+      id: serializer.fromJson<int>(json['id']),
+      itemId: serializer.fromJson<String>(json['itemId']),
+      itemType: serializer.fromJson<String>(json['itemType']),
+      rating: serializer.fromJson<int>(json['rating']),
+      reviewTime: serializer.fromJson<DateTime>(json['reviewTime']),
+      durationMs: serializer.fromJson<int>(json['durationMs']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'itemId': serializer.toJson<String>(itemId),
+      'itemType': serializer.toJson<String>(itemType),
+      'rating': serializer.toJson<int>(rating),
+      'reviewTime': serializer.toJson<DateTime>(reviewTime),
+      'durationMs': serializer.toJson<int>(durationMs),
+    };
+  }
+
+  ReviewLogTableData copyWith({
+    int? id,
+    String? itemId,
+    String? itemType,
+    int? rating,
+    DateTime? reviewTime,
+    int? durationMs,
+  }) => ReviewLogTableData(
+    id: id ?? this.id,
+    itemId: itemId ?? this.itemId,
+    itemType: itemType ?? this.itemType,
+    rating: rating ?? this.rating,
+    reviewTime: reviewTime ?? this.reviewTime,
+    durationMs: durationMs ?? this.durationMs,
+  );
+  ReviewLogTableData copyWithCompanion(ReviewLogTableCompanion data) {
+    return ReviewLogTableData(
+      id: data.id.present ? data.id.value : this.id,
+      itemId: data.itemId.present ? data.itemId.value : this.itemId,
+      itemType: data.itemType.present ? data.itemType.value : this.itemType,
+      rating: data.rating.present ? data.rating.value : this.rating,
+      reviewTime: data.reviewTime.present
+          ? data.reviewTime.value
+          : this.reviewTime,
+      durationMs: data.durationMs.present
+          ? data.durationMs.value
+          : this.durationMs,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReviewLogTableData(')
+          ..write('id: $id, ')
+          ..write('itemId: $itemId, ')
+          ..write('itemType: $itemType, ')
+          ..write('rating: $rating, ')
+          ..write('reviewTime: $reviewTime, ')
+          ..write('durationMs: $durationMs')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(id, itemId, itemType, rating, reviewTime, durationMs);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ReviewLogTableData &&
+          other.id == this.id &&
+          other.itemId == this.itemId &&
+          other.itemType == this.itemType &&
+          other.rating == this.rating &&
+          other.reviewTime == this.reviewTime &&
+          other.durationMs == this.durationMs);
+}
+
+class ReviewLogTableCompanion extends UpdateCompanion<ReviewLogTableData> {
+  final Value<int> id;
+  final Value<String> itemId;
+  final Value<String> itemType;
+  final Value<int> rating;
+  final Value<DateTime> reviewTime;
+  final Value<int> durationMs;
+  const ReviewLogTableCompanion({
+    this.id = const Value.absent(),
+    this.itemId = const Value.absent(),
+    this.itemType = const Value.absent(),
+    this.rating = const Value.absent(),
+    this.reviewTime = const Value.absent(),
+    this.durationMs = const Value.absent(),
+  });
+  ReviewLogTableCompanion.insert({
+    this.id = const Value.absent(),
+    required String itemId,
+    required String itemType,
+    required int rating,
+    required DateTime reviewTime,
+    this.durationMs = const Value.absent(),
+  }) : itemId = Value(itemId),
+       itemType = Value(itemType),
+       rating = Value(rating),
+       reviewTime = Value(reviewTime);
+  static Insertable<ReviewLogTableData> custom({
+    Expression<int>? id,
+    Expression<String>? itemId,
+    Expression<String>? itemType,
+    Expression<int>? rating,
+    Expression<DateTime>? reviewTime,
+    Expression<int>? durationMs,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (itemId != null) 'item_id': itemId,
+      if (itemType != null) 'item_type': itemType,
+      if (rating != null) 'rating': rating,
+      if (reviewTime != null) 'review_time': reviewTime,
+      if (durationMs != null) 'duration_ms': durationMs,
+    });
+  }
+
+  ReviewLogTableCompanion copyWith({
+    Value<int>? id,
+    Value<String>? itemId,
+    Value<String>? itemType,
+    Value<int>? rating,
+    Value<DateTime>? reviewTime,
+    Value<int>? durationMs,
+  }) {
+    return ReviewLogTableCompanion(
+      id: id ?? this.id,
+      itemId: itemId ?? this.itemId,
+      itemType: itemType ?? this.itemType,
+      rating: rating ?? this.rating,
+      reviewTime: reviewTime ?? this.reviewTime,
+      durationMs: durationMs ?? this.durationMs,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (itemId.present) {
+      map['item_id'] = Variable<String>(itemId.value);
+    }
+    if (itemType.present) {
+      map['item_type'] = Variable<String>(itemType.value);
+    }
+    if (rating.present) {
+      map['rating'] = Variable<int>(rating.value);
+    }
+    if (reviewTime.present) {
+      map['review_time'] = Variable<DateTime>(reviewTime.value);
+    }
+    if (durationMs.present) {
+      map['duration_ms'] = Variable<int>(durationMs.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ReviewLogTableCompanion(')
+          ..write('id: $id, ')
+          ..write('itemId: $itemId, ')
+          ..write('itemType: $itemType, ')
+          ..write('rating: $rating, ')
+          ..write('reviewTime: $reviewTime, ')
+          ..write('durationMs: $durationMs')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $KanjiCardTableTable kanjiCardTable = $KanjiCardTableTable(this);
+  late final $VocabularyTableTable vocabularyTable = $VocabularyTableTable(
+    this,
+  );
+  late final $GrammarTableTable grammarTable = $GrammarTableTable(this);
   late final $ZenGardenTableTable zenGardenTable = $ZenGardenTableTable(this);
   late final $LessonTableTable lessonTable = $LessonTableTable(this);
   late final $StudyLogTableTable studyLogTable = $StudyLogTableTable(this);
+  late final $ReviewLogTableTable reviewLogTable = $ReviewLogTableTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
   @override
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     kanjiCardTable,
+    vocabularyTable,
+    grammarTable,
     zenGardenTable,
     lessonTable,
     studyLogTable,
+    reviewLogTable,
   ];
 }
 
@@ -1951,6 +3572,595 @@ typedef $$KanjiCardTableTableProcessedTableManager =
       KanjiCardData,
       PrefetchHooks Function()
     >;
+typedef $$VocabularyTableTableCreateCompanionBuilder =
+    VocabularyTableCompanion Function({
+      required String id,
+      required String word,
+      required String reading,
+      required String meaning,
+      Value<int> jlptLevel,
+      Value<double> stability,
+      Value<double> difficulty,
+      Value<DateTime?> lastReview,
+      required DateTime nextReview,
+      Value<int> reps,
+      Value<int> lapses,
+      Value<int> state,
+      Value<int> rowid,
+    });
+typedef $$VocabularyTableTableUpdateCompanionBuilder =
+    VocabularyTableCompanion Function({
+      Value<String> id,
+      Value<String> word,
+      Value<String> reading,
+      Value<String> meaning,
+      Value<int> jlptLevel,
+      Value<double> stability,
+      Value<double> difficulty,
+      Value<DateTime?> lastReview,
+      Value<DateTime> nextReview,
+      Value<int> reps,
+      Value<int> lapses,
+      Value<int> state,
+      Value<int> rowid,
+    });
+
+class $$VocabularyTableTableFilterComposer
+    extends Composer<_$AppDatabase, $VocabularyTableTable> {
+  $$VocabularyTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get word => $composableBuilder(
+    column: $table.word,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get reading => $composableBuilder(
+    column: $table.reading,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get meaning => $composableBuilder(
+    column: $table.meaning,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get jlptLevel => $composableBuilder(
+    column: $table.jlptLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get stability => $composableBuilder(
+    column: $table.stability,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<double> get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastReview => $composableBuilder(
+    column: $table.lastReview,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get nextReview => $composableBuilder(
+    column: $table.nextReview,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get reps => $composableBuilder(
+    column: $table.reps,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get lapses => $composableBuilder(
+    column: $table.lapses,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$VocabularyTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $VocabularyTableTable> {
+  $$VocabularyTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get word => $composableBuilder(
+    column: $table.word,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get reading => $composableBuilder(
+    column: $table.reading,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get meaning => $composableBuilder(
+    column: $table.meaning,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get jlptLevel => $composableBuilder(
+    column: $table.jlptLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get stability => $composableBuilder(
+    column: $table.stability,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<double> get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get lastReview => $composableBuilder(
+    column: $table.lastReview,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get nextReview => $composableBuilder(
+    column: $table.nextReview,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get reps => $composableBuilder(
+    column: $table.reps,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get lapses => $composableBuilder(
+    column: $table.lapses,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get state => $composableBuilder(
+    column: $table.state,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$VocabularyTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $VocabularyTableTable> {
+  $$VocabularyTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get word =>
+      $composableBuilder(column: $table.word, builder: (column) => column);
+
+  GeneratedColumn<String> get reading =>
+      $composableBuilder(column: $table.reading, builder: (column) => column);
+
+  GeneratedColumn<String> get meaning =>
+      $composableBuilder(column: $table.meaning, builder: (column) => column);
+
+  GeneratedColumn<int> get jlptLevel =>
+      $composableBuilder(column: $table.jlptLevel, builder: (column) => column);
+
+  GeneratedColumn<double> get stability =>
+      $composableBuilder(column: $table.stability, builder: (column) => column);
+
+  GeneratedColumn<double> get difficulty => $composableBuilder(
+    column: $table.difficulty,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get lastReview => $composableBuilder(
+    column: $table.lastReview,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<DateTime> get nextReview => $composableBuilder(
+    column: $table.nextReview,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get reps =>
+      $composableBuilder(column: $table.reps, builder: (column) => column);
+
+  GeneratedColumn<int> get lapses =>
+      $composableBuilder(column: $table.lapses, builder: (column) => column);
+
+  GeneratedColumn<int> get state =>
+      $composableBuilder(column: $table.state, builder: (column) => column);
+}
+
+class $$VocabularyTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $VocabularyTableTable,
+          VocabularyTableData,
+          $$VocabularyTableTableFilterComposer,
+          $$VocabularyTableTableOrderingComposer,
+          $$VocabularyTableTableAnnotationComposer,
+          $$VocabularyTableTableCreateCompanionBuilder,
+          $$VocabularyTableTableUpdateCompanionBuilder,
+          (
+            VocabularyTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $VocabularyTableTable,
+              VocabularyTableData
+            >,
+          ),
+          VocabularyTableData,
+          PrefetchHooks Function()
+        > {
+  $$VocabularyTableTableTableManager(
+    _$AppDatabase db,
+    $VocabularyTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$VocabularyTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$VocabularyTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$VocabularyTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> word = const Value.absent(),
+                Value<String> reading = const Value.absent(),
+                Value<String> meaning = const Value.absent(),
+                Value<int> jlptLevel = const Value.absent(),
+                Value<double> stability = const Value.absent(),
+                Value<double> difficulty = const Value.absent(),
+                Value<DateTime?> lastReview = const Value.absent(),
+                Value<DateTime> nextReview = const Value.absent(),
+                Value<int> reps = const Value.absent(),
+                Value<int> lapses = const Value.absent(),
+                Value<int> state = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VocabularyTableCompanion(
+                id: id,
+                word: word,
+                reading: reading,
+                meaning: meaning,
+                jlptLevel: jlptLevel,
+                stability: stability,
+                difficulty: difficulty,
+                lastReview: lastReview,
+                nextReview: nextReview,
+                reps: reps,
+                lapses: lapses,
+                state: state,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String word,
+                required String reading,
+                required String meaning,
+                Value<int> jlptLevel = const Value.absent(),
+                Value<double> stability = const Value.absent(),
+                Value<double> difficulty = const Value.absent(),
+                Value<DateTime?> lastReview = const Value.absent(),
+                required DateTime nextReview,
+                Value<int> reps = const Value.absent(),
+                Value<int> lapses = const Value.absent(),
+                Value<int> state = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => VocabularyTableCompanion.insert(
+                id: id,
+                word: word,
+                reading: reading,
+                meaning: meaning,
+                jlptLevel: jlptLevel,
+                stability: stability,
+                difficulty: difficulty,
+                lastReview: lastReview,
+                nextReview: nextReview,
+                reps: reps,
+                lapses: lapses,
+                state: state,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$VocabularyTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $VocabularyTableTable,
+      VocabularyTableData,
+      $$VocabularyTableTableFilterComposer,
+      $$VocabularyTableTableOrderingComposer,
+      $$VocabularyTableTableAnnotationComposer,
+      $$VocabularyTableTableCreateCompanionBuilder,
+      $$VocabularyTableTableUpdateCompanionBuilder,
+      (
+        VocabularyTableData,
+        BaseReferences<
+          _$AppDatabase,
+          $VocabularyTableTable,
+          VocabularyTableData
+        >,
+      ),
+      VocabularyTableData,
+      PrefetchHooks Function()
+    >;
+typedef $$GrammarTableTableCreateCompanionBuilder =
+    GrammarTableCompanion Function({
+      required String id,
+      required String title,
+      required String structure,
+      required String explanation,
+      required String example,
+      Value<int> jlptLevel,
+      Value<bool> isLearned,
+      Value<int> rowid,
+    });
+typedef $$GrammarTableTableUpdateCompanionBuilder =
+    GrammarTableCompanion Function({
+      Value<String> id,
+      Value<String> title,
+      Value<String> structure,
+      Value<String> explanation,
+      Value<String> example,
+      Value<int> jlptLevel,
+      Value<bool> isLearned,
+      Value<int> rowid,
+    });
+
+class $$GrammarTableTableFilterComposer
+    extends Composer<_$AppDatabase, $GrammarTableTable> {
+  $$GrammarTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get structure => $composableBuilder(
+    column: $table.structure,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get example => $composableBuilder(
+    column: $table.example,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get jlptLevel => $composableBuilder(
+    column: $table.jlptLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isLearned => $composableBuilder(
+    column: $table.isLearned,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$GrammarTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $GrammarTableTable> {
+  $$GrammarTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get title => $composableBuilder(
+    column: $table.title,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get structure => $composableBuilder(
+    column: $table.structure,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get example => $composableBuilder(
+    column: $table.example,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get jlptLevel => $composableBuilder(
+    column: $table.jlptLevel,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isLearned => $composableBuilder(
+    column: $table.isLearned,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$GrammarTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $GrammarTableTable> {
+  $$GrammarTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get title =>
+      $composableBuilder(column: $table.title, builder: (column) => column);
+
+  GeneratedColumn<String> get structure =>
+      $composableBuilder(column: $table.structure, builder: (column) => column);
+
+  GeneratedColumn<String> get explanation => $composableBuilder(
+    column: $table.explanation,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get example =>
+      $composableBuilder(column: $table.example, builder: (column) => column);
+
+  GeneratedColumn<int> get jlptLevel =>
+      $composableBuilder(column: $table.jlptLevel, builder: (column) => column);
+
+  GeneratedColumn<bool> get isLearned =>
+      $composableBuilder(column: $table.isLearned, builder: (column) => column);
+}
+
+class $$GrammarTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $GrammarTableTable,
+          GrammarTableData,
+          $$GrammarTableTableFilterComposer,
+          $$GrammarTableTableOrderingComposer,
+          $$GrammarTableTableAnnotationComposer,
+          $$GrammarTableTableCreateCompanionBuilder,
+          $$GrammarTableTableUpdateCompanionBuilder,
+          (
+            GrammarTableData,
+            BaseReferences<_$AppDatabase, $GrammarTableTable, GrammarTableData>,
+          ),
+          GrammarTableData,
+          PrefetchHooks Function()
+        > {
+  $$GrammarTableTableTableManager(_$AppDatabase db, $GrammarTableTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$GrammarTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$GrammarTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$GrammarTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> id = const Value.absent(),
+                Value<String> title = const Value.absent(),
+                Value<String> structure = const Value.absent(),
+                Value<String> explanation = const Value.absent(),
+                Value<String> example = const Value.absent(),
+                Value<int> jlptLevel = const Value.absent(),
+                Value<bool> isLearned = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GrammarTableCompanion(
+                id: id,
+                title: title,
+                structure: structure,
+                explanation: explanation,
+                example: example,
+                jlptLevel: jlptLevel,
+                isLearned: isLearned,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String id,
+                required String title,
+                required String structure,
+                required String explanation,
+                required String example,
+                Value<int> jlptLevel = const Value.absent(),
+                Value<bool> isLearned = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => GrammarTableCompanion.insert(
+                id: id,
+                title: title,
+                structure: structure,
+                explanation: explanation,
+                example: example,
+                jlptLevel: jlptLevel,
+                isLearned: isLearned,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$GrammarTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $GrammarTableTable,
+      GrammarTableData,
+      $$GrammarTableTableFilterComposer,
+      $$GrammarTableTableOrderingComposer,
+      $$GrammarTableTableAnnotationComposer,
+      $$GrammarTableTableCreateCompanionBuilder,
+      $$GrammarTableTableUpdateCompanionBuilder,
+      (
+        GrammarTableData,
+        BaseReferences<_$AppDatabase, $GrammarTableTable, GrammarTableData>,
+      ),
+      GrammarTableData,
+      PrefetchHooks Function()
+    >;
 typedef $$ZenGardenTableTableCreateCompanionBuilder =
     ZenGardenTableCompanion Function({
       Value<int> id,
@@ -1958,6 +4168,7 @@ typedef $$ZenGardenTableTableCreateCompanionBuilder =
       Value<int> sunlight,
       Value<int> exp,
       Value<String> plantsJson,
+      Value<DateTime?> lastLogin,
     });
 typedef $$ZenGardenTableTableUpdateCompanionBuilder =
     ZenGardenTableCompanion Function({
@@ -1966,6 +4177,7 @@ typedef $$ZenGardenTableTableUpdateCompanionBuilder =
       Value<int> sunlight,
       Value<int> exp,
       Value<String> plantsJson,
+      Value<DateTime?> lastLogin,
     });
 
 class $$ZenGardenTableTableFilterComposer
@@ -1999,6 +4211,11 @@ class $$ZenGardenTableTableFilterComposer
 
   ColumnFilters<String> get plantsJson => $composableBuilder(
     column: $table.plantsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get lastLogin => $composableBuilder(
+    column: $table.lastLogin,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2036,6 +4253,11 @@ class $$ZenGardenTableTableOrderingComposer
     column: $table.plantsJson,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<DateTime> get lastLogin => $composableBuilder(
+    column: $table.lastLogin,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ZenGardenTableTableAnnotationComposer
@@ -2063,6 +4285,9 @@ class $$ZenGardenTableTableAnnotationComposer
     column: $table.plantsJson,
     builder: (column) => column,
   );
+
+  GeneratedColumn<DateTime> get lastLogin =>
+      $composableBuilder(column: $table.lastLogin, builder: (column) => column);
 }
 
 class $$ZenGardenTableTableTableManager
@@ -2107,12 +4332,14 @@ class $$ZenGardenTableTableTableManager
                 Value<int> sunlight = const Value.absent(),
                 Value<int> exp = const Value.absent(),
                 Value<String> plantsJson = const Value.absent(),
+                Value<DateTime?> lastLogin = const Value.absent(),
               }) => ZenGardenTableCompanion(
                 id: id,
                 water: water,
                 sunlight: sunlight,
                 exp: exp,
                 plantsJson: plantsJson,
+                lastLogin: lastLogin,
               ),
           createCompanionCallback:
               ({
@@ -2121,12 +4348,14 @@ class $$ZenGardenTableTableTableManager
                 Value<int> sunlight = const Value.absent(),
                 Value<int> exp = const Value.absent(),
                 Value<String> plantsJson = const Value.absent(),
+                Value<DateTime?> lastLogin = const Value.absent(),
               }) => ZenGardenTableCompanion.insert(
                 id: id,
                 water: water,
                 sunlight: sunlight,
                 exp: exp,
                 plantsJson: plantsJson,
+                lastLogin: lastLogin,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
@@ -2445,16 +4674,245 @@ typedef $$StudyLogTableTableProcessedTableManager =
       StudyLogTableData,
       PrefetchHooks Function()
     >;
+typedef $$ReviewLogTableTableCreateCompanionBuilder =
+    ReviewLogTableCompanion Function({
+      Value<int> id,
+      required String itemId,
+      required String itemType,
+      required int rating,
+      required DateTime reviewTime,
+      Value<int> durationMs,
+    });
+typedef $$ReviewLogTableTableUpdateCompanionBuilder =
+    ReviewLogTableCompanion Function({
+      Value<int> id,
+      Value<String> itemId,
+      Value<String> itemType,
+      Value<int> rating,
+      Value<DateTime> reviewTime,
+      Value<int> durationMs,
+    });
+
+class $$ReviewLogTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ReviewLogTableTable> {
+  $$ReviewLogTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get itemId => $composableBuilder(
+    column: $table.itemId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get itemType => $composableBuilder(
+    column: $table.itemType,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get reviewTime => $composableBuilder(
+    column: $table.reviewTime,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get durationMs => $composableBuilder(
+    column: $table.durationMs,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ReviewLogTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ReviewLogTableTable> {
+  $$ReviewLogTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get itemId => $composableBuilder(
+    column: $table.itemId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get itemType => $composableBuilder(
+    column: $table.itemType,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get rating => $composableBuilder(
+    column: $table.rating,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get reviewTime => $composableBuilder(
+    column: $table.reviewTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get durationMs => $composableBuilder(
+    column: $table.durationMs,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ReviewLogTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ReviewLogTableTable> {
+  $$ReviewLogTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<String> get itemId =>
+      $composableBuilder(column: $table.itemId, builder: (column) => column);
+
+  GeneratedColumn<String> get itemType =>
+      $composableBuilder(column: $table.itemType, builder: (column) => column);
+
+  GeneratedColumn<int> get rating =>
+      $composableBuilder(column: $table.rating, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get reviewTime => $composableBuilder(
+    column: $table.reviewTime,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get durationMs => $composableBuilder(
+    column: $table.durationMs,
+    builder: (column) => column,
+  );
+}
+
+class $$ReviewLogTableTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ReviewLogTableTable,
+          ReviewLogTableData,
+          $$ReviewLogTableTableFilterComposer,
+          $$ReviewLogTableTableOrderingComposer,
+          $$ReviewLogTableTableAnnotationComposer,
+          $$ReviewLogTableTableCreateCompanionBuilder,
+          $$ReviewLogTableTableUpdateCompanionBuilder,
+          (
+            ReviewLogTableData,
+            BaseReferences<
+              _$AppDatabase,
+              $ReviewLogTableTable,
+              ReviewLogTableData
+            >,
+          ),
+          ReviewLogTableData,
+          PrefetchHooks Function()
+        > {
+  $$ReviewLogTableTableTableManager(
+    _$AppDatabase db,
+    $ReviewLogTableTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ReviewLogTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ReviewLogTableTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ReviewLogTableTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<String> itemId = const Value.absent(),
+                Value<String> itemType = const Value.absent(),
+                Value<int> rating = const Value.absent(),
+                Value<DateTime> reviewTime = const Value.absent(),
+                Value<int> durationMs = const Value.absent(),
+              }) => ReviewLogTableCompanion(
+                id: id,
+                itemId: itemId,
+                itemType: itemType,
+                rating: rating,
+                reviewTime: reviewTime,
+                durationMs: durationMs,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                required String itemId,
+                required String itemType,
+                required int rating,
+                required DateTime reviewTime,
+                Value<int> durationMs = const Value.absent(),
+              }) => ReviewLogTableCompanion.insert(
+                id: id,
+                itemId: itemId,
+                itemType: itemType,
+                rating: rating,
+                reviewTime: reviewTime,
+                durationMs: durationMs,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ReviewLogTableTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ReviewLogTableTable,
+      ReviewLogTableData,
+      $$ReviewLogTableTableFilterComposer,
+      $$ReviewLogTableTableOrderingComposer,
+      $$ReviewLogTableTableAnnotationComposer,
+      $$ReviewLogTableTableCreateCompanionBuilder,
+      $$ReviewLogTableTableUpdateCompanionBuilder,
+      (
+        ReviewLogTableData,
+        BaseReferences<_$AppDatabase, $ReviewLogTableTable, ReviewLogTableData>,
+      ),
+      ReviewLogTableData,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
   $AppDatabaseManager(this._db);
   $$KanjiCardTableTableTableManager get kanjiCardTable =>
       $$KanjiCardTableTableTableManager(_db, _db.kanjiCardTable);
+  $$VocabularyTableTableTableManager get vocabularyTable =>
+      $$VocabularyTableTableTableManager(_db, _db.vocabularyTable);
+  $$GrammarTableTableTableManager get grammarTable =>
+      $$GrammarTableTableTableManager(_db, _db.grammarTable);
   $$ZenGardenTableTableTableManager get zenGardenTable =>
       $$ZenGardenTableTableTableManager(_db, _db.zenGardenTable);
   $$LessonTableTableTableManager get lessonTable =>
       $$LessonTableTableTableManager(_db, _db.lessonTable);
   $$StudyLogTableTableTableManager get studyLogTable =>
       $$StudyLogTableTableTableManager(_db, _db.studyLogTable);
+  $$ReviewLogTableTableTableManager get reviewLogTable =>
+      $$ReviewLogTableTableTableManager(_db, _db.reviewLogTable);
 }

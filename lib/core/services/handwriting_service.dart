@@ -1,5 +1,12 @@
 import 'dart:ui';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_mlkit_digital_ink_recognition/google_mlkit_digital_ink_recognition.dart';
+
+final handwritingServiceProvider = Provider((ref) {
+  final service = HandwritingService();
+  ref.onDispose(() => service.dispose());
+  return service;
+});
 
 class HandwritingService {
   final DigitalInkRecognizer _recognizer = DigitalInkRecognizer(languageCode: 'ja');

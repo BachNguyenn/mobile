@@ -2,67 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/datasources/app_database.dart';
 import 'kanji_library_provider.dart';
 import 'study_event_provider.dart';
-
-/// Progress data cho 1 module học tập (Kanji, Từ vựng, Ngữ pháp)
-class ModuleProgress {
-  final String title;
-  final int learned;
-  final int total;
-  final double percentage;
-
-  const ModuleProgress({
-    required this.title,
-    required this.learned,
-    required this.total,
-    required this.percentage,
-  });
-
-  static const empty = ModuleProgress(
-    title: '',
-    learned: 0,
-    total: 0,
-    percentage: 0.0,
-  );
-}
-
-/// Progress tổng hợp cho cả 3 module trên Home
-class HomeProgress {
-  final ModuleProgress kanji;
-  final ModuleProgress vocabulary;
-  final ModuleProgress grammar;
-  final int streak;
-  final int overdueCount;
-  final int todayReviewed;
-
-  const HomeProgress({
-    required this.kanji,
-    required this.vocabulary,
-    required this.grammar,
-    required this.streak,
-    required this.overdueCount,
-    required this.todayReviewed,
-  });
-
-  static const empty = HomeProgress(
-    kanji: ModuleProgress.empty,
-    vocabulary: ModuleProgress.empty,
-    grammar: ModuleProgress.empty,
-    streak: 0,
-    overdueCount: 0,
-    todayReviewed: 0,
-  );
-
-  /// Tổng % hoàn thành trung bình
-  double get overallPercentage {
-    if (kanji.total == 0) return 0.0;
-    return kanji.percentage; // Hiện tại chỉ có Kanji data
-  }
-}
+import 'progress_models.dart';
 
 /// Provider chính — tính toán progress cho Home screen
 ///
 /// Tự động rebuild khi có study event mới (reactive cross-tab).
 final homeProgressProvider = FutureProvider<HomeProgress>((ref) async {
+  // Wait for db seeding first
+  await ref.watch(databaseInitializerProvider.future);
+
   // Lắng nghe study events để auto-refresh
   ref.watch(studyEventStreamProvider);
 
@@ -74,12 +22,23 @@ final homeProgressProvider = FutureProvider<HomeProgress>((ref) async {
   final totalKanji = allCards.length;
   final kanjiPercentage = totalKanji > 0 ? learnedKanji / totalKanji : 0.0;
 
-  // ── Overdue Count ───────────────────────────────────────
+  // ── Vocabulary Progress ─────────────────────────────────
+  final allVocab = await db.select(db.vocabularyTable).get();
+  final learnedVocab = allVocab.where((c) => c.reps > 0).length;
+  final totalVocab = allVocab.length;
+  final vocabPercentage = totalVocab > 0 ? learnedVocab / totalVocab : 0.0;
+
+  // ── Grammar Progress ────────────────────────────────────
+  final allGrammar = await db.select(db.grammarTable).get();
+  final learnedGrammar = allGrammar.where((c) => c.isLearned).length;
+  final totalGrammar = allGrammar.length;
+  final grammarPercentage = totalGrammar > 0 ? learnedGrammar / totalGrammar : 0.0;
+
+  // ── Overdue Count (Combined) ────────────────────────────
   final now = DateTime.now();
-  final overdueCards = allCards.where(
-    (c) => c.reps > 0 && c.nextReview.isBefore(now),
-  );
-  final overdueCount = overdueCards.length;
+  final overdueKanji = allCards.where((c) => c.reps > 0 && c.nextReview.isBefore(now)).length;
+  final overdueVocab = allVocab.where((c) => c.reps > 0 && c.nextReview.isBefore(now)).length;
+  final overdueCount = overdueKanji + overdueVocab;
 
   // ── Streak (số ngày liên tục có học) ────────────────────
   final studyLogs = await db.select(db.studyLogTable).get();
@@ -99,19 +58,17 @@ final homeProgressProvider = FutureProvider<HomeProgress>((ref) async {
       total: totalKanji,
       percentage: kanjiPercentage,
     ),
-    // Placeholder cho Từ vựng — sẽ implement khi có data
-    vocabulary: const ModuleProgress(
+    vocabulary: ModuleProgress(
       title: 'Từ vựng',
-      learned: 0,
-      total: 0,
-      percentage: 0.0,
+      learned: learnedVocab,
+      total: totalVocab,
+      percentage: vocabPercentage,
     ),
-    // Placeholder cho Ngữ pháp — sẽ implement khi có data
-    grammar: const ModuleProgress(
+    grammar: ModuleProgress(
       title: 'Ngữ pháp',
-      learned: 0,
-      total: 0,
-      percentage: 0.0,
+      learned: learnedGrammar,
+      total: totalGrammar,
+      percentage: grammarPercentage,
     ),
     streak: streak,
     overdueCount: overdueCount,

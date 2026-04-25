@@ -26,23 +26,28 @@ class HandwritingCanvasState extends State<HandwritingCanvas> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onPanStart: (details) {
-        setState(() {
-          _strokes.add([details.localPosition]);
-        });
-      },
-      onPanUpdate: (details) {
-        setState(() {
-          if (_strokes.isNotEmpty) {
-            _strokes.last.add(details.localPosition);
-          }
-        });
-        widget.onDrawingChanged(_strokes);
-      },
-      child: CustomPaint(
-        painter: HandwritingPainter(strokes: _strokes),
-        size: Size.infinite,
+    return RepaintBoundary(
+      child: GestureDetector(
+        onPanStart: (details) {
+          setState(() {
+            _strokes.add([details.localPosition]);
+          });
+        },
+        onPanUpdate: (details) {
+          setState(() {
+            if (_strokes.isNotEmpty) {
+              _strokes.last.add(details.localPosition);
+            }
+          });
+          widget.onDrawingChanged(_strokes);
+        },
+        child: CustomPaint(
+          painter: HandwritingPainter(
+            strokes: _strokes,
+            pointCount: _strokes.fold(0, (sum, s) => sum + s.length),
+          ),
+          size: Size.infinite,
+        ),
       ),
     );
   }
@@ -50,8 +55,9 @@ class HandwritingCanvasState extends State<HandwritingCanvas> {
 
 class HandwritingPainter extends CustomPainter {
   final List<List<Offset>> strokes;
+  final int pointCount;
 
-  HandwritingPainter({required this.strokes});
+  HandwritingPainter({required this.strokes, required this.pointCount});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -68,5 +74,7 @@ class HandwritingPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant HandwritingPainter oldDelegate) => true;
+  bool shouldRepaint(covariant HandwritingPainter oldDelegate) {
+    return oldDelegate.pointCount != pointCount || oldDelegate.strokes.length != strokes.length;
+  }
 }

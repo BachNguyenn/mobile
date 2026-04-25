@@ -67,6 +67,15 @@ abstract final class AppSpacing {
   /// Bottom navigation bar height
   static const double bottomNavHeight = 64.0;
 
+  /// Nav bar item minimum touch target width
+  static const double navBarItemMinWidth = 64.0;
+
+  /// Nav bar active pill indicator height
+  static const double navBarPillHeight = 32.0;
+
+  /// Nav bar active pill indicator border radius
+  static const double navBarPillRadius = 16.0;
+
   /// SliverAppBar expanded height cho Zen Garden
   static const double zenHeaderExpandedHeight = 280.0;
 
@@ -84,6 +93,15 @@ abstract final class AppSpacing {
 
   /// Search bar height
   static const double searchBarHeight = 48.0;
+
+  /// Quick action chip height
+  static const double quickActionChipHeight = 48.0;
+
+  /// Mini 2D garden widget height on Home
+  static const double miniGardenHeight = 180.0;
+
+  /// Mini stat circle size
+  static const double miniStatSize = 52.0;
 
   // ─── Pre-built EdgeInsets ──────────────────────────────────
   /// Horizontal page margin: 24dp left + right

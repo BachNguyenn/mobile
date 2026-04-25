@@ -4,25 +4,32 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../providers/kanji_library_provider.dart';
-import 'kanji_detail_screen.dart';
+import '../providers/progress_models.dart';
+import '../widgets/kanji/kanji_progress_card.dart';
+import '../widgets/kanji/kanji_action_button.dart';
+import '../widgets/kanji/kanji_grid_item.dart';
+import '../widgets/kanji/kanji_jlpt_filter_dialog.dart';
+import 'review_screen.dart';
+import 'learning_path_screen.dart';
 
-/// Thư viện Kanji — redesigned với Japandi palette
-///
-/// Thay đổi so với bản cũ:
-/// - Color scheme dùng AppColors thay vì hardcode
-/// - Hero animation support (tag: 'kanji_card')
-/// - Spacing theo quy tắc 8dp
+/// Thư viện Kanji — redesigned với Kanji-specific features
 class KanjiLibraryScreen extends ConsumerWidget {
   const KanjiLibraryScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final searchResults = ref.watch(kanjiSearchResultsProvider);
-    
+    final kanjiProgressAsync = ref.watch(kanjiProgressProvider);
+    final dueCardsAsync = ref.watch(dueKanjiCardsProvider);
+    final totalDueCountAsync = ref.watch(totalDueCountProvider);
+    final selectedLevel = ref.watch(kanjiLevelFilterProvider);
+
     return Scaffold(
       backgroundColor: AppColors.cream,
       body: CustomScrollView(
+        physics: const BouncingScrollPhysics(),
         slivers: [
+          // ── AppBar ──────────────────────────────────────────
           SliverAppBar(
             expandedHeight: 120,
             floating: true,
@@ -35,7 +42,7 @@ class KanjiLibraryScreen extends ConsumerWidget {
                 child: Material(
                   color: Colors.transparent,
                   child: Text(
-                    'Thư viện Kanji',
+                    'Thư viện Chữ Hán',
                     style: AppTypography.headingS.copyWith(
                       color: AppColors.white,
                     ),
@@ -51,18 +58,131 @@ class KanjiLibraryScreen extends ConsumerWidget {
             actions: [
               IconButton(
                 icon: const Icon(Icons.filter_list_rounded, color: AppColors.white),
-                onPressed: () => _showFilterDialog(context, ref),
+                onPressed: () => showDialog(
+                  context: context,
+                  builder: (context) => const KanjiJlptFilterDialog(),
+                ),
               ),
             ],
           ),
+
           SliverToBoxAdapter(
             child: Padding(
-              padding: AppSpacing.paddingAll16,
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.sp16,
+                AppSpacing.sp16,
+                AppSpacing.sp16,
+                AppSpacing.sp8,
+              ),
+              child: kanjiProgressAsync.when(
+                data: (progress) => KanjiProgressCard(
+                  progress: progress,
+                  dueCount: totalDueCountAsync.valueOrNull ?? 0,
+                ),
+                loading: () => const KanjiProgressCard(
+                  progress: ModuleProgress.empty,
+                  dueCount: 0,
+                ),
+                error: (e, _) => const KanjiProgressCard(
+                  progress: ModuleProgress.empty,
+                  dueCount: 0,
+                ),
+              ),
+            ),
+          ),
+
+          // ── Review Level Selector ──────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.sp8),
+              child: _ReviewLevelSelector(),
+            ),
+          ),
+
+          // ── Action Buttons (Ôn tập + Bài mới) ──────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sp16,
+                vertical: AppSpacing.sp8,
+              ),
+              child: Row(
+                children: [
+                  // Ôn tập button
+                  Expanded(
+                    child: KanjiActionButton(
+                      icon: Icons.auto_stories_rounded,
+                      label: 'Ôn tập',
+                      sublabel: totalDueCountAsync.when(
+                        data: (totalDue) {
+                          if (totalDue == 0) return 'Đã hoàn thành';
+                          final cards = dueCardsAsync.valueOrNull ?? [];
+                          return 'Học ${cards.length}/$totalDue thẻ';
+                        },
+                        loading: () => 'Đang tải...',
+                        error: (e, _) => 'Lỗi',
+                      ),
+                      color: AppColors.terracotta,
+                      onTap: () {
+                        final dueCards = dueCardsAsync.value;
+                        if (dueCards != null && dueCards.isNotEmpty) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => ReviewScreen(cards: dueCards),
+                            ),
+                          );
+                        } else if (dueCards != null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Không có thẻ nào cần ôn tập!'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sp12),
+                  // Bài mới button
+                  Expanded(
+                    child: KanjiActionButton(
+                      icon: Icons.add_circle_outline_rounded,
+                      label: 'Bài mới',
+                      sublabel: 'Lộ trình học',
+                      color: AppColors.mossGreen,
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LearningPathScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // ── Search Bar ──────────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.sp16,
+                AppSpacing.sp8,
+                AppSpacing.sp16,
+                AppSpacing.sp8,
+              ),
               child: TextField(
-                onChanged: (value) => ref.read(kanjiSearchQueryProvider.notifier).state = value,
+                onChanged: (value) =>
+                    ref.read(kanjiSearchQueryProvider.notifier).state = value,
                 decoration: InputDecoration(
                   hintText: 'Tìm kiếm theo Hán tự, nghĩa hoặc cách đọc...',
-                  prefixIcon: const Icon(Icons.search_rounded, color: AppColors.mossGreen),
+                  prefixIcon: const Icon(
+                    Icons.search_rounded,
+                    color: AppColors.mossGreen,
+                  ),
                   filled: true,
                   fillColor: AppColors.white,
                   border: OutlineInputBorder(
@@ -71,16 +191,41 @@ class KanjiLibraryScreen extends ConsumerWidget {
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                    borderSide: BorderSide(color: AppColors.slateLight.withValues(alpha: 0.3)),
+                    borderSide: BorderSide(
+                      color: AppColors.slateLight.withValues(alpha: 0.3),
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                    borderSide: const BorderSide(color: AppColors.mossGreen, width: 1.5),
+                    borderSide: const BorderSide(
+                      color: AppColors.mossGreen,
+                      width: 1.5,
+                    ),
                   ),
                 ),
               ),
             ),
           ),
+
+          // ── Section Title ───────────────────────────────────
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.sp16,
+                AppSpacing.sp8,
+                AppSpacing.sp16,
+                AppSpacing.sp4,
+              ),
+              child: Text(
+                selectedLevel == null ? 'Tất cả chữ Hán' : 'Chữ Hán N$selectedLevel',
+                style: AppTypography.bodyMBold.copyWith(
+                  color: AppColors.slateGrey,
+                ),
+              ),
+            ),
+          ),
+
+          // ── Kanji Grid ──────────────────────────────────────
           searchResults.when(
             data: (kanjis) {
               if (kanjis.isEmpty) {
@@ -96,7 +241,7 @@ class KanjiLibraryScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: AppSpacing.sp12),
                         Text(
-                          'Không tìm thấy chữ Kanji nào.',
+                          'Không tìm thấy Chữ Hán nào.',
                           style: AppTypography.bodyM.copyWith(
                             color: AppColors.slateMuted,
                           ),
@@ -107,9 +252,12 @@ class KanjiLibraryScreen extends ConsumerWidget {
                 );
               }
               return SliverPadding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sp16,
+                ),
                 sliver: SliverGrid(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  gridDelegate:
+                      const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 4,
                     mainAxisSpacing: AppSpacing.sp12,
                     crossAxisSpacing: AppSpacing.sp12,
@@ -117,57 +265,7 @@ class KanjiLibraryScreen extends ConsumerWidget {
                   ),
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final kanji = kanjis[index];
-                      return GestureDetector(
-                        onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => KanjiDetailScreen(kanji: kanji),
-                          ),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.white,
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                            border: Border.all(
-                              color: AppColors.slateLight.withValues(alpha: 0.2),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.ink.withValues(alpha: 0.03),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                kanji.kanji,
-                                style: AppTypography.kanjiDisplay.copyWith(
-                                  fontSize: 28,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.sp4),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: AppSpacing.sp4,
-                                ),
-                                child: Text(
-                                  kanji.meanings.split(',').first,
-                                  style: AppTypography.labelS.copyWith(
-                                    color: AppColors.slateMuted,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
+                      return KanjiGridItem(kanji: kanjis[index]);
                     },
                     childCount: kanjis.length,
                   ),
@@ -176,7 +274,8 @@ class KanjiLibraryScreen extends ConsumerWidget {
             },
             loading: () => const SliverFillRemaining(
               child: Center(
-                child: CircularProgressIndicator(color: AppColors.mossGreen),
+                child:
+                    CircularProgressIndicator(color: AppColors.mossGreen),
               ),
             ),
             error: (err, stack) => SliverFillRemaining(
@@ -185,49 +284,62 @@ class KanjiLibraryScreen extends ConsumerWidget {
               ),
             ),
           ),
+
+          // Bottom padding
+          const SliverToBoxAdapter(
+            child: SizedBox(height: AppSpacing.sp48),
+          ),
         ],
       ),
     );
   }
+}
 
-  void _showFilterDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        ),
-        title: Text('Lọc theo trình độ JLPT', style: AppTypography.headingS),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            _buildFilterOption(context, ref, null, 'Tất cả'),
-            _buildFilterOption(context, ref, 5, 'N5'),
-            _buildFilterOption(context, ref, 4, 'N4'),
-            _buildFilterOption(context, ref, 3, 'N3'),
-            _buildFilterOption(context, ref, 2, 'N2'),
-            _buildFilterOption(context, ref, 1, 'N1'),
-          ],
-        ),
-      ),
-    );
-  }
+class _ReviewLevelSelector extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final currentFilter = ref.watch(kanjiLevelFilterProvider);
+    final levels = [null, 5, 4, 3, 2, 1];
 
-  Widget _buildFilterOption(BuildContext context, WidgetRef ref, int? level, String label) {
-    final currentFilter = ref.watch(kanjiJlptFilterProvider);
-    return ListTile(
-      title: Text(label, style: AppTypography.bodyM),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+    return SizedBox(
+      height: 40,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
+        itemCount: levels.length,
+        itemBuilder: (context, index) {
+          final level = levels[index];
+          final isSelected = currentFilter == level;
+          final label = level == null ? 'Tất cả' : 'N$level';
+
+          return Padding(
+            padding: const EdgeInsets.only(right: AppSpacing.sp8),
+            child: ChoiceChip(
+              label: Text(label),
+              selected: isSelected,
+              onSelected: (selected) {
+                ref.read(kanjiLevelFilterProvider.notifier).state =
+                    selected ? level : null;
+              },
+              selectedColor: AppColors.mossGreen.withValues(alpha: 0.2),
+              labelStyle: AppTypography.label.copyWith(
+                color: isSelected ? AppColors.mossGreen : AppColors.slateGrey,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+              backgroundColor: AppColors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+                side: BorderSide(
+                  color: isSelected
+                      ? AppColors.mossGreen
+                      : AppColors.slateLight.withValues(alpha: 0.3),
+                ),
+              ),
+              showCheckmark: false,
+            ),
+          );
+        },
       ),
-      trailing: currentFilter == level
-          ? const Icon(Icons.check_rounded, color: AppColors.mossGreen)
-          : null,
-      onTap: () {
-        ref.read(kanjiJlptFilterProvider.notifier).state = level;
-        Navigator.pop(context);
-      },
     );
   }
 }

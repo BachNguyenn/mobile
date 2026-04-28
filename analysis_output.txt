@@ -1,0 +1,23 @@
+﻿Analyzing mobile...                                             
+
+   info - Use a 'SizedBox' to add whitespace to a layout - lib\presentation\screens\learning_path_screen.dart:130:12 - sized_box_for_whitespace
+   info - Don't invoke 'print' in production code - scratch\check_encoding.dart:6:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\check_encoding.dart:11:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\check_encoding.dart:14:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\check_encoding.dart:16:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\convert_vocab.dart:8:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\convert_vocab.dart:17:5 - avoid_print
+warning - The value of the local variable 'header' isn't used - scratch\convert_vocab.dart:24:9 - unused_local_variable
+   info - Don't invoke 'print' in production code - scratch\convert_vocab.dart:65:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\convert_vocab.dart:68:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\lesson_generator.dart:5:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\lesson_generator.dart:12:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\lesson_generator.dart:18:7 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\lesson_generator.dart:76:3 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\verify_json.dart:10:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\verify_json.dart:11:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\verify_path.dart:10:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\verify_path.dart:11:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\verify_path.dart:12:5 - avoid_print
+   info - Don't invoke 'print' in production code - scratch\verify_path.dart:13:5 - avoid_print
+

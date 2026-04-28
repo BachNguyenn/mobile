@@ -1,60 +1,77 @@
-
 import 'dart:convert';
 import 'dart:io';
 
 void main() async {
-  print('--- DEMO: MÓC NỐI DỮ LIỆU BÀI HỌC (UNIT 1) ---\n');
+  print('--- Đang tạo Lộ trình học tích hợp (Unified Learning Path) ---');
 
-  // 1. Load data
-  final kanjiData = json.decode(await File('assets/data/n5/kanji.json').readAsString()) as List;
-  final vocabData = json.decode(await File('d:/dataset nihongo/JLPTWords.json').readAsString()) as Map<String, dynamic>;
-  final grammarData = json.decode(await File('assets/data/n5/grammar.json').readAsString()) as List;
-
-  // 2. Chọn 5 Kanji đầu tiên của N5 làm ví dụ
-  final targetKanji = kanjiData.take(5).toList();
-  final kanjiChars = targetKanji.map((k) => k['character'] as String).toList();
-  print('1. Kanji mục tiêu: ${kanjiChars.join(', ')}');
-
-  // 3. Tìm từ vựng liên quan (chứa ít nhất 1 trong 5 Kanji trên)
-  print('\n2. Đang tìm từ vựng liên quan...');
-  final relatedVocab = <Map<String, dynamic>>[];
+  final List<Map<String, dynamic>> fullPath = [];
   
-  vocabData.forEach((word, details) {
-    if (relatedVocab.length >= 10) return; // Lấy 10 từ thôi
-    
-    // Kiểm tra xem từ vựng có chứa kanji mục tiêu không
-    bool containsTarget = false;
-    for (var char in kanjiChars) {
-      if (word.contains(char)) {
-        containsTarget = true;
-        break;
-      }
+  final levels = [5, 4, 3];
+
+  for (var level in levels) {
+    print('Đang xử lý N$level...');
+    final kanjiFile = File('assets/data/n$level/kanji.json');
+    final vocabFile = File('assets/data/n$level/vocabulary.json');
+    final grammarFile = File('assets/data/n$level/grammar.json');
+
+    if (!await kanjiFile.exists() || !await vocabFile.exists() || !await grammarFile.exists()) {
+      print('Bỏ qua N$level do thiếu file dữ liệu.');
+      continue;
     }
 
-    if (containsTarget) {
-      final list = details as List;
-      // Chỉ lấy từ trình độ level 5 (N5)
-      final n5Detail = list.firstWhere((d) => d['level'] == 5, orElse: () => null);
-      if (n5Detail != null) {
-        relatedVocab.add({
-          'word': word,
-          'reading': n5Detail['reading'],
-          'kanji_used': kanjiChars.where((c) => word.contains(c)).toList(),
+    final List<dynamic> kanjiData = jsonDecode(await kanjiFile.readAsString(encoding: utf8));
+    final List<dynamic> vocabData = jsonDecode(await vocabFile.readAsString(encoding: utf8));
+    final List<dynamic> grammarData = jsonDecode(await grammarFile.readAsString(encoding: utf8));
+
+    int kanjiIdx = 0;
+    int grammarIdx = 0;
+    int lessonCount = 1;
+
+    while (kanjiIdx < kanjiData.length) {
+      final currentKanji = kanjiData.skip(kanjiIdx).take(5).toList();
+      final kanjiChars = currentKanji.map((k) => k['character'] as String).toList();
+      final kanjiIds = kanjiChars.map((c) => 'n${level}_$c').toList();
+
+      final relatedVocab = vocabData.where((v) {
+        final word = v['word'] as String;
+        return kanjiChars.any((char) => word.contains(char));
+      }).take(12).toList();
+
+      final vocabIds = relatedVocab.map((v) => 'n${level}_${v['word']}').toList();
+
+      final currentGrammar = grammarData.skip(grammarIdx).take(2).toList();
+      final grammarIds = currentGrammar.map((g) => 'n${level}_${g['title']}').toList();
+
+      fullPath.add({
+        'id': 'lesson_n${level}_$lessonCount',
+        'title': 'Bài $lessonCount (N$level)',
+        'type': 'lesson',
+        'level': level,
+        'kanjiIds': kanjiIds,
+        'vocabIds': vocabIds,
+        'grammarIds': grammarIds,
+      });
+
+      if (lessonCount % 5 == 0) {
+        fullPath.add({
+          'id': 'milestone_n${level}_${lessonCount ~/ 5}',
+          'title': 'Kiểm tra định kỳ ${lessonCount ~/ 5}',
+          'type': 'quiz',
+          'level': level,
+          'lessonRange': [lessonCount - 4, lessonCount],
         });
       }
+
+      kanjiIdx += 5;
+      grammarIdx += 2;
+      if (grammarIdx >= grammarData.length) grammarIdx = 0;
+      lessonCount++;
     }
-  });
-
-  for (var v in relatedVocab) {
-    print('   - ${v['word']} (${v['reading']}) [Chứa: ${v['kanji_used'].join(', ')}]');
   }
 
-  // 4. Chọn ngữ pháp (Giả lập chọn 2 mẫu đầu tiên của N5)
-  print('\n3. Ngữ pháp đi kèm (N5):');
-  final sampleGrammar = grammarData.take(2).toList();
-  for (var g in sampleGrammar) {
-    print('   - ${g['title']}: ${g['short_explanation']}');
-  }
+  final outputFile = File('assets/data/unified_path.json');
+  const encoder = JsonEncoder.withIndent('  ');
+  await outputFile.writeAsString(encoder.convert(fullPath), encoding: utf8);
 
-  print('\n--- KẾT QUẢ: UNIT 1 ĐÃ SẴN SÀNG ---');
+  print('\nThành công! Đã tạo lộ trình với ${fullPath.length} nodes tại ${outputFile.path}');
 }

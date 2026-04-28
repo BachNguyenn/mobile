@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/kanji_library_provider.dart';
-import '../screens/kanji_detail_screen.dart';
+import '../../features/kanji/presentation/providers/kanji_repository_provider.dart';
+import '../../features/kanji/presentation/screens/kanji_detail_screen.dart';
 import '../../core/theme/app_colors.dart';
 
 /// Một widget tự động tìm các ký tự Kanji trong chuỗi [text]

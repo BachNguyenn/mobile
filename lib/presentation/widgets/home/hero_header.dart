@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../providers/progress_models.dart';
+import '../../../core/models/progress_models.dart';
 
 class HeroHeader extends StatelessWidget {
   final HomeProgress progress;

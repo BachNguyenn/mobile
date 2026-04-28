@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
-import '../../../domain/entities/kanji_card.dart';
+import '../../../features/kanji/domain/entities/kanji_card.dart';
 
 class ReviewTargetInfo extends StatelessWidget {
   final KanjiCard card;

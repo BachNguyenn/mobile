@@ -6,7 +6,10 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
 import 'home_page.dart';
-import 'kanji_library_screen.dart';
+import '../../features/kanji/presentation/screens/kanji_library_screen.dart';
+import '../../features/vocabulary/presentation/screens/vocabulary_library_screen.dart';
+import '../../features/grammar/presentation/screens/grammar_library_screen.dart';
+import 'learning_path_screen.dart';
 
 /// Main Navigation — Bottom Navigation Bar với 4 Tab (Premium Redesign)
 ///
@@ -55,7 +58,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   }
 
   void _switchToTab(int index) {
-    if (index < 0 || index >= 4 || index == _selectedIndex) return;
+    if (index < 0 || index >= 5 || index == _selectedIndex) return;
     setState(() {
       _previousIndex = _selectedIndex;
       _selectedIndex = index;
@@ -76,16 +79,9 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
 
   List<Widget> get _screens => [
         HomePage(onSwitchTab: _switchToTab),
-        const _PlaceholderTab(
-          title: 'Từ vựng',
-          subtitle: 'Sắp ra mắt',
-          icon: Icons.menu_book_rounded,
-        ),
-        const _PlaceholderTab(
-          title: 'Ngữ pháp',
-          subtitle: 'Sắp ra mắt',
-          icon: Icons.edit_note_rounded,
-        ),
+        const LearningPathScreen(isNavBarMode: true),
+        const VocabularyLibraryScreen(),
+        const GrammarLibraryScreen(),
         const KanjiLibraryScreen(),
       ];
 
@@ -131,6 +127,11 @@ const _navItems = [
     icon: Icons.home_outlined,
     activeIcon: Icons.home_rounded,
     label: 'Trang chủ',
+  ),
+  _NavItemData(
+    icon: Icons.psychology_outlined,
+    activeIcon: Icons.psychology_rounded,
+    label: 'Tổng hợp',
   ),
   _NavItemData(
     icon: Icons.menu_book_outlined,
@@ -298,58 +299,4 @@ class _NavItem extends StatelessWidget {
 // ═══════════════════════════════════════════════════════════════
 
 /// Placeholder tab cho Từ vựng / Ngữ pháp — giữ nguyên theo yêu cầu
-class _PlaceholderTab extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-
-  const _PlaceholderTab({
-    required this.title,
-    required this.subtitle,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.cream,
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: AppColors.mossGreen.withValues(alpha: 0.08),
-                borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-              ),
-              child: Icon(
-                icon,
-                size: 36,
-                color: AppColors.mossGreen.withValues(alpha: 0.5),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sp24),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: AppColors.ink,
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sp8),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: AppColors.slateMuted,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+// End of MainNavigation

@@ -1,4 +1,4 @@
-import '../../domain/entities/kanji_card.dart';
+import '../../features/kanji/domain/entities/kanji_card.dart';
 
 class SrsService {
   /// Simple SRS calculation based on rating (1: Again, 2: Hard, 3: Good, 4: Easy)

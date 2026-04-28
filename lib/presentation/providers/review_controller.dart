@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/entities/kanji_card.dart';
+import '../../features/kanji/domain/entities/kanji_card.dart';
 import '../../core/services/handwriting_service.dart';
-import 'kanji_library_provider.dart';
+import '../../features/kanji/presentation/providers/kanji_library_provider.dart';
 
 class ReviewState {
   final int currentIndex;

@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart';
 import '../../domain/entities/zen_garden.dart';
+import '../../core/providers/database_provider.dart';
 import '../../data/datasources/app_database.dart';
-import 'kanji_library_provider.dart';
 import 'study_event_provider.dart';
 
 final gardenProvider = StateNotifierProvider<GardenNotifier, ZenGarden>((ref) {

@@ -3,6 +3,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../../providers/lesson_controller.dart';
+import '../../../features/kanji/domain/entities/kanji_card.dart';
+import '../../../features/grammar/domain/entities/grammar_point.dart';
 import '../handwriting_canvas.dart';
 
 class LessonQuizContent extends StatelessWidget {
@@ -24,59 +26,163 @@ class LessonQuizContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentQ = state.questions[state.currentIndex];
-    if (currentQ.type == QuizType.handwriting) {
-      return _buildHandwritingQuiz(currentQ);
-    } else {
-      return _buildMultipleChoiceQuiz(currentQ);
+    
+    switch (currentQ.type) {
+      case QuizType.handwriting:
+        return _buildHandwritingQuiz(currentQ);
+      case QuizType.grammarStudy:
+        return _buildGrammarStudy(currentQ);
+      default:
+        return _buildMultipleChoiceQuiz(currentQ);
     }
   }
 
-  Widget _buildMultipleChoiceQuiz(QuizQuestion question) {
-    final isMeaningQuiz = question.type == QuizType.meaning;
+  Widget _buildGrammarStudy(QuizQuestion question) {
+    final grammar = question.originalData as GrammarPoint;
     
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          isMeaningQuiz ? 'Chọn nghĩa đúng' : 'Chọn chữ Kanji đúng',
-          style: AppTypography.headingM.copyWith(color: AppColors.slateGrey),
-        ),
-        const SizedBox(height: AppSpacing.sp32),
-        
-        Expanded(
-          flex: 2,
-          child: Center(
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Cấu trúc Ngữ pháp',
+            style: AppTypography.headingM.copyWith(color: AppColors.slateGrey),
+          ),
+          const SizedBox(height: AppSpacing.sp24),
+          
+          Container(
+            padding: const EdgeInsets.all(AppSpacing.sp20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+              border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.3)),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  grammar.title,
+                  style: AppTypography.headingL.copyWith(color: AppColors.ink),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  grammar.formation,
+                  style: AppTypography.bodyL.copyWith(
+                    color: AppColors.mossGreen,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          
+          const SizedBox(height: AppSpacing.sp24),
+          
+          Text(
+            'Giải thích',
+            style: AppTypography.bodyMBold.copyWith(color: AppColors.slateGrey),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            grammar.longExplanation,
+            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+          ),
+          
+          const SizedBox(height: AppSpacing.sp24),
+          
+          Text(
+            'Ví dụ',
+            style: AppTypography.bodyMBold.copyWith(color: AppColors.slateGrey),
+          ),
+          const SizedBox(height: AppSpacing.sp12),
+          
+          ...grammar.examples.map((ex) => Container(
+            margin: const EdgeInsets.only(bottom: AppSpacing.sp12),
+            padding: const EdgeInsets.all(AppSpacing.sp16),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+              border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.1)),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  ex.jp,
+                  style: AppTypography.bodyL.copyWith(
+                    color: AppColors.ink,
+                    fontFamily: 'Serif',
+                  ),
+                ),
+                Text(
+                  ex.romaji,
+                  style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  ex.en,
+                  style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+                ),
+              ],
+            ),
+          )),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMultipleChoiceQuiz(QuizQuestion question) {
+    String headerText;
+    switch (question.type) {
+      case QuizType.meaning: headerText = 'Chọn nghĩa đúng của chữ Hán'; break;
+      case QuizType.kanji: headerText = 'Chọn chữ Kanji đúng'; break;
+      case QuizType.vocabMeaning: headerText = 'Chọn nghĩa của từ vựng'; break;
+      case QuizType.vocabReading: headerText = 'Chọn cách đọc đúng'; break;
+      default: headerText = 'Chọn đáp án đúng';
+    }
+
+    final isBigText = question.type == QuizType.meaning || question.type == QuizType.vocabMeaning;
+    
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            headerText,
+            style: AppTypography.headingM.copyWith(color: AppColors.slateGrey),
+          ),
+          const SizedBox(height: AppSpacing.sp32),
+          
+          Center(
             child: Text(
-              isMeaningQuiz ? question.targetCard.kanji : question.targetCard.meanings,
+              question.prompt,
               style: TextStyle(
-                fontSize: isMeaningQuiz ? 100 : 32,
+                fontSize: isBigText ? 80 : 32,
                 fontWeight: FontWeight.bold,
-                fontFamily: isMeaningQuiz ? 'Serif' : null,
+                fontFamily: isBigText ? 'Serif' : null,
                 color: AppColors.ink,
               ),
               textAlign: TextAlign.center,
             ),
           ),
-        ),
-        
-        Expanded(
-          flex: 3,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.end,
+          
+          const SizedBox(height: AppSpacing.sp32),
+          
+          Column(
             children: question.options.map((option) {
-              final isSelected = state.selectedAnswerId == option.id;
-              final isTarget = option.id == question.targetCard.id;
+              final isSelected = state.selectedAnswer == option;
+              final isCorrect = option == question.answer;
               
               Color bgColor = Colors.white;
               Color borderColor = Colors.grey.shade300;
               Color textColor = AppColors.slateGrey;
               
               if (state.isAnswerChecked) {
-                if (isTarget) {
+                if (isCorrect) {
                   bgColor = AppColors.mossGreen.withValues(alpha: 0.1);
                   borderColor = AppColors.mossGreen;
                   textColor = AppColors.mossGreen;
-                } else if (isSelected && !isTarget) {
+                } else if (isSelected && !isCorrect) {
                   bgColor = AppColors.terracotta.withValues(alpha: 0.1);
                   borderColor = AppColors.terracotta;
                   textColor = AppColors.terracotta;
@@ -87,7 +193,7 @@ class LessonQuizContent extends StatelessWidget {
               }
 
               return GestureDetector(
-                onTap: () => onSelectAnswer(option.id),
+                onTap: () => onSelectAnswer(option),
                 child: Container(
                   width: double.infinity,
                   margin: const EdgeInsets.only(bottom: AppSpacing.sp12),
@@ -98,11 +204,11 @@ class LessonQuizContent extends StatelessWidget {
                     border: Border.all(color: borderColor, width: 2),
                   ),
                   child: Text(
-                    isMeaningQuiz ? option.meanings : option.kanji,
+                    option,
                     style: AppTypography.bodyL.copyWith(
                       color: textColor,
                       fontWeight: FontWeight.bold,
-                      fontFamily: !isMeaningQuiz ? 'Serif' : null,
+                      fontFamily: question.type == QuizType.kanji ? 'Serif' : null,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -110,12 +216,13 @@ class LessonQuizContent extends StatelessWidget {
               );
             }).toList(),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
   Widget _buildHandwritingQuiz(QuizQuestion question) {
+    final kanji = question.originalData as KanjiCard;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -125,12 +232,12 @@ class LessonQuizContent extends StatelessWidget {
         ),
         const SizedBox(height: AppSpacing.sp16),
         Text(
-          question.targetCard.meanings,
+          question.prompt,
           style: AppTypography.headingL.copyWith(color: AppColors.ink),
           textAlign: TextAlign.center,
         ),
         Text(
-          '${question.targetCard.onyomi} / ${question.targetCard.kunyomi}',
+          '${kanji.onyomi} / ${kanji.kunyomi}',
           style: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
           textAlign: TextAlign.center,
         ),
@@ -166,7 +273,7 @@ class LessonQuizContent extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            question.targetCard.kanji,
+                            question.answer,
                             style: TextStyle(
                               fontSize: 120,
                               fontFamily: 'Serif',

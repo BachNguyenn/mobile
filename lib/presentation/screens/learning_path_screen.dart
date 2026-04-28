@@ -8,37 +8,68 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 
 class LearningPathScreen extends ConsumerWidget {
-  const LearningPathScreen({super.key});
+  final bool isNavBarMode;
+  final LearningCategory? initialCategory;
+  
+  const LearningPathScreen({
+    super.key, 
+    this.isNavBarMode = false,
+    this.initialCategory,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (isNavBarMode || initialCategory != null) {
+      // Use microtask to avoid updating during build
+      Future.microtask(() {
+        final targetCategory = initialCategory ?? LearningCategory.mixed;
+        if (ref.read(learningCategoryProvider) != targetCategory) {
+          ref.read(learningCategoryProvider.notifier).state = targetCategory;
+        }
+      });
+    }
     final lessons = ref.watch(learningPathProvider);
-    final selectedLevel = ref.watch(selectedLevelProvider);
     
-    final levelLessons = lessons.where((l) => l.id.startsWith('n$selectedLevel')).toList();
+    final levelLessons = lessons; // Already filtered by level in provider
 
     return Scaffold(
       backgroundColor: AppColors.cream,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 160,
+            expandedHeight: 200,
             floating: true,
             pinned: true,
             backgroundColor: AppColors.cream,
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.only(bottom: 60),
-              title: Text(
-                'Lộ trình học tập',
-                style: AppTypography.headingM.copyWith(color: AppColors.slateGrey),
+              titlePadding: const EdgeInsets.only(bottom: 120),
+              title: Consumer(
+                builder: (context, ref, child) {
+                  final category = ref.watch(learningCategoryProvider);
+                  String title = 'Lộ trình học';
+                  switch (category) {
+                    case LearningCategory.mixed: title = 'Tổng hợp'; break;
+                    case LearningCategory.vocabulary: title = 'Từ vựng'; break;
+                    case LearningCategory.grammar: title = 'Ngữ pháp'; break;
+                    case LearningCategory.kanji: title = 'Chữ Hán'; break;
+                  }
+                  return Text(
+                    title,
+                    style: AppTypography.headingM.copyWith(color: AppColors.slateGrey),
+                  );
+                },
               ),
               centerTitle: true,
               background: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   _LevelSelector(),
-                  const SizedBox(height: 10),
+                  if (!isNavBarMode) ...[
+                    const SizedBox(height: 12),
+                    _CategorySelector(),
+                  ],
+                  const SizedBox(height: 12),
                 ],
               ),
             ),
@@ -72,6 +103,7 @@ class LearningPathScreen extends ConsumerWidget {
                       index: index,
                       lesson: lesson,
                       previousLesson: previousLesson,
+                      hideCounts: isNavBarMode,
                       onTap: lesson.isUnlocked ? () {
                         Navigator.push(
                           context, 
@@ -85,6 +117,84 @@ class LearningPathScreen extends ConsumerWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+}
+
+class _CategorySelector extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final selectedCategory = ref.watch(learningCategoryProvider);
+
+    return SizedBox(
+      height: 40,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 20),
+        children: [
+          _CategoryItem(
+            label: 'Từ vựng',
+            category: LearningCategory.vocabulary,
+            isSelected: selectedCategory == LearningCategory.vocabulary,
+          ),
+          _CategoryItem(
+            label: 'Ngữ pháp',
+            category: LearningCategory.grammar,
+            isSelected: selectedCategory == LearningCategory.grammar,
+          ),
+          _CategoryItem(
+            label: 'Chữ Hán',
+            category: LearningCategory.kanji,
+            isSelected: selectedCategory == LearningCategory.kanji,
+          ),
+          _CategoryItem(
+            label: 'Tổng hợp',
+            category: LearningCategory.mixed,
+            isSelected: selectedCategory == LearningCategory.mixed,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _CategoryItem extends ConsumerWidget {
+  final String label;
+  final LearningCategory category;
+  final bool isSelected;
+
+  const _CategoryItem({
+    required this.label,
+    required this.category,
+    required this.isSelected,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return GestureDetector(
+      onTap: () => ref.read(learningCategoryProvider.notifier).state = category,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(right: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.mossGreen.withValues(alpha: 0.1) : Colors.white.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.mossGreen : AppColors.slateLight.withValues(alpha: 0.2),
+            width: isSelected ? 1.5 : 1,
+          ),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: AppTypography.bodyS.copyWith(
+              color: isSelected ? AppColors.mossGreen : AppColors.slateGrey,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -141,12 +251,14 @@ class _PathNode extends StatelessWidget {
   final Lesson lesson;
   final Lesson? previousLesson;
   final VoidCallback? onTap;
+  final bool hideCounts;
 
   const _PathNode({
     required this.index,
     required this.lesson,
     this.previousLesson,
     this.onTap,
+    this.hideCounts = false,
   });
 
   // Calculate horizontal offset based on a sine wave pattern
@@ -235,10 +347,20 @@ class _PathNode extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          Text(
-            '${lesson.kanjiIds.length} Chữ Hán',
-            style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
-          ),
+          if (lesson.type == LessonType.lesson && !hideCounts) ...[
+            Text(
+              '${lesson.kanjiIds.length} Chữ Hán, ${lesson.vocabIds.length} Từ vựng',
+              style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
+            ),
+            Text(
+              '${lesson.grammarIds.length} Ngữ pháp',
+              style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
+            ),
+          ] else if (lesson.type == LessonType.quiz)
+            Text(
+              'Ôn tập kiến thức',
+              style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
+            ),
         ],
       ),
     );
@@ -250,10 +372,10 @@ class _PathNode extends StatelessWidget {
     
     if (lesson.isCompleted) {
       nodeColor = AppColors.sunGold;
-      nodeIcon = Icons.star_rounded;
+      nodeIcon = lesson.type == LessonType.quiz ? Icons.emoji_events_rounded : Icons.star_rounded;
     } else if (lesson.isUnlocked) {
-      nodeColor = AppColors.mossGreen;
-      nodeIcon = Icons.play_arrow_rounded;
+      nodeColor = lesson.type == LessonType.quiz ? AppColors.terracotta : AppColors.mossGreen;
+      nodeIcon = lesson.type == LessonType.quiz ? Icons.assignment_rounded : Icons.play_arrow_rounded;
     } else {
       nodeColor = AppColors.slateLight;
       nodeIcon = Icons.lock_rounded;

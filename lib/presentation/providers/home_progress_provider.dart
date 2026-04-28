@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../core/providers/database_provider.dart';
 import '../../data/datasources/app_database.dart';
-import 'kanji_library_provider.dart';
 import 'study_event_provider.dart';
-import 'progress_models.dart';
+import '../../core/models/progress_models.dart';
 
 /// Provider chính — tính toán progress cho Home screen
 ///

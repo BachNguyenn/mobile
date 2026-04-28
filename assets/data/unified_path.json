@@ -1,0 +1,3880 @@
+[
+  {
+    "id": "lesson_n5_1",
+    "title": "Bài 1 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_安",
+      "n5_一",
+      "n5_飲",
+      "n5_右",
+      "n5_雨"
+    ],
+    "vocabIds": [
+      "n5_雨",
+      "n5_一",
+      "n5_一日",
+      "n5_一番",
+      "n5_一緒",
+      "n5_一昨日",
+      "n5_一日",
+      "n5_飲み物",
+      "n5_飲む",
+      "n5_一つ",
+      "n5_一月",
+      "n5_一人"
+    ],
+    "grammarIds": [
+      "n5_A が いちばん～ (A ga ichiban～)",
+      "n5_A。けれども、～B。(A. Keredomo,~ B.)"
+    ]
+  },
+  {
+    "id": "lesson_n5_2",
+    "title": "Bài 2 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_駅",
+      "n5_円",
+      "n5_下",
+      "n5_何",
+      "n5_火"
+    ],
+    "vocabIds": [
+      "n5_駅",
+      "n5_～円",
+      "n5_火曜日",
+      "n5_下さい",
+      "n5_靴下",
+      "n5_下",
+      "n5_地下鉄",
+      "n5_何",
+      "n5_何～",
+      "n5_下手",
+      "n5_丸い; 円い",
+      "n5_廊下"
+    ],
+    "grammarIds": [
+      "n5_A。しかし、～B。 (A. Shikashi, ~B.)",
+      "n5_A。じゃ、～B。(A. Ja, ~B.)"
+    ]
+  },
+  {
+    "id": "lesson_n5_3",
+    "title": "Bài 3 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_花",
+      "n5_会",
+      "n5_外",
+      "n5_学",
+      "n5_間"
+    ],
+    "vocabIds": [
+      "n5_会う",
+      "n5_外国",
+      "n5_外国人",
+      "n5_会社",
+      "n5_学生",
+      "n5_学校",
+      "n5_花瓶",
+      "n5_時間",
+      "n5_～時間",
+      "n5_～週間",
+      "n5_外",
+      "n5_大学"
+    ],
+    "grammarIds": [
+      "n5_A。それじゃ、～B。(A. Soreja,~B.)",
+      "n5_A。それでは、～B。(A. Soredewa,~B.)"
+    ]
+  },
+  {
+    "id": "lesson_n5_4",
+    "title": "Bài 4 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_気",
+      "n5_休",
+      "n5_魚",
+      "n5_金",
+      "n5_九"
+    ],
+    "vocabIds": [
+      "n5_お金",
+      "n5_九",
+      "n5_金曜日",
+      "n5_九",
+      "n5_元気",
+      "n5_九日",
+      "n5_九つ",
+      "n5_魚",
+      "n5_天気",
+      "n5_電気",
+      "n5_夏休み",
+      "n5_病気"
+    ],
+    "grammarIds": [
+      "n5_A。 では、～B。 (A. Dewa, ~B)",
+      "n5_A。でも、～B。(A. Demo, ~B)"
+    ]
+  },
+  {
+    "id": "lesson_n5_5",
+    "title": "Bài 5 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_空",
+      "n5_月",
+      "n5_見",
+      "n5_言",
+      "n5_古"
+    ],
+    "vocabIds": [
+      "n5_言う",
+      "n5_～か月",
+      "n5_～月",
+      "n5_月曜日",
+      "n5_言葉",
+      "n5_今月",
+      "n5_先月",
+      "n5_空",
+      "n5_一月",
+      "n5_古い",
+      "n5_毎月",
+      "n5_見せる"
+    ],
+    "grammarIds": [
+      "n5_Aと Bと どちら～ (A to B to dochira~)",
+      "n5_AとBと どっち〜 (A to B to docchi〜)"
+    ]
+  },
+  {
+    "id": "milestone_n5_1",
+    "title": "Kiểm tra định kỳ 1",
+    "type": "quiz",
+    "level": 5,
+    "lessonRange": [
+      1,
+      5
+    ]
+  },
+  {
+    "id": "lesson_n5_6",
+    "title": "Bài 6 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_五",
+      "n5_午",
+      "n5_後",
+      "n5_語",
+      "n5_口"
+    ],
+    "vocabIds": [
+      "n5_明後日",
+      "n5_後",
+      "n5_五日",
+      "n5_五つ",
+      "n5_入口",
+      "n5_後ろ",
+      "n5_英語",
+      "n5_口",
+      "n5_五",
+      "n5_～語",
+      "n5_午後",
+      "n5_午前"
+    ],
+    "grammarIds": [
+      "n5_A は B が〜 (A wa B ga〜)",
+      "n5_A は B より～ (A wa B yori～)"
+    ]
+  },
+  {
+    "id": "lesson_n5_7",
+    "title": "Bài 7 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_校",
+      "n5_行",
+      "n5_高",
+      "n5_国",
+      "n5_今"
+    ],
+    "vocabIds": [
+      "n5_行く",
+      "n5_今",
+      "n5_外国",
+      "n5_外国人",
+      "n5_学校",
+      "n5_今日",
+      "n5_銀行",
+      "n5_国",
+      "n5_今朝",
+      "n5_今年",
+      "n5_今月",
+      "n5_今週"
+    ],
+    "grammarIds": [
+      "n5_A より B のほうが～ (A yori B no hou ga ～)",
+      "n5_い-Adjective く + Verb (i-Adjective + ku + Verb)"
+    ]
+  },
+  {
+    "id": "lesson_n5_8",
+    "title": "Bài 8 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_左",
+      "n5_三",
+      "n5_山",
+      "n5_四",
+      "n5_子"
+    ],
+    "vocabIds": [
+      "n5_椅子",
+      "n5_お菓子",
+      "n5_男の子",
+      "n5_女の子",
+      "n5_子供",
+      "n5_三",
+      "n5_四",
+      "n5_沢山",
+      "n5_左",
+      "n5_帽子",
+      "n5_三日",
+      "n5_三つ"
+    ],
+    "grammarIds": [
+      "n5_い-Adjective く します (i-Adjective ku shimasu)",
+      "n5_い-Adjective: Negative Polite Form"
+    ]
+  },
+  {
+    "id": "lesson_n5_9",
+    "title": "Bài 9 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_時",
+      "n5_耳",
+      "n5_七",
+      "n5_社",
+      "n5_車"
+    ],
+    "vocabIds": [
+      "n5_会社",
+      "n5_車",
+      "n5_～時",
+      "n5_時間",
+      "n5_～時間",
+      "n5_七",
+      "n5_自転車",
+      "n5_自動車",
+      "n5_電車",
+      "n5_～時",
+      "n5_時々",
+      "n5_時計"
+    ],
+    "grammarIds": [
+      "n5_い-Adjective て (i-Adjective + te~)",
+      "n5_な-Adjective に + Verb"
+    ]
+  },
+  {
+    "id": "lesson_n5_10",
+    "title": "Bài 10 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_手",
+      "n5_週",
+      "n5_十",
+      "n5_出",
+      "n5_書"
+    ],
+    "vocabIds": [
+      "n5_お手洗い",
+      "n5_書く",
+      "n5_切手",
+      "n5_今週",
+      "n5_辞書",
+      "n5_十",
+      "n5_～週間",
+      "n5_上手",
+      "n5_先週",
+      "n5_出す",
+      "n5_手",
+      "n5_出かける"
+    ],
+    "grammarIds": [
+      "n5_な-Adjective で～ (na-Adjective de~)",
+      "n5_な-Adjective に します (na-Adjective ni shimasu)"
+    ]
+  },
+  {
+    "id": "milestone_n5_2",
+    "title": "Kiểm tra định kỳ 2",
+    "type": "quiz",
+    "level": 5,
+    "lessonRange": [
+      6,
+      10
+    ]
+  },
+  {
+    "id": "lesson_n5_11",
+    "title": "Bài 11 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_女",
+      "n5_小",
+      "n5_少",
+      "n5_上",
+      "n5_食"
+    ],
+    "vocabIds": [
+      "n5_上げる",
+      "n5_上",
+      "n5_上着",
+      "n5_女",
+      "n5_女の子",
+      "n5_上手",
+      "n5_食堂",
+      "n5_少ない",
+      "n5_少し",
+      "n5_食べ物",
+      "n5_食べる",
+      "n5_小さい"
+    ],
+    "grammarIds": [
+      "n5_な-Adjective に なります (na-Adjective ni narimasu)",
+      "n5_Noun か Noun か～ (Noun ka Noun ka～)"
+    ]
+  },
+  {
+    "id": "lesson_n5_12",
+    "title": "Bài 12 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_新",
+      "n5_人",
+      "n5_水",
+      "n5_生",
+      "n5_西"
+    ],
+    "vocabIds": [
+      "n5_新しい",
+      "n5_生まれる",
+      "n5_大人",
+      "n5_外国人",
+      "n5_学生",
+      "n5_～人",
+      "n5_新聞",
+      "n5_水曜日",
+      "n5_生徒",
+      "n5_先生",
+      "n5_誕生日",
+      "n5_西"
+    ],
+    "grammarIds": [
+      "n5_Noun が できます (Noun ga dekimasu)",
+      "n5_Noun がほしいです (〜ga hoshii desu)"
+    ]
+  },
+  {
+    "id": "lesson_n5_13",
+    "title": "Bài 13 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_先",
+      "n5_千",
+      "n5_川",
+      "n5_前",
+      "n5_足"
+    ],
+    "vocabIds": [
+      "n5_足; 脚",
+      "n5_川; 河",
+      "n5_午前",
+      "n5_先",
+      "n5_千",
+      "n5_先月",
+      "n5_先週",
+      "n5_先生",
+      "n5_名前",
+      "n5_前",
+      "n5_～前"
+    ],
+    "grammarIds": [
+      "n5_Noun から Noun まで (Noun kara Noun made)",
+      "n5_Noun くらい～ (Noun kurai～)"
+    ]
+  },
+  {
+    "id": "lesson_n5_14",
+    "title": "Bài 14 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_多",
+      "n5_大",
+      "n5_男",
+      "n5_中",
+      "n5_長"
+    ],
+    "vocabIds": [
+      "n5_多い",
+      "n5_大きい",
+      "n5_大きな",
+      "n5_大勢",
+      "n5_男",
+      "n5_男の子",
+      "n5_大人",
+      "n5_～中",
+      "n5_大学",
+      "n5_大使館",
+      "n5_大丈夫",
+      "n5_大好き"
+    ],
+    "grammarIds": [
+      "n5_Noun ぐらい～ (Noun gurai～)",
+      "n5_Noun ごろ～ (Noun + goro～)"
+    ]
+  },
+  {
+    "id": "lesson_n5_15",
+    "title": "Bài 15 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_天",
+      "n5_店",
+      "n5_電",
+      "n5_土",
+      "n5_東"
+    ],
+    "vocabIds": [
+      "n5_喫茶店",
+      "n5_天気",
+      "n5_電気",
+      "n5_電車",
+      "n5_電話",
+      "n5_土曜日",
+      "n5_東",
+      "n5_店"
+    ],
+    "grammarIds": [
+      "n5_Noun だけ〜 (〜dake)",
+      "n5_Nounで～ (Noun de ~)"
+    ]
+  },
+  {
+    "id": "milestone_n5_3",
+    "title": "Kiểm tra định kỳ 3",
+    "type": "quiz",
+    "level": 5,
+    "lessonRange": [
+      11,
+      15
+    ]
+  },
+  {
+    "id": "lesson_n5_16",
+    "title": "Bài 16 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_道",
+      "n5_読",
+      "n5_南",
+      "n5_二",
+      "n5_日"
+    ],
+    "vocabIds": [
+      "n5_明後日",
+      "n5_明日",
+      "n5_一日",
+      "n5_五日",
+      "n5_一昨日",
+      "n5_火曜日",
+      "n5_昨日",
+      "n5_今日",
+      "n5_金曜日",
+      "n5_月曜日",
+      "n5_九日",
+      "n5_水曜日"
+    ],
+    "grammarIds": [
+      "n5_Noun と～ (Noun to～)",
+      "n5_Noun に～ (Noun ni～)"
+    ]
+  },
+  {
+    "id": "lesson_n5_17",
+    "title": "Bài 17 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_入",
+      "n5_年",
+      "n5_買",
+      "n5_白",
+      "n5_八"
+    ],
+    "vocabIds": [
+      "n5_入口",
+      "n5_入れる",
+      "n5_面白い",
+      "n5_買い物",
+      "n5_買う",
+      "n5_去年",
+      "n5_今年",
+      "n5_さ来年",
+      "n5_白",
+      "n5_白い",
+      "n5_年",
+      "n5_～年"
+    ],
+    "grammarIds": [
+      "n5_Noun に 帰ります (Noun ni kaerimasu)",
+      "n5_Noun に します (Noun ni shimasu)"
+    ]
+  },
+  {
+    "id": "lesson_n5_18",
+    "title": "Bài 18 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_半",
+      "n5_百",
+      "n5_父",
+      "n5_分",
+      "n5_聞"
+    ],
+    "vocabIds": [
+      "n5_伯父; 叔父さん",
+      "n5_お父さん",
+      "n5_聞く",
+      "n5_自分",
+      "n5_新聞",
+      "n5_多分",
+      "n5_父",
+      "n5_半",
+      "n5_半分",
+      "n5_百",
+      "n5_～分",
+      "n5_八百屋"
+    ],
+    "grammarIds": [
+      "n5_Noun に なります (Noun ni narimasu)",
+      "n5_Noun に 来ます (Noun ni kimasu)"
+    ]
+  },
+  {
+    "id": "lesson_n5_19",
+    "title": "Bài 19 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_母",
+      "n5_北",
+      "n5_本",
+      "n5_毎",
+      "n5_万"
+    ],
+    "vocabIds": [
+      "n5_お母さん",
+      "n5_伯母さん; 叔母さん",
+      "n5_北",
+      "n5_母",
+      "n5_本",
+      "n5_～本",
+      "n5_本棚",
+      "n5_本当",
+      "n5_毎朝",
+      "n5_毎月",
+      "n5_毎週",
+      "n5_毎日"
+    ],
+    "grammarIds": [
+      "n5_Noun に 行きます (Noun ni ikimasu)",
+      "n5_Noun の あとで (Noun no atode)"
+    ]
+  },
+  {
+    "id": "lesson_n5_20",
+    "title": "Bài 20 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_名",
+      "n5_木",
+      "n5_目",
+      "n5_友",
+      "n5_来"
+    ],
+    "vocabIds": [
+      "n5_片仮名",
+      "n5_木",
+      "n5_来る",
+      "n5_さ来年",
+      "n5_友達",
+      "n5_名前",
+      "n5_平仮名",
+      "n5_目",
+      "n5_木曜日",
+      "n5_有名",
+      "n5_来月",
+      "n5_来週"
+    ],
+    "grammarIds": [
+      "n5_Noun の 前に (Noun no mae ni)",
+      "n5_Noun は～ (Noun wa〜)"
+    ]
+  },
+  {
+    "id": "milestone_n5_4",
+    "title": "Kiểm tra định kỳ 4",
+    "type": "quiz",
+    "level": 5,
+    "lessonRange": [
+      16,
+      20
+    ]
+  },
+  {
+    "id": "lesson_n5_21",
+    "title": "Bài 21 (N5)",
+    "type": "lesson",
+    "level": 5,
+    "kanjiIds": [
+      "n5_立",
+      "n5_六",
+      "n5_話"
+    ],
+    "vocabIds": [
+      "n5_立つ",
+      "n5_電話",
+      "n5_話",
+      "n5_話す",
+      "n5_六日",
+      "n5_六つ",
+      "n5_六"
+    ],
+    "grammarIds": [
+      "n5_Noun も〜 (Noun mo~)",
+      "n5_Noun や Noun など～ (Noun ya Noun nado)"
+    ]
+  },
+  {
+    "id": "lesson_n4_1",
+    "title": "Bài 1 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_悪",
+      "n4_暗",
+      "n4_以",
+      "n4_意",
+      "n4_医"
+    ],
+    "vocabIds": [
+      "n4_意見",
+      "n4_医学",
+      "n4_注意",
+      "n4_歯医者",
+      "n4_以下",
+      "n4_以内",
+      "n4_用意",
+      "n4_以外",
+      "n4_以上"
+    ],
+    "grammarIds": [
+      "n4_A とか B とか",
+      "n4_A は B ほど～ありません (A wa B hodo ～ arimasen)"
+    ]
+  },
+  {
+    "id": "lesson_n4_2",
+    "title": "Bài 2 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_員",
+      "n4_引",
+      "n4_院",
+      "n4_運",
+      "n4_映"
+    ],
+    "vocabIds": [
+      "n4_運動",
+      "n4_運転手",
+      "n4_～員",
+      "n4_公務員",
+      "n4_運転",
+      "n4_店員",
+      "n4_引っ越す",
+      "n4_引き出し",
+      "n4_運ぶ",
+      "n4_退院",
+      "n4_入院"
+    ],
+    "grammarIds": [
+      "n4_A は B ほど～ない (A wa B hodo ~ nai)",
+      "n4_A より B のほうが〜 (A yori B no hou ga 〜)"
+    ]
+  },
+  {
+    "id": "lesson_n4_3",
+    "title": "Bài 3 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_英",
+      "n4_遠",
+      "n4_屋",
+      "n4_音",
+      "n4_夏"
+    ],
+    "vocabIds": [
+      "n4_床屋",
+      "n4_発音",
+      "n4_屋上",
+      "n4_遠慮",
+      "n4_音",
+      "n4_遠く"
+    ],
+    "grammarIds": [
+      "n4_い-Adjective く する/なる (i-Adjective kusuru/naru)",
+      "n4_な-adjective に する/なる"
+    ]
+  },
+  {
+    "id": "lesson_n4_4",
+    "title": "Bài 4 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_家",
+      "n4_歌",
+      "n4_画",
+      "n4_回",
+      "n4_海"
+    ],
+    "vocabIds": [
+      "n4_漫画",
+      "n4_～家",
+      "n4_海岸",
+      "n4_計画",
+      "n4_回る、回す",
+      "n4_家内"
+    ],
+    "grammarIds": [
+      "n4_Noun しか～ない (Noun shika~nai)",
+      "n4_Noun に する (Noun ni suru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_5",
+    "title": "Bài 5 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_界",
+      "n4_開",
+      "n4_楽",
+      "n4_寒",
+      "n4_漢"
+    ],
+    "vocabIds": [
+      "n4_開く",
+      "n4_世界",
+      "n4_楽む",
+      "n4_楽しみ"
+    ],
+    "grammarIds": [
+      "n4_Noun に なる (Noun ni naru)",
+      "n4_のために (no tame ni)"
+    ]
+  },
+  {
+    "id": "milestone_n4_1",
+    "title": "Kiểm tra định kỳ 1",
+    "type": "quiz",
+    "level": 4,
+    "lessonRange": [
+      1,
+      5
+    ]
+  },
+  {
+    "id": "lesson_n4_6",
+    "title": "Bài 6 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_館",
+      "n4_顔",
+      "n4_帰",
+      "n4_起",
+      "n4_急"
+    ],
+    "vocabIds": [
+      "n4_起こす",
+      "n4_美術館",
+      "n4_旅館",
+      "n4_急行",
+      "n4_特急",
+      "n4_帰り",
+      "n4_急ぐ",
+      "n4_急"
+    ],
+    "grammarIds": [
+      "n4_Noun の 間に (〜no aida ni)",
+      "n4_Noun ばかり (〜bakari)"
+    ]
+  },
+  {
+    "id": "lesson_n4_7",
+    "title": "Bài 7 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_究",
+      "n4_牛",
+      "n4_去",
+      "n4_京",
+      "n4_強"
+    ],
+    "vocabIds": [
+      "n4_研究室",
+      "n4_研究"
+    ],
+    "grammarIds": [
+      "n4_Noun を あげる (Noun wo ageru)",
+      "n4_Nounをいただく (Noun wo itadaku)"
+    ]
+  },
+  {
+    "id": "lesson_n4_8",
+    "title": "Bài 8 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_教",
+      "n4_業",
+      "n4_近",
+      "n4_銀",
+      "n4_区"
+    ],
+    "vocabIds": [
+      "n4_～区",
+      "n4_教会",
+      "n4_教育",
+      "n4_最近",
+      "n4_産業",
+      "n4_卒業",
+      "n4_近所",
+      "n4_工業"
+    ],
+    "grammarIds": [
+      "n4_Nounをくださる",
+      "n4_Noun を くれる (Noun wo kureru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_9",
+    "title": "Bài 9 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_兄",
+      "n4_計",
+      "n4_軽",
+      "n4_建",
+      "n4_犬"
+    ],
+    "vocabIds": [
+      "n4_建てる",
+      "n4_建て",
+      "n4_計画"
+    ],
+    "grammarIds": [
+      "n4_Noun を さしあげる (Noun wo sashiageru)",
+      "n4_Noun もらう (Noun wo morau)"
+    ]
+  },
+  {
+    "id": "lesson_n4_10",
+    "title": "Bài 10 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_研",
+      "n4_県",
+      "n4_験",
+      "n4_元",
+      "n4_光"
+    ],
+    "vocabIds": [
+      "n4_光る",
+      "n4_試験",
+      "n4_光",
+      "n4_研究室",
+      "n4_経験",
+      "n4_研究"
+    ],
+    "grammarIds": [
+      "n4_Noun + 中 (Noun + ちゅう)",
+      "n4_Verb させられる (Verb-saserareru)"
+    ]
+  },
+  {
+    "id": "milestone_n4_2",
+    "title": "Kiểm tra định kỳ 2",
+    "type": "quiz",
+    "level": 4,
+    "lessonRange": [
+      6,
+      10
+    ]
+  },
+  {
+    "id": "lesson_n4_11",
+    "title": "Bài 11 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_好",
+      "n4_工",
+      "n4_広",
+      "n4_考",
+      "n4_合"
+    ],
+    "vocabIds": [
+      "n4_場合",
+      "n4_試合",
+      "n4_都合",
+      "n4_具合",
+      "n4_割合",
+      "n4_合う",
+      "n4_格好",
+      "n4_考える",
+      "n4_工業",
+      "n4_工場",
+      "n4_間に合う"
+    ],
+    "grammarIds": [
+      "n4_Verb させる (Verb-saseru)",
+      "n4_Verb た ことがある (Verb ta koto ga aru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_12",
+    "title": "Bài 12 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_黒",
+      "n4_菜",
+      "n4_作",
+      "n4_産",
+      "n4_仕"
+    ],
+    "vocabIds": [
+      "n4_お土産",
+      "n4_生産",
+      "n4_産業",
+      "n4_仕方"
+    ],
+    "grammarIds": [
+      "n4_Verb た ときに (Verb た ときに)",
+      "n4_Verb た ところ (Verb ta tokoro)"
+    ]
+  },
+  {
+    "id": "lesson_n4_13",
+    "title": "Bài 13 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_使",
+      "n4_始",
+      "n4_姉",
+      "n4_市",
+      "n4_思"
+    ],
+    "vocabIds": [
+      "n4_思う",
+      "n4_始める",
+      "n4_思い出す",
+      "n4_市",
+      "n4_～始める",
+      "n4_市民"
+    ],
+    "grammarIds": [
+      "n4_Verb たほうがいい (〜ta hou ga ii)",
+      "n4_Verb ために (tame ni)"
+    ]
+  },
+  {
+    "id": "lesson_n4_14",
+    "title": "Bài 14 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_止",
+      "n4_死",
+      "n4_私",
+      "n4_紙",
+      "n4_試"
+    ],
+    "vocabIds": [
+      "n4_止む",
+      "n4_止める",
+      "n4_止める",
+      "n4_試合",
+      "n4_試験"
+    ],
+    "grammarIds": [
+      "n4_Verb つもり (〜tsumori)",
+      "n4_Verb てあげる (Verb te ageru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_15",
+    "title": "Bài 15 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_事",
+      "n4_字",
+      "n4_持",
+      "n4_自",
+      "n4_室"
+    ],
+    "vocabIds": [
+      "n4_大事",
+      "n4_会議室",
+      "n4_用事",
+      "n4_事務所",
+      "n4_事",
+      "n4_事故",
+      "n4_気持ち",
+      "n4_火事",
+      "n4_返事",
+      "n4_お金持ち",
+      "n4_字",
+      "n4_自由"
+    ],
+    "grammarIds": [
+      "n4_Verb て ある (Verb-te aru)",
+      "n4_Verb て いく (Verb-te iku)"
+    ]
+  },
+  {
+    "id": "milestone_n4_3",
+    "title": "Kiểm tra định kỳ 3",
+    "type": "quiz",
+    "level": 4,
+    "lessonRange": [
+      11,
+      15
+    ]
+  },
+  {
+    "id": "lesson_n4_16",
+    "title": "Bài 16 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_質",
+      "n4_写",
+      "n4_者",
+      "n4_借",
+      "n4_弱"
+    ],
+    "vocabIds": [
+      "n4_歯医者",
+      "n4_写す"
+    ],
+    "grammarIds": [
+      "n4_Verb ていただきたい (te itadakitai)",
+      "n4_Verb ていただく (〜te itadaku)"
+    ]
+  },
+  {
+    "id": "lesson_n4_17",
+    "title": "Bài 17 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_主",
+      "n4_首",
+      "n4_秋",
+      "n4_終",
+      "n4_習"
+    ],
+    "vocabIds": [
+      "n4_予習",
+      "n4_終わり",
+      "n4_ご主人",
+      "n4_習慣",
+      "n4_首",
+      "n4_復習"
+    ],
+    "grammarIds": [
+      "n4_Verb て いただけませんか (Verb te itadakemasen ka)",
+      "n4_Verb て いる (Verb-te iru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_18",
+    "title": "Bài 18 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_集",
+      "n4_住",
+      "n4_重",
+      "n4_春",
+      "n4_所"
+    ],
+    "vocabIds": [
+      "n4_住所",
+      "n4_事務所",
+      "n4_場所",
+      "n4_集める",
+      "n4_近所",
+      "n4_集まる"
+    ],
+    "grammarIds": [
+      "n4_Verb て いる ところ (Verb te iru tokoro)",
+      "n4_Verb ている間に (te iru aida ni)"
+    ]
+  },
+  {
+    "id": "lesson_n4_19",
+    "title": "Bài 19 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_暑",
+      "n4_乗",
+      "n4_場",
+      "n4_色",
+      "n4_心"
+    ],
+    "vocabIds": [
+      "n4_心配",
+      "n4_売り場",
+      "n4_場合",
+      "n4_飛行場",
+      "n4_熱心",
+      "n4_場所",
+      "n4_心",
+      "n4_景色",
+      "n4_乗り物",
+      "n4_駐車場",
+      "n4_会場",
+      "n4_安心"
+    ],
+    "grammarIds": [
+      "n4_Verb ておく (〜te oku)",
+      "n4_Verb て くださいませんか (Verb-te kudasaimasen ka)"
+    ]
+  },
+  {
+    "id": "lesson_n4_20",
+    "title": "Bài 20 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_森",
+      "n4_真",
+      "n4_親",
+      "n4_進",
+      "n4_図"
+    ],
+    "vocabIds": [
+      "n4_親",
+      "n4_親切",
+      "n4_森",
+      "n4_進む",
+      "n4_真面目",
+      "n4_真中"
+    ],
+    "grammarIds": [
+      "n4_Verb て くださる (Verb-te kudasaru)",
+      "n4_Verb て くる (Verb te kuru)"
+    ]
+  },
+  {
+    "id": "milestone_n4_4",
+    "title": "Kiểm tra định kỳ 4",
+    "type": "quiz",
+    "level": 4,
+    "lessonRange": [
+      16,
+      20
+    ]
+  },
+  {
+    "id": "lesson_n4_21",
+    "title": "Bài 21 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_世",
+      "n4_正",
+      "n4_声",
+      "n4_青",
+      "n4_赤"
+    ],
+    "vocabIds": [
+      "n4_正月",
+      "n4_赤ちゃん",
+      "n4_世界",
+      "n4_赤ん坊",
+      "n4_正しい",
+      "n4_世話"
+    ],
+    "grammarIds": [
+      "n4_Verb てくれませんか (〜te kuremasen ka)",
+      "n4_Verb て くれる (Verb-te kureru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_22",
+    "title": "Bài 22 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_切",
+      "n4_説",
+      "n4_洗",
+      "n4_早",
+      "n4_走"
+    ],
+    "vocabIds": [
+      "n4_小説",
+      "n4_親切",
+      "n4_説明"
+    ],
+    "grammarIds": [
+      "n4_Verb て + さしあげる (Verb TE sashiageru)",
+      "n4_Verb てしまう (〜te shimau)"
+    ]
+  },
+  {
+    "id": "lesson_n4_23",
+    "title": "Bài 23 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_送",
+      "n4_族",
+      "n4_村",
+      "n4_太",
+      "n4_体"
+    ],
+    "vocabIds": [
+      "n4_大体",
+      "n4_送る",
+      "n4_放送",
+      "n4_太る"
+    ],
+    "grammarIds": [
+      "n4_Verb て ほしい (Verb-te hoshii)",
+      "n4_Verb てみる (〜te miru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_24",
+    "title": "Bài 24 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_待",
+      "n4_貸",
+      "n4_代",
+      "n4_台",
+      "n4_題"
+    ],
+    "vocabIds": [
+      "n4_台風",
+      "n4_時代",
+      "n4_招待",
+      "n4_～代",
+      "n4_代わり"
+    ],
+    "grammarIds": [
+      "n4_Verb てもらいたい (～te moraitai)",
+      "n4_Verb て もらう (Verb-te morau)"
+    ]
+  },
+  {
+    "id": "lesson_n4_25",
+    "title": "Bài 25 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_短",
+      "n4_知",
+      "n4_地",
+      "n4_池",
+      "n4_茶"
+    ],
+    "vocabIds": [
+      "n4_地震",
+      "n4_地理",
+      "n4_知らせる",
+      "n4_承知"
+    ],
+    "grammarIds": [
+      "n4_Verb てもらえませんか (～te moraemasen ka)",
+      "n4_Verb ない ことがある (Verb-nai koto ga aru)"
+    ]
+  },
+  {
+    "id": "milestone_n4_5",
+    "title": "Kiểm tra định kỳ 5",
+    "type": "quiz",
+    "level": 4,
+    "lessonRange": [
+      21,
+      25
+    ]
+  },
+  {
+    "id": "lesson_n4_26",
+    "title": "Bài 26 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_着",
+      "n4_昼",
+      "n4_注",
+      "n4_朝",
+      "n4_町"
+    ],
+    "vocabIds": [
+      "n4_注意",
+      "n4_着物",
+      "n4_昼間",
+      "n4_下着",
+      "n4_昼休み",
+      "n4_注射",
+      "n4_～町"
+    ],
+    "grammarIds": [
+      "n4_Verb ない + ことにする (Verb nai koto ni suru)",
+      "n4_Verb ない ことになる (Verb nai koto ni naru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_27",
+    "title": "Bài 27 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_鳥",
+      "n4_通",
+      "n4_低",
+      "n4_弟",
+      "n4_転"
+    ],
+    "vocabIds": [
+      "n4_運転手",
+      "n4_通る",
+      "n4_運転",
+      "n4_通う",
+      "n4_小鳥",
+      "n4_交通",
+      "n4_通り",
+      "n4_普通"
+    ],
+    "grammarIds": [
+      "n4_Verb ないほうがいい (Verb nai hou ga ii)",
+      "n4_Verb ながら (〜nagara)"
+    ]
+  },
+  {
+    "id": "lesson_n4_28",
+    "title": "Bài 28 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_田",
+      "n4_都",
+      "n4_度",
+      "n4_冬",
+      "n4_答"
+    ],
+    "vocabIds": [
+      "n4_今度",
+      "n4_一度",
+      "n4_答",
+      "n4_都合",
+      "n4_支度",
+      "n4_都",
+      "n4_田舎"
+    ],
+    "grammarIds": [
+      "n4_Verb なさい (〜nasai)",
+      "n4_Verb にくい (〜nikui)"
+    ]
+  },
+  {
+    "id": "lesson_n4_29",
+    "title": "Bài 29 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_頭",
+      "n4_働",
+      "n4_動",
+      "n4_同",
+      "n4_堂"
+    ],
+    "vocabIds": [
+      "n4_運動",
+      "n4_動物園",
+      "n4_講堂",
+      "n4_動く"
+    ],
+    "grammarIds": [
+      "n4_Verb やすい (〜yasui)",
+      "n4_Verb ようと思う (Verb-you to omou)"
+    ]
+  },
+  {
+    "id": "lesson_n4_30",
+    "title": "Bài 30 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_特",
+      "n4_肉",
+      "n4_売",
+      "n4_発",
+      "n4_飯"
+    ],
+    "vocabIds": [
+      "n4_売り場",
+      "n4_発音",
+      "n4_特に",
+      "n4_特急",
+      "n4_出発",
+      "n4_特別"
+    ],
+    "grammarIds": [
+      "n4_Verb ように (〜you ni)",
+      "n4_Verb ようにする (Verb ~you ni suru)"
+    ]
+  },
+  {
+    "id": "milestone_n4_6",
+    "title": "Kiểm tra định kỳ 6",
+    "type": "quiz",
+    "level": 4,
+    "lessonRange": [
+      26,
+      30
+    ]
+  },
+  {
+    "id": "lesson_n4_31",
+    "title": "Bài 31 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_病",
+      "n4_品",
+      "n4_不",
+      "n4_風",
+      "n4_服"
+    ],
+    "vocabIds": [
+      "n4_台風",
+      "n4_品物",
+      "n4_食料品",
+      "n4_不便"
+    ],
+    "grammarIds": [
+      "n4_Verb ようになる (〜you ni naru)",
+      "n4_Verb ように言う (Verb-you ni iu)"
+    ]
+  },
+  {
+    "id": "lesson_n4_32",
+    "title": "Bài 32 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_物",
+      "n4_文",
+      "n4_別",
+      "n4_便",
+      "n4_勉"
+    ],
+    "vocabIds": [
+      "n4_別",
+      "n4_贈り物",
+      "n4_動物園",
+      "n4_品物",
+      "n4_文法",
+      "n4_乗り物",
+      "n4_着物",
+      "n4_不便",
+      "n4_忘れ物",
+      "n4_文学",
+      "n4_文化",
+      "n4_特別"
+    ],
+    "grammarIds": [
+      "n4_Verb られる (〜rareru)",
+      "n4_Verb る ことがある (〜ru koto ga aru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_33",
+    "title": "Bài 33 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_歩",
+      "n4_方",
+      "n4_妹",
+      "n4_味",
+      "n4_民"
+    ],
+    "vocabIds": [
+      "n4_味噌",
+      "n4_味",
+      "n4_興味",
+      "n4_市民",
+      "n4_仕方",
+      "n4_両方",
+      "n4_趣味"
+    ],
+    "grammarIds": [
+      "n4_Verb ることができる (〜ru koto ga dekiru)",
+      "n4_Verb ることにする (〜ru koto ni suru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_34",
+    "title": "Bài 34 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_明",
+      "n4_問",
+      "n4_門",
+      "n4_夜",
+      "n4_野"
+    ],
+    "vocabIds": [
+      "n4_今夜",
+      "n4_説明",
+      "n4_専門",
+      "n4_明日"
+    ],
+    "grammarIds": [
+      "n4_Verb る ことになる (〜ru koto ni naru)",
+      "n4_Verb るときに (〜ru toki ni)"
+    ]
+  },
+  {
+    "id": "lesson_n4_35",
+    "title": "Bài 35 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_薬",
+      "n4_有",
+      "n4_夕",
+      "n4_曜",
+      "n4_洋"
+    ],
+    "vocabIds": [
+      "n4_西洋"
+    ],
+    "grammarIds": [
+      "n4_Verb る ところ (Verb-ru tokoro)",
+      "n4_Verb 出す (~dasu)"
+    ]
+  },
+  {
+    "id": "milestone_n4_7",
+    "title": "Kiểm tra định kỳ 7",
+    "type": "quiz",
+    "level": 4,
+    "lessonRange": [
+      31,
+      35
+    ]
+  },
+  {
+    "id": "lesson_n4_36",
+    "title": "Bài 36 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_用",
+      "n4_理",
+      "n4_旅",
+      "n4_料",
+      "n4_力"
+    ],
+    "vocabIds": [
+      "n4_地理",
+      "n4_無理",
+      "n4_利用",
+      "n4_用事",
+      "n4_力",
+      "n4_食料品",
+      "n4_用",
+      "n4_用意",
+      "n4_旅館",
+      "n4_理由"
+    ],
+    "grammarIds": [
+      "n4_Verb 方 (〜hou)",
+      "n4_Verb 終わる (〜owaru)"
+    ]
+  },
+  {
+    "id": "lesson_n4_37",
+    "title": "Bài 37 (N4)",
+    "type": "lesson",
+    "level": 4,
+    "kanjiIds": [
+      "n4_林"
+    ],
+    "vocabIds": [
+      "n4_林"
+    ],
+    "grammarIds": [
+      "n4_Verb + 続ける (つづける, tsuzukeru)",
+      "n4_～かしら (〜kashira)"
+    ]
+  },
+  {
+    "id": "lesson_n3_1",
+    "title": "Bài 1 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_愛",
+      "n3_案",
+      "n3_位",
+      "n3_偉",
+      "n3_移"
+    ],
+    "vocabIds": [
+      "n3_愛",
+      "n3_愛情",
+      "n3_愛する",
+      "n3_案",
+      "n3_案外",
+      "n3_偉大",
+      "n3_位置",
+      "n3_移動",
+      "n3_可愛そう",
+      "n3_可愛らしい",
+      "n3_位",
+      "n3_単位"
+    ],
+    "grammarIds": [
+      "n3_A その上 B (A sono ue B)",
+      "n3_～うちに (〜uchi ni)"
+    ]
+  },
+  {
+    "id": "lesson_n3_2",
+    "title": "Bài 2 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_域",
+      "n3_因",
+      "n3_雲",
+      "n3_営",
+      "n3_永"
+    ],
+    "vocabIds": [
+      "n3_永遠",
+      "n3_永久",
+      "n3_営業",
+      "n3_経営",
+      "n3_因る",
+      "n3_地域"
+    ],
+    "grammarIds": [
+      "n3_～うとした (〜uto shita)",
+      "n3_～おかげで (〜okagede)"
+    ]
+  },
+  {
+    "id": "lesson_n3_3",
+    "title": "Bài 3 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_鋭",
+      "n3_園",
+      "n3_延",
+      "n3_煙",
+      "n3_塩"
+    ],
+    "vocabIds": [
+      "n3_鋭い",
+      "n3_延期",
+      "n3_禁煙",
+      "n3_煙",
+      "n3_延ばす",
+      "n3_延びる"
+    ],
+    "grammarIds": [
+      "n3_～かけ (〜kake)",
+      "n3_～かなあ (〜kanaa)"
+    ]
+  },
+  {
+    "id": "lesson_n3_4",
+    "title": "Bài 4 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_汚",
+      "n3_奥",
+      "n3_応",
+      "n3_欧",
+      "n3_王"
+    ],
+    "vocabIds": [
+      "n3_女王",
+      "n3_王",
+      "n3_応援",
+      "n3_王様",
+      "n3_王子",
+      "n3_応じる",
+      "n3_奥",
+      "n3_汚染",
+      "n3_汚す"
+    ],
+    "grammarIds": [
+      "n3_～ないで (〜naide)",
+      "n3_～から～にかけて (〜kara 〜ni kakete)"
+    ]
+  },
+  {
+    "id": "lesson_n3_5",
+    "title": "Bài 5 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_仮",
+      "n3_可",
+      "n3_科",
+      "n3_果",
+      "n3_介"
+    ],
+    "vocabIds": [
+      "n3_可",
+      "n3_仮定",
+      "n3_可能",
+      "n3_科目",
+      "n3_可愛そう",
+      "n3_可愛らしい",
+      "n3_教科書",
+      "n3_許可",
+      "n3_結果",
+      "n3_効果",
+      "n3_厄介",
+      "n3_不可"
+    ],
+    "grammarIds": [
+      "n3_～かわりに (〜kawari ni)",
+      "n3_～きり (〜kiri)"
+    ]
+  },
+  {
+    "id": "milestone_n3_1",
+    "title": "Kiểm tra định kỳ 1",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      1,
+      5
+    ]
+  },
+  {
+    "id": "lesson_n3_6",
+    "title": "Bài 6 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_解",
+      "n3_改",
+      "n3_絵",
+      "n3_階",
+      "n3_害"
+    ],
+    "vocabIds": [
+      "n3_障害",
+      "n3_害",
+      "n3_絵画",
+      "n3_解決",
+      "n3_解釈",
+      "n3_改善",
+      "n3_見解",
+      "n3_誤解",
+      "n3_理解",
+      "n3_損害",
+      "n3_解く",
+      "n3_解ける"
+    ],
+    "grammarIds": [
+      "n3_～くせに (〜kuse ni)",
+      "n3_～くらい (〜kurai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_7",
+    "title": "Bài 7 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_各",
+      "n3_拡",
+      "n3_格",
+      "n3_確",
+      "n3_覚"
+    ],
+    "vocabIds": [
+      "n3_覚ます",
+      "n3_覚める",
+      "n3_性格",
+      "n3_正確",
+      "n3_価格",
+      "n3_覚悟",
+      "n3_確実",
+      "n3_拡大",
+      "n3_確認",
+      "n3_感覚",
+      "n3_合格",
+      "n3_明確"
+    ],
+    "grammarIds": [
+      "n3_～くらい～は～ない (〜kurai 〜wa 〜nai)",
+      "n3_～こそ (〜koso)"
+    ]
+  },
+  {
+    "id": "lesson_n3_8",
+    "title": "Bài 8 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_割",
+      "n3_活",
+      "n3_巻",
+      "n3_完",
+      "n3_感"
+    ],
+    "vocabIds": [
+      "n3_活気",
+      "n3_活動",
+      "n3_活躍",
+      "n3_活用",
+      "n3_感覚",
+      "n3_感じ",
+      "n3_感謝",
+      "n3_感情",
+      "n3_感じる",
+      "n3_感心",
+      "n3_完成",
+      "n3_完全"
+    ],
+    "grammarIds": [
+      "n3_～こと (〜koto)",
+      "n3_～ことだ (〜koto da)"
+    ]
+  },
+  {
+    "id": "lesson_n3_9",
+    "title": "Bài 9 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_汗",
+      "n3_環",
+      "n3_簡",
+      "n3_関",
+      "n3_含"
+    ],
+    "vocabIds": [
+      "n3_汗",
+      "n3_環境",
+      "n3_関心",
+      "n3_関する",
+      "n3_関連",
+      "n3_機関",
+      "n3_含む",
+      "n3_含める"
+    ],
+    "grammarIds": [
+      "n3_～ことにしている (〜koto ni shite iru)",
+      "n3_～ことになっている (〜koto ni natte iru)"
+    ]
+  },
+  {
+    "id": "lesson_n3_10",
+    "title": "Bài 10 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_岩",
+      "n3_願",
+      "n3_喜",
+      "n3_基",
+      "n3_期"
+    ],
+    "vocabIds": [
+      "n3_時期",
+      "n3_岩",
+      "n3_延期",
+      "n3_学期",
+      "n3_期間",
+      "n3_期限",
+      "n3_期待",
+      "n3_基本",
+      "n3_基",
+      "n3_基づく",
+      "n3_予期",
+      "n3_喜び"
+    ],
+    "grammarIds": [
+      "n3_～ことは…が (～koto wa... ga)",
+      "n3_～ことはない (〜koto wa nai)"
+    ]
+  },
+  {
+    "id": "milestone_n3_2",
+    "title": "Kiểm tra định kỳ 2",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      6,
+      10
+    ]
+  },
+  {
+    "id": "lesson_n3_11",
+    "title": "Bài 11 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_季",
+      "n3_規",
+      "n3_議",
+      "n3_喫",
+      "n3_客"
+    ],
+    "vocabIds": [
+      "n3_四季",
+      "n3_乗客",
+      "n3_観客",
+      "n3_議員",
+      "n3_議会",
+      "n3_議長",
+      "n3_議論",
+      "n3_季刊",
+      "n3_規制",
+      "n3_協議",
+      "n3_不思議",
+      "n3_正規"
+    ],
+    "grammarIds": [
+      "n3_～さ (〜sa)",
+      "n3_～さえ (～sae)"
+    ]
+  },
+  {
+    "id": "lesson_n3_12",
+    "title": "Bài 12 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_旧",
+      "n3_巨",
+      "n3_許",
+      "n3_共",
+      "n3_協"
+    ],
+    "vocabIds": [
+      "n3_旧",
+      "n3_共通",
+      "n3_共同",
+      "n3_協力",
+      "n3_許可",
+      "n3_巨大",
+      "n3_免許",
+      "n3_許す",
+      "n3_協議",
+      "n3_協調",
+      "n3_共に"
+    ],
+    "grammarIds": [
+      "n3_～しかない (〜shika nai)",
+      "n3_すこしも〜ない (sukoshimo~nai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_13",
+    "title": "Bài 13 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_恐",
+      "n3_挟",
+      "n3_橋",
+      "n3_曲",
+      "n3_玉"
+    ],
+    "vocabIds": [
+      "n3_恐らく",
+      "n3_恐れる",
+      "n3_恐ろしい",
+      "n3_恐怖",
+      "n3_作曲",
+      "n3_玉"
+    ],
+    "grammarIds": [
+      "n3_～ずに (〜zu ni)",
+      "n3_～せいで (〜sei de)"
+    ]
+  },
+  {
+    "id": "lesson_n3_14",
+    "title": "Bài 14 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_勤",
+      "n3_禁",
+      "n3_苦",
+      "n3_偶",
+      "n3_靴"
+    ],
+    "vocabIds": [
+      "n3_禁煙",
+      "n3_禁止",
+      "n3_偶然",
+      "n3_苦痛",
+      "n3_苦しい",
+      "n3_苦しむ",
+      "n3_苦労",
+      "n3_苦",
+      "n3_偶",
+      "n3_偶々",
+      "n3_通勤",
+      "n3_勤め"
+    ],
+    "grammarIds": [
+      "n3_～せてください (〜sete kudasai)",
+      "n3_～そのために (〜sono tame ni)"
+    ]
+  },
+  {
+    "id": "lesson_n3_15",
+    "title": "Bài 15 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_群",
+      "n3_係",
+      "n3_景",
+      "n3_経",
+      "n3_迎"
+    ],
+    "vocabIds": [
+      "n3_神経",
+      "n3_係",
+      "n3_歓迎",
+      "n3_経営",
+      "n3_景気",
+      "n3_経由",
+      "n3_光景",
+      "n3_迎え",
+      "n3_群",
+      "n3_経緯",
+      "n3_経つ",
+      "n3_風景"
+    ],
+    "grammarIds": [
+      "n3_～その結果 (〜sono kekka)",
+      "n3_～それと～ (〜sore to〜)"
+    ]
+  },
+  {
+    "id": "milestone_n3_3",
+    "title": "Kiểm tra định kỳ 3",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      11,
+      15
+    ]
+  },
+  {
+    "id": "lesson_n3_16",
+    "title": "Bài 16 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_劇",
+      "n3_決",
+      "n3_血",
+      "n3_健",
+      "n3_券"
+    ],
+    "vocabIds": [
+      "n3_解決",
+      "n3_決まり",
+      "n3_劇",
+      "n3_劇場",
+      "n3_血液",
+      "n3_決心",
+      "n3_決定",
+      "n3_券",
+      "n3_健康",
+      "n3_血管",
+      "n3_決行",
+      "n3_悲劇"
+    ],
+    "grammarIds": [
+      "n3_～？それとも～？ (～? sore tomo ～?)",
+      "n3_～だけしか (～dake shika)"
+    ]
+  },
+  {
+    "id": "lesson_n3_17",
+    "title": "Bài 17 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_権",
+      "n3_肩",
+      "n3_軒",
+      "n3_原",
+      "n3_減"
+    ],
+    "vocabIds": [
+      "n3_加減",
+      "n3_肩",
+      "n3_権利",
+      "n3_減少",
+      "n3_軒",
+      "n3_原",
+      "n3_減らす",
+      "n3_減る"
+    ],
+    "grammarIds": [
+      "n3_だけど (dakedo)",
+      "n3_～たて (～tate)"
+    ]
+  },
+  {
+    "id": "lesson_n3_18",
+    "title": "Bài 18 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_限",
+      "n3_個",
+      "n3_呼",
+      "n3_故",
+      "n3_湖"
+    ],
+    "vocabIds": [
+      "n3_制限",
+      "n3_限る",
+      "n3_期限",
+      "n3_限界",
+      "n3_呼吸",
+      "n3_故郷",
+      "n3_個人",
+      "n3_個々",
+      "n3_故人"
+    ],
+    "grammarIds": [
+      "n3_～たとえ～ても (〜tatoe〜temo)",
+      "n3_～たところ (〜ta tokoro)"
+    ]
+  },
+  {
+    "id": "lesson_n3_19",
+    "title": "Bài 19 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_御",
+      "n3_交",
+      "n3_公",
+      "n3_効",
+      "n3_厚"
+    ],
+    "vocabIds": [
+      "n3_外交",
+      "n3_効く",
+      "n3_効果",
+      "n3_交換",
+      "n3_交際",
+      "n3_公正",
+      "n3_公平",
+      "n3_有効",
+      "n3_公演",
+      "n3_交ざる",
+      "n3_交じる",
+      "n3_交ぜる"
+    ],
+    "grammarIds": [
+      "n3_～たとたん (〜ta totan)",
+      "n3_～たびに (〜tabi ni)"
+    ]
+  },
+  {
+    "id": "lesson_n3_20",
+    "title": "Bài 20 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_向",
+      "n3_幸",
+      "n3_紅",
+      "n3_耕",
+      "n3_肯"
+    ],
+    "vocabIds": [
+      "n3_幸せ",
+      "n3_傾向",
+      "n3_幸運",
+      "n3_幸福",
+      "n3_幸い",
+      "n3_向かい",
+      "n3_向く",
+      "n3_向ける",
+      "n3_不幸",
+      "n3_方向"
+    ],
+    "grammarIds": [
+      "n3_～だものだ (〜da mono da)",
+      "n3_～ちゃった (〜chatta)"
+    ]
+  },
+  {
+    "id": "milestone_n3_4",
+    "title": "Kiểm tra định kỳ 4",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      16,
+      20
+    ]
+  },
+  {
+    "id": "lesson_n3_21",
+    "title": "Bài 21 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_航",
+      "n3_講",
+      "n3_号",
+      "n3_告",
+      "n3_腰"
+    ],
+    "vocabIds": [
+      "n3_信号",
+      "n3_警告",
+      "n3_講演",
+      "n3_航空",
+      "n3_広告",
+      "n3_腰",
+      "n3_航海",
+      "n3_報告",
+      "n3_申告"
+    ],
+    "grammarIds": [
+      "n3_～ついでに (〜tsuide ni)",
+      "n3_～っけ？ (〜kke?)"
+    ]
+  },
+  {
+    "id": "lesson_n3_22",
+    "title": "Bài 22 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_骨",
+      "n3_込",
+      "n3_困",
+      "n3_根",
+      "n3_混"
+    ],
+    "vocabIds": [
+      "n3_骨折",
+      "n3_混雑",
+      "n3_困難",
+      "n3_混乱",
+      "n3_申し込む",
+      "n3_屋根",
+      "n3_根",
+      "n3_羽根",
+      "n3_人込み",
+      "n3_骨",
+      "n3_混ざる",
+      "n3_混じる"
+    ],
+    "grammarIds": [
+      "n3_～っぱい (〜ppai)",
+      "n3_～っぱなし (〜ppanashi)"
+    ]
+  },
+  {
+    "id": "lesson_n3_23",
+    "title": "Bài 23 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_査",
+      "n3_座",
+      "n3_再",
+      "n3_妻",
+      "n3_採"
+    ],
+    "vocabIds": [
+      "n3_検査",
+      "n3_座席",
+      "n3_採集",
+      "n3_調査",
+      "n3_再び",
+      "n3_捜査"
+    ],
+    "grammarIds": [
+      "n3_～つまり (〜tsumari)",
+      "n3_～つもりでした (〜tsumori deshita)"
+    ]
+  },
+  {
+    "id": "lesson_n3_24",
+    "title": "Bài 24 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_歳",
+      "n3_材",
+      "n3_財",
+      "n3_坂",
+      "n3_昨"
+    ],
+    "vocabIds": [
+      "n3_財産",
+      "n3_材料",
+      "n3_昨"
+    ],
+    "grammarIds": [
+      "n3_～てくれと (〜te kureto)",
+      "n3_～てごらん (〜te goran)"
+    ]
+  },
+  {
+    "id": "lesson_n3_25",
+    "title": "Bài 25 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_刷",
+      "n3_殺",
+      "n3_雑",
+      "n3_皿",
+      "n3_参"
+    ],
+    "vocabIds": [
+      "n3_皿",
+      "n3_参加",
+      "n3_参考",
+      "n3_自殺",
+      "n3_刷る",
+      "n3_印刷",
+      "n3_殺す",
+      "n3_混雑"
+    ],
+    "grammarIds": [
+      "n3_ですから～ (desu kara)",
+      "n3_～てはじめて (〜te hajimete)"
+    ]
+  },
+  {
+    "id": "milestone_n3_5",
+    "title": "Kiểm tra định kỳ 5",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      21,
+      25
+    ]
+  },
+  {
+    "id": "lesson_n3_26",
+    "title": "Bài 26 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_散",
+      "n3_残",
+      "n3_司",
+      "n3_志",
+      "n3_指"
+    ],
+    "vocabIds": [
+      "n3_指導",
+      "n3_意志",
+      "n3_指す",
+      "n3_散らす",
+      "n3_散る",
+      "n3_残す",
+      "n3_残り",
+      "n3_指揮",
+      "n3_志望",
+      "n3_上司",
+      "n3_同志"
+    ],
+    "grammarIds": [
+      "n3_～てほしい (〜te hoshii)",
+      "n3_～ても (〜temo)"
+    ]
+  },
+  {
+    "id": "lesson_n3_27",
+    "title": "Bài 27 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_枝",
+      "n3_詞",
+      "n3_示",
+      "n3_式",
+      "n3_失"
+    ],
+    "vocabIds": [
+      "n3_失業",
+      "n3_失望",
+      "n3_示す",
+      "n3_正式",
+      "n3_失う",
+      "n3_掲示",
+      "n3_名詞",
+      "n3_動詞",
+      "n3_助詞"
+    ],
+    "grammarIds": [
+      "n3_～といいなあ (〜to ii naa)",
+      "n3_～という (〜to iu)"
+    ]
+  },
+  {
+    "id": "lesson_n3_28",
+    "title": "Bài 28 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_湿",
+      "n3_実",
+      "n3_捨",
+      "n3_取",
+      "n3_酒"
+    ],
+    "vocabIds": [
+      "n3_事実",
+      "n3_湿気",
+      "n3_実験",
+      "n3_実現",
+      "n3_実行",
+      "n3_実際",
+      "n3_実施",
+      "n3_湿度",
+      "n3_実に",
+      "n3_実は",
+      "n3_実力",
+      "n3_湿る"
+    ],
+    "grammarIds": [
+      "n3_～ということだ (〜to iu koto da)",
+      "n3_～というと (〜to iu to)"
+    ]
+  },
+  {
+    "id": "lesson_n3_29",
+    "title": "Bài 29 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_授",
+      "n3_周",
+      "n3_修",
+      "n3_拾",
+      "n3_舟"
+    ],
+    "vocabIds": [
+      "n3_周囲",
+      "n3_修正",
+      "n3_修理",
+      "n3_教授",
+      "n3_修飾"
+    ],
+    "grammarIds": [
+      "n3_～というの～ (〜to iu no〜)",
+      "n3_～というのは (〜to iu no wa)"
+    ]
+  },
+  {
+    "id": "lesson_n3_30",
+    "title": "Bài 30 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_柔",
+      "n3_述",
+      "n3_準",
+      "n3_処",
+      "n3_署"
+    ],
+    "vocabIds": [
+      "n3_署名",
+      "n3_処理",
+      "n3_水準",
+      "n3_述べる"
+    ],
+    "grammarIds": [
+      "n3_～というより (〜to iu yori)",
+      "n3_～といっても (〜to ittemo)"
+    ]
+  },
+  {
+    "id": "milestone_n3_6",
+    "title": "Kiểm tra định kỳ 6",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      26,
+      30
+    ]
+  },
+  {
+    "id": "lesson_n3_31",
+    "title": "Bài 31 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_諸",
+      "n3_除",
+      "n3_召",
+      "n3_商",
+      "n3_床"
+    ],
+    "vocabIds": [
+      "n3_商人",
+      "n3_商売",
+      "n3_商品",
+      "n3_床",
+      "n3_除く"
+    ],
+    "grammarIds": [
+      "n3_～とおり (〜toori)",
+      "n3_～とく (〜toku)"
+    ]
+  },
+  {
+    "id": "lesson_n3_32",
+    "title": "Bài 32 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_昇",
+      "n3_焼",
+      "n3_照",
+      "n3_省",
+      "n3_笑"
+    ],
+    "vocabIds": [
+      "n3_省略",
+      "n3_笑顔",
+      "n3_笑い",
+      "n3_対照",
+      "n3_昇る",
+      "n3_省く",
+      "n3_反省",
+      "n3_微笑む",
+      "n3_照明"
+    ],
+    "grammarIds": [
+      "n3_～ところが (〜tokoro ga)",
+      "n3_～ところだった (〜tokoro datta)"
+    ]
+  },
+  {
+    "id": "lesson_n3_33",
+    "title": "Bài 33 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_紹",
+      "n3_賞",
+      "n3_情",
+      "n3_条",
+      "n3_畳"
+    ],
+    "vocabIds": [
+      "n3_事情",
+      "n3_賞",
+      "n3_条件",
+      "n3_賞品",
+      "n3_情報",
+      "n3_愛情",
+      "n3_感情",
+      "n3_友情",
+      "n3_畳む",
+      "n3_表情",
+      "n3_情"
+    ],
+    "grammarIds": [
+      "n3_ところで (tokorode)",
+      "n3_～としたら (〜to shitara)"
+    ]
+  },
+  {
+    "id": "lesson_n3_34",
+    "title": "Bài 34 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_蒸",
+      "n3_植",
+      "n3_職",
+      "n3_触",
+      "n3_信"
+    ],
+    "vocabIds": [
+      "n3_就職",
+      "n3_職",
+      "n3_職業",
+      "n3_植物",
+      "n3_信仰",
+      "n3_信号",
+      "n3_信じる",
+      "n3_信用",
+      "n3_信頼",
+      "n3_蒸し暑い",
+      "n3_蒸す",
+      "n3_通信"
+    ],
+    "grammarIds": [
+      "n3_～として (〜to shite)",
+      "n3_～どんなに～ことか (〜donna ni〜koto ka)"
+    ]
+  },
+  {
+    "id": "lesson_n3_35",
+    "title": "Bài 35 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_寝",
+      "n3_深",
+      "n3_神",
+      "n3_身",
+      "n3_震"
+    ],
+    "vocabIds": [
+      "n3_自身",
+      "n3_出身",
+      "n3_神経",
+      "n3_深刻",
+      "n3_身体",
+      "n3_身長",
+      "n3_精神",
+      "n3_神",
+      "n3_身",
+      "n3_全身",
+      "n3_独身",
+      "n3_中身"
+    ],
+    "grammarIds": [
+      "n3_どんなに～ても (donna ni ~ temo)",
+      "n3_～ないことはない (〜nai koto wa nai)"
+    ]
+  },
+  {
+    "id": "milestone_n3_7",
+    "title": "Kiểm tra định kỳ 7",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      31,
+      35
+    ]
+  },
+  {
+    "id": "lesson_n3_36",
+    "title": "Bài 36 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_数",
+      "n3_勢",
+      "n3_成",
+      "n3_整",
+      "n3_晴"
+    ],
+    "vocabIds": [
+      "n3_賛成",
+      "n3_数",
+      "n3_数字",
+      "n3_成功",
+      "n3_成人",
+      "n3_成績",
+      "n3_成長",
+      "n3_整理",
+      "n3_勢い",
+      "n3_数",
+      "n3_数える",
+      "n3_完成"
+    ],
+    "grammarIds": [
+      "n3_～ないと (〜nai to)",
+      "n3_～なぜなら (〜nazenara)"
+    ]
+  },
+  {
+    "id": "lesson_n3_37",
+    "title": "Bài 37 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_清",
+      "n3_精",
+      "n3_席",
+      "n3_昔",
+      "n3_石"
+    ],
+    "vocabIds": [
+      "n3_清む",
+      "n3_清潔",
+      "n3_精神",
+      "n3_精々",
+      "n3_石炭",
+      "n3_石油",
+      "n3_欠席",
+      "n3_座席",
+      "n3_宝石",
+      "n3_精巧",
+      "n3_精算"
+    ],
+    "grammarIds": [
+      "n3_～など (〜nado)",
+      "n3_～なんか (〜nanka)"
+    ]
+  },
+  {
+    "id": "lesson_n3_38",
+    "title": "Bài 38 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_接",
+      "n3_折",
+      "n3_絶",
+      "n3_占",
+      "n3_専"
+    ],
+    "vocabIds": [
+      "n3_占める",
+      "n3_絶対",
+      "n3_骨折",
+      "n3_面接",
+      "n3_絶滅",
+      "n3_専攻",
+      "n3_直接",
+      "n3_接ぐ"
+    ],
+    "grammarIds": [
+      "n3_～において (〜ni oite)",
+      "n3_～にかわって (〜ni kawatte)"
+    ]
+  },
+  {
+    "id": "lesson_n3_39",
+    "title": "Bài 39 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_泉",
+      "n3_線",
+      "n3_選",
+      "n3_全",
+      "n3_祖"
+    ],
+    "vocabIds": [
+      "n3_全て",
+      "n3_泉",
+      "n3_完全",
+      "n3_全",
+      "n3_全員",
+      "n3_全国",
+      "n3_選手",
+      "n3_全身",
+      "n3_全体",
+      "n3_選択",
+      "n3_地平線",
+      "n3_全く"
+    ],
+    "grammarIds": [
+      "n3_～にしては (〜ni shite wa)",
+      "n3_～にしても (〜ni shitemo)"
+    ]
+  },
+  {
+    "id": "lesson_n3_40",
+    "title": "Bài 40 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_組",
+      "n3_双",
+      "n3_層",
+      "n3_捜",
+      "n3_操"
+    ],
+    "vocabIds": [
+      "n3_一層",
+      "n3_組",
+      "n3_組合",
+      "n3_組む",
+      "n3_操作",
+      "n3_組織",
+      "n3_双子",
+      "n3_捜査",
+      "n3_操縦"
+    ],
+    "grammarIds": [
+      "n3_～について (〜ni tsuite)",
+      "n3_～にとって (〜ni totte)"
+    ]
+  },
+  {
+    "id": "milestone_n3_8",
+    "title": "Kiểm tra định kỳ 8",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      36,
+      40
+    ]
+  },
+  {
+    "id": "lesson_n3_41",
+    "title": "Bài 41 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_争",
+      "n3_相",
+      "n3_草",
+      "n3_像",
+      "n3_憎"
+    ],
+    "vocabIds": [
+      "n3_首相",
+      "n3_相変わらず",
+      "n3_相手",
+      "n3_争う",
+      "n3_論争",
+      "n3_想像",
+      "n3_相続",
+      "n3_相当",
+      "n3_相",
+      "n3_像"
+    ],
+    "grammarIds": [
+      "n3_～によって (〜ni yotte)",
+      "n3_～によれば (〜ni yoreba)"
+    ]
+  },
+  {
+    "id": "lesson_n3_42",
+    "title": "Bài 42 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_蔵",
+      "n3_造",
+      "n3_側",
+      "n3_測",
+      "n3_速"
+    ],
+    "vocabIds": [
+      "n3_製造",
+      "n3_急速",
+      "n3_高速",
+      "n3_予測",
+      "n3_速度",
+      "n3_測る",
+      "n3_創造"
+    ],
+    "grammarIds": [
+      "n3_～に対して (～ni taishite)",
+      "n3_～に比べて (〜ni kurabete)"
+    ]
+  },
+  {
+    "id": "lesson_n3_43",
+    "title": "Bài 43 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_卒",
+      "n3_存",
+      "n3_尊",
+      "n3_他",
+      "n3_対"
+    ],
+    "vocabIds": [
+      "n3_絶対",
+      "n3_尊敬",
+      "n3_存在",
+      "n3_尊重",
+      "n3_他",
+      "n3_対",
+      "n3_対象",
+      "n3_対照",
+      "n3_対する",
+      "n3_他人",
+      "n3_他",
+      "n3_保存"
+    ],
+    "grammarIds": [
+      "n3_～に関して (〜ni kanshite)",
+      "n3_～の～ (〜no 〜)"
+    ]
+  },
+  {
+    "id": "lesson_n3_44",
+    "title": "Bài 44 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_替",
+      "n3_袋",
+      "n3_退",
+      "n3_第",
+      "n3_宅"
+    ],
+    "vocabIds": [
+      "n3_次第",
+      "n3_住宅",
+      "n3_引退",
+      "n3_替える",
+      "n3_帰宅",
+      "n3_両替",
+      "n3_退屈",
+      "n3_宅",
+      "n3_足袋",
+      "n3_退く",
+      "n3_袋",
+      "n3_辞退"
+    ],
+    "grammarIds": [
+      "n3_～ばかり (〜bakari)",
+      "n3_～ばかりか (〜bakarika) ～も (mo)"
+    ]
+  },
+  {
+    "id": "lesson_n3_45",
+    "title": "Bài 45 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_担",
+      "n3_炭",
+      "n3_団",
+      "n3_暖",
+      "n3_段"
+    ],
+    "vocabIds": [
+      "n3_集団",
+      "n3_手段",
+      "n3_石炭",
+      "n3_暖まる",
+      "n3_暖める",
+      "n3_温暖",
+      "n3_段",
+      "n3_団体",
+      "n3_担当",
+      "n3_普段"
+    ],
+    "grammarIds": [
+      "n3_～はずだ (〜hazu da)",
+      "n3_～ば～のに (〜ba 〜noni)"
+    ]
+  },
+  {
+    "id": "milestone_n3_9",
+    "title": "Kiểm tra định kỳ 9",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      41,
+      45
+    ]
+  },
+  {
+    "id": "lesson_n3_46",
+    "title": "Bài 46 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_談",
+      "n3_置",
+      "n3_畜",
+      "n3_宙",
+      "n3_柱"
+    ],
+    "vocabIds": [
+      "n3_冗談",
+      "n3_位置",
+      "n3_宇宙",
+      "n3_装置"
+    ],
+    "grammarIds": [
+      "n3_～ば～ほど (〜ba 〜hodo)",
+      "n3_～はもちろん～も (〜wa mochiron 〜mo)"
+    ]
+  },
+  {
+    "id": "lesson_n3_47",
+    "title": "Bài 47 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_虫",
+      "n3_著",
+      "n3_調",
+      "n3_超",
+      "n3_頂"
+    ],
+    "vocabIds": [
+      "n3_順調",
+      "n3_著す",
+      "n3_強調",
+      "n3_超える",
+      "n3_超す",
+      "n3_虫歯",
+      "n3_協調",
+      "n3_調査",
+      "n3_調子",
+      "n3_頂上",
+      "n3_著者"
+    ],
+    "grammarIds": [
+      "n3_～ばよかった (〜ba yokatta)",
+      "n3_～ふりをする (〜furi wo suru)"
+    ]
+  },
+  {
+    "id": "lesson_n3_48",
+    "title": "Bài 48 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_直",
+      "n3_沈",
+      "n3_賃",
+      "n3_停",
+      "n3_定"
+    ],
+    "vocabIds": [
+      "n3_直に",
+      "n3_直",
+      "n3_沈む",
+      "n3_正直",
+      "n3_安定",
+      "n3_仮定",
+      "n3_勘定",
+      "n3_決定",
+      "n3_家賃",
+      "n3_直ちに",
+      "n3_直接",
+      "n3_定期"
+    ],
+    "grammarIds": [
+      "n3_～べきだ (〜beki da)",
+      "n3_～ほど～ (〜hodo〜)"
+    ]
+  },
+  {
+    "id": "lesson_n3_49",
+    "title": "Bài 49 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_底",
+      "n3_程",
+      "n3_的",
+      "n3_適",
+      "n3_鉄"
+    ],
+    "vocabIds": [
+      "n3_積極的",
+      "n3_快適",
+      "n3_過程",
+      "n3_課程",
+      "n3_目的",
+      "n3_底",
+      "n3_程度",
+      "n3_適する",
+      "n3_適切",
+      "n3_適度",
+      "n3_適用",
+      "n3_鉄"
+    ],
+    "grammarIds": [
+      "n3_～ますように (〜masu you ni)",
+      "n3_まったく～ない (mattaku ~nai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_50",
+    "title": "Bài 50 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_展",
+      "n3_点",
+      "n3_殿",
+      "n3_徒",
+      "n3_登"
+    ],
+    "vocabIds": [
+      "n3_欠点",
+      "n3_要点",
+      "n3_登山",
+      "n3_発展",
+      "n3_視点"
+    ],
+    "grammarIds": [
+      "n3_～まで (〜made)",
+      "n3_～まま (〜mama)"
+    ]
+  },
+  {
+    "id": "milestone_n3_10",
+    "title": "Kiểm tra định kỳ 10",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      46,
+      50
+    ]
+  },
+  {
+    "id": "lesson_n3_51",
+    "title": "Bài 51 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_努",
+      "n3_怒",
+      "n3_党",
+      "n3_凍",
+      "n3_投"
+    ],
+    "vocabIds": [
+      "n3_凍る",
+      "n3_怒り",
+      "n3_党",
+      "n3_投票",
+      "n3_努力",
+      "n3_野党"
+    ],
+    "grammarIds": [
+      "n3_まるで～よう (maru de ~ you)",
+      "n3_～てみる (〜te miru)"
+    ]
+  },
+  {
+    "id": "lesson_n3_52",
+    "title": "Bài 52 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_盗",
+      "n3_湯",
+      "n3_灯",
+      "n3_当",
+      "n3_到"
+    ],
+    "vocabIds": [
+      "n3_当たり前",
+      "n3_当たる",
+      "n3_当てる",
+      "n3_見当",
+      "n3_強盗",
+      "n3_当り",
+      "n3_相当",
+      "n3_担当",
+      "n3_当時",
+      "n3_到着",
+      "n3_灯",
+      "n3_弁当"
+    ],
+    "grammarIds": [
+      "n3_～みたいだ (〜mitai da)",
+      "n3_～めったに～ない (〜metta ni 〜nai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_53",
+    "title": "Bài 53 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_逃",
+      "n3_童",
+      "n3_銅",
+      "n3_得",
+      "n3_独"
+    ],
+    "vocabIds": [
+      "n3_児童",
+      "n3_得る",
+      "n3_得る",
+      "n3_銅貨",
+      "n3_童謡",
+      "n3_得意",
+      "n3_独身",
+      "n3_独特",
+      "n3_独立",
+      "n3_納得",
+      "n3_独り"
+    ],
+    "grammarIds": [
+      "n3_～めったにない (〜metta ni nai)",
+      "n3_もしかすると〜かもしれない (moshikasuru to 〜kamoshirenai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_54",
+    "title": "Bài 54 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_曇",
+      "n3_内",
+      "n3_軟",
+      "n3_任",
+      "n3_熱"
+    ],
+    "vocabIds": [
+      "n3_責任",
+      "n3_内容",
+      "n3_熱帯",
+      "n3_熱中",
+      "n3_任せる"
+    ],
+    "grammarIds": [
+      "n3_もし～たなら (moshi ~ tanara)",
+      "n3_もし～ても (moshi ~ temo)"
+    ]
+  },
+  {
+    "id": "lesson_n3_55",
+    "title": "Bài 55 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_念",
+      "n3_悩",
+      "n3_脳",
+      "n3_農",
+      "n3_波"
+    ],
+    "vocabIds": [
+      "n3_記念",
+      "n3_波",
+      "n3_悩む",
+      "n3_農家",
+      "n3_農業",
+      "n3_農民",
+      "n3_脳"
+    ],
+    "grammarIds": [
+      "n3_もしも～なら (moshimo ~ nara)",
+      "n3_～ようとしない (〜you to shinai)"
+    ]
+  },
+  {
+    "id": "milestone_n3_11",
+    "title": "Kiểm tra định kỳ 11",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      51,
+      55
+    ]
+  },
+  {
+    "id": "lesson_n3_56",
+    "title": "Bài 56 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_拝",
+      "n3_敗",
+      "n3_背",
+      "n3_倍",
+      "n3_薄"
+    ],
+    "vocabIds": [
+      "n3_～敗"
+    ],
+    "grammarIds": [
+      "n3_～ようと思う (〜you to omou)",
+      "n3_～ように (〜you ni)"
+    ]
+  },
+  {
+    "id": "lesson_n3_57",
+    "title": "Bài 57 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_爆",
+      "n3_麦",
+      "n3_箱",
+      "n3_畑",
+      "n3_抜"
+    ],
+    "vocabIds": [
+      "n3_小麦",
+      "n3_蕎麦",
+      "n3_抜く",
+      "n3_抜ける",
+      "n3_爆発",
+      "n3_畑"
+    ],
+    "grammarIds": [
+      "n3_～ように (〜you ni)",
+      "n3_～ように (〜you ni)"
+    ]
+  },
+  {
+    "id": "lesson_n3_58",
+    "title": "Bài 58 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_板",
+      "n3_犯",
+      "n3_般",
+      "n3_販",
+      "n3_番"
+    ],
+    "vocabIds": [
+      "n3_順番",
+      "n3_板",
+      "n3_一般",
+      "n3_黒板",
+      "n3_犯罪",
+      "n3_犯人",
+      "n3_販売"
+    ],
+    "grammarIds": [
+      "n3_～ようにしましょう (〜you ni shimashou)",
+      "n3_～ようになった (〜you ni natta)"
+    ]
+  },
+  {
+    "id": "lesson_n3_59",
+    "title": "Bài 59 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_彼",
+      "n3_比",
+      "n3_疲",
+      "n3_飛",
+      "n3_美"
+    ],
+    "vocabIds": [
+      "n3_疲れ",
+      "n3_飛ばす",
+      "n3_飛び出す",
+      "n3_比較",
+      "n3_飛行",
+      "n3_美人"
+    ],
+    "grammarIds": [
+      "n3_～ように言う (〜you ni iu)",
+      "n3_～らしい (〜rashii)"
+    ]
+  },
+  {
+    "id": "lesson_n3_60",
+    "title": "Bài 60 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_匹",
+      "n3_必",
+      "n3_筆",
+      "n3_標",
+      "n3_評"
+    ],
+    "vocabIds": [
+      "n3_必ずしも",
+      "n3_目標",
+      "n3_必死",
+      "n3_批評",
+      "n3_評価",
+      "n3_評判",
+      "n3_筆"
+    ],
+    "grammarIds": [
+      "n3_～られた (〜rareta)",
+      "n3_～ている (〜te iru)"
+    ]
+  },
+  {
+    "id": "milestone_n3_12",
+    "title": "Kiểm tra định kỳ 12",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      56,
+      60
+    ]
+  },
+  {
+    "id": "lesson_n3_61",
+    "title": "Bài 61 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_婦",
+      "n3_府",
+      "n3_浮",
+      "n3_符",
+      "n3_膚"
+    ],
+    "vocabIds": [
+      "n3_主婦",
+      "n3_政府",
+      "n3_夫婦",
+      "n3_婦人"
+    ],
+    "grammarIds": [
+      "n3_～わけがない (〜wake ga nai)",
+      "n3_～わけだ (〜wake da)"
+    ]
+  },
+  {
+    "id": "lesson_n3_62",
+    "title": "Bài 62 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_武",
+      "n3_部",
+      "n3_復",
+      "n3_腹",
+      "n3_沸"
+    ],
+    "vocabIds": [
+      "n3_回復",
+      "n3_大部分",
+      "n3_腹",
+      "n3_武器",
+      "n3_部分"
+    ],
+    "grammarIds": [
+      "n3_～わけではない (〜wake dewa nai)",
+      "n3_～わけにはいかない (〜wake ni wa ikanai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_63",
+    "title": "Bài 63 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_粉",
+      "n3_兵",
+      "n3_並",
+      "n3_閉",
+      "n3_米"
+    ],
+    "vocabIds": [
+      "n3_粉",
+      "n3_閉じる",
+      "n3_並"
+    ],
+    "grammarIds": [
+      "n3_～わりには (〜wari ni wa)",
+      "n3_～んだって (〜n datte)"
+    ]
+  },
+  {
+    "id": "lesson_n3_64",
+    "title": "Bài 64 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_片",
+      "n3_編",
+      "n3_返",
+      "n3_補",
+      "n3_抱"
+    ],
+    "vocabIds": [
+      "n3_抱く",
+      "n3_抱える",
+      "n3_片付く",
+      "n3_繰り返す",
+      "n3_候補",
+      "n3_片付け",
+      "n3_抱く",
+      "n3_補償"
+    ],
+    "grammarIds": [
+      "n3_～んだもん (〜nda mon)",
+      "n3_～上げる (〜ageru)"
+    ]
+  },
+  {
+    "id": "lesson_n3_65",
+    "title": "Bài 65 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_放",
+      "n3_訪",
+      "n3_亡",
+      "n3_忘",
+      "n3_望"
+    ],
+    "vocabIds": [
+      "n3_失望",
+      "n3_死亡",
+      "n3_希望",
+      "n3_亡くす",
+      "n3_望み",
+      "n3_望む",
+      "n3_放す",
+      "n3_放れる",
+      "n3_訪問",
+      "n3_志望"
+    ],
+    "grammarIds": [
+      "n3_～切れない (～kirenai)",
+      "n3_必ずしも～とは限らない (kanarazushimo ～ towa kagiranai)"
+    ]
+  },
+  {
+    "id": "milestone_n3_13",
+    "title": "Kiểm tra định kỳ 13",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      61,
+      65
+    ]
+  },
+  {
+    "id": "lesson_n3_66",
+    "title": "Bài 66 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_棒",
+      "n3_埋",
+      "n3_末",
+      "n3_満",
+      "n3_未"
+    ],
+    "vocabIds": [
+      "n3_末",
+      "n3_埋める",
+      "n3_満足",
+      "n3_満ちる",
+      "n3_未来",
+      "n3_埋まる",
+      "n3_粗末",
+      "n3_不満",
+      "n3_棒",
+      "n3_末"
+    ],
+    "grammarIds": [
+      "n3_～最中に (～saichuu ni)",
+      "n3_決して～ない (kesshite ~ nai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_67",
+    "title": "Bài 67 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_眠",
+      "n3_夢",
+      "n3_娘",
+      "n3_迷",
+      "n3_鳴"
+    ],
+    "vocabIds": [
+      "n3_睡眠",
+      "n3_居眠り",
+      "n3_迷う",
+      "n3_夢中",
+      "n3_迷惑",
+      "n3_鳴らす",
+      "n3_迷子"
+    ],
+    "grammarIds": [
+      "n3_A その上 B (A sono ue B)",
+      "n3_～うちに (〜uchi ni)"
+    ]
+  },
+  {
+    "id": "lesson_n3_68",
+    "title": "Bài 68 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_綿",
+      "n3_面",
+      "n3_役",
+      "n3_輸",
+      "n3_勇"
+    ],
+    "vocabIds": [
+      "n3_面",
+      "n3_綿",
+      "n3_面接",
+      "n3_面倒",
+      "n3_役",
+      "n3_役割",
+      "n3_勇気",
+      "n3_綿",
+      "n3_場面",
+      "n3_表面"
+    ],
+    "grammarIds": [
+      "n3_～うとした (〜uto shita)",
+      "n3_～おかげで (〜okagede)"
+    ]
+  },
+  {
+    "id": "lesson_n3_69",
+    "title": "Bài 69 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_余",
+      "n3_預",
+      "n3_幼",
+      "n3_容",
+      "n3_翌"
+    ],
+    "vocabIds": [
+      "n3_預かる",
+      "n3_預ける",
+      "n3_幼い",
+      "n3_容易",
+      "n3_容器",
+      "n3_余分",
+      "n3_余裕",
+      "n3_内容"
+    ],
+    "grammarIds": [
+      "n3_～かけ (〜kake)",
+      "n3_～かなあ (〜kanaa)"
+    ]
+  },
+  {
+    "id": "lesson_n3_70",
+    "title": "Bài 70 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_頼",
+      "n3_落",
+      "n3_乱",
+      "n3_利",
+      "n3_裏"
+    ],
+    "vocabIds": [
+      "n3_信頼",
+      "n3_依頼",
+      "n3_裏切る",
+      "n3_お洒落",
+      "n3_権利",
+      "n3_混乱",
+      "n3_有利",
+      "n3_利益",
+      "n3_利口",
+      "n3_頼る",
+      "n3_不利"
+    ],
+    "grammarIds": [
+      "n3_～ないで (〜naide)",
+      "n3_～から～にかけて (〜kara 〜ni kakete)"
+    ]
+  },
+  {
+    "id": "milestone_n3_14",
+    "title": "Kiểm tra định kỳ 14",
+    "type": "quiz",
+    "level": 3,
+    "lessonRange": [
+      66,
+      70
+    ]
+  },
+  {
+    "id": "lesson_n3_71",
+    "title": "Bài 71 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_陸",
+      "n3_率",
+      "n3_略",
+      "n3_流",
+      "n3_両"
+    ],
+    "vocabIds": [
+      "n3_省略",
+      "n3_陸",
+      "n3_率",
+      "n3_流行",
+      "n3_両替",
+      "n3_大陸",
+      "n3_流す",
+      "n3_流れ",
+      "n3_流れる",
+      "n3_流行る"
+    ],
+    "grammarIds": [
+      "n3_～かわりに (〜kawari ni)",
+      "n3_～きり (〜kiri)"
+    ]
+  },
+  {
+    "id": "lesson_n3_72",
+    "title": "Bài 72 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_量",
+      "n3_領",
+      "n3_緑",
+      "n3_輪",
+      "n3_涙"
+    ],
+    "vocabIds": [
+      "n3_量",
+      "n3_輪",
+      "n3_大統領",
+      "n3_涙",
+      "n3_量る"
+    ],
+    "grammarIds": [
+      "n3_～くせに (〜kuse ni)",
+      "n3_～くらい (〜kurai)"
+    ]
+  },
+  {
+    "id": "lesson_n3_73",
+    "title": "Bài 73 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_類",
+      "n3_冷",
+      "n3_齢",
+      "n3_歴",
+      "n3_恋"
+    ],
+    "vocabIds": [
+      "n3_冷ます",
+      "n3_冷める",
+      "n3_種類",
+      "n3_書類",
+      "n3_人類",
+      "n3_恋",
+      "n3_恋人",
+      "n3_冷静",
+      "n3_学歴",
+      "n3_年齢",
+      "n3_冷やす"
+    ],
+    "grammarIds": [
+      "n3_～くらい～は～ない (〜kurai 〜wa 〜nai)",
+      "n3_～こそ (〜koso)"
+    ]
+  },
+  {
+    "id": "lesson_n3_74",
+    "title": "Bài 74 (N3)",
+    "type": "lesson",
+    "level": 3,
+    "kanjiIds": [
+      "n3_連",
+      "n3_論",
+      "n3_和"
+    ],
+    "vocabIds": [
+      "n3_関連",
+      "n3_議論",
+      "n3_結論",
+      "n3_連想",
+      "n3_連続",
+      "n3_論じる",
+      "n3_論争",
+      "n3_論文",
+      "n3_連れ",
+      "n3_平和"
+    ],
+    "grammarIds": [
+      "n3_～こと (〜koto)",
+      "n3_～ことだ (〜koto da)"
+    ]
+  }
+]

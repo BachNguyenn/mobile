@@ -4,8 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
-import '../../domain/entities/kanji_card.dart';
-import '../../domain/entities/srs_item.dart';
+import '../../features/kanji/domain/entities/kanji_card.dart';
+import '../../core/srs/srs_item.dart';
 
 part 'app_database.g.dart';
 

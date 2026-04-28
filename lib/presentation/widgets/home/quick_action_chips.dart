@@ -4,9 +4,9 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/theme/app_typography.dart';
 import '../global_search_delegate.dart';
-import '../../screens/analytics_screen.dart';
+import '../../../features/analytics/presentation/screens/analytics_screen.dart';
 import '../../screens/learning_path_screen.dart';
-import '../../screens/grammar_analysis_screen.dart';
+import '../../../features/grammar/presentation/screens/grammar_analysis_screen.dart';
 
 typedef TabSwitchCallback = void Function(int index);
 

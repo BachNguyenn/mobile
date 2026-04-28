@@ -41,9 +41,10 @@ flutter:
   uses-material-design: true
   assets:
     - .env
-    - assets/data/n5/kanji.json
-    - assets/data/n4/kanji.json
-    - assets/data/n3/kanji.json
-    - assets/data/n2/kanji.json
-    - assets/data/n1/kanji.json
+    - assets/data/n5/
+    - assets/data/n4/
+    - assets/data/n3/
+    - assets/data/n2/
+    - assets/data/n1/
+    - assets/data/unified_path.json
     - assets/images/

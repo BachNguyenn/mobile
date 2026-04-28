@@ -7,7 +7,7 @@ import '../../core/theme/app_typography.dart';
 import '../providers/auth_provider.dart';
 import '../providers/garden_provider.dart';
 import '../providers/home_progress_provider.dart';
-import '../providers/progress_models.dart';
+import '../../core/models/progress_models.dart';
 import '../widgets/learning_card.dart';
 import '../widgets/zen_garden_2d_widget.dart';
 import '../widgets/global_search_delegate.dart';

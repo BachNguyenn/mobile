@@ -18,11 +18,20 @@ class LessonBottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final currentQ = state.questions[state.currentIndex];
+
     if (!state.isAnswerChecked) {
-      final currentQ = state.questions[state.currentIndex];
-      final canCheck = currentQ.type == QuizType.handwriting 
-          ? state.currentStrokes.isNotEmpty 
-          : state.selectedAnswerId != null;
+      bool canCheck;
+      String buttonText = 'Kiểm tra';
+      
+      if (currentQ.type == QuizType.grammarStudy) {
+        canCheck = true;
+        buttonText = 'Tiếp tục';
+      } else if (currentQ.type == QuizType.handwriting) {
+        canCheck = state.currentStrokes.isNotEmpty;
+      } else {
+        canCheck = state.selectedAnswer != null;
+      }
 
       return Container(
         padding: const EdgeInsets.all(AppSpacing.sp24),
@@ -41,15 +50,17 @@ class LessonBottomBar extends StatelessWidget {
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppSpacing.radiusL)),
               elevation: 0,
             ),
-            child: const Text('Kiểm tra', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            child: Text(buttonText, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           ),
         ),
       );
     }
 
-    final color = state.isCorrect ? AppColors.mossGreen : AppColors.terracotta;
-    final message = state.isCorrect ? 'Chính xác!' : 'Chưa đúng rồi!';
-    final icon = state.isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded;
+    // After answer is checked
+    final isGrammar = currentQ.type == QuizType.grammarStudy;
+    final color = isGrammar ? AppColors.mossGreen : (state.isCorrect ? AppColors.mossGreen : AppColors.terracotta);
+    final message = isGrammar ? 'Đã hiểu!' : (state.isCorrect ? 'Chính xác!' : 'Chưa đúng rồi!');
+    final icon = isGrammar ? Icons.info_outline_rounded : (state.isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded);
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp24),

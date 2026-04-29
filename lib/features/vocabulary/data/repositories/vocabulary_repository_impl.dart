@@ -1,4 +1,5 @@
 import 'package:drift/drift.dart';
+import 'package:mobile/core/srs/srs_item.dart';
 import '../../domain/entities/vocabulary.dart';
 import '../../domain/repositories/vocabulary_repository.dart';
 import '../../../../data/datasources/app_database.dart';
@@ -13,6 +14,27 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
     final rows = await (_db.select(_db.vocabularyTable)
           ..orderBy([(t) => OrderingTerm(expression: t.id)]))
         .get();
+    return rows.map((row) => _mapRowToEntity(row)).toList();
+  }
+
+  @override
+  Future<List<Vocabulary>> getDueVocabulary(
+    DateTime now, {
+    int? jlptLevel,
+    int? limit,
+  }) async {
+    final query = _db.select(_db.vocabularyTable)
+      ..where((t) => t.nextReview.isSmallerOrEqualValue(now));
+
+    if (jlptLevel != null) {
+      query.where((t) => t.jlptLevel.equals(jlptLevel));
+    }
+
+    if (limit != null) {
+      query.limit(limit);
+    }
+
+    final rows = await query.get();
     return rows.map((row) => _mapRowToEntity(row)).toList();
   }
 
@@ -68,6 +90,26 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
     return rows.map((row) => _mapRowToEntity(row)).toList();
   }
 
+  @override
+  Future<bool> submitReview({
+    required SrsItem updatedItem,
+    required int rating,
+    required int durationMs,
+    required int expGain,
+    required int waterGain,
+    required int sunGain,
+  }) {
+    return _db.submitReview(
+      updatedItem: updatedItem,
+      itemType: 'vocabulary',
+      rating: rating,
+      durationMs: durationMs,
+      expGain: expGain,
+      waterGain: waterGain,
+      sunGain: sunGain,
+    );
+  }
+
   Vocabulary _mapRowToEntity(VocabularyTableData row) {
     return Vocabulary(
       id: row.id,
@@ -75,6 +117,13 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
       reading: row.reading,
       meaning: row.meaning,
       jlptLevel: row.jlptLevel,
+      stability: row.stability,
+      difficulty: row.difficulty,
+      lastReview: row.lastReview,
+      nextReview: row.nextReview,
+      reps: row.reps,
+      lapses: row.lapses,
+      state: row.state,
     );
   }
 }

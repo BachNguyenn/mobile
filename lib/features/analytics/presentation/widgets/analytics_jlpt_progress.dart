@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class AnalyticsJlptProgress extends StatelessWidget {
   final Map<String, double> progress;
@@ -7,20 +10,55 @@ class AnalyticsJlptProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          'Phân bổ theo JLPT',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        const SizedBox(height: 16),
-        _JlptProgressRow(level: 'N5', percent: progress['N5'] ?? 0, color: Colors.green),
-        _JlptProgressRow(level: 'N4', percent: progress['N4'] ?? 0, color: Colors.blue),
-        _JlptProgressRow(level: 'N3', percent: progress['N3'] ?? 0, color: Colors.orange),
-        _JlptProgressRow(level: 'N2', percent: progress['N2'] ?? 0, color: Colors.red),
-        _JlptProgressRow(level: 'N1', percent: progress['N1'] ?? 0, color: Colors.purple),
-      ],
+    return Container(
+      padding: AppSpacing.cardPadding,
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Phân bổ theo JLPT',
+            style: AppTypography.headingS.copyWith(color: AppColors.ink),
+          ),
+          const SizedBox(height: AppSpacing.sp16),
+          _JlptProgressRow(
+            level: 'N5',
+            percent: progress['N5'] ?? 0,
+            color: AppColors.mossGreen,
+          ),
+          _JlptProgressRow(
+            level: 'N4',
+            percent: progress['N4'] ?? 0,
+            color: AppColors.waterBlue,
+          ),
+          _JlptProgressRow(
+            level: 'N3',
+            percent: progress['N3'] ?? 0,
+            color: AppColors.sunGold,
+          ),
+          _JlptProgressRow(
+            level: 'N2',
+            percent: progress['N2'] ?? 0,
+            color: AppColors.terracotta,
+          ),
+          _JlptProgressRow(
+            level: 'N1',
+            percent: progress['N1'] ?? 0,
+            color: AppColors.sakura,
+          ),
+        ],
+      ),
     );
   }
 }
@@ -38,29 +76,34 @@ class _JlptProgressRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final value = percent.clamp(0.0, 1.0).toDouble();
+
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.only(bottom: AppSpacing.sp12),
       child: Row(
         children: [
           SizedBox(
-            width: 30,
+            width: 32,
             child: Text(
               level,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
             ),
           ),
-          const SizedBox(width: 12),
+          const SizedBox(width: AppSpacing.sp12),
           Expanded(
             child: LinearProgressIndicator(
-              value: percent,
+              value: value,
               backgroundColor: color.withValues(alpha: 0.1),
               color: color,
               borderRadius: BorderRadius.circular(10),
               minHeight: 8,
             ),
           ),
-          const SizedBox(width: 12),
-          Text('${(percent * 100).toInt()}%', style: const TextStyle(fontSize: 12)),
+          const SizedBox(width: AppSpacing.sp12),
+          Text(
+            '${(value * 100).toInt()}%',
+            style: AppTypography.label,
+          ),
         ],
       ),
     );

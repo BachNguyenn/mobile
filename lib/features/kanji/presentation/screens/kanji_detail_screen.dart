@@ -16,24 +16,26 @@ class KanjiDetailScreen extends StatelessWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 250,
             pinned: true,
             backgroundColor: AppColors.mossGreen,
-            flexibleSpace: FlexibleSpaceBar(
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: AppColors.mossGradient,
-                ),
-                child: Center(
-                  child: Hero(
-                    tag: 'kanji_${kanji.kanji}',
-                    child: Text(
-                      kanji.kanji,
-                      style: AppTypography.kanjiDisplay.copyWith(
-                        fontSize: 100,
-                        color: AppColors.white,
-                      ),
-                    ),
+            foregroundColor: AppColors.white,
+            title: Text(
+              kanji.kanji,
+              style: AppTypography.headingS.copyWith(color: AppColors.white),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              height: 210,
+              decoration: const BoxDecoration(
+                gradient: AppColors.mossGradient,
+              ),
+              child: Center(
+                child: Text(
+                  kanji.kanji,
+                  style: AppTypography.kanjiDisplay.copyWith(
+                    fontSize: 100,
+                    color: AppColors.white,
                   ),
                 ),
               ),

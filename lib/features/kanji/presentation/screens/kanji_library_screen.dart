@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import 'package:mobile/presentation/navigation/app_routes.dart';
 import '../../../../core/models/progress_models.dart';
 import '../providers/kanji_library_provider.dart';
 import '../../../../shared/widgets/progress_card.dart';
@@ -11,12 +12,13 @@ import '../widgets/kanji_library_app_bar.dart';
 import '../widgets/kanji_library_search_bar.dart';
 import '../widgets/kanji_level_selector.dart';
 import '../widgets/kanji_grid_view.dart';
-import '../../../../presentation/screens/review_screen.dart';
-import '../../../../presentation/providers/learning_path_provider.dart';
-import '../../../../presentation/screens/learning_path_screen.dart';
+import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
+import 'package:mobile/features/review/domain/entities/review_item.dart';
 
 class KanjiLibraryScreen extends ConsumerWidget {
-  const KanjiLibraryScreen({super.key});
+  final ValueChanged<LearningCategory>? onOpenLearningCategory;
+
+  const KanjiLibraryScreen({super.key, this.onOpenLearningCategory});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -78,7 +80,7 @@ class KanjiLibraryScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: KanjiActionButton(
+                    child: LibraryActionButton(
                       icon: Icons.auto_stories_rounded,
                       label: 'Ôn tập',
                       sublabel: totalDueCountAsync.when(
@@ -92,12 +94,12 @@ class KanjiLibraryScreen extends ConsumerWidget {
                       ),
                       color: AppColors.terracotta,
                       onTap: () {
-                        final dueCards = dueCardsAsync.value;
+                        final dueCards = dueCardsAsync.valueOrNull;
                         if (dueCards != null && dueCards.isNotEmpty) {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(
-                              builder: (_) => ReviewScreen(cards: dueCards),
+                            AppRoutes.review(
+                              dueCards.map(ReviewItem.fromKanji).toList(),
                             ),
                           );
                         } else if (dueCards != null) {
@@ -112,21 +114,23 @@ class KanjiLibraryScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: AppSpacing.sp12),
                   Expanded(
-                    child: KanjiActionButton(
+                    child: LibraryActionButton(
                       icon: Icons.add_circle_outline_rounded,
                       label: 'Bài mới',
                       sublabel: 'Lộ trình học',
                       color: AppColors.mossGreen,
                       onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LearningPathScreen(
-                              isNavBarMode: true,
+                        final openLearningCategory = onOpenLearningCategory;
+                        if (openLearningCategory != null) {
+                          openLearningCategory(LearningCategory.kanji);
+                        } else {
+                          Navigator.push(
+                            context,
+                            AppRoutes.learningPath(
                               initialCategory: LearningCategory.kanji,
                             ),
-                          ),
-                        );
+                          );
+                        }
                       },
                     ),
                   ),
@@ -135,7 +139,7 @@ class KanjiLibraryScreen extends ConsumerWidget {
             ),
           ),
 
-          const KanjiLibrarySearchBar(),
+          const SliverToBoxAdapter(child: KanjiLibrarySearchBar()),
 
           SliverToBoxAdapter(
             child: Padding(
@@ -146,7 +150,9 @@ class KanjiLibraryScreen extends ConsumerWidget {
                 AppSpacing.sp4,
               ),
               child: Text(
-                selectedLevel == null ? 'Tất cả chữ Hán' : 'Chữ Hán N$selectedLevel',
+                selectedLevel == null
+                    ? 'Tất cả chữ Hán'
+                    : 'Chữ Hán N$selectedLevel',
                 style: AppTypography.bodyMBold.copyWith(
                   color: AppColors.slateGrey,
                 ),
@@ -156,9 +162,7 @@ class KanjiLibraryScreen extends ConsumerWidget {
 
           const KanjiGridView(),
 
-          const SliverToBoxAdapter(
-            child: SizedBox(height: AppSpacing.sp48),
-          ),
+          const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.sp48)),
         ],
       ),
     );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../providers/vocabulary_library_provider.dart';
 
 class VocabularyLevelSelector extends ConsumerWidget {
@@ -29,13 +30,24 @@ class VocabularyLevelSelector extends ConsumerWidget {
               label: Text(label),
               selected: isSelected,
               selectedColor: AppColors.waterBlue.withValues(alpha: 0.2),
-              labelStyle: TextStyle(
+              labelStyle: AppTypography.label.copyWith(
                 color: isSelected ? AppColors.waterBlue : AppColors.slateGrey,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
               onSelected: (selected) {
-                ref.read(vocabularyLevelFilterProvider.notifier).state = selected ? level : null;
+                ref.read(vocabularyLevelFilterProvider.notifier).state =
+                    selected ? level : null;
               },
+              backgroundColor: AppColors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+                side: BorderSide(
+                  color: isSelected
+                      ? AppColors.waterBlue
+                      : AppColors.slateLight.withValues(alpha: 0.3),
+                ),
+              ),
+              showCheckmark: false,
             ),
           );
         },

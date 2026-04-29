@@ -2,27 +2,31 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _notifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notifications =
+      FlutterLocalNotificationsPlugin();
 
   Future<void> init() async {
     tz.initializeTimeZones();
-    
-    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const InitializationSettings settings = InitializationSettings(android: androidSettings);
-    
-    // Explicitly using named parameter 'settings' as required by the analyzer error
+
+    const androidSettings = AndroidInitializationSettings(
+      '@mipmap/ic_launcher',
+    );
+    const settings = InitializationSettings(android: androidSettings);
+
     await _notifications.initialize(
       settings: settings,
       onDidReceiveNotificationResponse: (NotificationResponse response) {},
     );
   }
 
-  Future<void> scheduleDailyReminder({required int hour, required int minute}) async {
-    // Explicitly using named parameters as required by the analyzer error
+  Future<void> scheduleDailyReminder({
+    required int hour,
+    required int minute,
+  }) async {
     await _notifications.show(
       id: 0,
-      title: 'Chào buổi sáng!',
-      body: 'Đến lúc học tiếng Nhật rồi.',
+      title: 'Đến giờ học rồi',
+      body: 'Dành vài phút ôn tiếng Nhật hôm nay nhé.',
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_reminder',
@@ -34,4 +38,7 @@ class NotificationService {
     );
   }
 
+  Future<void> cancelDailyReminder() {
+    return _notifications.cancel(id: 0);
+  }
 }

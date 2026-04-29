@@ -3,7 +3,7 @@ import '../../domain/entities/kanji_card.dart';
 import '../../../../core/providers/database_provider.dart';
 import '../../../../core/models/progress_models.dart';
 import 'kanji_repository_provider.dart';
-import '../../../../presentation/providers/study_event_provider.dart';
+import 'package:mobile/features/review/presentation/providers/study_event_provider.dart';
 import '../../../../core/srs/fsrs_engine.dart';
 
 // Removed databaseInitializerProvider as it moved to core/providers/database_provider.dart
@@ -68,10 +68,9 @@ final totalDueCountProvider = FutureProvider<int>((ref) async {
   return allDue.length;
 });
 
-final kanjiSearchResultsProvider = FutureProvider<List<KanjiCard>>((ref) async {
+final kanjiSearchResultsProvider = FutureProvider.family<List<KanjiCard>, String>((ref, query) async {
   await ref.watch(databaseInitializerProvider.future);
   final repo = ref.watch(kanjiRepositoryProvider);
-  final query = ref.watch(kanjiSearchQueryProvider);
   final jlptLevel = ref.watch(kanjiLevelFilterProvider);
   
   return repo.searchKanji(query, jlptLevel: jlptLevel);
@@ -110,7 +109,7 @@ final emitKanjiStudyEventProvider = Provider<void Function(String cardId, int ra
       ref.invalidate(kanjiListProvider);
       ref.invalidate(dueKanjiCardsProvider);
       ref.invalidate(totalDueCountProvider);
-      ref.invalidate(kanjiSearchResultsProvider);
+      ref.invalidate(kanjiSearchResultsProvider(ref.read(kanjiSearchQueryProvider)));
 
       // 4. Emit the event for UI effects
       eventController.addEvent(StudyEvent(

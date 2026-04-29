@@ -102,7 +102,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 8;
+  int get schemaVersion => 9;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -118,17 +118,16 @@ class AppDatabase extends _$AppDatabase {
           // Create triggers for FTS5
           await customStatement('''
             CREATE TRIGGER kanji_card_insert AFTER INSERT ON kanji_card_table BEGIN
+              DELETE FROM kanji_search_table WHERE id = new.id;
               INSERT INTO kanji_search_table (id, meanings, onyomi, kunyomi)
               VALUES (new.id, new.meanings, new.onyomi, new.kunyomi);
             END;
           ''');
           await customStatement('''
             CREATE TRIGGER kanji_card_update AFTER UPDATE ON kanji_card_table BEGIN
-              UPDATE kanji_search_table SET 
-                meanings = new.meanings,
-                onyomi = new.onyomi,
-                kunyomi = new.kunyomi
-              WHERE id = new.id;
+              DELETE FROM kanji_search_table WHERE id = new.id;
+              INSERT INTO kanji_search_table (id, meanings, onyomi, kunyomi)
+              VALUES (new.id, new.meanings, new.onyomi, new.kunyomi);
             END;
           ''');
           await customStatement('''
@@ -153,17 +152,16 @@ class AppDatabase extends _$AppDatabase {
             // Add triggers
             await customStatement('''
               CREATE TRIGGER kanji_card_insert AFTER INSERT ON kanji_card_table BEGIN
+                DELETE FROM kanji_search_table WHERE id = new.id;
                 INSERT INTO kanji_search_table (id, meanings, onyomi, kunyomi)
                 VALUES (new.id, new.meanings, new.onyomi, new.kunyomi);
               END;
             ''');
             await customStatement('''
               CREATE TRIGGER kanji_card_update AFTER UPDATE ON kanji_card_table BEGIN
-                UPDATE kanji_search_table SET 
-                  meanings = new.meanings,
-                  onyomi = new.onyomi,
-                  kunyomi = new.kunyomi
-                WHERE id = new.id;
+                DELETE FROM kanji_search_table WHERE id = new.id;
+                INSERT INTO kanji_search_table (id, meanings, onyomi, kunyomi)
+                VALUES (new.id, new.meanings, new.onyomi, new.kunyomi);
               END;
             ''');
             await customStatement('''
@@ -182,6 +180,34 @@ class AppDatabase extends _$AppDatabase {
             await _createTableIfNotExist(m, grammarTable);
             await _createTableIfNotExist(m, lessonTable);
             await _createTableIfNotExist(m, studyLogTable);
+          }
+          if (from < 9) {
+            // Recreate triggers with proper Unicode handling (DELETE then INSERT pattern)
+            try {
+              await customStatement('DROP TRIGGER IF EXISTS kanji_card_insert;');
+              await customStatement('DROP TRIGGER IF EXISTS kanji_card_update;');
+              await customStatement('DROP TRIGGER IF EXISTS kanji_card_delete;');
+            } catch (_) {}
+
+            await customStatement('''
+              CREATE TRIGGER kanji_card_insert AFTER INSERT ON kanji_card_table BEGIN
+                DELETE FROM kanji_search_table WHERE id = new.id;
+                INSERT INTO kanji_search_table (id, meanings, onyomi, kunyomi)
+                VALUES (new.id, new.meanings, new.onyomi, new.kunyomi);
+              END;
+            ''');
+            await customStatement('''
+              CREATE TRIGGER kanji_card_update AFTER UPDATE ON kanji_card_table BEGIN
+                DELETE FROM kanji_search_table WHERE id = new.id;
+                INSERT INTO kanji_search_table (id, meanings, onyomi, kunyomi)
+                VALUES (new.id, new.meanings, new.onyomi, new.kunyomi);
+              END;
+            ''');
+            await customStatement('''
+              CREATE TRIGGER kanji_card_delete AFTER DELETE ON kanji_card_table BEGIN
+                DELETE FROM kanji_search_table WHERE id = old.id;
+              END;
+            ''');
           }
         },
       );
@@ -270,7 +296,7 @@ class AppDatabase extends _$AppDatabase {
             state: Value(updatedItem.state),
           ),
         );
-      } else if (itemType == 'vocab') {
+      } else if (itemType == 'vocab' || itemType == 'vocabulary') {
         await (update(vocabularyTable)..where((t) => t.id.equals(updatedItem.id))).write(
           VocabularyTableCompanion(
             stability: Value(updatedItem.stability),
@@ -306,6 +332,57 @@ class AppDatabase extends _$AppDatabase {
       }
 
       // 4. Update Daily Study Log count
+      final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
+      final logList = await (select(studyLogTable)..where((t) => t.date.equals(today))).get();
+      if (logList.isNotEmpty) {
+        await (update(studyLogTable)..where((t) => t.date.equals(today))).write(
+          StudyLogTableCompanion(count: Value(logList.first.count + 1)),
+        );
+      } else {
+        await into(studyLogTable).insert(StudyLogTableCompanion.insert(
+          date: today,
+          count: const Value(1),
+        ));
+      }
+
+      return true;
+    });
+  }
+
+  Future<bool> submitGrammarReview({
+    required String grammarId,
+    required int rating,
+    required int durationMs,
+    required int expGain,
+    required int waterGain,
+    required int sunGain,
+  }) async {
+    return transaction(() async {
+      if (rating >= 3) {
+        await (update(grammarTable)..where((t) => t.id.equals(grammarId))).write(
+          GrammarTableCompanion(isLearned: const Value(true)),
+        );
+      }
+
+      await into(reviewLogTable).insert(ReviewLogTableCompanion.insert(
+        itemId: grammarId,
+        itemType: 'grammar',
+        rating: rating,
+        reviewTime: DateTime.now(),
+        durationMs: Value(durationMs),
+      ));
+
+      final gardenList = await select(zenGardenTable).get();
+      if (gardenList.isNotEmpty) {
+        final current = gardenList.first;
+        await update(zenGardenTable).replace(current.copyWith(
+          exp: current.exp + expGain,
+          water: current.water + waterGain,
+          sunlight: current.sunlight + sunGain,
+          lastLogin: Value(DateTime.now()),
+        ));
+      }
+
       final today = DateTime(DateTime.now().year, DateTime.now().month, DateTime.now().day);
       final logList = await (select(studyLogTable)..where((t) => t.date.equals(today))).get();
       if (logList.isNotEmpty) {

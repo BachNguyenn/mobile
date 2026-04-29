@@ -30,8 +30,9 @@ class KanjiLevelSelector extends ConsumerWidget {
               label: Text(label),
               selected: isSelected,
               onSelected: (selected) {
-                ref.read(kanjiLevelFilterProvider.notifier).state =
-                    selected ? level : null;
+                ref.read(kanjiLevelFilterProvider.notifier).state = selected
+                    ? level
+                    : null;
               },
               selectedColor: AppColors.mossGreen.withValues(alpha: 0.2),
               labelStyle: AppTypography.label.copyWith(

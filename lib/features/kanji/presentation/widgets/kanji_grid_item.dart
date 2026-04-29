@@ -12,6 +12,14 @@ class KanjiGridItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final meanings = kanji.meanings
+        .split(',')
+        .map((meaning) => meaning.trim())
+        .where((meaning) => meaning.isNotEmpty);
+    final primaryMeaning = meanings.isNotEmpty
+        ? meanings.first
+        : 'Chưa có nghĩa';
+
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
@@ -22,9 +30,7 @@ class KanjiGridItem extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(
           color: AppColors.white,
-          borderRadius: BorderRadius.circular(
-            AppSpacing.radiusS,
-          ),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
           border: Border.all(
             color: AppColors.slateLight.withValues(alpha: 0.2),
           ),
@@ -41,17 +47,13 @@ class KanjiGridItem extends StatelessWidget {
           children: [
             Text(
               kanji.kanji,
-              style: AppTypography.kanjiDisplay.copyWith(
-                fontSize: 28,
-              ),
+              style: AppTypography.kanjiDisplay.copyWith(fontSize: 28),
             ),
             const SizedBox(height: AppSpacing.sp4),
             Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sp4,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp4),
               child: Text(
-                kanji.meanings.split(',').first,
+                primaryMeaning,
                 style: AppTypography.labelS.copyWith(
                   color: AppColors.slateMuted,
                 ),

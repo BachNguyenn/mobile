@@ -14,7 +14,10 @@ class VocabularySearchBar extends ConsumerWidget {
           ref.read(vocabularySearchQueryProvider.notifier).state = value,
       decoration: InputDecoration(
         hintText: 'Tìm kiếm từ vựng, nghĩa...',
-        prefixIcon: const Icon(Icons.search_rounded, color: AppColors.waterBlue),
+        prefixIcon: const Icon(
+          Icons.search_rounded,
+          color: AppColors.waterBlue,
+        ),
         filled: true,
         fillColor: AppColors.white,
         border: OutlineInputBorder(
@@ -29,10 +32,7 @@ class VocabularySearchBar extends ConsumerWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-          borderSide: const BorderSide(
-            color: AppColors.waterBlue,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.waterBlue, width: 1.5),
         ),
       ),
     );

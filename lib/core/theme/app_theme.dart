@@ -4,74 +4,77 @@ import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'app_spacing.dart';
 
-/// ThemeData tổng hợp cho Japandi Design System
-///
-/// Sử dụng: `MaterialApp(theme: AppTheme.light)`
 abstract final class AppTheme {
-  static ThemeData get light {
+  static ThemeData get light => _buildTheme(Brightness.light);
+
+  static ThemeData get dark => _buildTheme(Brightness.dark);
+
+  static ThemeData _buildTheme(Brightness brightness) {
+    final isDark = brightness == Brightness.dark;
+    final surface = isDark ? const Color(0xFF171A1F) : AppColors.cream;
+    final card = isDark ? const Color(0xFF22262D) : AppColors.white;
+    final text = isDark ? const Color(0xFFE8EDF2) : AppColors.ink;
+    final body = isDark ? const Color(0xFFC7D0DA) : AppColors.slateGrey;
+    final muted = isDark ? const Color(0xFF97A3AF) : AppColors.slateMuted;
+    final border = isDark ? const Color(0xFF3A414A) : AppColors.slateLight;
+
     final colorScheme = ColorScheme.fromSeed(
       seedColor: AppColors.mossGreen,
       primary: AppColors.mossGreen,
       onPrimary: AppColors.white,
       secondary: AppColors.terracotta,
       onSecondary: AppColors.white,
-      surface: AppColors.cream,
-      onSurface: AppColors.ink,
+      surface: surface,
+      onSurface: text,
       error: AppColors.error,
       onError: AppColors.white,
-      brightness: Brightness.light,
+      brightness: brightness,
     );
 
     return ThemeData(
       useMaterial3: true,
+      brightness: brightness,
       colorScheme: colorScheme,
-      scaffoldBackgroundColor: AppColors.cream,
+      scaffoldBackgroundColor: surface,
+      cardColor: card,
       textTheme: GoogleFonts.notoSansTextTheme().copyWith(
         headlineLarge: GoogleFonts.notoSerif(
           fontSize: 24,
           fontWeight: FontWeight.w700,
-          color: AppColors.ink,
+          color: text,
         ),
         headlineMedium: GoogleFonts.notoSerif(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: AppColors.slateGrey,
+          color: body,
         ),
-        bodyLarge: GoogleFonts.notoSans(
-          fontSize: 16,
-          color: AppColors.slateGrey,
-        ),
-        bodyMedium: GoogleFonts.notoSans(
-          fontSize: 14,
-          color: AppColors.slateGrey,
-        ),
+        bodyLarge: GoogleFonts.notoSans(fontSize: 16, color: body),
+        bodyMedium: GoogleFonts.notoSans(fontSize: 14, color: body),
         labelSmall: GoogleFonts.notoSans(
           fontSize: 11,
           fontWeight: FontWeight.w500,
-          color: AppColors.slateMuted,
+          color: muted,
         ),
       ),
-
-      // ─── AppBar ──────────────────────────────────────────
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.cream,
-        foregroundColor: AppColors.ink,
+        backgroundColor: surface,
+        foregroundColor: text,
         elevation: 0,
         scrolledUnderElevation: 0.5,
         centerTitle: false,
-        systemOverlayStyle: SystemUiOverlayStyle.dark,
+        systemOverlayStyle: isDark
+            ? SystemUiOverlayStyle.light
+            : SystemUiOverlayStyle.dark,
         titleTextStyle: GoogleFonts.notoSerif(
           fontSize: 20,
           fontWeight: FontWeight.w600,
-          color: AppColors.ink,
+          color: text,
         ),
       ),
-
-      // ─── Bottom Navigation ───────────────────────────────
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
-        backgroundColor: AppColors.white,
+        backgroundColor: card,
         selectedItemColor: AppColors.mossGreen,
-        unselectedItemColor: AppColors.slateLight,
+        unselectedItemColor: muted,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
         showSelectedLabels: true,
@@ -85,19 +88,15 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w500,
         ),
       ),
-
-      // ─── Card ────────────────────────────────────────────
       cardTheme: CardThemeData(
-        color: AppColors.white,
+        color: card,
         elevation: AppSpacing.elevationS,
-        shadowColor: AppColors.ink.withValues(alpha: 0.06),
+        shadowColor: Colors.black.withValues(alpha: isDark ? 0.25 : 0.06),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         ),
         margin: EdgeInsets.zero,
       ),
-
-      // ─── ElevatedButton ──────────────────────────────────
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.mossGreen,
@@ -116,8 +115,6 @@ abstract final class AppTheme {
           ),
         ),
       ),
-
-      // ─── OutlinedButton ──────────────────────────────────
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.mossGreen,
@@ -131,11 +128,9 @@ abstract final class AppTheme {
           ),
         ),
       ),
-
-      // ─── TextField / Input ───────────────────────────────
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: card,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sp16,
           vertical: AppSpacing.sp12,
@@ -146,43 +141,32 @@ abstract final class AppTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-          borderSide: BorderSide(color: AppColors.slateLight.withValues(alpha: 0.5)),
+          borderSide: BorderSide(color: border.withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
           borderSide: const BorderSide(color: AppColors.mossGreen, width: 1.5),
         ),
-        hintStyle: GoogleFonts.notoSans(
-          fontSize: 14,
-          color: AppColors.slateMuted,
-        ),
-        prefixIconColor: AppColors.slateMuted,
+        hintStyle: GoogleFonts.notoSans(fontSize: 14, color: muted),
+        prefixIconColor: muted,
       ),
-
-      // ─── Divider ─────────────────────────────────────────
-      dividerTheme: const DividerThemeData(
-        color: AppColors.slateLight,
-        thickness: 0.5,
-        space: 0,
-      ),
-
-      // ─── ProgressIndicator ───────────────────────────────
-      progressIndicatorTheme: const ProgressIndicatorThemeData(
+      dividerTheme: DividerThemeData(color: border, thickness: 0.5, space: 0),
+      progressIndicatorTheme: ProgressIndicatorThemeData(
         color: AppColors.mossGreen,
-        linearTrackColor: AppColors.creamDark,
+        linearTrackColor: isDark
+            ? const Color(0xFF2C3138)
+            : AppColors.creamDark,
         linearMinHeight: 6,
       ),
-
-      // ─── BottomSheet ─────────────────────────────────────
-      bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AppColors.white,
-        shape: RoundedRectangleBorder(
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: card,
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppSpacing.radiusL),
           ),
         ),
         showDragHandle: true,
-        dragHandleColor: AppColors.slateLight,
+        dragHandleColor: border,
       ),
     );
   }

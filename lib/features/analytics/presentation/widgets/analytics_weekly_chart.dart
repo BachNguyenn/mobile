@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 
 class AnalyticsWeeklyChart extends StatelessWidget {
   final List<double> weeklyData;
@@ -11,14 +14,15 @@ class AnalyticsWeeklyChart extends StatelessWidget {
 
     return Container(
       height: 200,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.03),
-            blurRadius: 10,
+            color: AppColors.ink.withValues(alpha: 0.04),
+            blurRadius: 12,
             offset: const Offset(0, 4),
           ),
         ],
@@ -27,7 +31,8 @@ class AnalyticsWeeklyChart extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: List.generate(days.length, (index) {
-          return _Bar(day: days[index], percent: weeklyData[index]);
+          final percent = index < weeklyData.length ? weeklyData[index] : 0.0;
+          return _Bar(day: days[index], percent: percent);
         }),
       ),
     );
@@ -42,19 +47,21 @@ class _Bar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final value = percent.clamp(0.0, 1.0).toDouble();
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
         Container(
           width: 12,
-          height: 140 * percent,
+          height: 140 * value,
           decoration: BoxDecoration(
-            color: const Color(0xFF8A9A5B),
+            color: AppColors.mossGreen,
             borderRadius: BorderRadius.circular(6),
           ),
         ),
-        const SizedBox(height: 8),
-        Text(day, style: const TextStyle(fontSize: 10, color: Colors.grey)),
+        const SizedBox(height: AppSpacing.sp8),
+        Text(day, style: AppTypography.labelS),
       ],
     );
   }

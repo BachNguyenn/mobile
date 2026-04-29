@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../core/theme/app_colors.dart';
-import '../../core/theme/app_spacing.dart';
-import '../../core/theme/app_typography.dart';
+import 'package:mobile/core/theme/app_colors.dart';
+import 'package:mobile/core/theme/app_spacing.dart';
+import 'package:mobile/core/theme/app_typography.dart';
 
-import 'home_page.dart';
-import '../../features/kanji/presentation/screens/kanji_library_screen.dart';
-import '../../features/vocabulary/presentation/screens/vocabulary_library_screen.dart';
-import '../../features/grammar/presentation/screens/grammar_library_screen.dart';
-import 'learning_path_screen.dart';
+import 'package:mobile/features/home/presentation/screens/home_page.dart';
+import 'package:mobile/features/kanji/presentation/screens/kanji_library_screen.dart';
+import 'package:mobile/features/vocabulary/presentation/screens/vocabulary_library_screen.dart';
+import 'package:mobile/features/grammar/presentation/screens/grammar_library_screen.dart';
+import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
+import 'package:mobile/features/learning/presentation/screens/learning_path_screen.dart';
+import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
 
 /// Main Navigation — Bottom Navigation Bar với 4 Tab (Premium Redesign)
 ///
@@ -38,6 +40,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   late final AnimationController _pillController;
   late Animation<double> _pillAnimation;
   int _previousIndex = 0;
+  LearningCategory _learningCategory = LearningCategory.mixed;
 
   @override
   void initState() {
@@ -47,7 +50,10 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
       duration: const Duration(milliseconds: 350),
     );
     _pillAnimation = Tween<double>(begin: 0.0, end: 0.0).animate(
-      CurvedAnimation(parent: _pillController, curve: Curves.easeInOutCubicEmphasized),
+      CurvedAnimation(
+        parent: _pillController,
+        curve: Curves.easeInOutCubicEmphasized,
+      ),
     );
   }
 
@@ -57,49 +63,103 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
     super.dispose();
   }
 
-  void _switchToTab(int index) {
-    if (index < 0 || index >= 5 || index == _selectedIndex) return;
+  void _openTab(int index, {bool resetLearningCategory = true}) {
+    if (index < 0 || index >= 5) return;
+    final settings = ref.read(settingsProvider).valueOrNull;
+    final targetLearningCategory = resetLearningCategory && index == 1
+        ? settings?.defaultLearningCategory ?? LearningCategory.mixed
+        : _learningCategory;
+    if (index == _selectedIndex &&
+        targetLearningCategory == _learningCategory) {
+      return;
+    }
+
     setState(() {
       _previousIndex = _selectedIndex;
       _selectedIndex = index;
+      _learningCategory = targetLearningCategory;
     });
+    if (index == 1 &&
+        ref.read(learningCategoryProvider) != targetLearningCategory) {
+      ref.read(learningCategoryProvider.notifier).state =
+          targetLearningCategory;
+    }
     _animatePill(_previousIndex, index);
-    HapticFeedback.selectionClick();
+    _triggerHaptic();
+  }
+
+  void _openLearningCategory(LearningCategory category) {
+    final previousIndex = _selectedIndex;
+    setState(() {
+      _previousIndex = _selectedIndex;
+      _selectedIndex = 1;
+      _learningCategory = category;
+    });
+    if (ref.read(learningCategoryProvider) != category) {
+      ref.read(learningCategoryProvider.notifier).state = category;
+    }
+    _animatePill(previousIndex, 1);
+    _triggerHaptic();
+  }
+
+  void _triggerHaptic() {
+    final settings = ref.read(settingsProvider).valueOrNull;
+    if (settings?.hapticsEnabled ?? AppSettings.defaults.hapticsEnabled) {
+      HapticFeedback.selectionClick();
+    }
   }
 
   void _animatePill(int from, int to) {
-    _pillAnimation = Tween<double>(
-      begin: from.toDouble(),
-      end: to.toDouble(),
-    ).animate(
-      CurvedAnimation(parent: _pillController, curve: Curves.easeInOutCubicEmphasized),
-    );
+    _pillAnimation = Tween<double>(begin: from.toDouble(), end: to.toDouble())
+        .animate(
+          CurvedAnimation(
+            parent: _pillController,
+            curve: Curves.easeInOutCubicEmphasized,
+          ),
+        );
     _pillController.forward(from: 0);
   }
 
-  List<Widget> get _screens => [
-        HomePage(onSwitchTab: _switchToTab),
-        const LearningPathScreen(isNavBarMode: true),
-        const VocabularyLibraryScreen(),
-        const GrammarLibraryScreen(),
-        const KanjiLibraryScreen(),
-      ];
+  Widget _buildCurrentScreen() {
+    switch (_selectedIndex) {
+      case 0:
+        return HomePage(
+          onOpenTab: _openTab,
+          onOpenLearningCategory: _openLearningCategory,
+        );
+      case 1:
+        return LearningPathScreen(
+          isNavBarMode: true,
+          initialCategory: _learningCategory,
+        );
+      case 2:
+        return VocabularyLibraryScreen(
+          onOpenLearningCategory: _openLearningCategory,
+        );
+      case 3:
+        return GrammarLibraryScreen(
+          onOpenLearningCategory: _openLearningCategory,
+        );
+      case 4:
+        return KanjiLibraryScreen(
+          onOpenLearningCategory: _openLearningCategory,
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _screens,
-      ),
+      body: _buildCurrentScreen(),
 
       // ── Premium Bottom Navigation Bar ──────────────────────
       bottomNavigationBar: _PremiumBottomNav(
         selectedIndex: _selectedIndex,
         pillAnimation: _pillAnimation,
         pillController: _pillController,
-        onItemTap: _switchToTab,
+        onItemTap: _openTab,
       ),
     );
   }
@@ -190,12 +250,16 @@ class _PremiumBottomNav extends StatelessWidget {
                     animation: pillController,
                     builder: (context, _) {
                       final currentPos = pillAnimation.value;
-                      final pillLeft = currentPos * itemWidth +
+                      final pillLeft =
+                          currentPos * itemWidth +
                           (itemWidth - AppSpacing.navBarItemMinWidth) / 2;
 
                       return Positioned(
                         left: pillLeft,
-                        top: (AppSpacing.bottomNavHeight - AppSpacing.navBarPillHeight) / 2,
+                        top:
+                            (AppSpacing.bottomNavHeight -
+                                AppSpacing.navBarPillHeight) /
+                            2,
                         child: Container(
                           width: AppSpacing.navBarItemMinWidth,
                           height: AppSpacing.navBarPillHeight,
@@ -261,10 +325,7 @@ class _NavItem extends StatelessWidget {
               duration: const Duration(milliseconds: 250),
               curve: Curves.easeOutBack,
               builder: (context, scale, child) {
-                return Transform.scale(
-                  scale: scale,
-                  child: child,
-                );
+                return Transform.scale(scale: scale, child: child);
               },
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
@@ -272,7 +333,9 @@ class _NavItem extends StatelessWidget {
                   isSelected ? data.activeIcon : data.icon,
                   key: ValueKey('${data.label}_$isSelected'),
                   size: 24,
-                  color: isSelected ? AppColors.mossGreen : AppColors.slateMuted,
+                  color: isSelected
+                      ? AppColors.mossGreen
+                      : AppColors.slateMuted,
                 ),
               ),
             ),

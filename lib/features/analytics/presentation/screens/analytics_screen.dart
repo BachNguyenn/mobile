@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../providers/analytics_provider.dart';
 import '../widgets/analytics_stat_card.dart';
 import '../widgets/analytics_weekly_chart.dart';
@@ -13,35 +16,51 @@ class AnalyticsScreen extends ConsumerWidget {
     final analyticsAsync = ref.watch(analyticsProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFDFCF8),
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        title: const Text('Thống kê học tập', style: TextStyle(fontFamily: 'Serif')),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
+        title: Text('Thống kê học tập', style: AppTypography.headingM),
       ),
       body: analyticsAsync.when(
         data: (data) => SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.all(AppSpacing.sp24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 children: [
-                  AnalyticsStatCard(label: 'Đã học', value: data.learned.toString(), color: Colors.green),
-                  const SizedBox(width: 16),
-                  AnalyticsStatCard(label: 'Đang nhớ', value: data.remembering.toString(), color: Colors.blue),
-                  const SizedBox(width: 16),
-                  AnalyticsStatCard(label: 'Chưa học', value: data.notLearned.toString(), color: Colors.grey),
+                  Expanded(
+                    child: AnalyticsStatCard(
+                      label: 'Đã học',
+                      value: data.learned.toString(),
+                      color: AppColors.success,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sp12),
+                  Expanded(
+                    child: AnalyticsStatCard(
+                      label: 'Đang nhớ',
+                      value: data.remembering.toString(),
+                      color: AppColors.waterBlue,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sp12),
+                  Expanded(
+                    child: AnalyticsStatCard(
+                      label: 'Chưa học',
+                      value: data.notLearned.toString(),
+                      color: AppColors.slateMuted,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 32),
-              const Text(
+              const SizedBox(height: AppSpacing.sp32),
+              Text(
                 'Tiến độ 7 ngày qua',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                style: AppTypography.headingS.copyWith(color: AppColors.ink),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: AppSpacing.sp16),
               AnalyticsWeeklyChart(weeklyData: data.weeklyData),
-              const SizedBox(height: 32),
+              const SizedBox(height: AppSpacing.sp32),
               AnalyticsJlptProgress(progress: data.jlptProgress),
             ],
           ),

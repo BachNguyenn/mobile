@@ -64,6 +64,25 @@ class GrammarRepositoryImpl implements GrammarRepository {
   }
 
   @override
+  Future<bool> submitReview({
+    required String grammarId,
+    required int rating,
+    required int durationMs,
+    required int expGain,
+    required int waterGain,
+    required int sunGain,
+  }) {
+    return _db.submitGrammarReview(
+      grammarId: grammarId,
+      rating: rating,
+      durationMs: durationMs,
+      expGain: expGain,
+      waterGain: waterGain,
+      sunGain: sunGain,
+    );
+  }
+
+  @override
   Future<List<GrammarPoint>> searchGrammar(String query, {int? jlptLevel}) async {
     final queryBuilder = _db.select(_db.grammarTable);
     if (query.isNotEmpty) {

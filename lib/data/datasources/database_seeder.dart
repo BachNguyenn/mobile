@@ -31,7 +31,7 @@ class DatabaseSeeder {
     for (final level in levels) {
       try {
         final ByteData bytes = await rootBundle.load('assets/data/$level/kanji.json');
-        final String response = utf8.decode(bytes.buffer.asUint8List(), allowMalformed: true);
+        final String response = utf8.decode(bytes.buffer.asUint8List());
         final List<dynamic> data = json.decode(response);
         
         final List<KanjiCard> cards = data.map((json) {
@@ -60,7 +60,7 @@ class DatabaseSeeder {
     for (final level in levels) {
       try {
         final ByteData bytes = await rootBundle.load('assets/data/$level/grammar.json');
-        final String response = utf8.decode(bytes.buffer.asUint8List(), allowMalformed: true);
+        final String response = utf8.decode(bytes.buffer.asUint8List());
         final List<dynamic> data = json.decode(response);
         
         final List<GrammarPoint> points = data.map((json) {
@@ -93,7 +93,7 @@ class DatabaseSeeder {
     for (final level in levels) {
       try {
         final ByteData bytes = await rootBundle.load('assets/data/$level/vocabulary.json');
-        final String response = utf8.decode(bytes.buffer.asUint8List(), allowMalformed: true);
+        final String response = utf8.decode(bytes.buffer.asUint8List());
         final List<dynamic> data = json.decode(response);
         
         final List<Vocabulary> vocabList = data.map((json) {
@@ -104,6 +104,7 @@ class DatabaseSeeder {
             reading: json['reading'] ?? '',
             meaning: json['meaning'] ?? '',
             jlptLevel: int.parse(level.replaceAll('n', '')),
+            nextReview: DateTime.now(),
           );
         }).toList();
         

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
-class KanjiActionButton extends StatelessWidget {
+class LibraryActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final String sublabel;
   final Color color;
   final VoidCallback onTap;
 
-  const KanjiActionButton({
+  const LibraryActionButton({
     super.key,
     required this.icon,
     required this.label,

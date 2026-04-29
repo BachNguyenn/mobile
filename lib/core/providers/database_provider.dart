@@ -12,28 +12,32 @@ final databaseProvider = Provider<AppDatabase>((ref) {
 });
 
 final databaseInitializerProvider = FutureProvider<void>((ref) async {
+  final db = ref.watch(databaseProvider);
   final kanjiRepo = ref.watch(kanjiRepositoryProvider);
   final grammarRepo = ref.watch(grammarRepositoryProvider);
   final vocabRepo = ref.watch(vocabularyRepositoryProvider);
-  
+
   final seeder = DatabaseSeeder(
     kanjiRepository: kanjiRepo,
     grammarRepository: grammarRepo,
     vocabularyRepository: vocabRepo,
   );
 
-  final kanjiList = await kanjiRepo.getAllCards();
-  if (kanjiList.isEmpty) {
+  final hasKanji =
+      await (db.select(db.kanjiCardTable)..limit(1)).getSingleOrNull() != null;
+  if (!hasKanji) {
     await seeder.seedKanjiData();
   }
 
-  final grammarList = await grammarRepo.getAllGrammarPoints();
-  if (grammarList.isEmpty) {
+  final hasGrammar =
+      await (db.select(db.grammarTable)..limit(1)).getSingleOrNull() != null;
+  if (!hasGrammar) {
     await seeder.seedGrammarData();
   }
 
-  final vocabList = await vocabRepo.getAllVocabulary();
-  if (vocabList.isEmpty) {
+  final hasVocab =
+      await (db.select(db.vocabularyTable)..limit(1)).getSingleOrNull() != null;
+  if (!hasVocab) {
     await seeder.seedVocabData();
   }
 });

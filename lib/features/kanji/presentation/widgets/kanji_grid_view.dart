@@ -11,7 +11,9 @@ class KanjiGridView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final searchResults = ref.watch(kanjiSearchResultsProvider);
+    final searchResults = ref.watch(
+      kanjiSearchResultsProvider(ref.watch(kanjiSearchQueryProvider)),
+    );
 
     return searchResults.when(
       data: (kanjis) {
@@ -39,9 +41,7 @@ class KanjiGridView extends ConsumerWidget {
           );
         }
         return SliverPadding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sp16,
-          ),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
           sliver: SliverGrid(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 4,
@@ -49,12 +49,9 @@ class KanjiGridView extends ConsumerWidget {
               crossAxisSpacing: AppSpacing.sp12,
               childAspectRatio: 0.8,
             ),
-            delegate: SliverChildBuilderDelegate(
-              (context, index) {
-                return KanjiGridItem(kanji: kanjis[index]);
-              },
-              childCount: kanjis.length,
-            ),
+            delegate: SliverChildBuilderDelegate((context, index) {
+              return KanjiGridItem(kanji: kanjis[index]);
+            }, childCount: kanjis.length),
           ),
         );
       },
@@ -64,9 +61,7 @@ class KanjiGridView extends ConsumerWidget {
         ),
       ),
       error: (err, stack) => SliverFillRemaining(
-        child: Center(
-          child: Text('Lỗi: $err', style: AppTypography.bodyM),
-        ),
+        child: Center(child: Text('Lỗi: $err', style: AppTypography.bodyM)),
       ),
     );
   }

@@ -8,14 +8,5 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
 });
 
 final authStateProvider = StreamProvider<User?>((ref) {
-  final repo = ref.watch(authRepositoryProvider);
-  return Stream<User?>.multi((controller) {
-    controller.add(repo.currentUser);
-    final subscription = repo.authStateChanges.listen(
-      controller.add,
-      onError: controller.addError,
-      onDone: controller.close,
-    );
-    controller.onCancel = subscription.cancel;
-  });
+  return ref.watch(authRepositoryProvider).authStateChanges;
 });

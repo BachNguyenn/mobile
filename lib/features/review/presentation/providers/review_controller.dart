@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/services/handwriting_service.dart';
 import 'package:mobile/features/grammar/presentation/providers/grammar_library_provider.dart';
@@ -9,7 +8,7 @@ import 'package:mobile/features/vocabulary/presentation/providers/vocabulary_lib
 class ReviewState {
   final int currentIndex;
   final bool showAnswer;
-  final List<List<Offset>> currentStrokes;
+  final List<List<HandwritingPoint>> currentStrokes;
   final String? recognizedText;
   final String? selectedChoice;
   final bool isFinished;
@@ -26,7 +25,7 @@ class ReviewState {
   ReviewState copyWith({
     int? currentIndex,
     bool? showAnswer,
-    List<List<Offset>>? currentStrokes,
+    List<List<HandwritingPoint>>? currentStrokes,
     String? recognizedText,
     String? selectedChoice,
     bool? isFinished,
@@ -36,21 +35,24 @@ class ReviewState {
       currentIndex: currentIndex ?? this.currentIndex,
       showAnswer: showAnswer ?? this.showAnswer,
       currentStrokes: currentStrokes ?? this.currentStrokes,
-      recognizedText: clearAnswerData ? null : recognizedText ?? this.recognizedText,
-      selectedChoice: clearAnswerData ? null : selectedChoice ?? this.selectedChoice,
+      recognizedText: clearAnswerData
+          ? null
+          : recognizedText ?? this.recognizedText,
+      selectedChoice: clearAnswerData
+          ? null
+          : selectedChoice ?? this.selectedChoice,
       isFinished: isFinished ?? this.isFinished,
     );
   }
 }
 
 class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
-
   @override
   ReviewState build(List<ReviewItem> arg) {
     return ReviewState();
   }
 
-  void onDrawingChanged(List<List<Offset>> strokes) {
+  void onDrawingChanged(List<List<HandwritingPoint>> strokes) {
     state = state.copyWith(currentStrokes: strokes);
   }
 
@@ -62,12 +64,11 @@ class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
   Future<void> handleCheck() async {
     final item = arg[state.currentIndex];
     final text = item.usesHandwriting
-        ? await ref.read(handwritingServiceProvider).recognize(state.currentStrokes)
+        ? await ref
+              .read(handwritingServiceProvider)
+              .recognize(state.currentStrokes)
         : state.selectedChoice;
-    state = state.copyWith(
-      recognizedText: text,
-      showAnswer: true,
-    );
+    state = state.copyWith(recognizedText: text, showAnswer: true);
   }
 
   void handleRating(int rating) {
@@ -104,5 +105,5 @@ class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
 
 final reviewControllerProvider =
     NotifierProvider.family<ReviewController, ReviewState, List<ReviewItem>>(
-  ReviewController.new,
-);
+      ReviewController.new,
+    );

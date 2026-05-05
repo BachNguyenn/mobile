@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/domain/entities/quiz_question.dart';
@@ -24,7 +23,7 @@ class LessonState {
   final bool isAnswerChecked;
   final bool isCorrect;
   final String? selectedAnswer;
-  final List<List<Offset>> currentStrokes;
+  final List<List<HandwritingPoint>> currentStrokes;
   final String? recognizedText;
   final bool isFinished;
   final bool isLoading;
@@ -43,7 +42,8 @@ class LessonState {
     this.correctAnswers = 0,
   });
 
-  double get progress => questions.isEmpty ? 0 : (currentIndex + 1) / questions.length;
+  double get progress =>
+      questions.isEmpty ? 0 : (currentIndex + 1) / questions.length;
 
   LessonState copyWith({
     List<QuizQuestion>? questions,
@@ -51,7 +51,7 @@ class LessonState {
     bool? isAnswerChecked,
     bool? isCorrect,
     Object? selectedAnswer = _unset,
-    List<List<Offset>>? currentStrokes,
+    List<List<HandwritingPoint>>? currentStrokes,
     Object? recognizedText = _unset,
     bool? isFinished,
     bool? isLoading,
@@ -62,11 +62,13 @@ class LessonState {
       currentIndex: currentIndex ?? this.currentIndex,
       isAnswerChecked: isAnswerChecked ?? this.isAnswerChecked,
       isCorrect: isCorrect ?? this.isCorrect,
-      selectedAnswer:
-          selectedAnswer == _unset ? this.selectedAnswer : selectedAnswer as String?,
+      selectedAnswer: selectedAnswer == _unset
+          ? this.selectedAnswer
+          : selectedAnswer as String?,
       currentStrokes: currentStrokes ?? this.currentStrokes,
-      recognizedText:
-          recognizedText == _unset ? this.recognizedText : recognizedText as String?,
+      recognizedText: recognizedText == _unset
+          ? this.recognizedText
+          : recognizedText as String?,
       isFinished: isFinished ?? this.isFinished,
       isLoading: isLoading ?? this.isLoading,
       correctAnswers: correctAnswers ?? this.correctAnswers,
@@ -98,9 +100,15 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
       final allVocab = results[1] as List<Vocabulary>;
       final allGrammar = results[2] as List<GrammarPoint>;
 
-      final lessonKanji = allKanji.where((k) => arg.kanjiIds.contains(k.id)).toList();
-      final lessonVocab = allVocab.where((v) => arg.vocabIds.contains(v.id)).toList();
-      final lessonGrammar = allGrammar.where((g) => arg.grammarIds.contains(g.id)).toList();
+      final lessonKanji = allKanji
+          .where((k) => arg.kanjiIds.contains(k.id))
+          .toList();
+      final lessonVocab = allVocab
+          .where((v) => arg.vocabIds.contains(v.id))
+          .toList();
+      final lessonGrammar = allGrammar
+          .where((g) => arg.grammarIds.contains(g.id))
+          .toList();
 
       final questions = LessonQuestionGenerator().generate(
         lessonKanji: lessonKanji,
@@ -111,10 +119,7 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
         allGrammar: allGrammar,
       );
 
-      state = state.copyWith(
-        questions: questions,
-        isLoading: false,
-      );
+      state = state.copyWith(questions: questions, isLoading: false);
     } catch (_) {
       state = state.copyWith(isLoading: false, questions: []);
     }
@@ -125,7 +130,7 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
     state = state.copyWith(selectedAnswer: answer);
   }
 
-  void onDrawingChanged(List<List<Offset>> strokes) {
+  void onDrawingChanged(List<List<HandwritingPoint>> strokes) {
     if (state.isAnswerChecked) return;
     state = state.copyWith(currentStrokes: strokes);
   }
@@ -137,13 +142,16 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
 
   void checkAnswer() async {
     if (state.isAnswerChecked) return;
-    
+
     final currentQ = state.questions[state.currentIndex];
     bool isCorrect = false;
 
     if (currentQ.type == QuizType.handwriting) {
-      final text = await ref.read(handwritingServiceProvider).recognize(state.currentStrokes);
-      isCorrect = (text == currentQ.answer);
+      final candidates = await ref
+          .read(handwritingServiceProvider)
+          .recognizeCandidates(state.currentStrokes);
+      final text = candidates.isEmpty ? null : candidates.first;
+      isCorrect = candidates.contains(currentQ.answer);
       state = state.copyWith(
         recognizedText: text,
         isCorrect: isCorrect,
@@ -193,7 +201,9 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
         currentStrokes: [],
       );
     } else {
-      await ref.read(learningPathProvider.notifier).toggleLessonCompletion(arg.id);
+      await ref
+          .read(learningPathProvider.notifier)
+          .toggleLessonCompletion(arg.id);
       ref.invalidate(learningPathProvider);
       ref.invalidate(homeProgressProvider);
       ref.invalidate(kanjiProgressProvider);
@@ -208,5 +218,5 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
 
 final lessonControllerProvider =
     NotifierProvider.family<LessonController, LessonState, Lesson>(
-  LessonController.new,
-);
+      LessonController.new,
+    );

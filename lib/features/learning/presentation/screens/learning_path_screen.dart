@@ -6,6 +6,10 @@ import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/presentation/screens/lesson_detail_screen.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_typography.dart';
+import 'package:mobile/core/theme/app_spacing.dart';
+import 'package:mobile/presentation/navigation/app_routes.dart';
+import 'package:mobile/shared/widgets/app_empty_state.dart';
+import 'package:mobile/shared/widgets/jlpt_level_selector.dart';
 
 class LearningPathScreen extends ConsumerStatefulWidget {
   final bool isNavBarMode;
@@ -59,48 +63,39 @@ class _LearningPathScreenState extends ConsumerState<LearningPathScreen> {
     final levelLessons = lessons; // Already filtered by level in provider
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       body: CustomScrollView(
         slivers: [
           _LearningPathAppBar(),
           SliverToBoxAdapter(
             child: Column(
               children: [
-                const SizedBox(height: 12),
-                _LevelSelector(),
+                const SizedBox(height: AppSpacing.sp12),
+                JlptLevelSelector(
+                  selectedLevel: ref.watch(selectedLevelProvider),
+                  accentColor: AppColors.mossGreen,
+                  onChanged: (level) {
+                    if (level != null) {
+                      ref.read(selectedLevelProvider.notifier).state = level;
+                    }
+                  },
+                  levels: const [5, 4, 3, 2, 1],
+                ),
                 if (!widget.isNavBarMode) ...[
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.sp12),
                   _CategorySelector(),
                 ],
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.sp12),
               ],
             ),
           ),
           if (levelLessons.isEmpty)
-            SliverFillRemaining(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.auto_stories_rounded,
-                      size: 48,
-                      color: AppColors.slateLight,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'Chưa có bài học nào cho trình độ này.',
-                      style: AppTypography.bodyM.copyWith(
-                        color: AppColors.slateMuted,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+            AppEmptyState.sliver(
+              icon: Icons.auto_stories_rounded,
+              message: 'Chưa có bài học nào cho trình độ này.',
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: 40),
+              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sp48),
               sliver: SliverList(
                 delegate: SliverChildBuilderDelegate((context, index) {
                   final lesson = levelLessons[index];
@@ -157,13 +152,22 @@ class _LearningPathAppBar extends ConsumerWidget {
     return SliverAppBar(
       floating: true,
       pinned: true,
-      backgroundColor: AppColors.cream,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       elevation: 0,
       centerTitle: true,
       title: Text(
         title,
-        style: AppTypography.headingM.copyWith(color: AppColors.slateGrey),
+        style: AppTypography.headingM.copyWith(color: Theme.of(context).colorScheme.onSurface),
       ),
+      actions: [
+        IconButton(
+          tooltip: 'Kiểm tra năng lực',
+          onPressed: () {
+            Navigator.push(context, AppRoutes.placementTest());
+          },
+          icon: const Icon(Icons.fact_check_rounded),
+        ),
+      ],
     );
   }
 }
@@ -177,7 +181,7 @@ class _CategorySelector extends ConsumerWidget {
       height: 40,
       child: ListView(
         scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp20),
         children: [
           _CategoryItem(
             label: 'Từ vựng',
@@ -222,13 +226,13 @@ class _CategoryItem extends ConsumerWidget {
       onTap: () => ref.read(learningCategoryProvider.notifier).state = category,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
+        margin: const EdgeInsets.only(right: AppSpacing.sp8),
+        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.mossGreen.withValues(alpha: 0.1)
               : Colors.white.withValues(alpha: 0.4),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           border: Border.all(
             color: isSelected
                 ? AppColors.mossGreen
@@ -250,55 +254,7 @@ class _CategoryItem extends ConsumerWidget {
   }
 }
 
-class _LevelSelector extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final selectedLevel = ref.watch(selectedLevelProvider);
 
-    return Container(
-      height: 44,
-      margin: const EdgeInsets.only(top: 8),
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: 5,
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        itemBuilder: (context, index) {
-          final level = 5 - index; // 5, 4, 3, 2, 1
-          final isSelected = selectedLevel == level;
-
-          return GestureDetector(
-            onTap: () => ref.read(selectedLevelProvider.notifier).state = level,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              margin: const EdgeInsets.only(right: 10),
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.mossGreen
-                    : Colors.white.withValues(alpha: 0.6),
-                borderRadius: BorderRadius.circular(22),
-                border: Border.all(
-                  color: isSelected
-                      ? AppColors.mossGreen
-                      : AppColors.slateLight.withValues(alpha: 0.2),
-                ),
-              ),
-              child: Center(
-                child: Text(
-                  'N$level',
-                  style: AppTypography.bodyMBold.copyWith(
-                    color: isSelected ? Colors.white : AppColors.slateGrey,
-                    fontSize: 14,
-                  ),
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-}
 
 class _PathNode extends StatelessWidget {
   final int index;
@@ -379,10 +335,10 @@ class _PathNode extends StatelessWidget {
 
   Widget _buildLessonTooltip() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp12, vertical: AppSpacing.sp8),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),

@@ -87,9 +87,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        backgroundColor: AppColors.cream,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),

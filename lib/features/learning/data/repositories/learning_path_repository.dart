@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:mobile/data/datasources/app_database.dart';
 import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
+import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 
 class LearningPathRepository {
   final AppDatabase _db;
@@ -15,6 +16,7 @@ class LearningPathRepository {
   Future<List<Lesson>> getLessons({
     required LearningCategory category,
     required int level,
+    LearningGoal goal = LearningGoal.jlpt,
   }) async {
     final data = await _loadPathData();
     final completedLessonRows = await _db.select(_db.lessonTable).get();
@@ -63,7 +65,8 @@ class LearningPathRepository {
       );
     }
 
-    return _withUnlockState(lessons);
+    final sorted = _sortLessonsForGoal(lessons, goal);
+    return _withUnlockState(sorted);
   }
 
   Future<void> setLessonCompletion(String id, bool isCompleted) async {
@@ -109,5 +112,22 @@ class LearningPathRepository {
           isUnlocked: i == 0 || lessons[i - 1].isCompleted,
         ),
     ];
+  }
+
+  List<Lesson> _sortLessonsForGoal(List<Lesson> lessons, LearningGoal goal) {
+    int scoreFor(Lesson lesson) {
+      switch (goal) {
+        case LearningGoal.jlpt:
+          return lesson.grammarIds.length + lesson.kanjiIds.length;
+        case LearningGoal.conversation:
+          return (lesson.vocabIds.length * 2) + lesson.grammarIds.length;
+        case LearningGoal.reading:
+          return (lesson.kanjiIds.length * 2) + lesson.vocabIds.length;
+      }
+    }
+
+    final sorted = List<Lesson>.from(lessons);
+    sorted.sort((a, b) => scoreFor(b).compareTo(scoreFor(a)));
+    return sorted;
   }
 }

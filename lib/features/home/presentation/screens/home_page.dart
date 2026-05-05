@@ -23,14 +23,37 @@ import 'package:mobile/presentation/widgets/zen_garden_2d_widget.dart';
 typedef TabSwitchCallback = void Function(int index);
 typedef LearningCategoryCallback = void Function(LearningCategory category);
 
-class HomePage extends ConsumerWidget {
+class HomePage extends ConsumerStatefulWidget {
   final TabSwitchCallback? onOpenTab;
   final LearningCategoryCallback? onOpenLearningCategory;
 
   const HomePage({super.key, this.onOpenTab, this.onOpenLearningCategory});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends ConsumerState<HomePage>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _staggerController;
+
+  @override
+  void initState() {
+    super.initState();
+    _staggerController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..forward();
+  }
+
+  @override
+  void dispose() {
+    _staggerController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final garden = ref.watch(gardenProvider);
     final progressAsync = ref.watch(homeProgressProvider);
     final authState = ref.watch(authStateProvider);
@@ -42,6 +65,26 @@ class HomePage extends ConsumerWidget {
           _buildContent(context, ref, garden, HomeProgress.empty, user),
       error: (e, _) =>
           _buildContent(context, ref, garden, HomeProgress.empty, user),
+    );
+  }
+
+  Widget _staggeredItem({required int index, required Widget child}) {
+    final delay = index * 0.12;
+    return AnimatedBuilder(
+      animation: _staggerController,
+      builder: (context, child) {
+        final progress =
+            ((_staggerController.value - delay) / 0.4).clamp(0.0, 1.0);
+        final curve = Curves.easeOutCubic.transform(progress);
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - curve)),
+          child: Opacity(
+            opacity: curve,
+            child: child,
+          ),
+        );
+      },
+      child: child,
     );
   }
 
@@ -90,111 +133,220 @@ class HomePage extends ConsumerWidget {
           ),
         ),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.sp24,
-              AppSpacing.sp20,
-              AppSpacing.sp24,
-              AppSpacing.sp8,
-            ),
-            child: DailyProgressCard(progress: progress),
-          ),
-        ),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.sp24,
-              AppSpacing.sp16,
-              AppSpacing.sp24,
-              AppSpacing.sp8,
-            ),
-            child: ZenGarden2DWidget(
-              garden: garden,
-              streak: progress.streak,
-              onTap: () {
-                Navigator.push(context, AppRoutes.garden());
-              },
+          child: _staggeredItem(
+            index: 0,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.sp24,
+                AppSpacing.sp20,
+                AppSpacing.sp24,
+                AppSpacing.sp8,
+              ),
+              child: DailyProgressCard(progress: progress),
             ),
           ),
         ),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.only(
-              top: AppSpacing.sp16,
-              bottom: AppSpacing.sp8,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: AppSpacing.paddingH24,
-                  child: Text('Hành động nhanh', style: AppTypography.headingM),
-                ),
-                const SizedBox(height: AppSpacing.sp12),
-                QuickActionChips(
-                  ref: ref,
-                  context: context,
-                  onOpenLearningCategory: onOpenLearningCategory,
-                ),
-              ],
+          child: _staggeredItem(
+            index: 1,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.sp24,
+                AppSpacing.sp16,
+                AppSpacing.sp24,
+                AppSpacing.sp8,
+              ),
+              child: ZenGarden2DWidget(
+                garden: garden,
+                streak: progress.streak,
+                onTap: () {
+                  Navigator.push(context, AppRoutes.garden());
+                },
+              ),
             ),
           ),
         ),
         SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(
-              AppSpacing.sp24,
-              AppSpacing.sp16,
-              AppSpacing.sp24,
-              AppSpacing.sp12,
+          child: _staggeredItem(
+            index: 2,
+            child: Padding(
+              padding: const EdgeInsets.only(
+                top: AppSpacing.sp16,
+                bottom: AppSpacing.sp8,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: AppSpacing.paddingH24,
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.flash_on_rounded,
+                          size: 18,
+                          color: AppColors.sunGold,
+                        ),
+                        const SizedBox(width: AppSpacing.sp8),
+                        Text(
+                          'Hành động nhanh',
+                          style: AppTypography.headingM,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: AppSpacing.sp12),
+                  QuickActionChips(
+                    ref: ref,
+                    context: context,
+                    onOpenLearningCategory: widget.onOpenLearningCategory,
+                  ),
+                ],
+              ),
             ),
-            child: Text('Bắt đầu học', style: AppTypography.headingM),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: _staggeredItem(
+            index: 3,
+            child: const _ZenDivider(),
+          ),
+        ),
+        SliverToBoxAdapter(
+          child: _staggeredItem(
+            index: 4,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.sp24,
+                AppSpacing.sp8,
+                AppSpacing.sp24,
+                AppSpacing.sp12,
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.auto_stories_rounded,
+                    size: 20,
+                    color: AppColors.mossGreen,
+                  ),
+                  const SizedBox(width: AppSpacing.sp8),
+                  Text('Bắt đầu học', style: AppTypography.headingM),
+                ],
+              ),
+            ),
           ),
         ),
         SliverPadding(
           padding: AppSpacing.paddingH24,
           sliver: SliverList(
             delegate: SliverChildListDelegate([
-              LearningCard(
-                title: 'Từ vựng',
-                subtitle: 'Học từ mới theo chủ đề',
-                icon: Icons.menu_book_rounded,
-                progress: progress.vocabulary.percentage,
-                heroTag: 'vocabulary_card',
-                accentColor: AppColors.waterBlue,
-                onTap: () {
-                  onOpenTab?.call(2);
-                },
+              _staggeredItem(
+                index: 5,
+                child: LearningCard(
+                  title: 'Từ vựng',
+                  subtitle: 'Mở rộng vốn từ và nhận mặt cụm quen dùng',
+                  badge: 'Theo chủ đề',
+                  metricLabel: 'Đã học',
+                  metricValue:
+                      '${progress.vocabulary.learned}/${progress.vocabulary.total}',
+                  highlights: const ['Từ mới', 'Ngữ cảnh'],
+                  icon: Icons.menu_book_rounded,
+                  progress: progress.vocabulary.percentage,
+                  heroTag: 'vocabulary_card',
+                  accentColor: AppColors.waterBlue,
+                  onTap: () {
+                    widget.onOpenTab?.call(2);
+                  },
+                ),
               ),
               const SizedBox(height: AppSpacing.sp16),
-              LearningCard(
-                title: 'Ngữ pháp',
-                subtitle: 'Cấu trúc câu từ N5 đến N1',
-                icon: Icons.edit_note_rounded,
-                progress: progress.grammar.percentage,
-                heroTag: 'grammar_card',
-                accentColor: AppColors.sunGold,
-                onTap: () {
-                  onOpenTab?.call(3);
-                },
+              _staggeredItem(
+                index: 6,
+                child: LearningCard(
+                  title: 'Ngữ pháp',
+                  subtitle: 'Luyện mẫu câu và cách dùng từ N5 đến N1',
+                  badge: 'Mẫu câu',
+                  metricLabel: 'Tiến độ',
+                  metricValue:
+                      '${(progress.grammar.percentage * 100).round()}% hoàn thành',
+                  highlights: const ['Cấu trúc', 'Ví dụ'],
+                  icon: Icons.edit_note_rounded,
+                  progress: progress.grammar.percentage,
+                  heroTag: 'grammar_card',
+                  accentColor: AppColors.sunGold,
+                  onTap: () {
+                    widget.onOpenTab?.call(3);
+                  },
+                ),
               ),
               const SizedBox(height: AppSpacing.sp16),
-              LearningCard(
-                title: 'Chữ Hán',
-                subtitle: 'Tập viết và ghi nhớ Kanji',
-                icon: Icons.translate_rounded,
-                progress: progress.kanji.percentage,
-                heroTag: 'kanji_card',
-                accentColor: AppColors.mossGreen,
-                onTap: () {
-                  onOpenTab?.call(4);
-                },
+              _staggeredItem(
+                index: 7,
+                child: LearningCard(
+                  title: 'Chữ Hán',
+                  subtitle: 'Tập viết, nhớ nghĩa và nối âm đọc Kanji',
+                  badge: 'Nét viết',
+                  metricLabel: 'Đã nhớ',
+                  metricValue:
+                      '${progress.kanji.learned}/${progress.kanji.total} ký tự',
+                  highlights: const ['On/Kun', 'Viết tay'],
+                  icon: Icons.translate_rounded,
+                  progress: progress.kanji.percentage,
+                  heroTag: 'kanji_card',
+                  accentColor: AppColors.mossGreen,
+                  onTap: () {
+                    widget.onOpenTab?.call(4);
+                  },
+                ),
               ),
               const SizedBox(height: AppSpacing.sp48),
             ]),
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ZenDivider extends StatelessWidget {
+  const _ZenDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sp48,
+        vertical: AppSpacing.sp16,
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              height: 0.5,
+              color: AppColors.slateLight.withValues(alpha: 0.3),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp12),
+            child: Container(
+              width: 8,
+              height: 8,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: AppColors.slateMuted.withValues(alpha: 0.3),
+                  width: 1,
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Container(
+              height: 0.5,
+              color: AppColors.slateLight.withValues(alpha: 0.3),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -23,7 +23,6 @@ class LessonResultScreen extends StatelessWidget {
     final accuracyPercent = (accuracy * 100).round();
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.sp24),
@@ -84,9 +83,9 @@ class LessonResultScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
                     ),
                   ),
-                  child: const Text(
+                  child: Text(
                     'Về lộ trình',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: AppTypography.bodyMBold.copyWith(color: AppColors.white),
                   ),
                 ),
               ),

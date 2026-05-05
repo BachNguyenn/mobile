@@ -8,6 +8,9 @@ import '../providers/grammar_library_provider.dart';
 import '../../../../shared/widgets/progress_card.dart';
 import '../../../../shared/widgets/action_button.dart';
 import '../../../../shared/widgets/library_sliver_app_bar.dart';
+import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../../../shared/widgets/app_empty_state.dart';
+import '../../../../shared/widgets/jlpt_level_selector.dart';
 import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
@@ -27,13 +30,11 @@ class GrammarLibraryScreen extends ConsumerWidget {
     final totalDueAsync = ref.watch(totalDueGrammarCountProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           const LibrarySliverAppBar(
             title: 'Thư viện Ngữ pháp',
-            color: AppColors.sunGold,
             heroTag: 'grammar_card',
           ),
 
@@ -74,7 +75,12 @@ class GrammarLibraryScreen extends ConsumerWidget {
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.only(top: AppSpacing.sp8),
-              child: _LevelSelector(),
+              child: JlptLevelSelector(
+                selectedLevel: ref.watch(grammarLevelFilterProvider),
+                accentColor: AppColors.sunGold,
+                onChanged: (level) =>
+                    ref.read(grammarLevelFilterProvider.notifier).state = level,
+              ),
             ),
           ),
 
@@ -210,26 +216,8 @@ class GrammarLibraryScreen extends ConsumerWidget {
           searchResults.when(
             data: (grammarList) {
               if (grammarList.isEmpty) {
-                return SliverFillRemaining(
-                  child: Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.search_off_rounded,
-                          size: 48,
-                          color: AppColors.slateLight,
-                        ),
-                        const SizedBox(height: AppSpacing.sp12),
-                        Text(
-                          'Không tìm thấy ngữ pháp nào.',
-                          style: AppTypography.bodyM.copyWith(
-                            color: AppColors.slateMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                return AppEmptyState.sliver(
+                  message: 'Không tìm thấy ngữ pháp nào.',
                 );
               }
               return SliverPadding(
@@ -281,9 +269,8 @@ class GrammarLibraryScreen extends ConsumerWidget {
                           ),
                           child: Text(
                             'N${grammar.jlptLevel}',
-                            style: const TextStyle(
+                            style: AppTypography.bodyMBold.copyWith(
                               color: AppColors.sunGold,
-                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -315,7 +302,7 @@ class GrammarLibraryScreen extends ConsumerWidget {
                                 ),
                                 ...grammar.examples.map(
                                   (ex) => Padding(
-                                    padding: const EdgeInsets.only(top: 6),
+                                    padding: const EdgeInsets.only(top: AppSpacing.sp4),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
@@ -347,13 +334,11 @@ class GrammarLibraryScreen extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => const SliverFillRemaining(
-              child: Center(
-                child: CircularProgressIndicator(color: AppColors.sunGold),
-              ),
+            loading: () => AppLoadingIndicator.sliver(),
+            error: (e, _) => AppEmptyState.sliver(
+              icon: Icons.error_outline_rounded,
+              message: 'Lỗi: $e',
             ),
-            error: (e, _) =>
-                SliverFillRemaining(child: Center(child: Text('Lỗi: $e'))),
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.sp48)),
@@ -370,59 +355,9 @@ class GrammarLibraryScreen extends ConsumerWidget {
           '$title:',
           style: AppTypography.bodyMBold.copyWith(color: AppColors.sunGold),
         ),
-        const SizedBox(height: 2),
+        const SizedBox(height: AppSpacing.sp4),
         Text(content, style: AppTypography.bodyM),
       ],
-    );
-  }
-}
-
-class _LevelSelector extends ConsumerWidget {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final currentFilter = ref.watch(grammarLevelFilterProvider);
-    final levels = [null, 5, 4, 3, 2, 1];
-
-    return SizedBox(
-      height: 40,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
-        itemCount: levels.length,
-        itemBuilder: (context, index) {
-          final level = levels[index];
-          final isSelected = currentFilter == level;
-          final label = level == null ? 'Tất cả' : 'N$level';
-
-          return Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.sp8),
-            child: ChoiceChip(
-              label: Text(label),
-              selected: isSelected,
-              selectedColor: AppColors.sunGold.withValues(alpha: 0.2),
-              labelStyle: AppTypography.label.copyWith(
-                color: isSelected ? AppColors.sunGold : AppColors.slateGrey,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-              onSelected: (selected) {
-                ref.read(grammarLevelFilterProvider.notifier).state = selected
-                    ? level
-                    : null;
-              },
-              backgroundColor: AppColors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-                side: BorderSide(
-                  color: isSelected
-                      ? AppColors.sunGold
-                      : AppColors.slateLight.withValues(alpha: 0.3),
-                ),
-              ),
-              showCheckmark: false,
-            ),
-          );
-        },
-      ),
     );
   }
 }

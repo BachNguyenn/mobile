@@ -6,6 +6,7 @@ import 'package:mobile/features/grammar/presentation/screens/grammar_analysis_sc
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/presentation/screens/learning_path_screen.dart';
 import 'package:mobile/features/learning/presentation/screens/lesson_detail_screen.dart';
+import 'package:mobile/features/learning/presentation/screens/placement_test_screen.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/features/review/presentation/screens/review_screen.dart';
 import 'package:mobile/features/settings/presentation/screens/settings_screen.dart';
@@ -39,6 +40,10 @@ abstract final class AppRoutes {
     return MaterialPageRoute(
       builder: (_) => LessonDetailScreen(lesson: lesson),
     );
+  }
+
+  static MaterialPageRoute<void> placementTest() {
+    return MaterialPageRoute(builder: (_) => const PlacementTestScreen());
   }
 
   static MaterialPageRoute<void> review(List<ReviewItem> items) {

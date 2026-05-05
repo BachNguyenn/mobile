@@ -6,6 +6,9 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/models/progress_models.dart';
 import '../../../../shared/widgets/progress_card.dart';
 import '../../../../shared/widgets/action_button.dart';
+import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../../../shared/widgets/app_empty_state.dart';
+import '../../../../shared/widgets/jlpt_level_selector.dart';
 import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
@@ -13,9 +16,7 @@ import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
 import '../providers/vocabulary_library_provider.dart';
 import '../widgets/vocabulary_app_bar.dart';
 import '../widgets/vocabulary_search_bar.dart';
-import '../widgets/vocabulary_level_selector.dart';
 import '../widgets/vocabulary_list_item.dart';
-import '../widgets/vocabulary_empty_state.dart';
 
 class VocabularyLibraryScreen extends ConsumerWidget {
   final ValueChanged<LearningCategory>? onOpenLearningCategory;
@@ -32,7 +33,6 @@ class VocabularyLibraryScreen extends ConsumerWidget {
     final totalDueAsync = ref.watch(totalDueVocabularyCountProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -72,10 +72,15 @@ class VocabularyLibraryScreen extends ConsumerWidget {
             ),
           ),
 
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(top: AppSpacing.sp8),
-              child: VocabularyLevelSelector(),
+              padding: const EdgeInsets.only(top: AppSpacing.sp8),
+              child: JlptLevelSelector(
+                selectedLevel: ref.watch(vocabularyLevelFilterProvider),
+                accentColor: AppColors.waterBlue,
+                onChanged: (level) =>
+                    ref.read(vocabularyLevelFilterProvider.notifier).state = level,
+              ),
             ),
           ),
 
@@ -184,7 +189,9 @@ class VocabularyLibraryScreen extends ConsumerWidget {
           searchResults.when(
             data: (vocabList) {
               if (vocabList.isEmpty) {
-                return const SliverFillRemaining(child: VocabularyEmptyState());
+                return AppEmptyState.sliver(
+                  message: 'Không tìm thấy từ vựng nào.',
+                );
               }
               return SliverPadding(
                 padding: const EdgeInsets.symmetric(
@@ -197,11 +204,11 @@ class VocabularyLibraryScreen extends ConsumerWidget {
                 ),
               );
             },
-            loading: () => const SliverFillRemaining(
-              child: Center(child: CircularProgressIndicator()),
+            loading: () => AppLoadingIndicator.sliver(),
+            error: (e, _) => AppEmptyState.sliver(
+              icon: Icons.error_outline_rounded,
+              message: 'Lỗi: $e',
             ),
-            error: (e, _) =>
-                SliverFillRemaining(child: Center(child: Text('Lỗi: $e'))),
           ),
 
           const SliverToBoxAdapter(child: SizedBox(height: AppSpacing.sp48)),

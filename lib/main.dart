@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/theme/app_theme.dart';
 import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
@@ -23,12 +22,6 @@ void main() async {
 }
 
 Future<void> _initializeDeferredServices() async {
-  try {
-    await dotenv.load(fileName: ".env");
-  } catch (_) {
-    // .env file not found
-  }
-
   try {
     final notify = NotificationService();
     await notify.init();

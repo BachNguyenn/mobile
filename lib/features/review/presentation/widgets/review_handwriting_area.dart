@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/services/handwriting_service.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
 
 class ReviewHandwritingArea extends StatelessWidget {
   final GlobalKey<HandwritingCanvasState> canvasKey;
-  final Function(List<List<Offset>>) onDrawingChanged;
+  final ValueChanged<List<List<HandwritingPoint>>> onDrawingChanged;
   final VoidCallback onClear;
 
   const ReviewHandwritingArea({

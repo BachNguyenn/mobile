@@ -3,6 +3,8 @@ import 'package:mobile/core/providers/database_provider.dart';
 import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/data/repositories/learning_path_repository.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
+import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
+import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
 
 export 'package:mobile/features/learning/domain/entities/learning_category.dart';
 
@@ -21,16 +23,23 @@ final learningPathProvider =
   final repository = ref.watch(learningPathRepositoryProvider);
   final category = ref.watch(learningCategoryProvider);
   final level = ref.watch(selectedLevelProvider);
+  final settings = ref.watch(settingsProvider).valueOrNull ?? AppSettings.defaults;
   ref.watch(databaseInitializerProvider);
-  return LearningPathNotifier(repository, category, level);
+  return LearningPathNotifier(
+    repository,
+    category,
+    level,
+    settings.learningGoal,
+  );
 });
 
 class LearningPathNotifier extends StateNotifier<List<Lesson>> {
   final LearningPathRepository _repository;
   final LearningCategory _category;
   final int _level;
+  final LearningGoal _goal;
 
-  LearningPathNotifier(this._repository, this._category, this._level)
+  LearningPathNotifier(this._repository, this._category, this._level, this._goal)
       : super([]) {
     loadLessons();
   }
@@ -40,6 +49,7 @@ class LearningPathNotifier extends StateNotifier<List<Lesson>> {
       state = await _repository.getLessons(
         category: _category,
         level: _level,
+        goal: _goal,
       );
     } catch (_) {
       state = [];

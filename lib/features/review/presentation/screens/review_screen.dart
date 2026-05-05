@@ -25,7 +25,6 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
   Widget build(BuildContext context) {
     if (widget.items.isEmpty) {
       return Scaffold(
-        backgroundColor: AppColors.cream,
         appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
         body: const Center(child: Text('Không có mục nào để ôn tập')),
       );
@@ -50,7 +49,6 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     });
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       appBar: AppBar(
         title: Text(
           'Ôn tập (${state.currentIndex + 1}/${widget.items.length})',
@@ -102,7 +100,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                     item.usesHandwriting || item.choices.isNotEmpty
                         ? 'Kiểm tra & xem đáp án'
                         : 'Xem đáp án',
-                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: AppTypography.bodyMBold.copyWith(color: Colors.white),
                   ),
                 ),
               )
@@ -236,6 +234,12 @@ class _KnowledgeReviewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     if (state.showAnswer) {
       final isCorrect = state.selectedChoice == null || state.selectedChoice == item.answer;
+      final errorInsight = isCorrect
+          ? null
+          : _ReviewErrorAnalyzer.analyze(
+              item: item,
+              selectedChoice: state.selectedChoice,
+            );
       return Center(
         child: Container(
           width: double.infinity,
@@ -268,6 +272,25 @@ class _KnowledgeReviewBody extends StatelessWidget {
                   item.grammar!.formation,
                   style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
                   textAlign: TextAlign.center,
+                ),
+              ],
+              if (errorInsight != null) ...[
+                const SizedBox(height: AppSpacing.sp12),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppSpacing.sp12),
+                  decoration: BoxDecoration(
+                    color: AppColors.terracotta.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+                    border: Border.all(
+                      color: AppColors.terracotta.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Text(
+                    errorInsight,
+                    style: AppTypography.bodyS.copyWith(color: AppColors.slateGrey),
+                    textAlign: TextAlign.left,
+                  ),
                 ),
               ],
             ],
@@ -311,5 +334,83 @@ class _KnowledgeReviewBody extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+abstract final class _ReviewErrorAnalyzer {
+  static String? analyze({
+    required ReviewItem item,
+    required String? selectedChoice,
+  }) {
+    final picked = selectedChoice?.trim();
+    if (picked == null || picked.isEmpty) {
+      return 'Bạn chưa chọn đáp án. Hãy thử tự trả lời trước rồi so sánh với đáp án đúng để nhớ lâu hơn.';
+    }
+
+    if (item.type == ReviewItemType.grammar) {
+      final formation = item.grammar?.formation.toLowerCase() ?? '';
+      if (formation.contains('は') || formation.contains('が') || formation.contains('を')) {
+        return 'Bạn có thể đang nhầm trợ từ. Hãy kiểm tra vai trò chủ đề/chủ ngữ/tân ngữ trong câu mẫu.';
+      }
+      if (_looksLikeTenseConfusion(picked, item.answer)) {
+        return 'Bạn có thể đang nhầm thì hoặc sắc thái thời gian (đã/đang/sẽ). Hãy đối chiếu lại ngữ cảnh câu.';
+      }
+      return 'Bạn đang nhầm cách dùng mẫu ngữ pháp. Hãy đọc lại ví dụ và chú ý điều kiện dùng mẫu.';
+    }
+
+    if (item.type == ReviewItemType.vocabulary) {
+      if (_isNearMeaning(picked, item.answer)) {
+        return 'Bạn chọn nghĩa gần đúng nhưng chưa chính xác. Đây là nhóm từ gần nghĩa, cần học theo ngữ cảnh câu.';
+      }
+      return 'Bạn đang nhầm nghĩa từ. Hãy ôn lại từ này trong cụm/câu thay vì học đơn lẻ.';
+    }
+
+    if (item.type == ReviewItemType.kanji) {
+      return 'Bạn có thể nhầm chữ có hình dạng gần giống. Hãy tập trung vào bộ thủ và nét đặc trưng của ký tự.';
+    }
+
+    return null;
+  }
+
+  static bool _looksLikeTenseConfusion(String picked, String answer) {
+    const tenseMarkers = ['đã', 'đang', 'sẽ', 'past', 'present', 'future'];
+    final pickedLower = picked.toLowerCase();
+    final answerLower = answer.toLowerCase();
+    final pickedMarker = tenseMarkers.where(pickedLower.contains).toList();
+    final answerMarker = tenseMarkers.where(answerLower.contains).toList();
+    return pickedMarker.isNotEmpty && answerMarker.isNotEmpty && pickedMarker.first != answerMarker.first;
+  }
+
+  static bool _isNearMeaning(String a, String b) {
+    final x = a.toLowerCase();
+    final y = b.toLowerCase();
+    if (x == y) return true;
+    final distance = _levenshtein(x, y);
+    return distance <= 3 || (x.split(' ').toSet().intersection(y.split(' ').toSet()).isNotEmpty);
+  }
+
+  static int _levenshtein(String s, String t) {
+    if (s == t) return 0;
+    if (s.isEmpty) return t.length;
+    if (t.isEmpty) return s.length;
+
+    final prev = List<int>.generate(t.length + 1, (i) => i);
+    final curr = List<int>.filled(t.length + 1, 0);
+
+    for (var i = 1; i <= s.length; i++) {
+      curr[0] = i;
+      for (var j = 1; j <= t.length; j++) {
+        final cost = s[i - 1] == t[j - 1] ? 0 : 1;
+        curr[j] = [
+          curr[j - 1] + 1,
+          prev[j] + 1,
+          prev[j - 1] + cost,
+        ].reduce((a, b) => a < b ? a : b);
+      }
+      for (var j = 0; j <= t.length; j++) {
+        prev[j] = curr[j];
+      }
+    }
+    return prev[t.length];
   }
 }

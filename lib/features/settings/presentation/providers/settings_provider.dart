@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
+import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AppSettings {
@@ -12,6 +13,7 @@ class AppSettings {
   final ThemeMode themeMode;
   final String appLanguage;
   final double fontScale;
+  final LearningGoal learningGoal;
 
   const AppSettings({
     required this.dailyReminderEnabled,
@@ -22,6 +24,7 @@ class AppSettings {
     required this.themeMode,
     required this.appLanguage,
     required this.fontScale,
+    required this.learningGoal,
   });
 
   static const defaults = AppSettings(
@@ -33,6 +36,7 @@ class AppSettings {
     themeMode: ThemeMode.system,
     appLanguage: 'vi',
     fontScale: 1.0,
+    learningGoal: LearningGoal.jlpt,
   );
 
   AppSettings copyWith({
@@ -44,6 +48,7 @@ class AppSettings {
     ThemeMode? themeMode,
     String? appLanguage,
     double? fontScale,
+    LearningGoal? learningGoal,
   }) {
     return AppSettings(
       dailyReminderEnabled: dailyReminderEnabled ?? this.dailyReminderEnabled,
@@ -55,6 +60,7 @@ class AppSettings {
       themeMode: themeMode ?? this.themeMode,
       appLanguage: appLanguage ?? this.appLanguage,
       fontScale: fontScale ?? this.fontScale,
+      learningGoal: learningGoal ?? this.learningGoal,
     );
   }
 }
@@ -68,6 +74,7 @@ abstract final class AppSettingsStore {
   static const _themeModeKey = 'settings.themeMode';
   static const _appLanguageKey = 'settings.appLanguage';
   static const _fontScaleKey = 'settings.fontScale';
+  static const _learningGoalKey = 'settings.learningGoal';
 
   static Future<AppSettings> load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -95,6 +102,7 @@ abstract final class AppSettingsStore {
           prefs.getString(_appLanguageKey) ?? AppSettings.defaults.appLanguage,
       fontScale:
           prefs.getDouble(_fontScaleKey) ?? AppSettings.defaults.fontScale,
+      learningGoal: _learningGoalFromString(prefs.getString(_learningGoalKey)),
     );
   }
 
@@ -114,6 +122,7 @@ abstract final class AppSettingsStore {
     await prefs.setString(_themeModeKey, settings.themeMode.name);
     await prefs.setString(_appLanguageKey, settings.appLanguage);
     await prefs.setDouble(_fontScaleKey, settings.fontScale);
+    await prefs.setString(_learningGoalKey, settings.learningGoal.name);
   }
 
   static LearningCategory _categoryFromString(String? value) {
@@ -127,6 +136,13 @@ abstract final class AppSettingsStore {
     return ThemeMode.values.firstWhere(
       (mode) => mode.name == value,
       orElse: () => AppSettings.defaults.themeMode,
+    );
+  }
+
+  static LearningGoal _learningGoalFromString(String? value) {
+    return LearningGoal.values.firstWhere(
+      (goal) => goal.name == value,
+      orElse: () => AppSettings.defaults.learningGoal,
     );
   }
 }
@@ -184,6 +200,12 @@ class SettingsController extends StateNotifier<AsyncValue<AppSettings>> {
   Future<void> updateFontScale(double scale) {
     return _update((settings) {
       return settings.copyWith(fontScale: scale);
+    });
+  }
+
+  Future<void> updateLearningGoal(LearningGoal goal) {
+    return _update((settings) {
+      return settings.copyWith(learningGoal: goal);
     });
   }
 

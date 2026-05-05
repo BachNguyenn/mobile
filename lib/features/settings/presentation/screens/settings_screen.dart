@@ -6,6 +6,7 @@ import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
+import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -18,7 +19,7 @@ class SettingsScreen extends ConsumerWidget {
     final user = authState.valueOrNull;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text('Cài đặt', style: AppTypography.headingM),
         elevation: 0,
@@ -88,6 +89,13 @@ class SettingsScreen extends ConsumerWidget {
                       ref
                           .read(settingsProvider.notifier)
                           .updateDefaultLearningCategory(category);
+                    },
+                  ),
+                  const Divider(height: 1),
+                  _LearningGoalTile(
+                    selected: settings.learningGoal,
+                    onChanged: (goal) {
+                      ref.read(settingsProvider.notifier).updateLearningGoal(goal);
                     },
                   ),
                 ],
@@ -568,5 +576,57 @@ class _CategoryPickerTile extends StatelessWidget {
       case LearningCategory.kanji:
         return Icons.translate_rounded;
     }
+  }
+}
+
+class _LearningGoalTile extends StatelessWidget {
+  final LearningGoal selected;
+  final ValueChanged<LearningGoal> onChanged;
+
+  const _LearningGoalTile({required this.selected, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: const Icon(Icons.flag_rounded, color: AppColors.mossGreen),
+      title: Text('Mục tiêu học', style: AppTypography.bodyMBold),
+      subtitle: Text(selected.label, style: AppTypography.caption),
+      trailing: const Icon(Icons.chevron_right_rounded),
+      onTap: () => _showGoalPicker(context),
+    );
+  }
+
+  void _showGoalPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return Container(
+          margin: const EdgeInsets.all(AppSpacing.sp16),
+          padding: AppSpacing.cardPadding,
+          decoration: BoxDecoration(
+            color: Theme.of(context).cardColor,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: LearningGoal.values.map((goal) {
+              final isSelected = goal == selected;
+              return ListTile(
+                title: Text(goal.label, style: AppTypography.bodyMBold),
+                trailing: isSelected
+                    ? const Icon(Icons.check_rounded, color: AppColors.mossGreen)
+                    : null,
+                onTap: () {
+                  onChanged(goal);
+                  Navigator.pop(context);
+                },
+              );
+            }).toList(),
+          ),
+        );
+      },
+    );
   }
 }

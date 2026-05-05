@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mobile/core/services/handwriting_service.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
@@ -10,7 +11,7 @@ import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
 class LessonQuizContent extends StatefulWidget {
   final LessonState state;
   final ValueChanged<String> onSelectAnswer;
-  final ValueChanged<List<List<Offset>>> onDrawingChanged;
+  final ValueChanged<List<List<HandwritingPoint>>> onDrawingChanged;
   final VoidCallback onResetCanvas;
   final GlobalKey<HandwritingCanvasState> canvasKey;
 
@@ -54,6 +55,7 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
 
   Widget _buildGrammarStudy(QuizQuestion question) {
     final grammar = (question.payload as GrammarQuizPayload).grammarPoint;
+    final spec = _LessonVisualSpec.forType(question.type);
 
     return SingleChildScrollView(
       child: Column(
@@ -61,30 +63,31 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
         children: [
           _QuizHeader(
             title: 'Cấu trúc ngữ pháp',
-            subtitle: 'Đọc ví dụ trước khi tiếp tục',
+            subtitle: 'Đọc nhịp dùng mẫu câu trước khi tiếp tục',
             question: question,
             showHint: _showHint,
             onToggleHint: _toggleHint,
           ),
           const SizedBox(height: AppSpacing.sp20),
           _SurfaceCard(
+            accent: spec.accent,
+            tint: spec.tint,
             child: Column(
               children: [
+                _LessonPill(
+                  icon: spec.icon,
+                  label: 'N${grammar.jlptLevel} • ${spec.label}',
+                  color: spec.accent,
+                ),
+                const SizedBox(height: AppSpacing.sp16),
                 Text(
                   grammar.title,
                   style: AppTypography.headingL.copyWith(color: AppColors.ink),
                   textAlign: TextAlign.center,
                 ),
                 if (grammar.formation.isNotEmpty) ...[
-                  const SizedBox(height: AppSpacing.sp8),
-                  Text(
-                    grammar.formation,
-                    style: AppTypography.bodyL.copyWith(
-                      color: AppColors.mossGreen,
-                      fontWeight: FontWeight.w700,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  const SizedBox(height: AppSpacing.sp16),
+                  _PatternPanel(text: grammar.formation, color: spec.accent),
                 ],
               ],
             ),
@@ -92,21 +95,24 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
           const SizedBox(height: AppSpacing.sp20),
           _InfoBlock(
             title: 'Giải thích',
+            icon: Icons.menu_book_rounded,
+            color: spec.accent,
             body: grammar.longExplanation.isNotEmpty
                 ? grammar.longExplanation
                 : grammar.shortExplanation,
           ),
           if (grammar.examples.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sp20),
-            Text(
-              'Ví dụ',
-              style: AppTypography.bodyMBold.copyWith(color: AppColors.slateGrey),
+            _SectionLabel(
+              icon: Icons.format_quote_rounded,
+              label: 'Ví dụ',
+              color: spec.accent,
             ),
             const SizedBox(height: AppSpacing.sp12),
             ...grammar.examples.map(
               (example) => Padding(
                 padding: const EdgeInsets.only(bottom: AppSpacing.sp12),
-                child: _ExampleCard(example: example),
+                child: _ExampleCard(example: example, color: spec.accent),
               ),
             ),
           ],
@@ -131,15 +137,18 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
           _PromptCard(question: question),
           const SizedBox(height: AppSpacing.sp24),
           Column(
-            children: question.options
-                .map((option) => _OptionCard(
-                      option: option,
-                      question: question,
-                      isSelected: widget.state.selectedAnswer == option,
-                      isAnswerChecked: widget.state.isAnswerChecked,
-                      onTap: () => widget.onSelectAnswer(option),
-                    ))
-                .toList(),
+            children: [
+              for (var index = 0; index < question.options.length; index++)
+                _OptionCard(
+                  option: question.options[index],
+                  optionIndex: index,
+                  question: question,
+                  isSelected:
+                      widget.state.selectedAnswer == question.options[index],
+                  isAnswerChecked: widget.state.isAnswerChecked,
+                  onTap: () => widget.onSelectAnswer(question.options[index]),
+                ),
+            ],
           ),
           if (widget.state.isAnswerChecked &&
               (question.explanation?.isNotEmpty ?? false)) ...[
@@ -156,6 +165,8 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
   }
 
   Widget _buildHandwritingQuiz(QuizQuestion question) {
+    final spec = _LessonVisualSpec.forType(question.type);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -177,9 +188,16 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
                   color: AppColors.white,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusL),
                   border: Border.all(
-                    color: AppColors.slateLight.withValues(alpha: 0.3),
+                    color: spec.accent.withValues(alpha: 0.25),
                     width: 2,
                   ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.ink.withValues(alpha: 0.04),
+                      blurRadius: 18,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusL),
@@ -224,12 +242,17 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
                           ],
                           if (question.explanation?.isNotEmpty ?? false) ...[
                             const SizedBox(height: AppSpacing.sp8),
-                            Text(
-                              question.explanation!,
-                              style: AppTypography.bodyS.copyWith(
-                                color: AppColors.slateGrey,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AppSpacing.sp24,
                               ),
-                              textAlign: TextAlign.center,
+                              child: Text(
+                                question.explanation!,
+                                style: AppTypography.bodyS.copyWith(
+                                  color: AppColors.slateGrey,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ],
                         ],
@@ -240,12 +263,9 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
               Positioned(
                 top: 12,
                 right: 12,
-                child: IconButton(
+                child: IconButton.filledTonal(
                   tooltip: 'Xóa nét viết',
-                  icon: const Icon(
-                    Icons.refresh_rounded,
-                    color: AppColors.slateLight,
-                  ),
+                  icon: const Icon(Icons.refresh_rounded),
                   onPressed: () {
                     if (!widget.state.isAnswerChecked) {
                       widget.canvasKey.currentState?.clear();
@@ -298,13 +318,62 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
     switch (type) {
       case QuizType.vocabReverse:
         return 'Nhìn nghĩa và chọn từ đúng';
+      case QuizType.vocabReading:
+        return 'Tập trung vào âm đọc kana';
       case QuizType.grammarUsage:
         return 'Dựa vào ví dụ để chọn mẫu câu';
+      case QuizType.grammarFormation:
+        return 'Nhận diện cách ghép mẫu câu';
       case QuizType.kanjiReading:
         return 'Nhìn chữ và chọn cách đọc';
       default:
         return 'Chọn đáp án chính xác nhất';
     }
+  }
+}
+
+class _LessonVisualSpec {
+  final String label;
+  final IconData icon;
+  final Color accent;
+  final Color tint;
+
+  const _LessonVisualSpec({
+    required this.label,
+    required this.icon,
+    required this.accent,
+    required this.tint,
+  });
+
+  factory _LessonVisualSpec.forType(QuizType type) {
+    return switch (type) {
+      QuizType.vocabMeaning ||
+      QuizType.vocabReading ||
+      QuizType.vocabReverse => const _LessonVisualSpec(
+        label: 'Từ vựng',
+        icon: Icons.style_rounded,
+        accent: AppColors.waterBlue,
+        tint: Color(0xFFF0F7FC),
+      ),
+      QuizType.grammarStudy ||
+      QuizType.grammarMeaning ||
+      QuizType.grammarFormation ||
+      QuizType.grammarUsage => const _LessonVisualSpec(
+        label: 'Ngữ pháp',
+        icon: Icons.account_tree_rounded,
+        accent: AppColors.terracotta,
+        tint: Color(0xFFFCF2EC),
+      ),
+      QuizType.handwriting ||
+      QuizType.meaning ||
+      QuizType.kanji ||
+      QuizType.kanjiReading => const _LessonVisualSpec(
+        label: 'Chữ Hán',
+        icon: Icons.brush_rounded,
+        accent: AppColors.mossGreen,
+        tint: Color(0xFFF2F6EF),
+      ),
+    };
   }
 }
 
@@ -326,43 +395,64 @@ class _QuizHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final hasHint = question.hint?.isNotEmpty ?? false;
+    final spec = _LessonVisualSpec.forType(question.type);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    title,
-                    style: AppTypography.headingM.copyWith(
-                      color: AppColors.slateGrey,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: AppTypography.bodyS.copyWith(
-                      color: AppColors.slateMuted,
-                    ),
-                  ),
-                ],
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.sp16),
+          decoration: BoxDecoration(
+            color: spec.tint,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+            border: Border.all(color: spec.accent.withValues(alpha: 0.16)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: spec.accent.withValues(alpha: 0.13),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+                ),
+                child: Icon(spec.icon, color: spec.accent, size: 22),
               ),
-            ),
-            if (hasHint)
-              IconButton.filledTonal(
-                tooltip: showHint ? 'Ẩn gợi ý' : 'Xem gợi ý',
-                onPressed: onToggleHint,
-                icon: Icon(
-                  showHint
-                      ? Icons.lightbulb_rounded
-                      : Icons.lightbulb_outline_rounded,
+              const SizedBox(width: AppSpacing.sp12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AppTypography.headingM.copyWith(
+                        color: AppColors.ink,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle,
+                      style: AppTypography.bodyS.copyWith(
+                        color: AppColors.slateGrey,
+                      ),
+                    ),
+                  ],
                 ),
               ),
-          ],
+              if (hasHint) ...[
+                const SizedBox(width: AppSpacing.sp8),
+                IconButton.filledTonal(
+                  tooltip: showHint ? 'Ẩn gợi ý' : 'Xem gợi ý',
+                  onPressed: onToggleHint,
+                  icon: Icon(
+                    showHint
+                        ? Icons.lightbulb_rounded
+                        : Icons.lightbulb_outline_rounded,
+                  ),
+                ),
+              ],
+            ],
+          ),
         ),
         if (hasHint && showHint) ...[
           const SizedBox(height: AppSpacing.sp12),
@@ -381,6 +471,7 @@ class _PromptCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final spec = _LessonVisualSpec.forType(question.type);
     final isJapaneseDisplay = switch (question.type) {
       QuizType.meaning ||
       QuizType.kanjiReading ||
@@ -390,23 +481,68 @@ class _PromptCard extends StatelessWidget {
     };
 
     return _SurfaceCard(
-      child: Text(
-        question.prompt,
-        style: (isJapaneseDisplay
-                ? AppTypography.kanjiHero
-                : AppTypography.headingL)
-            .copyWith(
-          color: AppColors.ink,
-          fontSize: isJapaneseDisplay ? (compact ? 40 : 56) : null,
-        ),
-        textAlign: TextAlign.center,
+      accent: spec.accent,
+      tint: spec.tint,
+      child: Column(
+        children: [
+          _PromptMetadata(question: question, spec: spec),
+          const SizedBox(height: AppSpacing.sp16),
+          Text(
+            question.prompt,
+            style:
+                (isJapaneseDisplay
+                        ? AppTypography.kanjiHero
+                        : AppTypography.headingL)
+                    .copyWith(
+                      color: AppColors.ink,
+                      fontSize: isJapaneseDisplay ? (compact ? 40 : 56) : null,
+                    ),
+            textAlign: TextAlign.center,
+          ),
+        ],
       ),
+    );
+  }
+}
+
+class _PromptMetadata extends StatelessWidget {
+  final QuizQuestion question;
+  final _LessonVisualSpec spec;
+
+  const _PromptMetadata({required this.question, required this.spec});
+
+  @override
+  Widget build(BuildContext context) {
+    final payload = question.payload;
+    final chips = <String>[spec.label];
+
+    if (payload is VocabularyQuizPayload) {
+      chips.add('N${payload.vocabulary.jlptLevel}');
+      if (question.type == QuizType.vocabMeaning &&
+          payload.vocabulary.reading.isNotEmpty) {
+        chips.add(payload.vocabulary.reading);
+      }
+    } else if (payload is KanjiQuizPayload) {
+      chips.add('N${payload.card.jlptLevel}');
+    } else if (payload is GrammarQuizPayload) {
+      chips.add('N${payload.grammarPoint.jlptLevel}');
+    }
+
+    return Wrap(
+      alignment: WrapAlignment.center,
+      spacing: AppSpacing.sp8,
+      runSpacing: AppSpacing.sp8,
+      children: [
+        for (final chip in chips)
+          _LessonPill(icon: spec.icon, label: chip, color: spec.accent),
+      ],
     );
   }
 }
 
 class _OptionCard extends StatelessWidget {
   final String option;
+  final int optionIndex;
   final QuizQuestion question;
   final bool isSelected;
   final bool isAnswerChecked;
@@ -414,6 +550,7 @@ class _OptionCard extends StatelessWidget {
 
   const _OptionCard({
     required this.option,
+    required this.optionIndex,
     required this.question,
     required this.isSelected,
     required this.isAnswerChecked,
@@ -422,37 +559,32 @@ class _OptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final spec = _LessonVisualSpec.forType(question.type);
     final isCorrect = option == question.answer;
     final showCorrect = isAnswerChecked && isCorrect;
     final showWrong = isAnswerChecked && isSelected && !isCorrect;
 
-    final bgColor = showCorrect
-        ? AppColors.mossGreen.withValues(alpha: 0.1)
-        : showWrong
-            ? AppColors.terracotta.withValues(alpha: 0.1)
-            : isSelected
-                ? AppColors.waterBlue.withValues(alpha: 0.1)
-                : AppColors.white;
-    final borderColor = showCorrect
+    final stateColor = showCorrect
         ? AppColors.mossGreen
         : showWrong
-            ? AppColors.terracotta
-            : isSelected
-                ? AppColors.waterBlue
-                : AppColors.slateLight.withValues(alpha: 0.6);
-    final textColor = showCorrect
-        ? AppColors.mossGreen
-        : showWrong
-            ? AppColors.terracotta
-            : AppColors.slateGrey;
+        ? AppColors.terracotta
+        : isSelected
+        ? spec.accent
+        : AppColors.slateMuted;
+    final bgColor = showCorrect || showWrong || isSelected
+        ? stateColor.withValues(alpha: 0.1)
+        : AppColors.white;
+    final borderColor = showCorrect || showWrong || isSelected
+        ? stateColor
+        : AppColors.slateLight.withValues(alpha: 0.55);
 
-    final IconData? icon = showCorrect
+    final IconData? trailingIcon = showCorrect
         ? Icons.check_circle_rounded
         : showWrong
-            ? Icons.cancel_rounded
-            : isSelected
-                ? Icons.radio_button_checked_rounded
-                : null;
+        ? Icons.cancel_rounded
+        : isSelected
+        ? Icons.radio_button_checked_rounded
+        : null;
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sp12),
@@ -463,32 +595,48 @@ class _OptionCard extends StatelessWidget {
           duration: const Duration(milliseconds: 160),
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
-            vertical: AppSpacing.sp16,
-            horizontal: AppSpacing.sp20,
+            vertical: AppSpacing.sp12,
+            horizontal: AppSpacing.sp16,
           ),
           decoration: BoxDecoration(
             color: bgColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusL),
             border: Border.all(color: borderColor, width: 1.5),
+            boxShadow: [
+              if (isSelected || showCorrect || showWrong)
+                BoxShadow(
+                  color: stateColor.withValues(alpha: 0.08),
+                  blurRadius: 14,
+                  offset: const Offset(0, 8),
+                ),
+            ],
           ),
           child: Row(
             children: [
+              _OptionIndexBadge(
+                label: String.fromCharCode(65 + optionIndex),
+                color: stateColor,
+                isActive: isSelected || showCorrect || showWrong,
+              ),
+              const SizedBox(width: AppSpacing.sp12),
               Expanded(
                 child: Text(
                   option,
                   style: AppTypography.bodyL.copyWith(
-                    color: textColor,
+                    color: showCorrect || showWrong
+                        ? stateColor
+                        : AppColors.slateGrey,
                     fontWeight: FontWeight.w700,
                     fontFamily: _usesJapaneseFont(question.type)
                         ? 'Noto Sans JP'
                         : null,
                   ),
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.start,
                 ),
               ),
-              if (icon != null) ...[
+              if (trailingIcon != null) ...[
                 const SizedBox(width: AppSpacing.sp12),
-                Icon(icon, color: textColor, size: 22),
+                Icon(trailingIcon, color: stateColor, size: 22),
               ],
             ],
           ),
@@ -501,6 +649,38 @@ class _OptionCard extends StatelessWidget {
     return type == QuizType.vocabReverse ||
         type == QuizType.kanji ||
         type == QuizType.kanjiReading;
+  }
+}
+
+class _OptionIndexBadge extends StatelessWidget {
+  final String label;
+  final Color color;
+  final bool isActive;
+
+  const _OptionIndexBadge({
+    required this.label,
+    required this.color,
+    required this.isActive,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 34,
+      height: 34,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: isActive ? color : color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+      ),
+      child: Text(
+        label,
+        style: AppTypography.bodyMBold.copyWith(
+          color: isActive ? AppColors.white : color,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+    );
   }
 }
 
@@ -526,17 +706,32 @@ class _FeedbackCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         border: Border.all(color: color.withValues(alpha: 0.22)),
       ),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            isCorrect ? 'Giải thích' : 'Đáp án đúng: $answer',
-            style: AppTypography.bodyMBold.copyWith(color: color),
+          Icon(
+            isCorrect ? Icons.task_alt_rounded : Icons.info_rounded,
+            color: color,
+            size: 22,
           ),
-          const SizedBox(height: AppSpacing.sp8),
-          Text(
-            explanation,
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+          const SizedBox(width: AppSpacing.sp12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isCorrect ? 'Giải thích' : 'Đáp án đúng: $answer',
+                  style: AppTypography.bodyMBold.copyWith(color: color),
+                ),
+                const SizedBox(height: AppSpacing.sp8),
+                Text(
+                  explanation,
+                  style: AppTypography.bodyM.copyWith(
+                    color: AppColors.slateGrey,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -582,85 +777,216 @@ class _HintCard extends StatelessWidget {
 class _InfoBlock extends StatelessWidget {
   final String title;
   final String body;
+  final IconData icon;
+  final Color color;
 
-  const _InfoBlock({required this.title, required this.body});
+  const _InfoBlock({
+    required this.title,
+    required this.body,
+    required this.icon,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     if (body.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: AppTypography.bodyMBold.copyWith(color: AppColors.slateGrey),
-        ),
-        const SizedBox(height: AppSpacing.sp8),
-        Text(
-          body,
-          style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
-        ),
-      ],
-    );
-  }
-}
-
-class _ExampleCard extends StatelessWidget {
-  final GrammarExample example;
-
-  const _ExampleCard({required this.example});
-
-  @override
-  Widget build(BuildContext context) {
     return _SurfaceCard(
+      accent: color,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _SectionLabel(icon: icon, label: title, color: color),
+          const SizedBox(height: AppSpacing.sp12),
           Text(
-            example.jp,
-            style: AppTypography.bodyL.copyWith(
-              color: AppColors.ink,
-              fontFamily: 'Noto Sans JP',
-              fontWeight: FontWeight.w600,
-            ),
+            body,
+            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
           ),
-          if (example.romaji.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(
-              example.romaji,
-              style: AppTypography.labelS.copyWith(
-                color: AppColors.slateMuted,
-              ),
-            ),
-          ],
-          if (example.en.isNotEmpty) ...[
-            const SizedBox(height: AppSpacing.sp8),
-            Text(
-              example.en,
-              style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
-            ),
-          ],
         ],
       ),
     );
   }
 }
 
-class _SurfaceCard extends StatelessWidget {
-  final Widget child;
+class _ExampleCard extends StatelessWidget {
+  final GrammarExample example;
+  final Color color;
 
-  const _SurfaceCard({required this.child});
+  const _ExampleCard({required this.example, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return _SurfaceCard(
+      accent: color,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 4,
+            height: 74,
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+            ),
+          ),
+          const SizedBox(width: AppSpacing.sp16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  example.jp,
+                  style: AppTypography.bodyL.copyWith(
+                    color: AppColors.ink,
+                    fontFamily: 'Noto Sans JP',
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (example.romaji.isNotEmpty) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    example.romaji,
+                    style: AppTypography.labelS.copyWith(
+                      color: AppColors.slateMuted,
+                    ),
+                  ),
+                ],
+                if (example.en.isNotEmpty) ...[
+                  const SizedBox(height: AppSpacing.sp8),
+                  Text(
+                    example.en,
+                    style: AppTypography.bodyM.copyWith(
+                      color: AppColors.slateGrey,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PatternPanel extends StatelessWidget {
+  final String text;
+  final Color color;
+
+  const _PatternPanel({required this.text, required this.color});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      padding: const EdgeInsets.symmetric(
+        vertical: AppSpacing.sp12,
+        horizontal: AppSpacing.sp16,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
+      ),
+      child: Text(
+        text,
+        style: AppTypography.bodyL.copyWith(
+          color: color,
+          fontWeight: FontWeight.w700,
+        ),
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+
+class _LessonPill extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _LessonPill({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sp12,
+        vertical: 6,
+      ),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: AppTypography.label.copyWith(
+              color: color,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionLabel extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _SectionLabel({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 18),
+        const SizedBox(width: AppSpacing.sp8),
+        Text(
+          label,
+          style: AppTypography.bodyMBold.copyWith(
+            color: AppColors.slateGrey,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SurfaceCard extends StatelessWidget {
+  final Widget child;
+  final Color? accent;
+  final Color? tint;
+
+  const _SurfaceCard({required this.child, this.accent, this.tint});
+
+  @override
+  Widget build(BuildContext context) {
+    final borderColor = accent ?? AppColors.slateLight;
+
+    return Container(
+      width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp20),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: tint ?? AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.18)),
+        border: Border.all(color: borderColor.withValues(alpha: 0.18)),
         boxShadow: [
           BoxShadow(
             color: AppColors.ink.withValues(alpha: 0.04),

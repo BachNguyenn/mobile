@@ -93,7 +93,6 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       body: SafeArea(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -106,7 +105,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 key: _formKey,
                 child: Column(
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: AppSpacing.sp48),
 
                     // ── Zen Illustration ─────────────────────────
                     SizedBox(
@@ -323,14 +322,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           height: 20,
                           decoration: BoxDecoration(
                             color: AppColors.white,
-                            borderRadius: BorderRadius.circular(4),
+                            borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               'G',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
+                              style: AppTypography.bodyMBold.copyWith(
                                 color: AppColors.slateGrey,
                               ),
                             ),

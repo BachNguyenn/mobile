@@ -21,19 +21,27 @@ class JapaneseSegment {
     String formatValue(dynamic value) {
       if (value == null) return '';
       if (value is List) {
-        return value.map((e) => e.toString().trim()).where((e) => e.isNotEmpty).join(', ');
+        return value
+            .map((e) => e.toString().trim())
+            .where((e) => e.isNotEmpty)
+            .join(', ');
       }
-      return value.toString();
+      return value.toString().trim();
+    }
+
+    String? formatOptional(dynamic value) {
+      final formatted = formatValue(value);
+      return formatted.isEmpty ? null : formatted;
     }
 
     return JapaneseSegment(
-      text: json['text'] ?? '',
-      reading: json['reading'] ?? '',
-      type: json['type'] ?? '',
-      baseForm: json['baseForm'] ?? '',
+      text: formatValue(json['text']),
+      reading: formatValue(json['reading']),
+      type: formatValue(json['type']),
+      baseForm: formatValue(json['baseForm']),
       explanation: formatValue(json['explanation']),
-      example: json['example'],
-      usageNote: json['usageNote'],
+      example: formatOptional(json['example']),
+      usageNote: formatOptional(json['usageNote']),
     );
   }
 }

@@ -8,9 +8,9 @@ import '../../../../core/models/progress_models.dart';
 import '../providers/kanji_library_provider.dart';
 import '../../../../shared/widgets/progress_card.dart';
 import '../../../../shared/widgets/action_button.dart';
+import '../../../../shared/widgets/jlpt_level_selector.dart';
 import '../widgets/kanji_library_app_bar.dart';
 import '../widgets/kanji_library_search_bar.dart';
-import '../widgets/kanji_level_selector.dart';
 import '../widgets/kanji_grid_view.dart';
 import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
@@ -28,7 +28,6 @@ class KanjiLibraryScreen extends ConsumerWidget {
     final selectedLevel = ref.watch(kanjiLevelFilterProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
@@ -64,10 +63,15 @@ class KanjiLibraryScreen extends ConsumerWidget {
             ),
           ),
 
-          const SliverToBoxAdapter(
+          SliverToBoxAdapter(
             child: Padding(
-              padding: EdgeInsets.only(top: AppSpacing.sp8),
-              child: KanjiLevelSelector(),
+              padding: const EdgeInsets.only(top: AppSpacing.sp8),
+              child: JlptLevelSelector(
+                selectedLevel: ref.watch(kanjiLevelFilterProvider),
+                accentColor: AppColors.mossGreen,
+                onChanged: (level) =>
+                    ref.read(kanjiLevelFilterProvider.notifier).state = level,
+              ),
             ),
           ),
 

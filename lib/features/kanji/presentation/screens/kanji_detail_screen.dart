@@ -12,7 +12,6 @@ class KanjiDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
@@ -117,7 +116,7 @@ class KanjiDetailScreen extends StatelessWidget {
               style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp12, vertical: AppSpacing.sp4),
               decoration: BoxDecoration(
                 color: AppColors.mossGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusS),
@@ -147,7 +146,7 @@ class KanjiDetailScreen extends StatelessWidget {
           ),
           child: Icon(icon, size: 20, color: AppColors.slateGrey),
         ),
-        const SizedBox(height: 4),
+        const SizedBox(height: AppSpacing.sp4),
         Text(label, style: AppTypography.labelS.copyWith(color: AppColors.slateMuted)),
       ],
     );

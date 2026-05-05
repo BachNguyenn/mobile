@@ -83,7 +83,7 @@ abstract final class AppSpacing {
   static const double zenHeaderCollapsedHeight = 64.0;
 
   /// Learning card height
-  static const double learningCardHeight = 120.0;
+  static const double learningCardHeight = 148.0;
 
   /// Icon container size trong learning card
   static const double iconContainerSize = 48.0;

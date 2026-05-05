@@ -97,6 +97,48 @@ abstract final class AppColors {
   /// Bamboo green
   static const Color bambooGreen = Color(0xFF8FBC8F);
 
+  // ─── Glassmorphism ──────────────────────────────────────────
+  /// Frosted glass background
+  static Color get glassBg => white.withValues(alpha: 0.55);
+
+  /// Glass border / stroke
+  static Color get glassStroke => white.withValues(alpha: 0.35);
+
+  /// Glass shadow
+  static Color get glassShadow => ink.withValues(alpha: 0.08);
+
+  // ─── Ambient / Glow ────────────────────────────────────────
+  /// Golden glow for ambient particles
+  static const Color gardenGlow = Color(0xFFE8D5A3);
+
+  /// Soft warm light ray
+  static const Color lightRay = Color(0xFFFFF8E7);
+
+  /// Petal pink glow
+  static const Color petalGlow = Color(0xFFFFD6DC);
+
+  // ─── Gradient Presets (Enhanced) ───────────────────────────
+  /// Premium hero header gradient — deeper wash
+  static const LinearGradient heroGradient = LinearGradient(
+    colors: [Color(0xFFFBF9F6), Color(0xFFF5F0E8), Color(0xFFEFE8DA)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  /// Hero header warning state
+  static const LinearGradient heroWarningGradient = LinearGradient(
+    colors: [Color(0xFFFDF6ED), Color(0xFFF8EDE0), Color(0xFFF2E4D2)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  /// Garden atmospheric gradient
+  static const LinearGradient gardenAtmosphere = LinearGradient(
+    colors: [Color(0xFFF7F2E8), Color(0xFFF0EAD6), Color(0xFFE8E0CC)],
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+  );
+
   // ─── Nav Bar ───────────────────────────────────────────────
   /// Active pill background
   static Color get navPillBg => mossGreen.withValues(alpha: 0.12);

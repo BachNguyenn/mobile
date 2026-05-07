@@ -21,22 +21,24 @@ class AnalyticsStatCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
         border: Border.all(color: color.withValues(alpha: 0.18)),
         boxShadow: [
           BoxShadow(
             color: AppColors.ink.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 18,
+            offset: const Offset(0, 8),
+          ),
+          BoxShadow(
+            color: color.withValues(alpha: 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 5),
           ),
         ],
       ),
       child: Column(
         children: [
-          Text(
-            value,
-            style: AppTypography.statNumber.copyWith(color: color),
-          ),
+          Text(value, style: AppTypography.statNumber.copyWith(color: color)),
           const SizedBox(height: AppSpacing.sp4),
           Text(
             label,

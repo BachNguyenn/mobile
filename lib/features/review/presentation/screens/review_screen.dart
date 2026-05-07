@@ -8,6 +8,7 @@ import 'package:mobile/features/review/presentation/providers/review_controller.
 import 'package:mobile/features/review/presentation/widgets/review_handwriting_area.dart';
 import 'package:mobile/features/review/presentation/widgets/review_rating_buttons.dart';
 import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
+import 'package:mobile/shared/widgets/app_page_background.dart';
 
 class ReviewScreen extends ConsumerStatefulWidget {
   final List<ReviewItem> items;
@@ -19,19 +20,28 @@ class ReviewScreen extends ConsumerStatefulWidget {
 }
 
 class _ReviewScreenState extends ConsumerState<ReviewScreen> {
-  final GlobalKey<HandwritingCanvasState> _canvasKey = GlobalKey<HandwritingCanvasState>();
+  final GlobalKey<HandwritingCanvasState> _canvasKey =
+      GlobalKey<HandwritingCanvasState>();
 
   @override
   Widget build(BuildContext context) {
     if (widget.items.isEmpty) {
       return Scaffold(
-        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0),
-        body: const Center(child: Text('Không có mục nào để ôn tập')),
+        appBar: AppBar(
+          backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+          surfaceTintColor: Colors.transparent,
+          elevation: 0,
+        ),
+        body: const AppPageBackground(
+          child: Center(child: Text('Không có mục nào để ôn tập')),
+        ),
       );
     }
 
     final state = ref.watch(reviewControllerProvider(widget.items));
-    final controller = ref.read(reviewControllerProvider(widget.items).notifier);
+    final controller = ref.read(
+      reviewControllerProvider(widget.items).notifier,
+    );
     final item = widget.items[state.currentIndex];
 
     ref.listen(reviewControllerProvider(widget.items), (previous, next) {
@@ -43,7 +53,9 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           navigator.pop();
         }
         messenger?.showSnackBar(
-          const SnackBar(content: Text('Chúc mừng! Bạn đã hoàn thành phiên ôn tập.')),
+          const SnackBar(
+            content: Text('Chúc mừng! Bạn đã hoàn thành phiên ôn tập.'),
+          ),
         );
       }
     });
@@ -54,64 +66,70 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           'Ôn tập (${state.currentIndex + 1}/${widget.items.length})',
           style: AppTypography.headingM,
         ),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.slateGrey,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(AppSpacing.sp24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            _ReviewPrompt(item: item),
-            const SizedBox(height: AppSpacing.sp24),
-            Expanded(
-              child: item.usesHandwriting
-                  ? _KanjiReviewBody(
-                      item: item,
-                      state: state,
-                      controller: controller,
-                      canvasKey: _canvasKey,
-                    )
-                  : _KnowledgeReviewBody(
-                      item: item,
-                      state: state,
-                      onSelectChoice: controller.selectChoice,
-                    ),
-            ),
-            const SizedBox(height: AppSpacing.sp24),
-            if (!state.showAnswer)
-              SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: item.choices.isNotEmpty && state.selectedChoice == null
-                      ? null
-                      : () => controller.handleCheck(),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.mossGreen,
-                    foregroundColor: Colors.white,
-                    disabledBackgroundColor: AppColors.slateLight,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    item.usesHandwriting || item.choices.isNotEmpty
-                        ? 'Kiểm tra & xem đáp án'
-                        : 'Xem đáp án',
-                    style: AppTypography.bodyMBold.copyWith(color: Colors.white),
-                  ),
-                ),
-              )
-            else
-              ReviewRatingButtons(
-                onRate: (rating) {
-                  controller.handleRating(rating);
-                  _canvasKey.currentState?.clear();
-                },
+      body: AppPageBackground(
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.sp24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              _ReviewPrompt(item: item),
+              const SizedBox(height: AppSpacing.sp24),
+              Expanded(
+                child: item.usesHandwriting
+                    ? _KanjiReviewBody(
+                        item: item,
+                        state: state,
+                        controller: controller,
+                        canvasKey: _canvasKey,
+                      )
+                    : _KnowledgeReviewBody(
+                        item: item,
+                        state: state,
+                        onSelectChoice: controller.selectChoice,
+                      ),
               ),
-          ],
+              const SizedBox(height: AppSpacing.sp24),
+              if (!state.showAnswer)
+                SizedBox(
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed:
+                        item.choices.isNotEmpty && state.selectedChoice == null
+                        ? null
+                        : () => controller.handleCheck(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.mossGreen,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor: AppColors.slateLight,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: Text(
+                      item.usesHandwriting || item.choices.isNotEmpty
+                          ? 'Kiểm tra & xem đáp án'
+                          : 'Xem đáp án',
+                      style: AppTypography.bodyMBold.copyWith(
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                )
+              else
+                ReviewRatingButtons(
+                  onRate: (rating) {
+                    controller.handleRating(rating);
+                    _canvasKey.currentState?.clear();
+                  },
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -188,14 +206,18 @@ class _KanjiReviewBody extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 116,
                         fontFamily: 'Serif',
-                        color: isCorrect ? AppColors.mossGreen : AppColors.terracotta,
+                        color: isCorrect
+                            ? AppColors.mossGreen
+                            : AppColors.terracotta,
                       ),
                     ),
                     if (state.recognizedText != null)
                       Text(
                         'Bạn viết: ${state.recognizedText}',
                         style: AppTypography.bodyM.copyWith(
-                          color: isCorrect ? AppColors.mossGreen : AppColors.terracotta,
+                          color: isCorrect
+                              ? AppColors.mossGreen
+                              : AppColors.terracotta,
                         ),
                       ),
                   ],
@@ -207,7 +229,10 @@ class _KanjiReviewBody extends StatelessWidget {
           top: 12,
           right: 12,
           child: IconButton(
-            icon: const Icon(Icons.refresh_rounded, color: AppColors.slateLight),
+            icon: const Icon(
+              Icons.refresh_rounded,
+              color: AppColors.slateLight,
+            ),
             onPressed: () {
               canvasKey.currentState?.clear();
               controller.resetCanvas();
@@ -233,7 +258,8 @@ class _KnowledgeReviewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.showAnswer) {
-      final isCorrect = state.selectedChoice == null || state.selectedChoice == item.answer;
+      final isCorrect =
+          state.selectedChoice == null || state.selectedChoice == item.answer;
       final errorInsight = isCorrect
           ? null
           : _ReviewErrorAnalyzer.analyze(
@@ -270,7 +296,9 @@ class _KnowledgeReviewBody extends StatelessWidget {
                 const SizedBox(height: AppSpacing.sp12),
                 Text(
                   item.grammar!.formation,
-                  style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+                  style: AppTypography.bodyM.copyWith(
+                    color: AppColors.slateGrey,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -288,7 +316,9 @@ class _KnowledgeReviewBody extends StatelessWidget {
                   ),
                   child: Text(
                     errorInsight,
-                    style: AppTypography.bodyS.copyWith(color: AppColors.slateGrey),
+                    style: AppTypography.bodyS.copyWith(
+                      color: AppColors.slateGrey,
+                    ),
                     textAlign: TextAlign.left,
                   ),
                 ),
@@ -349,7 +379,9 @@ abstract final class _ReviewErrorAnalyzer {
 
     if (item.type == ReviewItemType.grammar) {
       final formation = item.grammar?.formation.toLowerCase() ?? '';
-      if (formation.contains('は') || formation.contains('が') || formation.contains('を')) {
+      if (formation.contains('は') ||
+          formation.contains('が') ||
+          formation.contains('を')) {
         return 'Bạn có thể đang nhầm trợ từ. Hãy kiểm tra vai trò chủ đề/chủ ngữ/tân ngữ trong câu mẫu.';
       }
       if (_looksLikeTenseConfusion(picked, item.answer)) {
@@ -378,7 +410,9 @@ abstract final class _ReviewErrorAnalyzer {
     final answerLower = answer.toLowerCase();
     final pickedMarker = tenseMarkers.where(pickedLower.contains).toList();
     final answerMarker = tenseMarkers.where(answerLower.contains).toList();
-    return pickedMarker.isNotEmpty && answerMarker.isNotEmpty && pickedMarker.first != answerMarker.first;
+    return pickedMarker.isNotEmpty &&
+        answerMarker.isNotEmpty &&
+        pickedMarker.first != answerMarker.first;
   }
 
   static bool _isNearMeaning(String a, String b) {
@@ -386,7 +420,8 @@ abstract final class _ReviewErrorAnalyzer {
     final y = b.toLowerCase();
     if (x == y) return true;
     final distance = _levenshtein(x, y);
-    return distance <= 3 || (x.split(' ').toSet().intersection(y.split(' ').toSet()).isNotEmpty);
+    return distance <= 3 ||
+        (x.split(' ').toSet().intersection(y.split(' ').toSet()).isNotEmpty);
   }
 
   static int _levenshtein(String s, String t) {

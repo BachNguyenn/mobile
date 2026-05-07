@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
@@ -24,7 +25,7 @@ class LibraryActionButton extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
         splashColor: color.withValues(alpha: 0.1),
         child: Container(
           padding: const EdgeInsets.symmetric(
@@ -32,11 +33,16 @@ class LibraryActionButton extends StatelessWidget {
             horizontal: AppSpacing.sp16,
           ),
           decoration: BoxDecoration(
-            color: color.withValues(alpha: 0.08),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-            border: Border.all(
-              color: color.withValues(alpha: 0.15),
-            ),
+            color: AppColors.white.withValues(alpha: 0.82),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+            border: Border.all(color: color.withValues(alpha: 0.15)),
+            boxShadow: [
+              BoxShadow(
+                color: color.withValues(alpha: 0.05),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ],
           ),
           child: Row(
             children: [
@@ -56,9 +62,7 @@ class LibraryActionButton extends StatelessWidget {
                   children: [
                     Text(
                       label,
-                      style: AppTypography.bodyMBold.copyWith(
-                        color: color,
-                      ),
+                      style: AppTypography.bodyMBold.copyWith(color: color),
                     ),
                     const SizedBox(height: 2),
                     Text(

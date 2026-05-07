@@ -18,12 +18,14 @@ class ZenGarden2DWidget extends StatefulWidget {
   final ZenGarden garden;
   final int streak;
   final VoidCallback onTap;
+  final String? missionHint;
 
   const ZenGarden2DWidget({
     super.key,
     required this.garden,
     required this.streak,
     required this.onTap,
+    this.missionHint,
   });
 
   @override
@@ -157,10 +159,12 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
-                      'Chạm để khám phá',
+                      widget.missionHint ?? 'Chạm để khám phá',
                       style: AppTypography.labelS.copyWith(
                         color: AppColors.slateMuted.withValues(alpha: 0.6),
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(width: 2),
                     Icon(
@@ -430,6 +434,7 @@ class _MiniGardenPainter extends CustomPainter {
 
     Color color;
     switch (plant.type) {
+      case 'zen_bonsai':
       case 'bonsai':
         color = AppColors.mossDark;
         // Mini tree
@@ -444,6 +449,7 @@ class _MiniGardenPainter extends CustomPainter {
           Paint()..color = color.withValues(alpha: 0.3),
         );
         break;
+      case 'zen_sakura':
       case 'flower':
         color = AppColors.sakura;
         // Flower dots
@@ -461,6 +467,7 @@ class _MiniGardenPainter extends CustomPainter {
           Paint()..color = AppColors.sunGold.withValues(alpha: 0.5),
         );
         break;
+      case 'zen_stone':
       case 'stone':
         color = AppColors.slateGrey;
         canvas.drawOval(

@@ -12,6 +12,7 @@ import '../widgets/analytics_jlpt_progress.dart';
 import '../../../review/domain/entities/review_item.dart';
 import '../../../vocabulary/presentation/providers/vocabulary_library_provider.dart';
 import '../../../../presentation/navigation/app_routes.dart';
+import '../../../../shared/widgets/app_page_background.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -23,118 +24,123 @@ class AnalyticsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Thống kê học tập', style: AppTypography.headingM),
+        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        surfaceTintColor: Colors.transparent,
       ),
       body: analyticsAsync.when(
-        data: (data) => SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.sp24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Đã học',
-                      value: data.learned.toString(),
-                      color: AppColors.success,
+        data: (data) => AppPageBackground(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.sp24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Đã học',
+                        value: data.learned.toString(),
+                        color: AppColors.success,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sp12),
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Đang nhớ',
-                      value: data.remembering.toString(),
-                      color: AppColors.waterBlue,
+                    const SizedBox(width: AppSpacing.sp12),
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Đang nhớ',
+                        value: data.remembering.toString(),
+                        color: AppColors.waterBlue,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sp12),
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Chưa học',
-                      value: data.notLearned.toString(),
-                      color: AppColors.slateMuted,
+                    const SizedBox(width: AppSpacing.sp12),
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Chưa học',
+                        value: data.notLearned.toString(),
+                        color: AppColors.slateMuted,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              Row(
-                children: [
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Lượt ôn 30 ngày',
-                      value: data.reviewsLast30Days.toString(),
-                      color: AppColors.mossGreen,
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Lượt ôn 30 ngày',
+                        value: data.reviewsLast30Days.toString(),
+                        color: AppColors.mossGreen,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sp12),
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Ngày học/30',
-                      value: data.activeDaysLast30Days.toString(),
-                      color: AppColors.sunGold,
+                    const SizedBox(width: AppSpacing.sp12),
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Ngày học/30',
+                        value: data.activeDaysLast30Days.toString(),
+                        color: AppColors.sunGold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sp12),
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Tỉ lệ nhớ',
-                      value: '${(data.successRateLast30Days * 100).round()}%',
-                      color: AppColors.terracotta,
+                    const SizedBox(width: AppSpacing.sp12),
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Tỉ lệ nhớ',
+                        value: '${(data.successRateLast30Days * 100).round()}%',
+                        color: AppColors.terracotta,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              Row(
-                children: [
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Tỉ lệ nhớ D1',
-                      value: '${(data.d1Retention * 100).round()}%',
-                      color: AppColors.mossGreen,
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Tỉ lệ nhớ D1',
+                        value: '${(data.d1Retention * 100).round()}%',
+                        color: AppColors.mossGreen,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sp12),
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Tỉ lệ nhớ D7',
-                      value: '${(data.d7Retention * 100).round()}%',
-                      color: AppColors.waterBlue,
+                    const SizedBox(width: AppSpacing.sp12),
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Tỉ lệ nhớ D7',
+                        value: '${(data.d7Retention * 100).round()}%',
+                        color: AppColors.waterBlue,
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sp12),
-                  Expanded(
-                    child: AnalyticsStatCard(
-                      label: 'Hoàn thành lộ trình',
-                      value: '${(data.lessonCompletionRate * 100).round()}%',
-                      color: AppColors.sunGold,
+                    const SizedBox(width: AppSpacing.sp12),
+                    Expanded(
+                      child: AnalyticsStatCard(
+                        label: 'Hoàn thành lộ trình',
+                        value: '${(data.lessonCompletionRate * 100).round()}%',
+                        color: AppColors.sunGold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp32),
-              Text(
-                'Mức độ hoạt động',
-                style: AppTypography.headingS.copyWith(color: AppColors.ink),
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              AnalyticsHeatmap(heatmapData: data.heatmapData),
-              const SizedBox(height: AppSpacing.sp32),
-              AnalyticsJlptProgress(progress: data.jlptProgress),
-              const SizedBox(height: AppSpacing.sp24),
-              _WeakAreaInsightCard(
-                area: data.weakestArea,
-                areaType: data.weakestAreaType,
-                successRate: data.weakestAreaSuccessRate,
-                onPracticeNow: () => _openWeakAreaReview(context, ref, data.weakestAreaType),
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _RetentionInsightCard(
-                dropoutPoint: data.dropoutPoint,
-                cohortByLevel: data.cohortByLevel,
-              ),
-            ],
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp32),
+                Text(
+                  'Mức độ hoạt động',
+                  style: AppTypography.headingS.copyWith(color: AppColors.ink),
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                AnalyticsHeatmap(heatmapData: data.heatmapData),
+                const SizedBox(height: AppSpacing.sp32),
+                AnalyticsJlptProgress(progress: data.jlptProgress),
+                const SizedBox(height: AppSpacing.sp24),
+                _WeakAreaInsightCard(
+                  area: data.weakestArea,
+                  areaType: data.weakestAreaType,
+                  successRate: data.weakestAreaSuccessRate,
+                  onPracticeNow: () =>
+                      _openWeakAreaReview(context, ref, data.weakestAreaType),
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _RetentionInsightCard(
+                  dropoutPoint: data.dropoutPoint,
+                  cohortByLevel: data.cohortByLevel,
+                ),
+              ],
+            ),
           ),
         ),
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -185,7 +191,9 @@ class _RetentionInsightCard extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: AppSpacing.sp8),
               child: Text(
                 '$key: ${(value * 100).round()}%',
-                style: AppTypography.label.copyWith(color: AppColors.slateMuted),
+                style: AppTypography.label.copyWith(
+                  color: AppColors.slateMuted,
+                ),
               ),
             );
           }),

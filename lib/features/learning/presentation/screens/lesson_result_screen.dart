@@ -3,6 +3,7 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/presentation/navigation/app_routes.dart';
 
 class LessonResultScreen extends StatelessWidget {
   final Lesson lesson;
@@ -20,6 +21,7 @@ class LessonResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final accuracy = totalQuestions == 0 ? 0.0 : correctAnswers / totalQuestions;
     final expGain = (correctAnswers * 8).clamp(0, 999);
+    final resourceGain = (correctAnswers * 4).clamp(0, 999);
     final accuracyPercent = (accuracy * 100).round();
 
     return Scaffold(
@@ -70,24 +72,53 @@ class LessonResultScreen extends StatelessWidget {
                 value: '+$expGain EXP',
                 color: AppColors.sunGold,
               ),
+              const SizedBox(height: AppSpacing.sp12),
+              _ResultStat(
+                icon: Icons.spa_rounded,
+                label: 'Tài nguyên vườn',
+                value: '+$resourceGain nước/nắng',
+                color: AppColors.mossGreen,
+              ),
               const Spacer(),
-              SizedBox(
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.mossGreen,
-                    foregroundColor: AppColors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+              Row(
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                      height: 56,
+                      child: OutlinedButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: Text('Về lộ trình', style: AppTypography.bodyMBold),
+                      ),
                     ),
                   ),
-                  child: Text(
-                    'Về lộ trình',
-                    style: AppTypography.bodyMBold.copyWith(color: AppColors.white),
+                  const SizedBox(width: AppSpacing.sp12),
+                  Expanded(
+                    child: SizedBox(
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.push(context, AppRoutes.garden());
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.mossGreen,
+                          foregroundColor: AppColors.white,
+                          elevation: 0,
+                          shape: RoundedRectangleBorder(
+                            borderRadius:
+                                BorderRadius.circular(AppSpacing.radiusM),
+                          ),
+                        ),
+                        child: Text(
+                          'Trang trí vườn',
+                          style: AppTypography.bodyMBold.copyWith(
+                            color: AppColors.white,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),

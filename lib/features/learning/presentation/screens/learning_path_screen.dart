@@ -9,6 +9,7 @@ import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
+import 'package:mobile/shared/widgets/app_page_background.dart';
 import 'package:mobile/shared/widgets/jlpt_level_selector.dart';
 
 class LearningPathScreen extends ConsumerStatefulWidget {
@@ -63,67 +64,69 @@ class _LearningPathScreenState extends ConsumerState<LearningPathScreen> {
     final levelLessons = lessons; // Already filtered by level in provider
 
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          _LearningPathAppBar(),
-          SliverToBoxAdapter(
-            child: Column(
-              children: [
-                const SizedBox(height: AppSpacing.sp12),
-                JlptLevelSelector(
-                  selectedLevel: ref.watch(selectedLevelProvider),
-                  accentColor: AppColors.mossGreen,
-                  onChanged: (level) {
-                    if (level != null) {
-                      ref.read(selectedLevelProvider.notifier).state = level;
-                    }
-                  },
-                  levels: const [5, 4, 3, 2, 1],
-                ),
-                if (!widget.isNavBarMode) ...[
+      body: AppPageBackground(
+        child: CustomScrollView(
+          slivers: [
+            _LearningPathAppBar(),
+            SliverToBoxAdapter(
+              child: Column(
+                children: [
                   const SizedBox(height: AppSpacing.sp12),
-                  _CategorySelector(),
+                  JlptLevelSelector(
+                    selectedLevel: ref.watch(selectedLevelProvider),
+                    accentColor: AppColors.mossGreen,
+                    onChanged: (level) {
+                      if (level != null) {
+                        ref.read(selectedLevelProvider.notifier).state = level;
+                      }
+                    },
+                    levels: const [5, 4, 3, 2, 1],
+                  ),
+                  if (!widget.isNavBarMode) ...[
+                    const SizedBox(height: AppSpacing.sp12),
+                    _CategorySelector(),
+                  ],
+                  const SizedBox(height: AppSpacing.sp12),
                 ],
-                const SizedBox(height: AppSpacing.sp12),
-              ],
-            ),
-          ),
-          if (levelLessons.isEmpty)
-            AppEmptyState.sliver(
-              icon: Icons.auto_stories_rounded,
-              message: 'Chưa có bài học nào cho trình độ này.',
-            )
-          else
-            SliverPadding(
-              padding: const EdgeInsets.symmetric(vertical: AppSpacing.sp48),
-              sliver: SliverList(
-                delegate: SliverChildBuilderDelegate((context, index) {
-                  final lesson = levelLessons[index];
-                  final previousLesson = index > 0
-                      ? levelLessons[index - 1]
-                      : null;
-
-                  return _PathNode(
-                    index: index,
-                    lesson: lesson,
-                    previousLesson: previousLesson,
-                    hideCounts: widget.isNavBarMode,
-                    onTap: lesson.isUnlocked
-                        ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) =>
-                                    LessonDetailScreen(lesson: lesson),
-                              ),
-                            );
-                          }
-                        : null,
-                  );
-                }, childCount: levelLessons.length),
               ),
             ),
-        ],
+            if (levelLessons.isEmpty)
+              AppEmptyState.sliver(
+                icon: Icons.auto_stories_rounded,
+                message: 'Chưa có bài học nào cho trình độ này.',
+              )
+            else
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.sp48),
+                sliver: SliverList(
+                  delegate: SliverChildBuilderDelegate((context, index) {
+                    final lesson = levelLessons[index];
+                    final previousLesson = index > 0
+                        ? levelLessons[index - 1]
+                        : null;
+
+                    return _PathNode(
+                      index: index,
+                      lesson: lesson,
+                      previousLesson: previousLesson,
+                      hideCounts: widget.isNavBarMode,
+                      onTap: lesson.isUnlocked
+                          ? () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      LessonDetailScreen(lesson: lesson),
+                                ),
+                              );
+                            }
+                          : null,
+                    );
+                  }, childCount: levelLessons.length),
+                ),
+              ),
+          ],
+        ),
       ),
     );
   }
@@ -152,12 +155,15 @@ class _LearningPathAppBar extends ConsumerWidget {
     return SliverAppBar(
       floating: true,
       pinned: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+      surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
       title: Text(
         title,
-        style: AppTypography.headingM.copyWith(color: Theme.of(context).colorScheme.onSurface),
+        style: AppTypography.headingM.copyWith(
+          color: Theme.of(context).colorScheme.onSurface,
+        ),
       ),
       actions: [
         IconButton(
@@ -254,8 +260,6 @@ class _CategoryItem extends ConsumerWidget {
   }
 }
 
-
-
 class _PathNode extends StatelessWidget {
   final int index;
   final Lesson lesson;
@@ -335,7 +339,10 @@ class _PathNode extends StatelessWidget {
 
   Widget _buildLessonTooltip() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp12, vertical: AppSpacing.sp8),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sp12,
+        vertical: AppSpacing.sp8,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),

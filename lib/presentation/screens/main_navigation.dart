@@ -225,23 +225,40 @@ class _PremiumBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.06),
-            blurRadius: 20,
-            offset: const Offset(0, -6),
-          ),
-        ],
+    return SafeArea(
+      minimum: const EdgeInsets.fromLTRB(
+        AppSpacing.sp16,
+        AppSpacing.sp8,
+        AppSpacing.sp16,
+        AppSpacing.sp8,
       ),
-      child: SafeArea(
-        child: SizedBox(
-          height: AppSpacing.bottomNavHeight,
+      child: Container(
+        height: 68,
+        decoration: BoxDecoration(
+          color: AppColors.white.withValues(alpha: 0.96),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+          border: Border.all(
+            color: AppColors.mossGreen.withValues(alpha: 0.10),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.ink.withValues(alpha: 0.08),
+              blurRadius: 24,
+              offset: const Offset(0, 10),
+            ),
+            BoxShadow(
+              color: AppColors.mossGreen.withValues(alpha: 0.06),
+              blurRadius: 18,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusL),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final itemWidth = constraints.maxWidth / _navItems.length;
+              final pillWidth = (itemWidth - AppSpacing.sp8).clamp(48.0, 76.0);
 
               return Stack(
                 children: [
@@ -251,22 +268,23 @@ class _PremiumBottomNav extends StatelessWidget {
                     builder: (context, _) {
                       final currentPos = pillAnimation.value;
                       final pillLeft =
-                          currentPos * itemWidth +
-                          (itemWidth - AppSpacing.navBarItemMinWidth) / 2;
+                          currentPos * itemWidth + (itemWidth - pillWidth) / 2;
 
                       return Positioned(
                         left: pillLeft,
-                        top:
-                            (AppSpacing.bottomNavHeight -
-                                AppSpacing.navBarPillHeight) /
-                            2,
+                        top: 8,
                         child: Container(
-                          width: AppSpacing.navBarItemMinWidth,
-                          height: AppSpacing.navBarPillHeight,
+                          width: pillWidth,
+                          height: 52,
                           decoration: BoxDecoration(
                             color: AppColors.navPillBg,
                             borderRadius: BorderRadius.circular(
-                              AppSpacing.navBarPillRadius,
+                              AppSpacing.radiusM,
+                            ),
+                            border: Border.all(
+                              color: AppColors.mossGreen.withValues(
+                                alpha: 0.12,
+                              ),
                             ),
                           ),
                         ),
@@ -310,47 +328,55 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      splashColor: AppColors.mossGreen.withValues(alpha: 0.08),
-      highlightColor: Colors.transparent,
-      child: SizedBox(
-        height: AppSpacing.bottomNavHeight,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Icon with scale animation
-            TweenAnimationBuilder<double>(
-              tween: Tween(begin: 1.0, end: isSelected ? 1.15 : 1.0),
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOutBack,
-              builder: (context, scale, child) {
-                return Transform.scale(scale: scale, child: child);
-              },
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: Icon(
-                  isSelected ? data.activeIcon : data.icon,
-                  key: ValueKey('${data.label}_$isSelected'),
-                  size: 24,
-                  color: isSelected
-                      ? AppColors.mossGreen
-                      : AppColors.slateMuted,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        splashColor: AppColors.mossGreen.withValues(alpha: 0.08),
+        highlightColor: Colors.transparent,
+        child: SizedBox(
+          height: 68,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Icon with scale animation
+              TweenAnimationBuilder<double>(
+                tween: Tween(begin: 1.0, end: isSelected ? 1.15 : 1.0),
+                duration: const Duration(milliseconds: 250),
+                curve: Curves.easeOutBack,
+                builder: (context, scale, child) {
+                  return Transform.scale(scale: scale, child: child);
+                },
+                child: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  child: Icon(
+                    isSelected ? data.activeIcon : data.icon,
+                    key: ValueKey('${data.label}_$isSelected'),
+                    size: 24,
+                    color: isSelected
+                        ? AppColors.mossGreen
+                        : AppColors.slateMuted,
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: AppSpacing.sp4),
+              const SizedBox(height: AppSpacing.sp4),
 
-            // Label with animated color
-            AnimatedDefaultTextStyle(
-              duration: const Duration(milliseconds: 200),
-              style: AppTypography.labelS.copyWith(
-                color: isSelected ? AppColors.mossGreen : AppColors.slateMuted,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+              // Label with animated color
+              AnimatedDefaultTextStyle(
+                duration: const Duration(milliseconds: 200),
+                style: AppTypography.labelS.copyWith(
+                  color: isSelected ? AppColors.mossDark : AppColors.slateMuted,
+                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  fontSize: 10,
+                ),
+                child: Text(
+                  data.label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ),
-              child: Text(data.label),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

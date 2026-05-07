@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 
 /// SliverAppBar dùng chung cho các Library screens (Vocabulary, Kanji, Grammar).
@@ -24,7 +26,7 @@ class LibrarySliverAppBar extends StatelessWidget {
     return SliverAppBar(
       floating: true,
       pinned: true,
-      backgroundColor: theme.scaffoldBackgroundColor,
+      backgroundColor: AppColors.cream.withValues(alpha: 0.94),
       foregroundColor: theme.colorScheme.onSurface,
       surfaceTintColor: Colors.transparent,
       title: _buildTitle(theme),
@@ -36,10 +38,23 @@ class LibrarySliverAppBar extends StatelessWidget {
   Widget _buildTitle(ThemeData theme) {
     return Material(
       color: Colors.transparent,
-      child: Text(
-        title,
-        style: AppTypography.headingS.copyWith(
-          color: theme.colorScheme.onSurface,
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sp12,
+          vertical: AppSpacing.sp8,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.white.withValues(alpha: 0.72),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+          border: Border.all(
+            color: AppColors.mossGreen.withValues(alpha: 0.10),
+          ),
+        ),
+        child: Text(
+          title,
+          style: AppTypography.headingS.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
         ),
       ),
     );

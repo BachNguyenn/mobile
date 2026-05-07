@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
+import '../../../../shared/widgets/app_page_background.dart';
 import '../providers/grammar_analysis_controller.dart';
 import '../widgets/grammar_segment_card.dart';
 
@@ -54,7 +55,8 @@ class _GrammarAnalysisScreenState extends ConsumerState<GrammarAnalysisScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('AI Tutor tiếng Nhật', style: AppTypography.headingM),
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.slateGrey,
         actions: [
@@ -66,11 +68,11 @@ class _GrammarAnalysisScreenState extends ConsumerState<GrammarAnalysisScreen> {
             ),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sp24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+      body: AppPageBackground(
+        child: SafeArea(
+          child: ListView(
+            padding: const EdgeInsets.all(AppSpacing.sp24),
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             children: [
               _TutorInputCard(
                 controller: _controller,
@@ -80,7 +82,7 @@ class _GrammarAnalysisScreenState extends ConsumerState<GrammarAnalysisScreen> {
                 onSubmit: _analyze,
               ),
               const SizedBox(height: AppSpacing.sp20),
-              Expanded(child: _AnalysisContent(state: state)),
+              _AnalysisContent(state: state),
             ],
           ),
         ),
@@ -224,8 +226,11 @@ class _AnalysisContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (state.isLoading) {
-      return const Center(
-        child: CircularProgressIndicator(color: AppColors.mossGreen),
+      return const SizedBox(
+        height: 160,
+        child: Center(
+          child: CircularProgressIndicator(color: AppColors.mossGreen),
+        ),
       );
     }
 
@@ -246,12 +251,11 @@ class _AnalysisContent extends StatelessWidget {
       );
     }
 
-    return ListView.builder(
-      physics: const BouncingScrollPhysics(),
-      itemCount: state.segments.length,
-      itemBuilder: (context, index) {
-        return GrammarSegmentCard(segment: state.segments[index]);
-      },
+    return Column(
+      children: [
+        for (final segment in state.segments)
+          GrammarSegmentCard(segment: segment),
+      ],
     );
   }
 }
@@ -269,14 +273,19 @@ class _TutorMessage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.12)),
+      ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
+        padding: const EdgeInsets.all(AppSpacing.sp20),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 44, color: AppColors.mossGreen),
-            const SizedBox(height: AppSpacing.sp16),
+            Icon(icon, size: 36, color: AppColors.mossGreen),
+            const SizedBox(height: AppSpacing.sp12),
             Text(
               title,
               textAlign: TextAlign.center,

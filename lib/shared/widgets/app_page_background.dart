@@ -1,0 +1,22 @@
+import 'package:flutter/material.dart';
+import '../../core/theme/app_colors.dart';
+
+class AppPageBackground extends StatelessWidget {
+  final Widget child;
+
+  const AppPageBackground({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [AppColors.cream, Color(0xFFF7F2EA), AppColors.cream],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: child,
+    );
+  }
+}

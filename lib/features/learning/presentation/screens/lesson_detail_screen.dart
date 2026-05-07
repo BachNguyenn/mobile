@@ -8,6 +8,7 @@ import 'package:mobile/features/learning/presentation/screens/lesson_result_scre
 import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
 import 'package:mobile/features/learning/presentation/widgets/lesson_quiz_content.dart';
 import 'package:mobile/features/learning/presentation/widgets/lesson_bottom_bar.dart';
+import 'package:mobile/shared/widgets/app_page_background.dart';
 
 class LessonDetailScreen extends ConsumerStatefulWidget {
   final Lesson lesson;
@@ -19,12 +20,15 @@ class LessonDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
-  final GlobalKey<HandwritingCanvasState> _canvasKey = GlobalKey<HandwritingCanvasState>();
+  final GlobalKey<HandwritingCanvasState> _canvasKey =
+      GlobalKey<HandwritingCanvasState>();
 
   @override
   Widget build(BuildContext context) {
     final state = ref.watch(lessonControllerProvider(widget.lesson));
-    final controller = ref.read(lessonControllerProvider(widget.lesson).notifier);
+    final controller = ref.read(
+      lessonControllerProvider(widget.lesson).notifier,
+    );
 
     // Listen for finished state
     ref.listen(lessonControllerProvider(widget.lesson), (previous, next) {
@@ -51,7 +55,9 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     if (state.isLoading) {
       return const Scaffold(
         backgroundColor: AppColors.cream,
-        body: Center(child: CircularProgressIndicator(color: AppColors.mossGreen)),
+        body: Center(
+          child: CircularProgressIndicator(color: AppColors.mossGreen),
+        ),
       );
     }
 
@@ -59,39 +65,42 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
       return Scaffold(
         backgroundColor: AppColors.cream,
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+          surfaceTintColor: Colors.transparent,
           elevation: 0,
           foregroundColor: AppColors.slateGrey,
         ),
-        body: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.sp24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.quiz_outlined,
-                  color: AppColors.slateMuted,
-                  size: 48,
-                ),
-                const SizedBox(height: AppSpacing.sp16),
-                Text(
-                  'Chưa có câu hỏi cho bài này',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: AppColors.ink,
-                        fontWeight: FontWeight.w700,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: AppSpacing.sp8),
-                Text(
-                  'Hãy thử lại sau khi dữ liệu bài học được bổ sung.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.slateGrey,
-                      ),
-                  textAlign: TextAlign.center,
-                ),
-              ],
+        body: AppPageBackground(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(AppSpacing.sp24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.quiz_outlined,
+                    color: AppColors.slateMuted,
+                    size: 48,
+                  ),
+                  const SizedBox(height: AppSpacing.sp16),
+                  Text(
+                    'Chưa có câu hỏi cho bài này',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppColors.ink,
+                      fontWeight: FontWeight.w700,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: AppSpacing.sp8),
+                  Text(
+                    'Hãy thử lại sau khi dữ liệu bài học được bổ sung.',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: AppColors.slateGrey,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -99,9 +108,9 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     }
 
     return Scaffold(
-      backgroundColor: AppColors.cream,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.slateGrey,
         title: ClipRRect(
@@ -114,30 +123,32 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.sp24),
-                child: LessonQuizContent(
-                  state: state,
-                  onSelectAnswer: controller.selectAnswer,
-                  onDrawingChanged: controller.onDrawingChanged,
-                  onResetCanvas: controller.resetCanvas,
-                  canvasKey: _canvasKey,
+      body: AppPageBackground(
+        child: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.sp24),
+                  child: LessonQuizContent(
+                    state: state,
+                    onSelectAnswer: controller.selectAnswer,
+                    onDrawingChanged: controller.onDrawingChanged,
+                    onResetCanvas: controller.resetCanvas,
+                    canvasKey: _canvasKey,
+                  ),
                 ),
               ),
-            ),
-            LessonBottomBar(
-              state: state,
-              onCheck: controller.checkAnswer,
-              onNext: () {
-                controller.nextQuestion();
-                _canvasKey.currentState?.clear();
-              },
-            ),
-          ],
+              LessonBottomBar(
+                state: state,
+                onCheck: controller.checkAnswer,
+                onNext: () {
+                  controller.nextQuestion();
+                  _canvasKey.currentState?.clear();
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

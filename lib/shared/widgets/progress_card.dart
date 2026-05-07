@@ -28,15 +28,18 @@ class LibraryProgressCard extends StatelessWidget {
       padding: AppSpacing.cardPadding,
       decoration: BoxDecoration(
         color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(
-          color: color.withValues(alpha: 0.15),
-        ),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        border: Border.all(color: color.withValues(alpha: 0.15)),
         boxShadow: [
           BoxShadow(
             color: AppColors.ink.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+          BoxShadow(
+            color: color.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
           ),
         ],
       ),
@@ -51,14 +54,17 @@ class LibraryProgressCard extends StatelessWidget {
                 width: AppSpacing.iconContainerSize,
                 height: AppSpacing.iconContainerSize,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+                  gradient: LinearGradient(
+                    colors: [
+                      color.withValues(alpha: 0.18),
+                      color.withValues(alpha: 0.08),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusM),
                 ),
-                child: Icon(
-                  icon,
-                  size: 24,
-                  color: color,
-                ),
+                child: Icon(icon, size: 24, color: color),
               ),
               const SizedBox(width: AppSpacing.sp16),
 
@@ -104,8 +110,7 @@ class LibraryProgressCard extends StatelessWidget {
                   value: value.clamp(0.0, 1.0),
                   minHeight: AppSpacing.progressBarHeight,
                   backgroundColor: AppColors.creamDark,
-                  valueColor:
-                      AlwaysStoppedAnimation(color),
+                  valueColor: AlwaysStoppedAnimation(color),
                 );
               },
             ),
@@ -146,9 +151,7 @@ class LibraryProgressCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

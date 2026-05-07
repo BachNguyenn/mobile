@@ -8,6 +8,7 @@ import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'package:mobile/shared/widgets/app_page_background.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -19,181 +20,191 @@ class SettingsScreen extends ConsumerWidget {
     final user = authState.valueOrNull;
 
     return Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text('Cài đặt', style: AppTypography.headingM),
+        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
       body: settingsAsync.when(
         data: (settings) {
-          return ListView(
-            padding: const EdgeInsets.all(AppSpacing.sp16),
-            children: [
-              _SettingsSection(
-                title: 'Hồ sơ',
-                children: [
-                  _ProfileTile(
-                    name: user?.displayName ?? 'Zen Learner',
-                    email: user?.email ?? '',
-                    photoUrl: user?.photoURL,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _SettingsSection(
-                title: 'Giao diện',
-                children: [
-                  _ThemeModeTile(
-                    selected: settings.themeMode,
-                    onChanged: (mode) {
-                      ref.read(settingsProvider.notifier).updateThemeMode(mode);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _SettingsSection(
-                title: 'Hiển thị',
-                children: [
-                  _FontScaleTile(
-                    selected: settings.fontScale,
-                    onChanged: (scale) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .updateFontScale(scale);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _SettingsSection(
-                title: 'Ngôn ngữ',
-                children: [
-                  _LanguageTile(
-                    selected: settings.appLanguage,
-                    onChanged: (language) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .updateAppLanguage(language);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _SettingsSection(
-                title: 'Học tập',
-                children: [
-                  _CategoryPickerTile(
-                    selected: settings.defaultLearningCategory,
-                    onChanged: (category) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .updateDefaultLearningCategory(category);
-                    },
-                  ),
-                  const Divider(height: 1),
-                  _LearningGoalTile(
-                    selected: settings.learningGoal,
-                    onChanged: (goal) {
-                      ref.read(settingsProvider.notifier).updateLearningGoal(goal);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _SettingsSection(
-                title: 'Nhắc học',
-                children: [
-                  SwitchListTile.adaptive(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      'Nhắc học hằng ngày',
-                      style: AppTypography.bodyMBold,
+          return AppPageBackground(
+            child: ListView(
+              padding: const EdgeInsets.all(AppSpacing.sp16),
+              children: [
+                _SettingsSection(
+                  title: 'Hồ sơ',
+                  children: [
+                    _ProfileTile(
+                      name: user?.displayName ?? 'Zen Learner',
+                      email: user?.email ?? '',
+                      photoUrl: user?.photoURL,
                     ),
-                    subtitle: Text(
-                      settings.dailyReminderEnabled
-                          ? 'Đang bật lúc ${_formatTime(settings.reminderHour, settings.reminderMinute)}'
-                          : 'Đang tắt',
-                      style: AppTypography.caption,
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Giao diện',
+                  children: [
+                    _ThemeModeTile(
+                      selected: settings.themeMode,
+                      onChanged: (mode) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .updateThemeMode(mode);
+                      },
                     ),
-                    value: settings.dailyReminderEnabled,
-                    activeThumbColor: AppColors.mossGreen,
-                    onChanged: (enabled) async {
-                      await ref
-                          .read(settingsProvider.notifier)
-                          .updateDailyReminderEnabled(enabled);
-                      if (!enabled) {
-                        await NotificationService().cancelDailyReminder();
-                      }
-                    },
-                  ),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    enabled: settings.dailyReminderEnabled,
-                    leading: const Icon(
-                      Icons.schedule_rounded,
-                      color: AppColors.mossGreen,
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Hiển thị',
+                  children: [
+                    _FontScaleTile(
+                      selected: settings.fontScale,
+                      onChanged: (scale) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .updateFontScale(scale);
+                      },
                     ),
-                    title: Text('Giờ nhắc học', style: AppTypography.bodyMBold),
-                    subtitle: Text(
-                      _formatTime(
-                        settings.reminderHour,
-                        settings.reminderMinute,
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Ngôn ngữ',
+                  children: [
+                    _LanguageTile(
+                      selected: settings.appLanguage,
+                      onChanged: (language) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .updateAppLanguage(language);
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Học tập',
+                  children: [
+                    _CategoryPickerTile(
+                      selected: settings.defaultLearningCategory,
+                      onChanged: (category) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .updateDefaultLearningCategory(category);
+                      },
+                    ),
+                    const Divider(height: 1),
+                    _LearningGoalTile(
+                      selected: settings.learningGoal,
+                      onChanged: (goal) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .updateLearningGoal(goal);
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Nhắc học',
+                  children: [
+                    SwitchListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Nhắc học hằng ngày',
+                        style: AppTypography.bodyMBold,
                       ),
-                      style: AppTypography.caption,
+                      subtitle: Text(
+                        settings.dailyReminderEnabled
+                            ? 'Đang bật lúc ${_formatTime(settings.reminderHour, settings.reminderMinute)}'
+                            : 'Đang tắt',
+                        style: AppTypography.caption,
+                      ),
+                      value: settings.dailyReminderEnabled,
+                      activeThumbColor: AppColors.mossGreen,
+                      onChanged: (enabled) async {
+                        await ref
+                            .read(settingsProvider.notifier)
+                            .updateDailyReminderEnabled(enabled);
+                        if (!enabled) {
+                          await NotificationService().cancelDailyReminder();
+                        }
+                      },
                     ),
-                    trailing: const Icon(Icons.chevron_right_rounded),
-                    onTap: settings.dailyReminderEnabled
-                        ? () => _pickReminderTime(context, ref, settings)
-                        : null,
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _SettingsSection(
-                title: 'Trải nghiệm',
-                children: [
-                  SwitchListTile.adaptive(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(
-                      'Rung nhẹ khi thao tác',
-                      style: AppTypography.bodyMBold,
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      enabled: settings.dailyReminderEnabled,
+                      leading: const Icon(
+                        Icons.schedule_rounded,
+                        color: AppColors.mossGreen,
+                      ),
+                      title: Text(
+                        'Giờ nhắc học',
+                        style: AppTypography.bodyMBold,
+                      ),
+                      subtitle: Text(
+                        _formatTime(
+                          settings.reminderHour,
+                          settings.reminderMinute,
+                        ),
+                        style: AppTypography.caption,
+                      ),
+                      trailing: const Icon(Icons.chevron_right_rounded),
+                      onTap: settings.dailyReminderEnabled
+                          ? () => _pickReminderTime(context, ref, settings)
+                          : null,
                     ),
-                    subtitle: Text(
-                      'Áp dụng cho thanh điều hướng',
-                      style: AppTypography.caption,
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Trải nghiệm',
+                  children: [
+                    SwitchListTile.adaptive(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(
+                        'Rung nhẹ khi thao tác',
+                        style: AppTypography.bodyMBold,
+                      ),
+                      subtitle: Text(
+                        'Áp dụng cho thanh điều hướng',
+                        style: AppTypography.caption,
+                      ),
+                      value: settings.hapticsEnabled,
+                      activeThumbColor: AppColors.mossGreen,
+                      onChanged: (enabled) {
+                        ref
+                            .read(settingsProvider.notifier)
+                            .updateHapticsEnabled(enabled);
+                      },
                     ),
-                    value: settings.hapticsEnabled,
-                    activeThumbColor: AppColors.mossGreen,
-                    onChanged: (enabled) {
-                      ref
-                          .read(settingsProvider.notifier)
-                          .updateHapticsEnabled(enabled);
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp16),
-              _SettingsSection(
-                title: 'Tài khoản',
-                children: [
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    leading: const Icon(
-                      Icons.logout_rounded,
-                      color: AppColors.error,
-                    ),
-                    title: Text(
-                      'Đăng xuất',
-                      style: AppTypography.bodyMBold.copyWith(
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Tài khoản',
+                  children: [
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: const Icon(
+                        Icons.logout_rounded,
                         color: AppColors.error,
                       ),
+                      title: Text(
+                        'Đăng xuất',
+                        style: AppTypography.bodyMBold.copyWith(
+                          color: AppColors.error,
+                        ),
+                      ),
+                      onTap: () => _signOut(context, ref),
                     ),
-                    onTap: () => _signOut(context, ref),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           );
         },
         loading: () => const Center(
@@ -273,10 +284,17 @@ class _SettingsSection extends StatelessWidget {
           ),
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
             border: Border.all(
               color: AppColors.slateLight.withValues(alpha: 0.25),
             ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.ink.withValues(alpha: 0.04),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
+              ),
+            ],
           ),
           child: Column(children: children),
         ),
@@ -616,7 +634,10 @@ class _LearningGoalTile extends StatelessWidget {
               return ListTile(
                 title: Text(goal.label, style: AppTypography.bodyMBold),
                 trailing: isSelected
-                    ? const Icon(Icons.check_rounded, color: AppColors.mossGreen)
+                    ? const Icon(
+                        Icons.check_rounded,
+                        color: AppColors.mossGreen,
+                      )
                     : null,
                 onTap: () {
                   onChanged(goal);

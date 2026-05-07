@@ -147,7 +147,9 @@ class _HeroHeaderState extends State<HeroHeader>
                   const SizedBox(height: AppSpacing.sp16),
 
                   // Stat Chips Row — glassmorphism
-                  Row(
+                  Wrap(
+                    spacing: AppSpacing.sp8,
+                    runSpacing: AppSpacing.sp8,
                     children: [
                       _buildGlassStatChip(
                         icon: Icons.local_fire_department_rounded,
@@ -156,7 +158,6 @@ class _HeroHeaderState extends State<HeroHeader>
                             ? AppColors.terracotta
                             : AppColors.slateMuted,
                       ),
-                      const SizedBox(width: AppSpacing.sp8),
                       _buildGlassStatChip(
                         icon: Icons.schedule_rounded,
                         value: '${widget.overdueCount} cần ôn',
@@ -164,7 +165,6 @@ class _HeroHeaderState extends State<HeroHeader>
                             ? AppColors.warning
                             : AppColors.slateMuted,
                       ),
-                      const SizedBox(width: AppSpacing.sp8),
                       _buildGlassStatChip(
                         icon: Icons.check_circle_outline_rounded,
                         value: '${widget.todayReviewed} hôm nay',
@@ -194,10 +194,7 @@ class _HeroHeaderState extends State<HeroHeader>
       decoration: BoxDecoration(
         color: AppColors.glassBg,
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(
-          color: color.withValues(alpha: 0.25),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
         boxShadow: [
           BoxShadow(
             color: color.withValues(alpha: 0.08),

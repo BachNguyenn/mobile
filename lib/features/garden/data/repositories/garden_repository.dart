@@ -117,6 +117,43 @@ class GardenRepository {
         );
   }
 
+  Future<int> getTodayStudyCount() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final row = await (_db.select(_db.studyLogTable)
+          ..where((table) => table.date.equals(today)))
+        .getSingleOrNull();
+    return row?.count ?? 0;
+  }
+
+  Future<int> getTodayMaxCorrectStreak() async {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = today.add(const Duration(days: 1));
+    final rows = await (_db.select(_db.reviewLogTable)
+          ..where(
+            (table) =>
+                table.reviewTime.isBiggerOrEqualValue(today) &
+                table.reviewTime.isSmallerThanValue(tomorrow),
+          )
+          ..orderBy([
+            (table) => OrderingTerm(expression: table.reviewTime),
+          ]))
+        .get();
+
+    var current = 0;
+    var best = 0;
+    for (final row in rows) {
+      if (row.rating >= 3) {
+        current += 1;
+        if (current > best) best = current;
+      } else {
+        current = 0;
+      }
+    }
+    return best;
+  }
+
   Future<ZenGarden> _createInitialGarden() async {
     final now = DateTime.now();
     await _db.into(_db.zenGardenTable).insert(

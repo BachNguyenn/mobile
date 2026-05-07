@@ -10,10 +10,13 @@ import 'presentation/screens/main_navigation.dart';
 import 'package:mobile/features/auth/presentation/screens/login_screen.dart';
 import 'core/services/notification_service.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+final firebaseInitProvider = FutureProvider<void>((ref) async {
   await Firebase.initializeApp();
+});
 
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   runApp(const ProviderScope(child: MyApp()));
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -72,18 +75,83 @@ class AuthWrapper extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final authState = ref.watch(authStateProvider);
+    final firebaseInit = ref.watch(firebaseInitProvider);
 
-    return authState.when(
-      data: (user) =>
-          user != null ? const MainNavigation() : const LoginScreen(),
-      loading: () => const Scaffold(
-        backgroundColor: Color(0xFFFAF8F5),
-        body: Center(child: CircularProgressIndicator()),
-      ),
+    return firebaseInit.when(
+      data: (_) {
+        final authState = ref.watch(authStateProvider);
+        return authState.when(
+          data: (user) =>
+              user != null ? const MainNavigation() : const LoginScreen(),
+          loading: () => const _SplashScreen(),
+          error: (e, s) => Scaffold(
+            backgroundColor: const Color(0xFFFAF8F5),
+            body: Center(child: Text('Lỗi Auth: $e')),
+          ),
+        );
+      },
+      loading: () => const _SplashScreen(),
       error: (e, s) => Scaffold(
         backgroundColor: const Color(0xFFFAF8F5),
-        body: Center(child: Text('Lỗi: $e')),
+        body: Center(child: Text('Lỗi Khởi tạo: $e')),
+      ),
+    );
+  }
+}
+
+class _SplashScreen extends StatelessWidget {
+  const _SplashScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFFAF8F5), // app_colors.dart: background
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            // Zen Logo
+            Container(
+              width: 100,
+              height: 100,
+              decoration: BoxDecoration(
+                color: const Color(0xFF4A6B53), // mossGreen
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: const Color(0xFF4A6B53).withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: const Icon(
+                Icons.spa_rounded,
+                size: 50,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'Zen Japanese',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF2D312E), // ink
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(height: 32),
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.5,
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4A6B53)),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

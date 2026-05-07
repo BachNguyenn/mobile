@@ -41,6 +41,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   late Animation<double> _pillAnimation;
   int _previousIndex = 0;
   LearningCategory _learningCategory = LearningCategory.mixed;
+  final Set<int> _initializedIndices = {0};
 
   @override
   void initState() {
@@ -78,6 +79,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
       _previousIndex = _selectedIndex;
       _selectedIndex = index;
       _learningCategory = targetLearningCategory;
+      _initializedIndices.add(index);
     });
     if (index == 1 &&
         ref.read(learningCategoryProvider) != targetLearningCategory) {
@@ -94,6 +96,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
       _previousIndex = _selectedIndex;
       _selectedIndex = 1;
       _learningCategory = category;
+      _initializedIndices.add(1);
     });
     if (ref.read(learningCategoryProvider) != category) {
       ref.read(learningCategoryProvider.notifier).state = category;
@@ -121,32 +124,38 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   }
 
   Widget _buildCurrentScreen() {
-    switch (_selectedIndex) {
-      case 0:
-        return HomePage(
-          onOpenTab: _openTab,
-          onOpenLearningCategory: _openLearningCategory,
-        );
-      case 1:
-        return LearningPathScreen(
-          isNavBarMode: true,
-          initialCategory: _learningCategory,
-        );
-      case 2:
-        return VocabularyLibraryScreen(
-          onOpenLearningCategory: _openLearningCategory,
-        );
-      case 3:
-        return GrammarLibraryScreen(
-          onOpenLearningCategory: _openLearningCategory,
-        );
-      case 4:
-        return KanjiLibraryScreen(
-          onOpenLearningCategory: _openLearningCategory,
-        );
-      default:
-        return const SizedBox.shrink();
-    }
+    return IndexedStack(
+      index: _selectedIndex,
+      children: [
+        _initializedIndices.contains(0)
+            ? HomePage(
+                onOpenTab: _openTab,
+                onOpenLearningCategory: _openLearningCategory,
+              )
+            : const SizedBox.shrink(),
+        _initializedIndices.contains(1)
+            ? LearningPathScreen(
+                isNavBarMode: true,
+                initialCategory: _learningCategory,
+              )
+            : const SizedBox.shrink(),
+        _initializedIndices.contains(2)
+            ? VocabularyLibraryScreen(
+                onOpenLearningCategory: _openLearningCategory,
+              )
+            : const SizedBox.shrink(),
+        _initializedIndices.contains(3)
+            ? GrammarLibraryScreen(
+                onOpenLearningCategory: _openLearningCategory,
+              )
+            : const SizedBox.shrink(),
+        _initializedIndices.contains(4)
+            ? KanjiLibraryScreen(
+                onOpenLearningCategory: _openLearningCategory,
+              )
+            : const SizedBox.shrink(),
+      ],
+    );
   }
 
   @override

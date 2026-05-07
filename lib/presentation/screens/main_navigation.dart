@@ -140,19 +140,13 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
               )
             : const SizedBox.shrink(),
         _initializedIndices.contains(2)
-            ? VocabularyLibraryScreen(
-                onOpenLearningCategory: _openLearningCategory,
-              )
+            ? const VocabularyLibraryScreen()
             : const SizedBox.shrink(),
         _initializedIndices.contains(3)
-            ? GrammarLibraryScreen(
-                onOpenLearningCategory: _openLearningCategory,
-              )
+            ? const GrammarLibraryScreen()
             : const SizedBox.shrink(),
         _initializedIndices.contains(4)
-            ? KanjiLibraryScreen(
-                onOpenLearningCategory: _openLearningCategory,
-              )
+            ? const KanjiLibraryScreen()
             : const SizedBox.shrink(),
       ],
     );

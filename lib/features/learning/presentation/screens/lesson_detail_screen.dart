@@ -133,6 +133,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
                   child: LessonQuizContent(
                     state: state,
                     onSelectAnswer: controller.selectAnswer,
+                    onTypedAnswerChanged: controller.updateTypedAnswer,
                     onDrawingChanged: controller.onDrawingChanged,
                     onResetCanvas: controller.resetCanvas,
                     canvasKey: _canvasKey,

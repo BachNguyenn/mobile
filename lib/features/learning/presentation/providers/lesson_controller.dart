@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/domain/entities/quiz_question.dart';
+import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
 import 'package:mobile/features/learning/domain/services/lesson_question_generator.dart';
 import 'package:mobile/features/kanji/domain/entities/kanji_card.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
@@ -23,6 +24,7 @@ class LessonState {
   final bool isAnswerChecked;
   final bool isCorrect;
   final String? selectedAnswer;
+  final String typedAnswer;
   final List<List<HandwritingPoint>> currentStrokes;
   final String? recognizedText;
   final bool isFinished;
@@ -35,6 +37,7 @@ class LessonState {
     this.isAnswerChecked = false,
     this.isCorrect = false,
     this.selectedAnswer,
+    this.typedAnswer = '',
     this.currentStrokes = const [],
     this.recognizedText,
     this.isFinished = false,
@@ -51,6 +54,7 @@ class LessonState {
     bool? isAnswerChecked,
     bool? isCorrect,
     Object? selectedAnswer = _unset,
+    String? typedAnswer,
     List<List<HandwritingPoint>>? currentStrokes,
     Object? recognizedText = _unset,
     bool? isFinished,
@@ -65,6 +69,7 @@ class LessonState {
       selectedAnswer: selectedAnswer == _unset
           ? this.selectedAnswer
           : selectedAnswer as String?,
+      typedAnswer: typedAnswer ?? this.typedAnswer,
       currentStrokes: currentStrokes ?? this.currentStrokes,
       recognizedText: recognizedText == _unset
           ? this.recognizedText
@@ -130,6 +135,11 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
     state = state.copyWith(selectedAnswer: answer);
   }
 
+  void updateTypedAnswer(String answer) {
+    if (state.isAnswerChecked) return;
+    state = state.copyWith(typedAnswer: answer);
+  }
+
   void onDrawingChanged(List<List<HandwritingPoint>> strokes) {
     if (state.isAnswerChecked) return;
     state = state.copyWith(currentStrokes: strokes);
@@ -165,6 +175,16 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
         isAnswerChecked: true,
         correctAnswers: state.correctAnswers + 1,
       );
+    } else if (currentQ.inputMode == QuizInputMode.typing) {
+      isCorrect = QuizAnswerNormalizer.isCorrect(
+        state.typedAnswer,
+        currentQ.answer,
+      );
+      state = state.copyWith(
+        isCorrect: isCorrect,
+        isAnswerChecked: true,
+        correctAnswers: state.correctAnswers + (isCorrect ? 1 : 0),
+      );
     } else {
       isCorrect = state.selectedAnswer == currentQ.answer;
       state = state.copyWith(
@@ -197,6 +217,7 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
         isAnswerChecked: false,
         isCorrect: false,
         selectedAnswer: null,
+        typedAnswer: '',
         recognizedText: null,
         currentStrokes: [],
       );

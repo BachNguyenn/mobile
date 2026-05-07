@@ -82,10 +82,6 @@ class _LearningPathScreenState extends ConsumerState<LearningPathScreen> {
                     },
                     levels: const [5, 4, 3, 2, 1],
                   ),
-                  if (!widget.isNavBarMode) ...[
-                    const SizedBox(height: AppSpacing.sp12),
-                    _CategorySelector(),
-                  ],
                   const SizedBox(height: AppSpacing.sp12),
                 ],
               ),
@@ -112,6 +108,10 @@ class _LearningPathScreenState extends ConsumerState<LearningPathScreen> {
                       hideCounts: widget.isNavBarMode,
                       onTap: lesson.isUnlocked
                           ? () {
+                              if (!context.mounted ||
+                                  ModalRoute.of(context)?.isCurrent != true) {
+                                return;
+                              }
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -169,6 +169,10 @@ class _LearningPathAppBar extends ConsumerWidget {
         IconButton(
           tooltip: 'Kiểm tra năng lực',
           onPressed: () {
+            if (!context.mounted ||
+                ModalRoute.of(context)?.isCurrent != true) {
+              return;
+            }
             Navigator.push(context, AppRoutes.placementTest());
           },
           icon: const Icon(Icons.fact_check_rounded),
@@ -364,16 +368,31 @@ class _PathNode extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          if (lesson.type == LessonType.lesson && !hideCounts) ...[
-            Text(
-              '${lesson.kanjiIds.length} Chữ Hán, ${lesson.vocabIds.length} Từ vựng',
-              style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
-            ),
-            Text(
-              '${lesson.grammarIds.length} Ngữ pháp',
-              style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
-            ),
-          ] else if (lesson.type == LessonType.quiz)
+          if (lesson.type == LessonType.lesson && !hideCounts)
+            Builder(
+              builder: (context) {
+                final parts = <String>[];
+                if (lesson.vocabIds.isNotEmpty) {
+                  parts.add('${lesson.vocabIds.length} Từ vựng');
+                }
+                if (lesson.grammarIds.isNotEmpty) {
+                  parts.add('${lesson.grammarIds.length} Ngữ pháp');
+                }
+                if (lesson.kanjiIds.isNotEmpty) {
+                  parts.add('${lesson.kanjiIds.length} Chữ Hán');
+                }
+
+                if (parts.isEmpty) return const SizedBox.shrink();
+
+                return Text(
+                  parts.join(', '),
+                  style: AppTypography.labelS.copyWith(
+                    color: AppColors.slateMuted,
+                  ),
+                );
+              },
+            )
+          else if (lesson.type == LessonType.quiz)
             Text(
               'Ôn tập kiến thức',
               style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),

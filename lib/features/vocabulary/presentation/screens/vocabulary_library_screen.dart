@@ -109,6 +109,10 @@ class VocabularyLibraryScreen extends ConsumerWidget {
                         ),
                         color: AppColors.terracotta,
                         onTap: () {
+                          if (!context.mounted ||
+                              ModalRoute.of(context)?.isCurrent != true) {
+                            return;
+                          }
                           final dueVocabulary = dueVocabularyAsync.valueOrNull;
                           if (dueVocabulary != null &&
                               dueVocabulary.isNotEmpty) {
@@ -143,6 +147,10 @@ class VocabularyLibraryScreen extends ConsumerWidget {
                         sublabel: 'Lộ trình học',
                         color: AppColors.waterBlue,
                         onTap: () {
+                          if (!context.mounted ||
+                              ModalRoute.of(context)?.isCurrent != true) {
+                            return;
+                          }
                           final openLearningCategory = onOpenLearningCategory;
                           if (openLearningCategory != null) {
                             openLearningCategory(LearningCategory.vocabulary);

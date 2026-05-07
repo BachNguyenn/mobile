@@ -94,60 +94,80 @@ class GrammarLibraryScreen extends ConsumerWidget {
                   horizontal: AppSpacing.sp16,
                   vertical: AppSpacing.sp8,
                 ),
-                child: Row(
+                child: Column(
                   children: [
-                    Expanded(
-                      child: LibraryActionButton(
-                        icon: Icons.auto_stories_rounded,
-                        label: 'Ôn tập',
-                        sublabel: totalDueAsync.when(
-                          data: (totalDue) => totalDue == 0
-                              ? 'Đã hoàn thành'
-                              : 'Học ${dueGrammarAsync.valueOrNull?.length ?? 0}/$totalDue điểm',
-                          loading: () => 'Đang tải...',
-                          error: (e, _) => 'Lỗi',
+                    Row(
+                      children: [
+                        Expanded(
+                          child: LibraryActionButton(
+                            icon: Icons.auto_stories_rounded,
+                            label: 'Ôn tập',
+                            sublabel: totalDueAsync.when(
+                              data: (totalDue) => totalDue == 0
+                                  ? 'Đã hoàn thành'
+                                  : 'Học ${dueGrammarAsync.valueOrNull?.length ?? 0}/$totalDue điểm',
+                              loading: () => 'Đang tải...',
+                              error: (e, _) => 'Lỗi',
+                            ),
+                            color: AppColors.terracotta,
+                            onTap: () {
+                              final dueGrammar = dueGrammarAsync.valueOrNull;
+                              if (dueGrammar != null && dueGrammar.isNotEmpty) {
+                                Navigator.push(
+                                  context,
+                                  AppRoutes.review(
+                                    dueGrammar.map(ReviewItem.fromGrammar).toList(),
+                                  ),
+                                );
+                              } else if (dueGrammar != null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      'Không có ngữ pháp nào cần ôn tập!',
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                         ),
-                        color: AppColors.terracotta,
-                        onTap: () {
-                          final dueGrammar = dueGrammarAsync.valueOrNull;
-                          if (dueGrammar != null && dueGrammar.isNotEmpty) {
-                            Navigator.push(
-                              context,
-                              AppRoutes.review(
-                                dueGrammar.map(ReviewItem.fromGrammar).toList(),
-                              ),
-                            );
-                          } else if (dueGrammar != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Không có ngữ pháp nào cần ôn tập!',
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                      ),
+                        const SizedBox(width: AppSpacing.sp12),
+                        Expanded(
+                          child: LibraryActionButton(
+                            icon: Icons.add_circle_outline_rounded,
+                            label: 'Bài mới',
+                            sublabel: 'Lộ trình học',
+                            color: AppColors.sunGold,
+                            onTap: () {
+                              final openLearningCategory = onOpenLearningCategory;
+                              if (openLearningCategory != null) {
+                                openLearningCategory(LearningCategory.grammar);
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  AppRoutes.learningPath(
+                                    initialCategory: LearningCategory.grammar,
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(width: AppSpacing.sp12),
-                    Expanded(
+                    const SizedBox(height: AppSpacing.sp8),
+                    SizedBox(
+                      width: double.infinity,
                       child: LibraryActionButton(
-                        icon: Icons.add_circle_outline_rounded,
-                        label: 'Bài mới',
-                        sublabel: 'Lộ trình học',
-                        color: AppColors.sunGold,
+                        icon: Icons.subject_rounded,
+                        label: 'Luyện câu',
+                        sublabel: 'Luyện tập câu ví dụ từ ngữ pháp',
+                        color: AppColors.waterBlue,
                         onTap: () {
-                          final openLearningCategory = onOpenLearningCategory;
-                          if (openLearningCategory != null) {
-                            openLearningCategory(LearningCategory.grammar);
-                          } else {
-                            Navigator.push(
-                              context,
-                              AppRoutes.learningPath(
-                                initialCategory: LearningCategory.grammar,
-                              ),
-                            );
-                          }
+                          Navigator.push(
+                            context,
+                            AppRoutes.sentencePractice(),
+                          );
                         },
                       ),
                     ),

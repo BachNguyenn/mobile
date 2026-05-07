@@ -10,7 +10,6 @@ import 'package:mobile/features/learning/domain/entities/learning_category.dart'
 import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/features/vocabulary/presentation/providers/vocabulary_library_provider.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
-import 'package:mobile/presentation/widgets/global_search_delegate.dart';
 
 typedef LearningCategoryCallback = void Function(LearningCategory category);
 
@@ -114,6 +113,20 @@ class _QuickActionChipsState extends State<QuickActionChips>
         },
       ),
       _ChipData(
+        icon: Icons.subject_rounded,
+        label: 'Luyện câu',
+        color: AppColors.waterBlue,
+        gradient: LinearGradient(
+          colors: [
+            AppColors.waterBlue.withValues(alpha: 0.08),
+            AppColors.waterBlue.withValues(alpha: 0.14),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(widget.context, AppRoutes.sentencePractice());
+        },
+      ),
+      _ChipData(
         icon: Icons.search_rounded,
         label: 'Tra cứu',
         color: AppColors.slateGrey,
@@ -124,10 +137,7 @@ class _QuickActionChipsState extends State<QuickActionChips>
           ],
         ),
         onTap: () {
-          showSearch(
-            context: widget.context,
-            delegate: GlobalSearchDelegate(widget.ref),
-          );
+          Navigator.push(widget.context, AppRoutes.dictionary());
         },
       ),
     ];
@@ -145,14 +155,16 @@ class _QuickActionChipsState extends State<QuickActionChips>
             animation: _shimmerController,
             builder: (context, child) {
               final delay = index * 0.15;
-              final progress =
-                  ((_shimmerController.value - delay) / 0.5).clamp(0.0, 1.0);
+              final progress = ((_shimmerController.value - delay) / 0.5).clamp(
+                0.0,
+                1.0,
+              );
               return Transform.translate(
-                offset: Offset(0, 12 * (1 - Curves.easeOutCubic.transform(progress))),
-                child: Opacity(
-                  opacity: progress,
-                  child: child,
+                offset: Offset(
+                  0,
+                  12 * (1 - Curves.easeOutCubic.transform(progress)),
                 ),
+                child: Opacity(opacity: progress, child: child),
               );
             },
             child: _ActionChip(data: chips[index]),
@@ -240,10 +252,7 @@ class _ActionChipState extends State<_ActionChip>
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scaleAnimation.value, child: child);
         },
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),

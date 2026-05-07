@@ -46,12 +46,15 @@ class LearningPathNotifier extends StateNotifier<List<Lesson>> {
 
   Future<void> loadLessons() async {
     try {
-      state = await _repository.getLessons(
+      final lessons = await _repository.getLessons(
         category: _category,
         level: _level,
         goal: _goal,
       );
+      if (!mounted) return;
+      state = lessons;
     } catch (_) {
+      if (!mounted) return;
       state = [];
     }
   }

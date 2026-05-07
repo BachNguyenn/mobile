@@ -69,3 +69,20 @@ final studyEventStreamProvider = StreamProvider<StudyEvent>((ref) {
 
 /// Provider đếm tổng số thẻ đã học trong session hiện tại
 final sessionStudyCountProvider = StateProvider<int>((ref) => 0);
+
+/// Helper: emit study event khi user review xong 1 câu (sentence)
+///
+/// Sentence chưa có SRS riêng, nên chỉ emit event + tăng study count.
+final emitSentenceStudyEventProvider =
+    Provider<void Function(String sentenceId)>((ref) {
+  final eventController = ref.watch(studyEventControllerProvider);
+
+  return (String sentenceId) {
+    eventController.addEvent(StudyEvent(
+      cardId: sentenceId,
+      type: 'sentence',
+      timestamp: DateTime.now(),
+      qualityRating: 3,
+    ));
+  };
+});

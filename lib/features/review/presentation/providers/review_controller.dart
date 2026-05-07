@@ -2,7 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/services/handwriting_service.dart';
 import 'package:mobile/features/grammar/presentation/providers/grammar_library_provider.dart';
 import 'package:mobile/features/kanji/presentation/providers/kanji_library_provider.dart';
+import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
+import 'package:mobile/features/review/presentation/providers/study_event_provider.dart';
 import 'package:mobile/features/vocabulary/presentation/providers/vocabulary_library_provider.dart';
 
 class ReviewState {
@@ -11,6 +13,7 @@ class ReviewState {
   final List<List<HandwritingPoint>> currentStrokes;
   final String? recognizedText;
   final String? selectedChoice;
+  final String typedAnswer;
   final bool isFinished;
 
   ReviewState({
@@ -19,6 +22,7 @@ class ReviewState {
     this.currentStrokes = const [],
     this.recognizedText,
     this.selectedChoice,
+    this.typedAnswer = '',
     this.isFinished = false,
   });
 
@@ -28,6 +32,7 @@ class ReviewState {
     List<List<HandwritingPoint>>? currentStrokes,
     String? recognizedText,
     String? selectedChoice,
+    String? typedAnswer,
     bool? isFinished,
     bool clearAnswerData = false,
   }) {
@@ -41,6 +46,7 @@ class ReviewState {
       selectedChoice: clearAnswerData
           ? null
           : selectedChoice ?? this.selectedChoice,
+      typedAnswer: clearAnswerData ? '' : typedAnswer ?? this.typedAnswer,
       isFinished: isFinished ?? this.isFinished,
     );
   }
@@ -61,14 +67,29 @@ class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
     state = state.copyWith(selectedChoice: choice);
   }
 
+  void setTypedAnswer(String value) {
+    if (state.showAnswer) return;
+    state = state.copyWith(typedAnswer: value);
+  }
+
   Future<void> handleCheck() async {
     final item = arg[state.currentIndex];
-    final text = item.usesHandwriting
-        ? await ref
-              .read(handwritingServiceProvider)
-              .recognize(state.currentStrokes)
-        : state.selectedChoice;
+    String? text;
+    if (item.usesHandwriting) {
+      text = await ref
+          .read(handwritingServiceProvider)
+          .recognize(state.currentStrokes);
+    } else if (state.typedAnswer.trim().isNotEmpty) {
+      text = state.typedAnswer.trim();
+    } else {
+      text = state.selectedChoice;
+    }
     state = state.copyWith(recognizedText: text, showAnswer: true);
+  }
+
+  bool get isTypedAnswerCorrect {
+    final item = arg[state.currentIndex];
+    return QuizAnswerNormalizer.isCorrect(state.typedAnswer, item.answer);
   }
 
   void handleRating(int rating) {
@@ -83,6 +104,9 @@ class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
         break;
       case ReviewItemType.grammar:
         ref.read(emitGrammarStudyEventProvider)(item.id, rating);
+        break;
+      case ReviewItemType.sentence:
+        ref.read(emitSentenceStudyEventProvider)(item.id);
         break;
     }
 

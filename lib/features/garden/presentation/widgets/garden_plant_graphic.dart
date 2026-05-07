@@ -49,18 +49,18 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
     switch (widget.plant.type) {
       case 'zen_bonsai':
       case 'bonsai':
-        assetPath = 'assets/images/zen_bonsai.png';
+        assetPath = 'assets/images/zen_bonsai.webp';
         size = 100;
         break;
       case 'zen_sakura':
       case 'flower':
-        assetPath = 'assets/images/zen_sakura.png';
+        assetPath = 'assets/images/zen_sakura.webp';
         size = 120;
         break;
       case 'zen_stone':
       case 'stone':
       case 'bamboo':
-        assetPath = 'assets/images/zen_stone.png';
+        assetPath = 'assets/images/zen_stone.webp';
         size = 70;
         break;
     }

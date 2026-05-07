@@ -38,7 +38,7 @@ const gardenShopCatalog = [
     unlockLevel: 1,
     icon: Icons.landscape_rounded,
     color: AppColors.slateGrey,
-    assetPath: 'assets/images/zen_stone.png',
+    assetPath: 'assets/images/zen_stone.webp',
   ),
   GardenShopCatalogItem(
     type: 'zen_bonsai',
@@ -50,7 +50,7 @@ const gardenShopCatalog = [
     unlockLevel: 2,
     icon: Icons.park_rounded,
     color: AppColors.mossGreen,
-    assetPath: 'assets/images/zen_bonsai.png',
+    assetPath: 'assets/images/zen_bonsai.webp',
   ),
   GardenShopCatalogItem(
     type: 'zen_sakura',
@@ -62,7 +62,7 @@ const gardenShopCatalog = [
     unlockLevel: 3,
     icon: Icons.local_florist_rounded,
     color: AppColors.sakura,
-    assetPath: 'assets/images/zen_sakura.png',
+    assetPath: 'assets/images/zen_sakura.webp',
   ),
   GardenShopCatalogItem(
     type: 'locked_lantern',

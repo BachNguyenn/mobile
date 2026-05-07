@@ -81,6 +81,41 @@ class $KanjiCardTableTable extends KanjiCardTable
     requiredDuringInsert: false,
     defaultValue: const Constant(5),
   );
+  static const VerificationMeta _radicalsJsonMeta = const VerificationMeta(
+    'radicalsJson',
+  );
+  @override
+  late final GeneratedColumn<String> radicalsJson = GeneratedColumn<String>(
+    'radicals_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _mnemonicMeta = const VerificationMeta(
+    'mnemonic',
+  );
+  @override
+  late final GeneratedColumn<String> mnemonic = GeneratedColumn<String>(
+    'mnemonic',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _relatedWordsJsonMeta = const VerificationMeta(
+    'relatedWordsJson',
+  );
+  @override
+  late final GeneratedColumn<String> relatedWordsJson = GeneratedColumn<String>(
+    'related_words_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
   static const VerificationMeta _stabilityMeta = const VerificationMeta(
     'stability',
   );
@@ -166,6 +201,9 @@ class $KanjiCardTableTable extends KanjiCardTable
     kunyomi,
     strokeData,
     jlptLevel,
+    radicalsJson,
+    mnemonic,
+    relatedWordsJson,
     stability,
     difficulty,
     lastReview,
@@ -233,6 +271,30 @@ class $KanjiCardTableTable extends KanjiCardTable
       context.handle(
         _jlptLevelMeta,
         jlptLevel.isAcceptableOrUnknown(data['jlpt_level']!, _jlptLevelMeta),
+      );
+    }
+    if (data.containsKey('radicals_json')) {
+      context.handle(
+        _radicalsJsonMeta,
+        radicalsJson.isAcceptableOrUnknown(
+          data['radicals_json']!,
+          _radicalsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('mnemonic')) {
+      context.handle(
+        _mnemonicMeta,
+        mnemonic.isAcceptableOrUnknown(data['mnemonic']!, _mnemonicMeta),
+      );
+    }
+    if (data.containsKey('related_words_json')) {
+      context.handle(
+        _relatedWordsJsonMeta,
+        relatedWordsJson.isAcceptableOrUnknown(
+          data['related_words_json']!,
+          _relatedWordsJsonMeta,
+        ),
       );
     }
     if (data.containsKey('stability')) {
@@ -316,6 +378,18 @@ class $KanjiCardTableTable extends KanjiCardTable
         DriftSqlType.int,
         data['${effectivePrefix}jlpt_level'],
       )!,
+      radicalsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}radicals_json'],
+      )!,
+      mnemonic: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}mnemonic'],
+      ),
+      relatedWordsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}related_words_json'],
+      )!,
       stability: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}stability'],
@@ -361,6 +435,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
   final String kunyomi;
   final String? strokeData;
   final int jlptLevel;
+  final String radicalsJson;
+  final String? mnemonic;
+  final String relatedWordsJson;
   final double stability;
   final double difficulty;
   final DateTime? lastReview;
@@ -376,6 +453,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     required this.kunyomi,
     this.strokeData,
     required this.jlptLevel,
+    required this.radicalsJson,
+    this.mnemonic,
+    required this.relatedWordsJson,
     required this.stability,
     required this.difficulty,
     this.lastReview,
@@ -396,6 +476,11 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
       map['stroke_data'] = Variable<String>(strokeData);
     }
     map['jlpt_level'] = Variable<int>(jlptLevel);
+    map['radicals_json'] = Variable<String>(radicalsJson);
+    if (!nullToAbsent || mnemonic != null) {
+      map['mnemonic'] = Variable<String>(mnemonic);
+    }
+    map['related_words_json'] = Variable<String>(relatedWordsJson);
     map['stability'] = Variable<double>(stability);
     map['difficulty'] = Variable<double>(difficulty);
     if (!nullToAbsent || lastReview != null) {
@@ -419,6 +504,11 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
           ? const Value.absent()
           : Value(strokeData),
       jlptLevel: Value(jlptLevel),
+      radicalsJson: Value(radicalsJson),
+      mnemonic: mnemonic == null && nullToAbsent
+          ? const Value.absent()
+          : Value(mnemonic),
+      relatedWordsJson: Value(relatedWordsJson),
       stability: Value(stability),
       difficulty: Value(difficulty),
       lastReview: lastReview == null && nullToAbsent
@@ -444,6 +534,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
       kunyomi: serializer.fromJson<String>(json['kunyomi']),
       strokeData: serializer.fromJson<String?>(json['strokeData']),
       jlptLevel: serializer.fromJson<int>(json['jlptLevel']),
+      radicalsJson: serializer.fromJson<String>(json['radicalsJson']),
+      mnemonic: serializer.fromJson<String?>(json['mnemonic']),
+      relatedWordsJson: serializer.fromJson<String>(json['relatedWordsJson']),
       stability: serializer.fromJson<double>(json['stability']),
       difficulty: serializer.fromJson<double>(json['difficulty']),
       lastReview: serializer.fromJson<DateTime?>(json['lastReview']),
@@ -464,6 +557,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
       'kunyomi': serializer.toJson<String>(kunyomi),
       'strokeData': serializer.toJson<String?>(strokeData),
       'jlptLevel': serializer.toJson<int>(jlptLevel),
+      'radicalsJson': serializer.toJson<String>(radicalsJson),
+      'mnemonic': serializer.toJson<String?>(mnemonic),
+      'relatedWordsJson': serializer.toJson<String>(relatedWordsJson),
       'stability': serializer.toJson<double>(stability),
       'difficulty': serializer.toJson<double>(difficulty),
       'lastReview': serializer.toJson<DateTime?>(lastReview),
@@ -482,6 +578,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     String? kunyomi,
     Value<String?> strokeData = const Value.absent(),
     int? jlptLevel,
+    String? radicalsJson,
+    Value<String?> mnemonic = const Value.absent(),
+    String? relatedWordsJson,
     double? stability,
     double? difficulty,
     Value<DateTime?> lastReview = const Value.absent(),
@@ -497,6 +596,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     kunyomi: kunyomi ?? this.kunyomi,
     strokeData: strokeData.present ? strokeData.value : this.strokeData,
     jlptLevel: jlptLevel ?? this.jlptLevel,
+    radicalsJson: radicalsJson ?? this.radicalsJson,
+    mnemonic: mnemonic.present ? mnemonic.value : this.mnemonic,
+    relatedWordsJson: relatedWordsJson ?? this.relatedWordsJson,
     stability: stability ?? this.stability,
     difficulty: difficulty ?? this.difficulty,
     lastReview: lastReview.present ? lastReview.value : this.lastReview,
@@ -516,6 +618,13 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
           ? data.strokeData.value
           : this.strokeData,
       jlptLevel: data.jlptLevel.present ? data.jlptLevel.value : this.jlptLevel,
+      radicalsJson: data.radicalsJson.present
+          ? data.radicalsJson.value
+          : this.radicalsJson,
+      mnemonic: data.mnemonic.present ? data.mnemonic.value : this.mnemonic,
+      relatedWordsJson: data.relatedWordsJson.present
+          ? data.relatedWordsJson.value
+          : this.relatedWordsJson,
       stability: data.stability.present ? data.stability.value : this.stability,
       difficulty: data.difficulty.present
           ? data.difficulty.value
@@ -542,6 +651,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
           ..write('kunyomi: $kunyomi, ')
           ..write('strokeData: $strokeData, ')
           ..write('jlptLevel: $jlptLevel, ')
+          ..write('radicalsJson: $radicalsJson, ')
+          ..write('mnemonic: $mnemonic, ')
+          ..write('relatedWordsJson: $relatedWordsJson, ')
           ..write('stability: $stability, ')
           ..write('difficulty: $difficulty, ')
           ..write('lastReview: $lastReview, ')
@@ -562,6 +674,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     kunyomi,
     strokeData,
     jlptLevel,
+    radicalsJson,
+    mnemonic,
+    relatedWordsJson,
     stability,
     difficulty,
     lastReview,
@@ -581,6 +696,9 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
           other.kunyomi == this.kunyomi &&
           other.strokeData == this.strokeData &&
           other.jlptLevel == this.jlptLevel &&
+          other.radicalsJson == this.radicalsJson &&
+          other.mnemonic == this.mnemonic &&
+          other.relatedWordsJson == this.relatedWordsJson &&
           other.stability == this.stability &&
           other.difficulty == this.difficulty &&
           other.lastReview == this.lastReview &&
@@ -598,6 +716,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
   final Value<String> kunyomi;
   final Value<String?> strokeData;
   final Value<int> jlptLevel;
+  final Value<String> radicalsJson;
+  final Value<String?> mnemonic;
+  final Value<String> relatedWordsJson;
   final Value<double> stability;
   final Value<double> difficulty;
   final Value<DateTime?> lastReview;
@@ -614,6 +735,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     this.kunyomi = const Value.absent(),
     this.strokeData = const Value.absent(),
     this.jlptLevel = const Value.absent(),
+    this.radicalsJson = const Value.absent(),
+    this.mnemonic = const Value.absent(),
+    this.relatedWordsJson = const Value.absent(),
     this.stability = const Value.absent(),
     this.difficulty = const Value.absent(),
     this.lastReview = const Value.absent(),
@@ -631,6 +755,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     required String kunyomi,
     this.strokeData = const Value.absent(),
     this.jlptLevel = const Value.absent(),
+    this.radicalsJson = const Value.absent(),
+    this.mnemonic = const Value.absent(),
+    this.relatedWordsJson = const Value.absent(),
     this.stability = const Value.absent(),
     this.difficulty = const Value.absent(),
     this.lastReview = const Value.absent(),
@@ -653,6 +780,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     Expression<String>? kunyomi,
     Expression<String>? strokeData,
     Expression<int>? jlptLevel,
+    Expression<String>? radicalsJson,
+    Expression<String>? mnemonic,
+    Expression<String>? relatedWordsJson,
     Expression<double>? stability,
     Expression<double>? difficulty,
     Expression<DateTime>? lastReview,
@@ -670,6 +800,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
       if (kunyomi != null) 'kunyomi': kunyomi,
       if (strokeData != null) 'stroke_data': strokeData,
       if (jlptLevel != null) 'jlpt_level': jlptLevel,
+      if (radicalsJson != null) 'radicals_json': radicalsJson,
+      if (mnemonic != null) 'mnemonic': mnemonic,
+      if (relatedWordsJson != null) 'related_words_json': relatedWordsJson,
       if (stability != null) 'stability': stability,
       if (difficulty != null) 'difficulty': difficulty,
       if (lastReview != null) 'last_review': lastReview,
@@ -689,6 +822,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     Value<String>? kunyomi,
     Value<String?>? strokeData,
     Value<int>? jlptLevel,
+    Value<String>? radicalsJson,
+    Value<String?>? mnemonic,
+    Value<String>? relatedWordsJson,
     Value<double>? stability,
     Value<double>? difficulty,
     Value<DateTime?>? lastReview,
@@ -706,6 +842,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
       kunyomi: kunyomi ?? this.kunyomi,
       strokeData: strokeData ?? this.strokeData,
       jlptLevel: jlptLevel ?? this.jlptLevel,
+      radicalsJson: radicalsJson ?? this.radicalsJson,
+      mnemonic: mnemonic ?? this.mnemonic,
+      relatedWordsJson: relatedWordsJson ?? this.relatedWordsJson,
       stability: stability ?? this.stability,
       difficulty: difficulty ?? this.difficulty,
       lastReview: lastReview ?? this.lastReview,
@@ -740,6 +879,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     }
     if (jlptLevel.present) {
       map['jlpt_level'] = Variable<int>(jlptLevel.value);
+    }
+    if (radicalsJson.present) {
+      map['radicals_json'] = Variable<String>(radicalsJson.value);
+    }
+    if (mnemonic.present) {
+      map['mnemonic'] = Variable<String>(mnemonic.value);
+    }
+    if (relatedWordsJson.present) {
+      map['related_words_json'] = Variable<String>(relatedWordsJson.value);
     }
     if (stability.present) {
       map['stability'] = Variable<double>(stability.value);
@@ -778,6 +926,9 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
           ..write('kunyomi: $kunyomi, ')
           ..write('strokeData: $strokeData, ')
           ..write('jlptLevel: $jlptLevel, ')
+          ..write('radicalsJson: $radicalsJson, ')
+          ..write('mnemonic: $mnemonic, ')
+          ..write('relatedWordsJson: $relatedWordsJson, ')
           ..write('stability: $stability, ')
           ..write('difficulty: $difficulty, ')
           ..write('lastReview: $lastReview, ')
@@ -848,6 +999,51 @@ class $VocabularyTableTable extends VocabularyTable
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultValue: const Constant(5),
+  );
+  static const VerificationMeta _exampleSentencesJsonMeta =
+      const VerificationMeta('exampleSentencesJson');
+  @override
+  late final GeneratedColumn<String> exampleSentencesJson =
+      GeneratedColumn<String>(
+        'example_sentences_json',
+        aliasedName,
+        false,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+        defaultValue: const Constant('[]'),
+      );
+  static const VerificationMeta _imageUrlMeta = const VerificationMeta(
+    'imageUrl',
+  );
+  @override
+  late final GeneratedColumn<String> imageUrl = GeneratedColumn<String>(
+    'image_url',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _pitchAccentMeta = const VerificationMeta(
+    'pitchAccent',
+  );
+  @override
+  late final GeneratedColumn<String> pitchAccent = GeneratedColumn<String>(
+    'pitch_accent',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _partOfSpeechMeta = const VerificationMeta(
+    'partOfSpeech',
+  );
+  @override
+  late final GeneratedColumn<String> partOfSpeech = GeneratedColumn<String>(
+    'part_of_speech',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
   );
   static const VerificationMeta _stabilityMeta = const VerificationMeta(
     'stability',
@@ -932,6 +1128,10 @@ class $VocabularyTableTable extends VocabularyTable
     reading,
     meaning,
     jlptLevel,
+    exampleSentencesJson,
+    imageUrl,
+    pitchAccent,
+    partOfSpeech,
     stability,
     difficulty,
     lastReview,
@@ -985,6 +1185,39 @@ class $VocabularyTableTable extends VocabularyTable
       context.handle(
         _jlptLevelMeta,
         jlptLevel.isAcceptableOrUnknown(data['jlpt_level']!, _jlptLevelMeta),
+      );
+    }
+    if (data.containsKey('example_sentences_json')) {
+      context.handle(
+        _exampleSentencesJsonMeta,
+        exampleSentencesJson.isAcceptableOrUnknown(
+          data['example_sentences_json']!,
+          _exampleSentencesJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('image_url')) {
+      context.handle(
+        _imageUrlMeta,
+        imageUrl.isAcceptableOrUnknown(data['image_url']!, _imageUrlMeta),
+      );
+    }
+    if (data.containsKey('pitch_accent')) {
+      context.handle(
+        _pitchAccentMeta,
+        pitchAccent.isAcceptableOrUnknown(
+          data['pitch_accent']!,
+          _pitchAccentMeta,
+        ),
+      );
+    }
+    if (data.containsKey('part_of_speech')) {
+      context.handle(
+        _partOfSpeechMeta,
+        partOfSpeech.isAcceptableOrUnknown(
+          data['part_of_speech']!,
+          _partOfSpeechMeta,
+        ),
       );
     }
     if (data.containsKey('stability')) {
@@ -1060,6 +1293,22 @@ class $VocabularyTableTable extends VocabularyTable
         DriftSqlType.int,
         data['${effectivePrefix}jlpt_level'],
       )!,
+      exampleSentencesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}example_sentences_json'],
+      )!,
+      imageUrl: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}image_url'],
+      ),
+      pitchAccent: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}pitch_accent'],
+      ),
+      partOfSpeech: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}part_of_speech'],
+      ),
       stability: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}stability'],
@@ -1104,6 +1353,10 @@ class VocabularyTableData extends DataClass
   final String reading;
   final String meaning;
   final int jlptLevel;
+  final String exampleSentencesJson;
+  final String? imageUrl;
+  final String? pitchAccent;
+  final String? partOfSpeech;
   final double stability;
   final double difficulty;
   final DateTime? lastReview;
@@ -1117,6 +1370,10 @@ class VocabularyTableData extends DataClass
     required this.reading,
     required this.meaning,
     required this.jlptLevel,
+    required this.exampleSentencesJson,
+    this.imageUrl,
+    this.pitchAccent,
+    this.partOfSpeech,
     required this.stability,
     required this.difficulty,
     this.lastReview,
@@ -1133,6 +1390,16 @@ class VocabularyTableData extends DataClass
     map['reading'] = Variable<String>(reading);
     map['meaning'] = Variable<String>(meaning);
     map['jlpt_level'] = Variable<int>(jlptLevel);
+    map['example_sentences_json'] = Variable<String>(exampleSentencesJson);
+    if (!nullToAbsent || imageUrl != null) {
+      map['image_url'] = Variable<String>(imageUrl);
+    }
+    if (!nullToAbsent || pitchAccent != null) {
+      map['pitch_accent'] = Variable<String>(pitchAccent);
+    }
+    if (!nullToAbsent || partOfSpeech != null) {
+      map['part_of_speech'] = Variable<String>(partOfSpeech);
+    }
     map['stability'] = Variable<double>(stability);
     map['difficulty'] = Variable<double>(difficulty);
     if (!nullToAbsent || lastReview != null) {
@@ -1152,6 +1419,16 @@ class VocabularyTableData extends DataClass
       reading: Value(reading),
       meaning: Value(meaning),
       jlptLevel: Value(jlptLevel),
+      exampleSentencesJson: Value(exampleSentencesJson),
+      imageUrl: imageUrl == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imageUrl),
+      pitchAccent: pitchAccent == null && nullToAbsent
+          ? const Value.absent()
+          : Value(pitchAccent),
+      partOfSpeech: partOfSpeech == null && nullToAbsent
+          ? const Value.absent()
+          : Value(partOfSpeech),
       stability: Value(stability),
       difficulty: Value(difficulty),
       lastReview: lastReview == null && nullToAbsent
@@ -1175,6 +1452,12 @@ class VocabularyTableData extends DataClass
       reading: serializer.fromJson<String>(json['reading']),
       meaning: serializer.fromJson<String>(json['meaning']),
       jlptLevel: serializer.fromJson<int>(json['jlptLevel']),
+      exampleSentencesJson: serializer.fromJson<String>(
+        json['exampleSentencesJson'],
+      ),
+      imageUrl: serializer.fromJson<String?>(json['imageUrl']),
+      pitchAccent: serializer.fromJson<String?>(json['pitchAccent']),
+      partOfSpeech: serializer.fromJson<String?>(json['partOfSpeech']),
       stability: serializer.fromJson<double>(json['stability']),
       difficulty: serializer.fromJson<double>(json['difficulty']),
       lastReview: serializer.fromJson<DateTime?>(json['lastReview']),
@@ -1193,6 +1476,10 @@ class VocabularyTableData extends DataClass
       'reading': serializer.toJson<String>(reading),
       'meaning': serializer.toJson<String>(meaning),
       'jlptLevel': serializer.toJson<int>(jlptLevel),
+      'exampleSentencesJson': serializer.toJson<String>(exampleSentencesJson),
+      'imageUrl': serializer.toJson<String?>(imageUrl),
+      'pitchAccent': serializer.toJson<String?>(pitchAccent),
+      'partOfSpeech': serializer.toJson<String?>(partOfSpeech),
       'stability': serializer.toJson<double>(stability),
       'difficulty': serializer.toJson<double>(difficulty),
       'lastReview': serializer.toJson<DateTime?>(lastReview),
@@ -1209,6 +1496,10 @@ class VocabularyTableData extends DataClass
     String? reading,
     String? meaning,
     int? jlptLevel,
+    String? exampleSentencesJson,
+    Value<String?> imageUrl = const Value.absent(),
+    Value<String?> pitchAccent = const Value.absent(),
+    Value<String?> partOfSpeech = const Value.absent(),
     double? stability,
     double? difficulty,
     Value<DateTime?> lastReview = const Value.absent(),
@@ -1222,6 +1513,10 @@ class VocabularyTableData extends DataClass
     reading: reading ?? this.reading,
     meaning: meaning ?? this.meaning,
     jlptLevel: jlptLevel ?? this.jlptLevel,
+    exampleSentencesJson: exampleSentencesJson ?? this.exampleSentencesJson,
+    imageUrl: imageUrl.present ? imageUrl.value : this.imageUrl,
+    pitchAccent: pitchAccent.present ? pitchAccent.value : this.pitchAccent,
+    partOfSpeech: partOfSpeech.present ? partOfSpeech.value : this.partOfSpeech,
     stability: stability ?? this.stability,
     difficulty: difficulty ?? this.difficulty,
     lastReview: lastReview.present ? lastReview.value : this.lastReview,
@@ -1237,6 +1532,16 @@ class VocabularyTableData extends DataClass
       reading: data.reading.present ? data.reading.value : this.reading,
       meaning: data.meaning.present ? data.meaning.value : this.meaning,
       jlptLevel: data.jlptLevel.present ? data.jlptLevel.value : this.jlptLevel,
+      exampleSentencesJson: data.exampleSentencesJson.present
+          ? data.exampleSentencesJson.value
+          : this.exampleSentencesJson,
+      imageUrl: data.imageUrl.present ? data.imageUrl.value : this.imageUrl,
+      pitchAccent: data.pitchAccent.present
+          ? data.pitchAccent.value
+          : this.pitchAccent,
+      partOfSpeech: data.partOfSpeech.present
+          ? data.partOfSpeech.value
+          : this.partOfSpeech,
       stability: data.stability.present ? data.stability.value : this.stability,
       difficulty: data.difficulty.present
           ? data.difficulty.value
@@ -1261,6 +1566,10 @@ class VocabularyTableData extends DataClass
           ..write('reading: $reading, ')
           ..write('meaning: $meaning, ')
           ..write('jlptLevel: $jlptLevel, ')
+          ..write('exampleSentencesJson: $exampleSentencesJson, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('pitchAccent: $pitchAccent, ')
+          ..write('partOfSpeech: $partOfSpeech, ')
           ..write('stability: $stability, ')
           ..write('difficulty: $difficulty, ')
           ..write('lastReview: $lastReview, ')
@@ -1279,6 +1588,10 @@ class VocabularyTableData extends DataClass
     reading,
     meaning,
     jlptLevel,
+    exampleSentencesJson,
+    imageUrl,
+    pitchAccent,
+    partOfSpeech,
     stability,
     difficulty,
     lastReview,
@@ -1296,6 +1609,10 @@ class VocabularyTableData extends DataClass
           other.reading == this.reading &&
           other.meaning == this.meaning &&
           other.jlptLevel == this.jlptLevel &&
+          other.exampleSentencesJson == this.exampleSentencesJson &&
+          other.imageUrl == this.imageUrl &&
+          other.pitchAccent == this.pitchAccent &&
+          other.partOfSpeech == this.partOfSpeech &&
           other.stability == this.stability &&
           other.difficulty == this.difficulty &&
           other.lastReview == this.lastReview &&
@@ -1311,6 +1628,10 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
   final Value<String> reading;
   final Value<String> meaning;
   final Value<int> jlptLevel;
+  final Value<String> exampleSentencesJson;
+  final Value<String?> imageUrl;
+  final Value<String?> pitchAccent;
+  final Value<String?> partOfSpeech;
   final Value<double> stability;
   final Value<double> difficulty;
   final Value<DateTime?> lastReview;
@@ -1325,6 +1646,10 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
     this.reading = const Value.absent(),
     this.meaning = const Value.absent(),
     this.jlptLevel = const Value.absent(),
+    this.exampleSentencesJson = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.pitchAccent = const Value.absent(),
+    this.partOfSpeech = const Value.absent(),
     this.stability = const Value.absent(),
     this.difficulty = const Value.absent(),
     this.lastReview = const Value.absent(),
@@ -1340,6 +1665,10 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
     required String reading,
     required String meaning,
     this.jlptLevel = const Value.absent(),
+    this.exampleSentencesJson = const Value.absent(),
+    this.imageUrl = const Value.absent(),
+    this.pitchAccent = const Value.absent(),
+    this.partOfSpeech = const Value.absent(),
     this.stability = const Value.absent(),
     this.difficulty = const Value.absent(),
     this.lastReview = const Value.absent(),
@@ -1359,6 +1688,10 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
     Expression<String>? reading,
     Expression<String>? meaning,
     Expression<int>? jlptLevel,
+    Expression<String>? exampleSentencesJson,
+    Expression<String>? imageUrl,
+    Expression<String>? pitchAccent,
+    Expression<String>? partOfSpeech,
     Expression<double>? stability,
     Expression<double>? difficulty,
     Expression<DateTime>? lastReview,
@@ -1374,6 +1707,11 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
       if (reading != null) 'reading': reading,
       if (meaning != null) 'meaning': meaning,
       if (jlptLevel != null) 'jlpt_level': jlptLevel,
+      if (exampleSentencesJson != null)
+        'example_sentences_json': exampleSentencesJson,
+      if (imageUrl != null) 'image_url': imageUrl,
+      if (pitchAccent != null) 'pitch_accent': pitchAccent,
+      if (partOfSpeech != null) 'part_of_speech': partOfSpeech,
       if (stability != null) 'stability': stability,
       if (difficulty != null) 'difficulty': difficulty,
       if (lastReview != null) 'last_review': lastReview,
@@ -1391,6 +1729,10 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
     Value<String>? reading,
     Value<String>? meaning,
     Value<int>? jlptLevel,
+    Value<String>? exampleSentencesJson,
+    Value<String?>? imageUrl,
+    Value<String?>? pitchAccent,
+    Value<String?>? partOfSpeech,
     Value<double>? stability,
     Value<double>? difficulty,
     Value<DateTime?>? lastReview,
@@ -1406,6 +1748,10 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
       reading: reading ?? this.reading,
       meaning: meaning ?? this.meaning,
       jlptLevel: jlptLevel ?? this.jlptLevel,
+      exampleSentencesJson: exampleSentencesJson ?? this.exampleSentencesJson,
+      imageUrl: imageUrl ?? this.imageUrl,
+      pitchAccent: pitchAccent ?? this.pitchAccent,
+      partOfSpeech: partOfSpeech ?? this.partOfSpeech,
       stability: stability ?? this.stability,
       difficulty: difficulty ?? this.difficulty,
       lastReview: lastReview ?? this.lastReview,
@@ -1434,6 +1780,20 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
     }
     if (jlptLevel.present) {
       map['jlpt_level'] = Variable<int>(jlptLevel.value);
+    }
+    if (exampleSentencesJson.present) {
+      map['example_sentences_json'] = Variable<String>(
+        exampleSentencesJson.value,
+      );
+    }
+    if (imageUrl.present) {
+      map['image_url'] = Variable<String>(imageUrl.value);
+    }
+    if (pitchAccent.present) {
+      map['pitch_accent'] = Variable<String>(pitchAccent.value);
+    }
+    if (partOfSpeech.present) {
+      map['part_of_speech'] = Variable<String>(partOfSpeech.value);
     }
     if (stability.present) {
       map['stability'] = Variable<double>(stability.value);
@@ -1470,6 +1830,10 @@ class VocabularyTableCompanion extends UpdateCompanion<VocabularyTableData> {
           ..write('reading: $reading, ')
           ..write('meaning: $meaning, ')
           ..write('jlptLevel: $jlptLevel, ')
+          ..write('exampleSentencesJson: $exampleSentencesJson, ')
+          ..write('imageUrl: $imageUrl, ')
+          ..write('pitchAccent: $pitchAccent, ')
+          ..write('partOfSpeech: $partOfSpeech, ')
           ..write('stability: $stability, ')
           ..write('difficulty: $difficulty, ')
           ..write('lastReview: $lastReview, ')
@@ -3200,6 +3564,9 @@ typedef $$KanjiCardTableTableCreateCompanionBuilder =
       required String kunyomi,
       Value<String?> strokeData,
       Value<int> jlptLevel,
+      Value<String> radicalsJson,
+      Value<String?> mnemonic,
+      Value<String> relatedWordsJson,
       Value<double> stability,
       Value<double> difficulty,
       Value<DateTime?> lastReview,
@@ -3218,6 +3585,9 @@ typedef $$KanjiCardTableTableUpdateCompanionBuilder =
       Value<String> kunyomi,
       Value<String?> strokeData,
       Value<int> jlptLevel,
+      Value<String> radicalsJson,
+      Value<String?> mnemonic,
+      Value<String> relatedWordsJson,
       Value<double> stability,
       Value<double> difficulty,
       Value<DateTime?> lastReview,
@@ -3269,6 +3639,21 @@ class $$KanjiCardTableTableFilterComposer
 
   ColumnFilters<int> get jlptLevel => $composableBuilder(
     column: $table.jlptLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get radicalsJson => $composableBuilder(
+    column: $table.radicalsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get mnemonic => $composableBuilder(
+    column: $table.mnemonic,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get relatedWordsJson => $composableBuilder(
+    column: $table.relatedWordsJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3352,6 +3737,21 @@ class $$KanjiCardTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get radicalsJson => $composableBuilder(
+    column: $table.radicalsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get mnemonic => $composableBuilder(
+    column: $table.mnemonic,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get relatedWordsJson => $composableBuilder(
+    column: $table.relatedWordsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get stability => $composableBuilder(
     column: $table.stability,
     builder: (column) => ColumnOrderings(column),
@@ -3419,6 +3819,19 @@ class $$KanjiCardTableTableAnnotationComposer
 
   GeneratedColumn<int> get jlptLevel =>
       $composableBuilder(column: $table.jlptLevel, builder: (column) => column);
+
+  GeneratedColumn<String> get radicalsJson => $composableBuilder(
+    column: $table.radicalsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get mnemonic =>
+      $composableBuilder(column: $table.mnemonic, builder: (column) => column);
+
+  GeneratedColumn<String> get relatedWordsJson => $composableBuilder(
+    column: $table.relatedWordsJson,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get stability =>
       $composableBuilder(column: $table.stability, builder: (column) => column);
@@ -3488,6 +3901,9 @@ class $$KanjiCardTableTableTableManager
                 Value<String> kunyomi = const Value.absent(),
                 Value<String?> strokeData = const Value.absent(),
                 Value<int> jlptLevel = const Value.absent(),
+                Value<String> radicalsJson = const Value.absent(),
+                Value<String?> mnemonic = const Value.absent(),
+                Value<String> relatedWordsJson = const Value.absent(),
                 Value<double> stability = const Value.absent(),
                 Value<double> difficulty = const Value.absent(),
                 Value<DateTime?> lastReview = const Value.absent(),
@@ -3504,6 +3920,9 @@ class $$KanjiCardTableTableTableManager
                 kunyomi: kunyomi,
                 strokeData: strokeData,
                 jlptLevel: jlptLevel,
+                radicalsJson: radicalsJson,
+                mnemonic: mnemonic,
+                relatedWordsJson: relatedWordsJson,
                 stability: stability,
                 difficulty: difficulty,
                 lastReview: lastReview,
@@ -3522,6 +3941,9 @@ class $$KanjiCardTableTableTableManager
                 required String kunyomi,
                 Value<String?> strokeData = const Value.absent(),
                 Value<int> jlptLevel = const Value.absent(),
+                Value<String> radicalsJson = const Value.absent(),
+                Value<String?> mnemonic = const Value.absent(),
+                Value<String> relatedWordsJson = const Value.absent(),
                 Value<double> stability = const Value.absent(),
                 Value<double> difficulty = const Value.absent(),
                 Value<DateTime?> lastReview = const Value.absent(),
@@ -3538,6 +3960,9 @@ class $$KanjiCardTableTableTableManager
                 kunyomi: kunyomi,
                 strokeData: strokeData,
                 jlptLevel: jlptLevel,
+                radicalsJson: radicalsJson,
+                mnemonic: mnemonic,
+                relatedWordsJson: relatedWordsJson,
                 stability: stability,
                 difficulty: difficulty,
                 lastReview: lastReview,
@@ -3579,6 +4004,10 @@ typedef $$VocabularyTableTableCreateCompanionBuilder =
       required String reading,
       required String meaning,
       Value<int> jlptLevel,
+      Value<String> exampleSentencesJson,
+      Value<String?> imageUrl,
+      Value<String?> pitchAccent,
+      Value<String?> partOfSpeech,
       Value<double> stability,
       Value<double> difficulty,
       Value<DateTime?> lastReview,
@@ -3595,6 +4024,10 @@ typedef $$VocabularyTableTableUpdateCompanionBuilder =
       Value<String> reading,
       Value<String> meaning,
       Value<int> jlptLevel,
+      Value<String> exampleSentencesJson,
+      Value<String?> imageUrl,
+      Value<String?> pitchAccent,
+      Value<String?> partOfSpeech,
       Value<double> stability,
       Value<double> difficulty,
       Value<DateTime?> lastReview,
@@ -3636,6 +4069,26 @@ class $$VocabularyTableTableFilterComposer
 
   ColumnFilters<int> get jlptLevel => $composableBuilder(
     column: $table.jlptLevel,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get exampleSentencesJson => $composableBuilder(
+    column: $table.exampleSentencesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get pitchAccent => $composableBuilder(
+    column: $table.pitchAccent,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get partOfSpeech => $composableBuilder(
+    column: $table.partOfSpeech,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3709,6 +4162,26 @@ class $$VocabularyTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get exampleSentencesJson => $composableBuilder(
+    column: $table.exampleSentencesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get imageUrl => $composableBuilder(
+    column: $table.imageUrl,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get pitchAccent => $composableBuilder(
+    column: $table.pitchAccent,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get partOfSpeech => $composableBuilder(
+    column: $table.partOfSpeech,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get stability => $composableBuilder(
     column: $table.stability,
     builder: (column) => ColumnOrderings(column),
@@ -3768,6 +4241,24 @@ class $$VocabularyTableTableAnnotationComposer
 
   GeneratedColumn<int> get jlptLevel =>
       $composableBuilder(column: $table.jlptLevel, builder: (column) => column);
+
+  GeneratedColumn<String> get exampleSentencesJson => $composableBuilder(
+    column: $table.exampleSentencesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get imageUrl =>
+      $composableBuilder(column: $table.imageUrl, builder: (column) => column);
+
+  GeneratedColumn<String> get pitchAccent => $composableBuilder(
+    column: $table.pitchAccent,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get partOfSpeech => $composableBuilder(
+    column: $table.partOfSpeech,
+    builder: (column) => column,
+  );
 
   GeneratedColumn<double> get stability =>
       $composableBuilder(column: $table.stability, builder: (column) => column);
@@ -3839,6 +4330,10 @@ class $$VocabularyTableTableTableManager
                 Value<String> reading = const Value.absent(),
                 Value<String> meaning = const Value.absent(),
                 Value<int> jlptLevel = const Value.absent(),
+                Value<String> exampleSentencesJson = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                Value<String?> pitchAccent = const Value.absent(),
+                Value<String?> partOfSpeech = const Value.absent(),
                 Value<double> stability = const Value.absent(),
                 Value<double> difficulty = const Value.absent(),
                 Value<DateTime?> lastReview = const Value.absent(),
@@ -3853,6 +4348,10 @@ class $$VocabularyTableTableTableManager
                 reading: reading,
                 meaning: meaning,
                 jlptLevel: jlptLevel,
+                exampleSentencesJson: exampleSentencesJson,
+                imageUrl: imageUrl,
+                pitchAccent: pitchAccent,
+                partOfSpeech: partOfSpeech,
                 stability: stability,
                 difficulty: difficulty,
                 lastReview: lastReview,
@@ -3869,6 +4368,10 @@ class $$VocabularyTableTableTableManager
                 required String reading,
                 required String meaning,
                 Value<int> jlptLevel = const Value.absent(),
+                Value<String> exampleSentencesJson = const Value.absent(),
+                Value<String?> imageUrl = const Value.absent(),
+                Value<String?> pitchAccent = const Value.absent(),
+                Value<String?> partOfSpeech = const Value.absent(),
                 Value<double> stability = const Value.absent(),
                 Value<double> difficulty = const Value.absent(),
                 Value<DateTime?> lastReview = const Value.absent(),
@@ -3883,6 +4386,10 @@ class $$VocabularyTableTableTableManager
                 reading: reading,
                 meaning: meaning,
                 jlptLevel: jlptLevel,
+                exampleSentencesJson: exampleSentencesJson,
+                imageUrl: imageUrl,
+                pitchAccent: pitchAccent,
+                partOfSpeech: partOfSpeech,
                 stability: stability,
                 difficulty: difficulty,
                 lastReview: lastReview,

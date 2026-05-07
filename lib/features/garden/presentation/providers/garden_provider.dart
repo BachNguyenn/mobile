@@ -26,7 +26,9 @@ class GardenNotifier extends StateNotifier<ZenGarden> {
   }
 
   Future<void> loadGarden() async {
-    state = await _repository.loadGarden();
+    final newGarden = await _repository.loadGarden();
+    if (!mounted) return;
+    state = newGarden;
   }
 
   void onStudyEvent(StudyEvent event) {

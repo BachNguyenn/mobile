@@ -158,7 +158,9 @@ class SettingsController extends StateNotifier<AsyncValue<AppSettings>> {
   }
 
   Future<void> _load() async {
-    state = AsyncValue.data(await AppSettingsStore.load());
+    final settings = await AppSettingsStore.load();
+    if (!mounted) return;
+    state = AsyncValue.data(settings);
   }
 
   Future<void> updateDailyReminderEnabled(bool enabled) {

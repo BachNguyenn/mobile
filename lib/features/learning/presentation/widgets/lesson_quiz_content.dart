@@ -8,9 +8,12 @@ import 'package:mobile/features/learning/domain/entities/quiz_question.dart';
 import 'package:mobile/features/learning/presentation/providers/lesson_controller.dart';
 import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
 
+void _noopString(String _) {}
+
 class LessonQuizContent extends StatefulWidget {
   final LessonState state;
   final ValueChanged<String> onSelectAnswer;
+  final ValueChanged<String> onTypedAnswerChanged;
   final ValueChanged<List<List<HandwritingPoint>>> onDrawingChanged;
   final VoidCallback onResetCanvas;
   final GlobalKey<HandwritingCanvasState> canvasKey;
@@ -19,6 +22,7 @@ class LessonQuizContent extends StatefulWidget {
     super.key,
     required this.state,
     required this.onSelectAnswer,
+    this.onTypedAnswerChanged = _noopString,
     required this.onDrawingChanged,
     required this.onResetCanvas,
     required this.canvasKey,
@@ -48,6 +52,8 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
         return _buildHandwritingQuiz(currentQ);
       case QuizInputMode.study:
         return _buildGrammarStudy(currentQ);
+      case QuizInputMode.typing:
+        return _buildTypingQuiz(currentQ);
       case QuizInputMode.multipleChoice:
         return _buildMultipleChoiceQuiz(currentQ);
     }
@@ -157,6 +163,55 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
               isCorrect: widget.state.isCorrect,
               answer: question.answer,
               explanation: question.explanation!,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTypingQuiz(QuizQuestion question) {
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _QuizHeader(
+            title: _titleFor(question.type),
+            subtitle: 'Nháº­p Ä‘Ã¡p Ã¡n rá»“i kiá»ƒm tra',
+            question: question,
+            showHint: _showHint,
+            onToggleHint: _toggleHint,
+          ),
+          const SizedBox(height: AppSpacing.sp24),
+          _PromptCard(question: question),
+          const SizedBox(height: AppSpacing.sp24),
+          TextField(
+            enabled: !widget.state.isAnswerChecked,
+            onChanged: widget.onTypedAnswerChanged,
+            textInputAction: TextInputAction.done,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: AppColors.white,
+              hintText: 'Nháº­p Ä‘Ã¡p Ã¡n',
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+                borderSide: BorderSide(
+                  color: AppColors.slateLight.withValues(alpha: 0.5),
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+                borderSide: const BorderSide(color: AppColors.mossGreen),
+              ),
+            ),
+            style: AppTypography.bodyL.copyWith(color: AppColors.ink),
+          ),
+          if (widget.state.isAnswerChecked) ...[
+            const SizedBox(height: AppSpacing.sp12),
+            _FeedbackCard(
+              isCorrect: widget.state.isCorrect,
+              answer: question.answer,
+              explanation: question.explanation ?? '',
             ),
           ],
         ],

@@ -16,7 +16,6 @@ import 'package:mobile/features/home/presentation/widgets/profile_avatar.dart';
 import 'package:mobile/features/home/presentation/widgets/quick_action_chips.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
-import 'package:mobile/presentation/widgets/global_search_delegate.dart';
 import 'package:mobile/presentation/widgets/learning_card.dart';
 import 'package:mobile/presentation/widgets/zen_garden_2d_widget.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
@@ -62,11 +61,24 @@ class _HomePageState extends ConsumerState<HomePage>
     final User? user = authState.valueOrNull;
 
     return progressAsync.when(
-      data: (progress) => _buildContent(context, ref, garden, gardenMissions, progress, user),
-      loading: () =>
-          _buildContent(context, ref, garden, gardenMissions, HomeProgress.empty, user),
-      error: (e, _) =>
-          _buildContent(context, ref, garden, gardenMissions, HomeProgress.empty, user),
+      data: (progress) =>
+          _buildContent(context, ref, garden, gardenMissions, progress, user),
+      loading: () => _buildContent(
+        context,
+        ref,
+        garden,
+        gardenMissions,
+        HomeProgress.empty,
+        user,
+      ),
+      error: (e, _) => _buildContent(
+        context,
+        ref,
+        garden,
+        gardenMissions,
+        HomeProgress.empty,
+        user,
+      ),
     );
   }
 
@@ -109,10 +121,7 @@ class _HomePageState extends ConsumerState<HomePage>
             actions: [
               IconButton(
                 onPressed: () {
-                  showSearch(
-                    context: context,
-                    delegate: GlobalSearchDelegate(ref),
-                  );
+                  Navigator.push(context, AppRoutes.dictionary());
                 },
                 icon: const Icon(Icons.search_rounded, size: 22),
                 color: AppColors.slateGrey,
@@ -160,10 +169,10 @@ class _HomePageState extends ConsumerState<HomePage>
                   AppSpacing.sp8,
                 ),
                 child: ZenGarden2DWidget(
-                garden: garden,
-                streak: progress.streak,
-                missionHint: gardenMissions.valueOrNull?.homeHint,
-                onTap: () {
+                  garden: garden,
+                  streak: progress.streak,
+                  missionHint: gardenMissions.valueOrNull?.homeHint,
+                  onTap: () {
                     Navigator.push(context, AppRoutes.garden());
                   },
                 ),

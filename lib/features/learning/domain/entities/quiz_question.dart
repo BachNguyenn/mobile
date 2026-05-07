@@ -17,7 +17,7 @@ enum QuizType {
   grammarUsage,
 }
 
-enum QuizInputMode { multipleChoice, handwriting, study }
+enum QuizInputMode { multipleChoice, handwriting, study, typing }
 
 sealed class QuizPayload {
   const QuizPayload();

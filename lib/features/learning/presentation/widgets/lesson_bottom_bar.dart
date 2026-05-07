@@ -27,6 +27,7 @@ class LessonBottomBar extends StatelessWidget {
         QuizInputMode.study => true,
         QuizInputMode.handwriting => state.currentStrokes.isNotEmpty,
         QuizInputMode.multipleChoice => state.selectedAnswer != null,
+        QuizInputMode.typing => state.typedAnswer.trim().isNotEmpty,
       };
 
       return _BarSurface(
@@ -57,18 +58,18 @@ class LessonBottomBar extends StatelessWidget {
     final color = isStudy
         ? AppColors.mossGreen
         : state.isCorrect
-            ? AppColors.mossGreen
-            : AppColors.terracotta;
+        ? AppColors.mossGreen
+        : AppColors.terracotta;
     final message = isStudy
         ? 'Đã hiểu!'
         : state.isCorrect
-            ? 'Chính xác!'
-            : 'Chưa đúng';
+        ? 'Chính xác!'
+        : 'Chưa đúng';
     final icon = isStudy
         ? Icons.auto_stories_rounded
         : state.isCorrect
-            ? Icons.check_circle_rounded
-            : Icons.cancel_rounded;
+        ? Icons.check_circle_rounded
+        : Icons.cancel_rounded;
 
     return _BarSurface(
       backgroundColor: color.withValues(alpha: 0.08),

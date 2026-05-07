@@ -1,8 +1,9 @@
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
 import 'package:mobile/features/kanji/domain/entities/kanji_card.dart';
+import 'package:mobile/features/sentence/domain/entities/sentence.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
 
-enum ReviewItemType { kanji, vocabulary, grammar }
+enum ReviewItemType { kanji, vocabulary, grammar, sentence }
 
 class ReviewItem {
   final String id;
@@ -15,6 +16,7 @@ class ReviewItem {
   final KanjiCard? kanji;
   final Vocabulary? vocabulary;
   final GrammarPoint? grammar;
+  final Sentence? sentence;
 
   const ReviewItem({
     required this.id,
@@ -27,6 +29,7 @@ class ReviewItem {
     this.kanji,
     this.vocabulary,
     this.grammar,
+    this.sentence,
   });
 
   factory ReviewItem.fromKanji(KanjiCard card) {
@@ -58,7 +61,9 @@ class ReviewItem {
   }
 
   factory ReviewItem.fromGrammar(GrammarPoint grammar) {
-    final firstExample = grammar.examples.isNotEmpty ? grammar.examples.first.jp : null;
+    final firstExample = grammar.examples.isNotEmpty
+        ? grammar.examples.first.jp
+        : null;
     return ReviewItem(
       id: grammar.id,
       type: ReviewItemType.grammar,
@@ -69,6 +74,22 @@ class ReviewItem {
       subtitle: firstExample ?? grammar.formation,
       jlptLevel: grammar.jlptLevel,
       grammar: grammar,
+    );
+  }
+
+  factory ReviewItem.fromSentence(
+    Sentence sentence, {
+    List<String> choices = const [],
+  }) {
+    return ReviewItem(
+      id: sentence.id,
+      type: ReviewItemType.sentence,
+      prompt: sentence.text,
+      answer: sentence.meaning,
+      subtitle: sentence.reading,
+      choices: choices,
+      jlptLevel: sentence.jlptLevel,
+      sentence: sentence,
     );
   }
 

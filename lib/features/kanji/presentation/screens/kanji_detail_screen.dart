@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../core/services/audio_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../domain/entities/kanji_card.dart';
 
-class KanjiDetailScreen extends StatelessWidget {
+class KanjiDetailScreen extends ConsumerWidget {
   final KanjiCard kanji;
 
   const KanjiDetailScreen({super.key, required this.kanji});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
@@ -26,9 +28,7 @@ class KanjiDetailScreen extends StatelessWidget {
           SliverToBoxAdapter(
             child: Container(
               height: 210,
-              decoration: const BoxDecoration(
-                gradient: AppColors.mossGradient,
-              ),
+              decoration: const BoxDecoration(gradient: AppColors.mossGradient),
               child: Center(
                 child: Text(
                   kanji.kanji,
@@ -58,7 +58,8 @@ class KanjiDetailScreen extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: _buildInfoCard(
+                        child: _buildInfoCardWithSpeaker(
+                          ref,
                           'Onyomi',
                           kanji.onyomi,
                           Icons.record_voice_over_rounded,
@@ -67,7 +68,8 @@ class KanjiDetailScreen extends StatelessWidget {
                       ),
                       const SizedBox(width: AppSpacing.sp16),
                       Expanded(
-                        child: _buildInfoCard(
+                        child: _buildInfoCardWithSpeaker(
+                          ref,
                           'Kunyomi',
                           kanji.kunyomi,
                           Icons.record_voice_over_outlined,
@@ -76,11 +78,35 @@ class KanjiDetailScreen extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (kanji.radicals.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.sp16),
+                    _buildListCard(
+                      'Radicals',
+                      kanji.radicals,
+                      Icons.account_tree_rounded,
+                      AppColors.sunGold,
+                    ),
+                  ],
+                  if (kanji.mnemonic?.isNotEmpty ?? false) ...[
+                    const SizedBox(height: AppSpacing.sp16),
+                    _buildInfoCard(
+                      'Mnemonic',
+                      kanji.mnemonic!,
+                      Icons.lightbulb_rounded,
+                      AppColors.terracotta,
+                    ),
+                  ],
+                  if (kanji.relatedWords.isNotEmpty) ...[
+                    const SizedBox(height: AppSpacing.sp16),
+                    _buildListCard(
+                      'Related words',
+                      kanji.relatedWords,
+                      Icons.link_rounded,
+                      AppColors.waterBlue,
+                    ),
+                  ],
                   const SizedBox(height: AppSpacing.sp32),
-                  Text(
-                    'Ghi chú ôn tập',
-                    style: AppTypography.headingS,
-                  ),
+                  Text('Ghi chú ôn tập', style: AppTypography.headingS),
                   const SizedBox(height: AppSpacing.sp12),
                   Container(
                     width: double.infinity,
@@ -88,11 +114,15 @@ class KanjiDetailScreen extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: AppColors.white,
                       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-                      border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
+                      border: Border.all(
+                        color: AppColors.slateLight.withValues(alpha: 0.2),
+                      ),
                     ),
                     child: Text(
                       'Lần ôn tập tiếp theo: ${_formatDate(kanji.nextReview)}',
-                      style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+                      style: AppTypography.bodyM.copyWith(
+                        color: AppColors.slateGrey,
+                      ),
                     ),
                   ),
                 ],
@@ -116,14 +146,19 @@ class KanjiDetailScreen extends StatelessWidget {
               style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp12, vertical: AppSpacing.sp4),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.sp12,
+                vertical: AppSpacing.sp4,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.mossGreen.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusS),
               ),
               child: Text(
                 'JLPT N${kanji.jlptLevel}',
-                style: AppTypography.bodyMBold.copyWith(color: AppColors.mossGreen),
+                style: AppTypography.bodyMBold.copyWith(
+                  color: AppColors.mossGreen,
+                ),
               ),
             ),
           ],
@@ -142,17 +177,92 @@ class KanjiDetailScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: AppColors.white,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
+            border: Border.all(
+              color: AppColors.slateLight.withValues(alpha: 0.2),
+            ),
           ),
           child: Icon(icon, size: 20, color: AppColors.slateGrey),
         ),
         const SizedBox(height: AppSpacing.sp4),
-        Text(label, style: AppTypography.labelS.copyWith(color: AppColors.slateMuted)),
+        Text(
+          label,
+          style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
+        ),
       ],
     );
   }
 
-  Widget _buildInfoCard(String title, String content, IconData icon, Color themeColor) {
+  Widget _buildInfoCardWithSpeaker(
+    WidgetRef ref,
+    String title,
+    String content,
+    IconData icon,
+    Color themeColor,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sp20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: 0.03),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(color: themeColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: themeColor),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  title,
+                  style: AppTypography.bodyMBold.copyWith(color: themeColor),
+                ),
+              ),
+              if (content.isNotEmpty)
+                GestureDetector(
+                  onTap: () async {
+                    try {
+                      await ref
+                          .read(audioServiceProvider)
+                          .speakJapanese(content);
+                    } catch (_) {}
+                  },
+                  child: Icon(
+                    Icons.volume_up_rounded,
+                    size: 20,
+                    color: themeColor.withValues(alpha: 0.7),
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sp12),
+          Text(
+            content.isEmpty ? '---' : content,
+            style: AppTypography.bodyL.copyWith(
+              color: AppColors.ink,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(
+    String title,
+    String content,
+    IconData icon,
+    Color themeColor,
+  ) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp20),
@@ -188,6 +298,60 @@ class KanjiDetailScreen extends StatelessWidget {
               color: AppColors.ink,
               fontWeight: FontWeight.w500,
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListCard(
+    String title,
+    List<String> items,
+    IconData icon,
+    Color themeColor,
+  ) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sp20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        border: Border.all(color: themeColor.withValues(alpha: 0.1)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: themeColor),
+              const SizedBox(width: 8),
+              Text(
+                title,
+                style: AppTypography.bodyMBold.copyWith(color: themeColor),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sp12),
+          Wrap(
+            spacing: AppSpacing.sp8,
+            runSpacing: AppSpacing.sp8,
+            children: [
+              for (final item in items)
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sp12,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: themeColor.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+                  ),
+                  child: Text(
+                    item,
+                    style: AppTypography.label.copyWith(color: themeColor),
+                  ),
+                ),
+            ],
           ),
         ],
       ),

@@ -11,9 +11,9 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
 
   @override
   Future<List<Vocabulary>> getAllVocabulary() async {
-    final rows = await (_db.select(_db.vocabularyTable)
-          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-        .get();
+    final rows = await (_db.select(
+      _db.vocabularyTable,
+    )..orderBy([(t) => OrderingTerm(expression: t.id)])).get();
     return rows.map((row) => _mapRowToEntity(row)).toList();
   }
 
@@ -40,17 +40,19 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
 
   @override
   Future<List<Vocabulary>> getVocabularyByLevel(int level) async {
-    final rows = await (_db.select(_db.vocabularyTable)
-          ..where((t) => t.jlptLevel.equals(level))
-          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-        .get();
+    final rows =
+        await (_db.select(_db.vocabularyTable)
+              ..where((t) => t.jlptLevel.equals(level))
+              ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+            .get();
     return rows.map((row) => _mapRowToEntity(row)).toList();
   }
 
   @override
   Future<Vocabulary?> getVocabularyById(String id) async {
-    final row = await (_db.select(_db.vocabularyTable)..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.vocabularyTable,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     return row != null ? _mapRowToEntity(row) : null;
   }
 
@@ -58,28 +60,41 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
   Future<void> saveVocabulary(List<Vocabulary> vocabList) async {
     await _db.batch((batch) {
       batch.insertAllOnConflictUpdate(
-          _db.vocabularyTable,
-          vocabList
-              .map((v) => VocabularyTableCompanion.insert(
-                    id: v.id,
-                    word: v.word,
-                    reading: v.reading,
-                    meaning: v.meaning,
-                    jlptLevel: Value(v.jlptLevel),
-                    nextReview: DateTime.now(),
-                  ))
-              .toList());
+        _db.vocabularyTable,
+        vocabList
+            .map(
+              (v) => VocabularyTableCompanion.insert(
+                id: v.id,
+                word: v.word,
+                reading: v.reading,
+                meaning: v.meaning,
+                jlptLevel: Value(v.jlptLevel),
+                exampleSentencesJson: Value(v.exampleSentencesJson),
+                imageUrl: Value(v.imageUrl),
+                pitchAccent: Value(v.pitchAccent),
+                partOfSpeech: Value(v.partOfSpeech),
+                nextReview: DateTime.now(),
+              ),
+            )
+            .toList(),
+      );
     });
   }
 
   @override
-  Future<List<Vocabulary>> searchVocabulary(String query, {int? jlptLevel}) async {
+  Future<List<Vocabulary>> searchVocabulary(
+    String query, {
+    int? jlptLevel,
+  }) async {
     final queryBuilder = _db.select(_db.vocabularyTable);
     if (query.isNotEmpty) {
-      queryBuilder.where((t) => 
-        t.word.contains(query) | 
-        t.meaning.contains(query) | 
-        t.reading.contains(query)
+      queryBuilder.where(
+        (t) =>
+            t.word.contains(query) |
+            t.meaning.contains(query) |
+            t.reading.contains(query) |
+            t.exampleSentencesJson.contains(query) |
+            t.partOfSpeech.contains(query),
       );
     }
     if (jlptLevel != null) {
@@ -117,6 +132,10 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
       reading: row.reading,
       meaning: row.meaning,
       jlptLevel: row.jlptLevel,
+      exampleSentencesJson: row.exampleSentencesJson,
+      imageUrl: row.imageUrl,
+      pitchAccent: row.pitchAccent,
+      partOfSpeech: row.partOfSpeech,
       stability: row.stability,
       difficulty: row.difficulty,
       lastReview: row.lastReview,

@@ -43,34 +43,62 @@ class JlptLevelSelector extends StatelessWidget {
 
     return SizedBox(
       height: 40,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
-        itemCount: levels.length,
-        itemBuilder: (context, index) {
-          final level = levels[index];
-          final isSelected = selectedLevel == level;
-          final label = level == null ? 'Tất cả' : 'N$level';
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: constraints.maxWidth - (AppSpacing.sp16 * 2),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(levels.length, (index) {
+                  final level = levels[index];
+                  final isSelected = selectedLevel == level;
+                  final label = level == null ? 'Tất cả' : 'N$level';
 
-          return Padding(
-            padding: const EdgeInsets.only(right: AppSpacing.sp8),
-            child: ChoiceChip(
-              label: Text(label),
-              selected: isSelected,
-              selectedColor: accentColor.withValues(alpha: 0.2),
-              labelStyle: AppTypography.label.copyWith(
-                color: isSelected ? accentColor : theme.colorScheme.onSurface.withValues(alpha: 0.55),
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                  return GestureDetector(
+                    onTap: () =>
+                        onChanged(isSelected && level != null ? null : level),
+                    child: AnimatedContainer(
+                      duration: const Duration(milliseconds: 200),
+                      margin: EdgeInsets.only(
+                        right: index == levels.length - 1 ? 0 : AppSpacing.sp8,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.sp20,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? accentColor.withValues(alpha: 0.1)
+                            : Colors.white.withValues(alpha: 0.6),
+                        borderRadius:
+                            BorderRadius.circular(AppSpacing.radiusXL),
+                        border: Border.all(
+                          color: isSelected ? accentColor : borderColor,
+                          width: isSelected ? 1.5 : 1,
+                        ),
+                      ),
+                      child: Center(
+                        child: Text(
+                          label,
+                          style: AppTypography.bodyMBold.copyWith(
+                            color: isSelected
+                                ? accentColor
+                                : theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.55),
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
               ),
-              onSelected: (selected) => onChanged(selected ? level : null),
-              backgroundColor: cardColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-                side: BorderSide(
-                  color: isSelected ? accentColor : borderColor,
-                ),
-              ),
-              showCheckmark: false,
             ),
           );
         },

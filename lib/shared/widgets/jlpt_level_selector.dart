@@ -38,7 +38,6 @@ class JlptLevelSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final cardColor = theme.cardColor;
     final borderColor = theme.colorScheme.outlineVariant.withValues(alpha: 0.3);
 
     return SizedBox(

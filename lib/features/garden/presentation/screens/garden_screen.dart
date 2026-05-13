@@ -332,7 +332,7 @@ class _GardenHud extends StatelessWidget {
           missions.when(
             data: (summary) => Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.task_alt_rounded,
                   size: 16,
                   color: AppColors.mossGreen,

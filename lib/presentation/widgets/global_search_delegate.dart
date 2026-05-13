@@ -127,7 +127,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.search_off_rounded,
                         size: 48,
                         color: AppColors.slateLight,

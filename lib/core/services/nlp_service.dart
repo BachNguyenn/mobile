@@ -38,11 +38,11 @@ class GrammarParserService implements JapaneseTutorService {
     final normalizedSentence = sentence.trim();
     if (normalizedSentence.isEmpty) return [];
 
-    final baseUrl = const String.fromEnvironment(
+    const baseUrl = String.fromEnvironment(
       'OLLAMA_BASE_URL',
       defaultValue: _defaultBaseUrl,
     );
-    final modelName = const String.fromEnvironment(
+    const modelName = String.fromEnvironment(
       'OLLAMA_MODEL',
       defaultValue: _defaultModelName,
     );

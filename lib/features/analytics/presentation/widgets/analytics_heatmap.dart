@@ -72,8 +72,8 @@ class AnalyticsHeatmap extends StatelessWidget {
                           children: List.generate(rows, (rowIndex) {
                             final offset = (columns - 1 - colIndex) * 7 + (currentWeekday - 1 - rowIndex);
                             
+                            final bool isFuture = offset < 0;
                             int count = 0;
-                            bool isFuture = offset < 0;
                             
                             if (!isFuture) {
                               final date = todayNormalized.subtract(Duration(days: offset));
@@ -108,15 +108,15 @@ class AnalyticsHeatmap extends StatelessWidget {
                 style: AppTypography.labelS.copyWith(color: AppColors.slateMuted, fontSize: 10),
               ),
               const SizedBox(width: 4),
-              _LegendBox(count: 0),
+              const _LegendBox(count: 0),
               const SizedBox(width: 2),
-              _LegendBox(count: 5),
+              const _LegendBox(count: 5),
               const SizedBox(width: 2),
-              _LegendBox(count: 15),
+              const _LegendBox(count: 15),
               const SizedBox(width: 2),
-              _LegendBox(count: 25),
+              const _LegendBox(count: 25),
               const SizedBox(width: 2),
-              _LegendBox(count: 35),
+              const _LegendBox(count: 35),
               const SizedBox(width: 4),
               Text(
                 'Nhiều',

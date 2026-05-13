@@ -42,7 +42,7 @@ final homeProgressProvider = FutureProvider<HomeProgress>((ref) async {
 
   // ── Streak (số ngày liên tục có học) ────────────────────
   final studyLogs = await db.select(db.studyLogTable).get();
-  int streak = _calculateStreak(studyLogs, now);
+  final streak = _calculateStreak(studyLogs, now);
 
   // ── Today's reviewed count ──────────────────────────────
   final todayStart = DateTime(now.year, now.month, now.day);

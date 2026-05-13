@@ -133,7 +133,7 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.auto_awesome,
                         size: 12,
                         color: AppColors.mossGreen,

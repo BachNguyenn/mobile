@@ -190,7 +190,7 @@ class _HomePageState extends ConsumerState<HomePage>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
+                    const Padding(
                       padding: AppSpacing.paddingH24,
                       child: _HomeSectionHeader(
                         Icons.flash_on_rounded,
@@ -215,8 +215,8 @@ class _HomePageState extends ConsumerState<HomePage>
           SliverToBoxAdapter(
             child: _staggeredItem(
               index: 4,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(
+              child: const Padding(
+                padding: EdgeInsets.fromLTRB(
                   AppSpacing.sp24,
                   AppSpacing.sp8,
                   AppSpacing.sp24,

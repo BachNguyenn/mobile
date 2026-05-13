@@ -10,10 +10,13 @@ import 'package:flutter/material.dart';
 abstract final class AppColors {
   // ─── Background ────────────────────────────────────────────
   /// Nền chính — giấy washi ấm
-  static const Color cream = Color(0xFFFAF8F5);
+  static const Color cream = Color(0xFFFFFFFF);
 
   /// Nền phụ — card surface, section background
   static const Color creamDark = Color(0xFFF0EDE8);
+
+  /// Nền xanh đậm — theo màu của App Icon
+  static const Color zenBlue = Color(0xFF293156);
 
   // ─── Primary — Moss Green ──────────────────────────────────
   /// Primary chính — nút, accent, progress bar

@@ -87,12 +87,14 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.cream,
       appBar: AppBar(
+        backgroundColor: AppColors.cream,
         elevation: 0,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_rounded),
-          color: AppColors.slateGrey,
+          color: AppColors.ink,
         ),
       ),
       body: SafeArea(
@@ -105,21 +107,78 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               children: [
                 const SizedBox(height: AppSpacing.sp16),
 
+                // ── Logo Header ─────────────────────────────
+                Center(
+                  child: Column(
+                    children: [
+                      Container(
+                        height: 100,
+                        width: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          borderRadius: BorderRadius.circular(24),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.ink.withValues(alpha: 0.08),
+                              blurRadius: 25,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(24),
+                          child: Image.asset(
+                            'assets/images/app_logo.png',
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sp24),
+                      Text(
+                        'Zen Japanese',
+                        style: AppTypography.displayLarge.copyWith(
+                          letterSpacing: 1.2,
+                          color: AppColors.zenBlue,
+                          fontSize: 28,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sp8),
+                      Text(
+                        '日本語を学ぼう',
+                        style: AppTypography.japaneseQuote.copyWith(
+                          fontSize: 16,
+                          color: AppColors.mossGreen,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.sp48),
+
                 // ── Header ──────────────────────────────────
-                Text('Tạo tài khoản', style: AppTypography.displayLarge),
+                Text(
+                  'Tạo tài khoản',
+                  style: AppTypography.displayLarge.copyWith(
+                    color: AppColors.zenBlue,
+                    fontSize: 24,
+                  ),
+                ),
                 const SizedBox(height: AppSpacing.sp8),
                 Text(
                   '登録して学び始めよう',
                   style: AppTypography.japaneseQuote.copyWith(
                     fontSize: 16,
                     color: AppColors.mossGreen,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(height: AppSpacing.sp4),
+                const SizedBox(height: AppSpacing.sp8),
                 Text(
                   'Đăng ký để bắt đầu hành trình học tiếng Nhật',
                   style: AppTypography.bodyM.copyWith(
-                    color: AppColors.slateMuted,
+                    color: AppColors.slateGrey,
                   ),
                 ),
 
@@ -130,6 +189,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   controller: _emailController,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
+                  style: AppTypography.bodyM.copyWith(color: AppColors.ink),
                   decoration: _inputDecoration(
                     label: 'Email',
                     hint: 'your@email.com',
@@ -154,6 +214,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   controller: _passwordController,
                   obscureText: _obscurePassword,
                   textInputAction: TextInputAction.next,
+                  style: AppTypography.bodyM.copyWith(color: AppColors.ink),
                   decoration: _inputDecoration(
                     label: 'Mật khẩu',
                     hint: 'Ít nhất 6 ký tự',
@@ -190,6 +251,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   obscureText: _obscureConfirm,
                   textInputAction: TextInputAction.done,
                   onFieldSubmitted: (_) => _handleRegister(),
+                  style: AppTypography.bodyM.copyWith(color: AppColors.ink),
                   decoration: _inputDecoration(
                     label: 'Xác nhận mật khẩu',
                     hint: 'Nhập lại mật khẩu',
@@ -223,7 +285,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                   child: ElevatedButton(
                     onPressed: _isLoading ? null : _handleRegister,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.mossGreen,
+                      backgroundColor: AppColors.zenBlue,
                       foregroundColor: AppColors.white,
                       padding: const EdgeInsets.symmetric(
                         vertical: AppSpacing.sp16,
@@ -259,7 +321,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       text: TextSpan(
                         text: 'Đã có tài khoản? ',
                         style: AppTypography.bodyM.copyWith(
-                          color: AppColors.slateMuted,
+                          color: AppColors.slateGrey,
                         ),
                         children: [
                           TextSpan(
@@ -292,38 +354,38 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      prefixIcon: Icon(icon, color: AppColors.mossGreen, size: 20),
+      prefixIcon: Icon(icon, color: AppColors.zenBlue, size: 20),
       suffixIcon: suffixIcon,
-      labelStyle: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
-      hintStyle: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+      labelStyle: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+      hintStyle: AppTypography.bodyM.copyWith(color: AppColors.slateLight),
       filled: true,
       fillColor: AppColors.white,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp16,
-        vertical: AppSpacing.sp12,
+        vertical: AppSpacing.sp16,
       ),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: BorderSide(
           color: AppColors.slateLight.withValues(alpha: 0.5),
         ),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: BorderSide(
           color: AppColors.slateLight.withValues(alpha: 0.5),
         ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        borderSide: const BorderSide(color: AppColors.mossGreen, width: 1.5),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        borderSide: const BorderSide(color: AppColors.zenBlue, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: const BorderSide(color: AppColors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
     );

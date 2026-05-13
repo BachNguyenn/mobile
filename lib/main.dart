@@ -112,23 +112,25 @@ class _SplashScreen extends StatelessWidget {
           children: [
             // Zen Logo
             Container(
-              width: 100,
-              height: 100,
+              width: 120,
+              height: 120,
               decoration: BoxDecoration(
-                color: const Color(0xFF4A6B53), // mossGreen
-                shape: BoxShape.circle,
+                color: Colors.transparent,
+                borderRadius: BorderRadius.circular(28),
                 boxShadow: [
                   BoxShadow(
-                    color: const Color(0xFF4A6B53).withValues(alpha: 0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+                    color: const Color(0xFF2D3748).withValues(alpha: 0.08),
+                    blurRadius: 25,
+                    offset: const Offset(0, 8),
                   ),
                 ],
               ),
-              child: const Icon(
-                Icons.spa_rounded,
-                size: 50,
-                color: Colors.white,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(28),
+                child: Image.asset(
+                  'assets/images/app_logo.png',
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
             const SizedBox(height: 24),

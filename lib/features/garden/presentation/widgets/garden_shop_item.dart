@@ -147,13 +147,9 @@ class _GardenShopItemState extends ConsumerState<GardenShopItem>
                     width: 64,
                     height: 64,
                     decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      border: Border.all(
-                        color: AppColors.slateLight.withValues(alpha: 0.2),
-                      ),
                       image: DecorationImage(
-                        image: AssetImage('assets/images/${widget.type}.png'),
-                        fit: BoxFit.cover,
+                        image: AssetImage('assets/images/${widget.type}.webp'),
+                        fit: BoxFit.contain,
                       ),
                     ),
                   ),

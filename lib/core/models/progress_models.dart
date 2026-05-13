@@ -47,9 +47,11 @@ class HomeProgress {
     todayReviewed: 0,
   );
 
-  /// Tổng % hoàn thành trung bình
+  /// Tổng % hoàn thành trung bình (chỉ tính module có dữ liệu)
   double get overallPercentage {
-    if (kanji.total == 0) return 0.0;
-    return kanji.percentage;
+    final modules = [kanji, vocabulary, grammar];
+    final active = modules.where((m) => m.total > 0).toList();
+    if (active.isEmpty) return 0.0;
+    return active.fold(0.0, (sum, m) => sum + m.percentage) / active.length;
   }
 }

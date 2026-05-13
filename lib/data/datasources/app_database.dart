@@ -274,7 +274,7 @@ class AppDatabase extends _$AppDatabase {
       } catch (_) {
         // Fallback for malformed JSON or non-JSON strings that happen to have brackets
         String cleaned = trimmed.substring(1, trimmed.length - 1);
-        cleaned = cleaned.replaceAll('"', '').replaceAll("'", "");
+        cleaned = cleaned.replaceAll('"', '').replaceAll("'", '');
         return cleaned
             .split(',')
             .map((e) => e.trim())
@@ -428,7 +428,7 @@ class AppDatabase extends _$AppDatabase {
     return transaction(() async {
       if (rating >= 3) {
         await (update(grammarTable)..where((t) => t.id.equals(grammarId)))
-            .write(GrammarTableCompanion(isLearned: const Value(true)));
+            .write(const GrammarTableCompanion(isLearned: Value(true)));
       }
 
       await into(reviewLogTable).insert(

@@ -155,6 +155,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBody: true,
       body: _buildCurrentScreen(),
 
       // ── Premium Bottom Navigation Bar ──────────────────────
@@ -228,14 +229,13 @@ class _PremiumBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      minimum: const EdgeInsets.fromLTRB(
-        AppSpacing.sp16,
-        AppSpacing.sp8,
-        AppSpacing.sp16,
-        AppSpacing.sp8,
+    return Container(
+      margin: const EdgeInsets.fromLTRB(
+        AppSpacing.sp20,
+        0,
+        AppSpacing.sp20,
+        AppSpacing.sp24,
       ),
-      child: Container(
         height: 68,
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.96),
@@ -310,7 +310,6 @@ class _PremiumBottomNav extends StatelessWidget {
                 ],
               );
             },
-          ),
         ),
       ),
     );

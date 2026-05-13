@@ -7,12 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:787930915859:android:16107be90785ef16be0be6",
+        "mobilesdk_app_id": "1:787930915859:android:122d7558b4ce3233be0be6",
         "android_client_info": {
-          "package_name": "com.example.mobile"
+          "package_name": "com.zen.japanese"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "787930915859-bdplqtcrbpldnbs3vf33k7pjjbj41mon.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBoK4DOABdC7M2JwwUpWzk_OOxzt2ViDJ4"
@@ -20,7 +25,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "787930915859-bdplqtcrbpldnbs3vf33k7pjjbj41mon.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

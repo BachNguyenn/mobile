@@ -76,26 +76,7 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
       child: Stack(
         alignment: Alignment.center,
         children: [
-          // ── Ground shadow ──────────────────────────────
-          Positioned(
-            bottom: 4,
-            child: Container(
-              width: size * 0.6,
-              height: size * 0.15,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(size),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(
-                      alpha: widget.isDragging ? 0.15 : 0.08,
-                    ),
-                    blurRadius: widget.isDragging ? 16 : 8,
-                    spreadRadius: widget.isDragging ? 2 : 0,
-                  ),
-                ],
-              ),
-            ),
-          ),
+
 
           // ── Plant with sway animation ──────────────────
           AnimatedBuilder(
@@ -179,20 +160,10 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
         width: size,
         height: size,
         decoration: BoxDecoration(
-          shape: BoxShape.circle,
           image: DecorationImage(
             image: AssetImage(assetPath),
-            fit: BoxFit.cover,
+            fit: BoxFit.contain,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(
-                alpha: widget.isDragging ? 0.25 : 0.12,
-              ),
-              blurRadius: widget.isDragging ? 20 : 10,
-              offset: Offset(0, widget.isDragging ? 8 : 4),
-            ),
-          ],
         ),
       );
     } else {

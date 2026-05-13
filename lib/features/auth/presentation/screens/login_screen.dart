@@ -93,6 +93,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
+      backgroundColor: AppColors.cream,
       body: SafeArea(
         child: SingleChildScrollView(
           child: ConstrainedBox(
@@ -107,22 +108,38 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   children: [
                     const SizedBox(height: AppSpacing.sp48),
 
-                    // ── Zen Illustration ─────────────────────────
-                    SizedBox(
-                      height: 140,
-                      width: double.infinity,
-                      child: CustomPaint(
-                        painter: _LoginZenPainter(),
+                    // ── App Logo ─────────────────────────────────
+                    Container(
+                      height: 120,
+                      width: 120,
+                      decoration: BoxDecoration(
+                        color: Colors.transparent,
+                        borderRadius: BorderRadius.circular(28),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.ink.withValues(alpha: 0.08),
+                            blurRadius: 25,
+                            offset: const Offset(0, 8),
+                          ),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(28),
+                        child: Image.asset(
+                          'assets/images/app_logo.png',
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
 
-                    const SizedBox(height: AppSpacing.sp24),
+                    const SizedBox(height: AppSpacing.sp32),
 
                     // ── App Name ─────────────────────────────────
                     Text(
                       'Zen Japanese',
                       style: AppTypography.displayLarge.copyWith(
-                        letterSpacing: 1.5,
+                        letterSpacing: 1.2,
+                        color: AppColors.zenBlue,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sp8),
@@ -133,16 +150,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       style: AppTypography.japaneseQuote.copyWith(
                         fontSize: 18,
                         color: AppColors.mossGreen,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
 
-                    const SizedBox(height: AppSpacing.sp32),
+                    const SizedBox(height: AppSpacing.sp48),
 
                     // ── Email Field ──────────────────────────────
                     TextFormField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       textInputAction: TextInputAction.next,
+                      style: AppTypography.bodyM.copyWith(color: AppColors.ink),
                       decoration: _inputDecoration(
                         label: 'Email',
                         hint: 'your@email.com',
@@ -160,7 +179,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       },
                     ),
 
-                    const SizedBox(height: AppSpacing.sp12),
+                    const SizedBox(height: AppSpacing.sp16),
 
                     // ── Password Field ───────────────────────────
                     TextFormField(
@@ -168,6 +187,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       obscureText: _obscurePassword,
                       textInputAction: TextInputAction.done,
                       onFieldSubmitted: (_) => _handleEmailSignIn(),
+                      style: AppTypography.bodyM.copyWith(color: AppColors.ink),
                       decoration: _inputDecoration(
                         label: 'Mật khẩu',
                         hint: 'Nhập mật khẩu',
@@ -201,7 +221,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       child: ElevatedButton(
                         onPressed: _isLoading ? null : _handleEmailSignIn,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.mossGreen,
+                          backgroundColor: AppColors.zenBlue,
                           foregroundColor: AppColors.white,
                           padding: const EdgeInsets.symmetric(
                             vertical: AppSpacing.sp16,
@@ -227,7 +247,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       ),
                     ),
 
-                    const SizedBox(height: AppSpacing.sp12),
+                    const SizedBox(height: AppSpacing.sp16),
 
                     // ── Register Link ────────────────────────────
                     GestureDetector(
@@ -243,7 +263,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         text: TextSpan(
                           text: 'Chưa có tài khoản? ',
                           style: AppTypography.bodyM.copyWith(
-                            color: AppColors.slateMuted,
+                            color: AppColors.slateGrey,
                           ),
                           children: [
                             TextSpan(
@@ -264,7 +284,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       children: [
                         Expanded(
                           child: Divider(
-                            color: AppColors.slateLight.withValues(alpha: 0.5),
+                            color: AppColors.slateLight.withValues(alpha: 0.6),
                           ),
                         ),
                         Padding(
@@ -280,7 +300,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                         Expanded(
                           child: Divider(
-                            color: AppColors.slateLight.withValues(alpha: 0.5),
+                            color: AppColors.slateLight.withValues(alpha: 0.6),
                           ),
                         ),
                       ],
@@ -318,17 +338,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                 }
                               },
                         icon: Container(
-                          width: 20,
-                          height: 20,
+                          width: 24,
+                          height: 24,
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+                            border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.5)),
                           ),
-                          child: Center(
+                          child: const Center(
                             child: Text(
                               'G',
-                              style: AppTypography.bodyMBold.copyWith(
-                                color: AppColors.slateGrey,
+                              style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
                               ),
                             ),
                           ),
@@ -337,14 +360,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: AppColors.slateGrey,
                           side: BorderSide(
-                            color: AppColors.slateLight.withValues(alpha: 0.5),
+                            color: AppColors.slateLight.withValues(alpha: 0.8),
                           ),
                           padding: const EdgeInsets.symmetric(
-                            vertical: AppSpacing.sp12,
+                            vertical: AppSpacing.sp16,
                           ),
                           shape: RoundedRectangleBorder(
                             borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusS),
+                                BorderRadius.circular(AppSpacing.radiusM),
                           ),
                         ),
                       ),
@@ -419,12 +442,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       '一歩一歩、前に進もう',
                       style: AppTypography.caption.copyWith(
                         fontStyle: FontStyle.italic,
+                        color: AppColors.slateGrey,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sp4),
                     Text(
                       'Từng bước, tiến về phía trước',
-                      style: AppTypography.labelS,
+                      style: AppTypography.labelS.copyWith(
+                        color: AppColors.slateGrey,
+                      ),
                     ),
 
                     const SizedBox(height: AppSpacing.sp32),
@@ -447,145 +473,41 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      prefixIcon: Icon(icon, color: AppColors.mossGreen, size: 20),
+      prefixIcon: Icon(icon, color: AppColors.zenBlue, size: 20),
       suffixIcon: suffixIcon,
-      labelStyle: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
-      hintStyle: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+      labelStyle: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+      hintStyle: AppTypography.bodyM.copyWith(color: AppColors.slateLight),
       filled: true,
       fillColor: AppColors.white,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp16,
-        vertical: AppSpacing.sp12,
+        vertical: AppSpacing.sp16,
       ),
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: BorderSide(
           color: AppColors.slateLight.withValues(alpha: 0.5),
         ),
       ),
       enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: BorderSide(
           color: AppColors.slateLight.withValues(alpha: 0.5),
         ),
       ),
       focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        borderSide: const BorderSide(color: AppColors.mossGreen, width: 1.5),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        borderSide: const BorderSide(color: AppColors.zenBlue, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: const BorderSide(color: AppColors.error),
       ),
       focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
     );
   }
 }
 
-/// CustomPainter cho illustration Zen trên Login screen
-class _LoginZenPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final centerX = size.width / 2;
-    final centerY = size.height / 2;
-
-    // ── Raked Sand Circles ─────────────────────────────────
-    final sandPaint = Paint()
-      ..color = AppColors.slateLight.withValues(alpha: 0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.0;
-
-    for (var i = 1; i <= 6; i++) {
-      canvas.drawCircle(
-        Offset(centerX, centerY + 10),
-        i * 18.0,
-        sandPaint,
-      );
-    }
-
-    // ── Zen Stones (3 đá) ──────────────────────────────────
-    final stonePaint = Paint()
-      ..color = AppColors.slateMuted.withValues(alpha: 0.25)
-      ..style = PaintingStyle.fill;
-
-    // Đá lớn giữa
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX, centerY),
-        width: 32,
-        height: 22,
-      ),
-      stonePaint,
-    );
-
-    // Đá nhỏ trái
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX - 40, centerY + 12),
-        width: 20,
-        height: 14,
-      ),
-      stonePaint,
-    );
-
-    // Đá nhỏ phải
-    canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX + 35, centerY + 8),
-        width: 16,
-        height: 12,
-      ),
-      stonePaint,
-    );
-
-    // ── Bonsai cách điệu ──────────────────────────────────
-    final trunkPaint = Paint()
-      ..color = AppColors.terracotta.withValues(alpha: 0.3)
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
-
-    // Trunk
-    canvas.drawLine(
-      Offset(centerX - 65, centerY + 15),
-      Offset(centerX - 65, centerY - 20),
-      trunkPaint,
-    );
-
-    // Canopy
-    final canopyPaint = Paint()
-      ..color = AppColors.mossGreen.withValues(alpha: 0.2)
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(
-      Offset(centerX - 65, centerY - 28),
-      18,
-      canopyPaint,
-    );
-
-    // ── Sakura petals ──────────────────────────────────────
-    final petalPaint = Paint()
-      ..color = AppColors.sakura.withValues(alpha: 0.3)
-      ..style = PaintingStyle.fill;
-
-    final petalPositions = [
-      Offset(centerX + 60, centerY - 30),
-      Offset(centerX + 75, centerY - 15),
-      Offset(centerX - 80, centerY - 40),
-      Offset(centerX + 50, centerY + 30),
-      Offset(centerX - 30, centerY - 45),
-    ];
-
-    for (final pos in petalPositions) {
-      canvas.drawOval(
-        Rect.fromCenter(center: pos, width: 6, height: 4),
-        petalPaint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}

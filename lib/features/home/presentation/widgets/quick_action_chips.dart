@@ -85,20 +85,6 @@ class _QuickActionChipsState extends State<QuickActionChips>
         },
       ),
       _ChipData(
-        icon: Icons.psychology_rounded,
-        label: 'Phân tích AI',
-        color: const Color(0xFF9B7EDC),
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF9B7EDC).withValues(alpha: 0.08),
-            const Color(0xFF9B7EDC).withValues(alpha: 0.14),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(widget.context, AppRoutes.grammarAnalysis());
-        },
-      ),
-      _ChipData(
         icon: Icons.track_changes_rounded,
         label: 'Luyện điểm yếu',
         color: AppColors.terracotta,

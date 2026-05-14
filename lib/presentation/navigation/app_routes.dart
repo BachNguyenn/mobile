@@ -3,7 +3,6 @@ import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:mobile/features/dictionary/presentation/screens/dictionary_screen.dart';
 import 'package:mobile/features/garden/presentation/screens/garden_screen.dart';
-import 'package:mobile/features/grammar/presentation/screens/grammar_analysis_screen.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/presentation/screens/learning_path_screen.dart';
 import 'package:mobile/features/learning/presentation/screens/lesson_detail_screen.dart';
@@ -23,10 +22,6 @@ abstract final class AppRoutes {
 
   static MaterialPageRoute<void> garden() {
     return MaterialPageRoute(builder: (_) => const GardenScreen());
-  }
-
-  static MaterialPageRoute<void> grammarAnalysis() {
-    return MaterialPageRoute(builder: (_) => const GrammarAnalysisScreen());
   }
 
   static MaterialPageRoute<void> dictionary() {

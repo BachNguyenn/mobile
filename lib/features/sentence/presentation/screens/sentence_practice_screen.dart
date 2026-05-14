@@ -12,6 +12,10 @@ import 'package:mobile/shared/widgets/jlpt_level_selector.dart';
 
 enum SentencePracticeMode { readToMeaning, meaningToJapanese, typing }
 
+const sentenceModeTypingKey = Key('sentence.mode.typing');
+const sentenceCheckButtonKey = Key('sentence.check.button');
+const sentenceCorrectFeedbackKey = Key('sentence.feedback.correct');
+
 class SentencePracticeScreen extends ConsumerStatefulWidget {
   final Sentence? initialSentence;
 
@@ -94,7 +98,9 @@ class _SentencePracticeScreenState
                       const SizedBox(width: AppSpacing.sp16),
                       Text(
                         '${_currentIndex + 1}/${allSentences.length}',
-                        style: AppTypography.label.copyWith(color: AppColors.slateGrey),
+                        style: AppTypography.label.copyWith(
+                          color: AppColors.slateGrey,
+                        ),
                       ),
                     ],
                   ),
@@ -387,7 +393,7 @@ class _ModeSelector extends StatelessWidget {
         ButtonSegment(
           value: SentencePracticeMode.typing,
           icon: Icon(Icons.keyboard_rounded),
-          label: Text('Gõ'),
+          label: Text('Gõ', key: sentenceModeTypingKey),
         ),
       ],
       selected: {mode},
@@ -482,6 +488,7 @@ class _AnswerCard extends StatelessWidget {
               Expanded(
                 child: Text(
                   isCorrect ? 'Chính xác' : 'Đáp án đúng',
+                  key: isCorrect ? sentenceCorrectFeedbackKey : null,
                   style: AppTypography.bodyMBold.copyWith(color: color),
                 ),
               ),
@@ -562,6 +569,7 @@ class _BottomBar extends StatelessWidget {
         width: double.infinity,
         height: 54,
         child: ElevatedButton(
+          key: sentenceCheckButtonKey,
           onPressed: isChecked ? onNext : (canCheck ? onCheck : null),
           style: ElevatedButton.styleFrom(
             backgroundColor: isChecked ? color : AppColors.terracotta,

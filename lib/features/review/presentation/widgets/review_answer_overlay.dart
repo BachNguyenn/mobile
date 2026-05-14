@@ -36,7 +36,9 @@ class ReviewAnswerOverlay extends StatelessWidget {
                 Text(
                   'Bạn viết: $recognizedText',
                   style: AppTypography.bodyM.copyWith(
-                    color: isCorrect ? AppColors.mossGreen : AppColors.terracotta,
+                    color: isCorrect
+                        ? AppColors.mossGreen
+                        : AppColors.terracotta,
                   ),
                 ),
             ],

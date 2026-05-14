@@ -100,10 +100,7 @@ class _JlptProgressRow extends StatelessWidget {
             ),
           ),
           const SizedBox(width: AppSpacing.sp12),
-          Text(
-            '${(value * 100).toInt()}%',
-            style: AppTypography.label,
-          ),
+          Text('${(value * 100).toInt()}%', style: AppTypography.label),
         ],
       ),
     );

@@ -142,7 +142,9 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
               ),
               LessonBottomBar(
                 state: state,
-                onCheck: controller.checkAnswer,
+                onCheck: () {
+                  controller.checkAnswer();
+                },
                 onNext: () {
                   controller.nextQuestion();
                   _canvasKey.currentState?.clear();

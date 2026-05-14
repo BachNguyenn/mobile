@@ -42,7 +42,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await ref.read(authRepositoryProvider).signInWithEmail(
+      await ref
+          .read(authRepositoryProvider)
+          .signInWithEmail(
             _emailController.text.trim(),
             _passwordController.text,
           );
@@ -171,8 +173,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         if (value == null || value.trim().isEmpty) {
                           return 'Vui lòng nhập email';
                         }
-                        if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$')
-                            .hasMatch(value.trim())) {
+                        if (!RegExp(
+                          r'^[^@]+@[^@]+\.[^@]+$',
+                        ).hasMatch(value.trim())) {
                           return 'Email không hợp lệ';
                         }
                         return null;
@@ -227,8 +230,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             vertical: AppSpacing.sp16,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusS),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusS,
+                            ),
                           ),
                           textStyle: AppTypography.bodyMBold.copyWith(
                             color: AppColors.white,
@@ -342,8 +346,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                           height: 24,
                           decoration: BoxDecoration(
                             color: AppColors.white,
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
-                            border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.5)),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusXS,
+                            ),
+                            border: Border.all(
+                              color: AppColors.slateLight.withValues(
+                                alpha: 0.5,
+                              ),
+                            ),
                           ),
                           child: const Center(
                             child: Text(
@@ -366,8 +376,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                             vertical: AppSpacing.sp16,
                           ),
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusM),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusM,
+                            ),
                           ),
                         ),
                       ),
@@ -400,8 +411,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                       message =
                                           'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
                                     } else {
-                                      message =
-                                          'Lỗi: ${e.message ?? e.code}';
+                                      message = 'Lỗi: ${e.message ?? e.code}';
                                     }
                                   }
 

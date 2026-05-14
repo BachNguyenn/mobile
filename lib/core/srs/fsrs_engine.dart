@@ -65,7 +65,13 @@ class SrsService {
     final normalizedRating = rating.clamp(1, 4);
     final currentDifficulty = difficulty > 0 ? difficulty : _defaultDifficulty;
     final currentStability = stability > 0 ? stability : _defaultStability;
-    final elapsedDays = _elapsedDays(now, state, reps, lapses, currentStability);
+    final elapsedDays = _elapsedDays(
+      now,
+      state,
+      reps,
+      lapses,
+      currentStability,
+    );
     final retrievability = _retrievability(elapsedDays, currentStability);
 
     int newReps = reps;
@@ -82,13 +88,17 @@ class SrsService {
       newState = 3;
       newDifficulty = (currentDifficulty + _params.failedDifficultyPenalty)
           .clamp(1.0, 10.0);
-      newStability =
-          (currentStability * _params.failedStabilityMultiplier).clamp(0.02, 3650.0);
+      newStability = (currentStability * _params.failedStabilityMultiplier)
+          .clamp(0.02, 3650.0);
       newNextReview = now.add(const Duration(minutes: 1));
     } else {
       newReps++;
       newState = 2;
-      newDifficulty = _nextDifficulty(currentDifficulty, normalizedRating, retrievability);
+      newDifficulty = _nextDifficulty(
+        currentDifficulty,
+        normalizedRating,
+        retrievability,
+      );
       newStability = _nextStability(
         currentStability: currentStability,
         nextDifficulty: newDifficulty,
@@ -122,7 +132,8 @@ class SrsService {
       4: _params.easyDifficultyDelta,
     };
     final baseDelta = deltaByRating[rating] ?? 0.0;
-    final retrievalPenalty = (1 - retrievability) * _params.lowRetrievabilityDifficultyBoost;
+    final retrievalPenalty =
+        (1 - retrievability) * _params.lowRetrievabilityDifficultyBoost;
     final delta = baseDelta + retrievalPenalty;
     return (currentDifficulty + delta).clamp(1.0, 10.0);
   }
@@ -209,18 +220,18 @@ class FsrsParameters {
   });
 
   const FsrsParameters.defaultSet()
-      : hardDifficultyDelta = 0.2,
-        goodDifficultyDelta = -0.1,
-        easyDifficultyDelta = -0.3,
-        failedDifficultyPenalty = 0.4,
-        failedStabilityMultiplier = 0.45,
-        lowRetrievabilityDifficultyBoost = 0.2,
-        hardGrowth = 0.22,
-        goodGrowth = 0.55,
-        easyGrowth = 0.95,
-        hardIntervalMultiplier = 0.8,
-        goodIntervalMultiplier = 1.0,
-        easyIntervalMultiplier = 1.3;
+    : hardDifficultyDelta = 0.2,
+      goodDifficultyDelta = -0.1,
+      easyDifficultyDelta = -0.3,
+      failedDifficultyPenalty = 0.4,
+      failedStabilityMultiplier = 0.45,
+      lowRetrievabilityDifficultyBoost = 0.2,
+      hardGrowth = 0.22,
+      goodGrowth = 0.55,
+      easyGrowth = 0.95,
+      hardIntervalMultiplier = 0.8,
+      goodIntervalMultiplier = 1.0,
+      easyIntervalMultiplier = 1.3;
 }
 
 class _SrsValues {

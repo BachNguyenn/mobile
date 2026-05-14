@@ -23,19 +23,14 @@ class GardenResourceChip extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.glassBg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: color.withValues(alpha: 0.08),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
-          BoxShadow(
-            color: AppColors.glassShadow,
-            blurRadius: 4,
-          ),
+          BoxShadow(color: AppColors.glassShadow, blurRadius: 4),
         ],
       ),
       child: Row(

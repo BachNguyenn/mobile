@@ -3,6 +3,9 @@ import '../entities/grammar_point.dart';
 abstract class GrammarRepository {
   Future<List<GrammarPoint>> getAllGrammarPoints();
   Future<List<GrammarPoint>> getGrammarPointsByLevel(int level);
+  Future<int> countGrammarPoints({int? jlptLevel});
+  Future<int> countLearnedGrammar({int? jlptLevel});
+  Future<int> countDueGrammar({int? jlptLevel});
   Future<GrammarPoint?> getGrammarPointById(String id);
   Future<void> saveGrammarPoints(List<GrammarPoint> points);
   Future<void> markAsLearned(String id, bool isLearned);

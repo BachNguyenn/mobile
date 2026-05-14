@@ -72,9 +72,7 @@ class ZenGardenHeader extends StatelessWidget {
           // ── Sakura Particles (khi streak ≥ 7) ───────────
           if (streak >= 7)
             CustomPaint(
-              painter: SakuraParticlePainter(
-                seed: DateTime.now().millisecond,
-              ),
+              painter: SakuraParticlePainter(seed: DateTime.now().millisecond),
             ),
 
           // ── Bottom Content ──────────────────────────────
@@ -93,18 +91,13 @@ class ZenGardenHeader extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sp4),
-                Text(
-                  'Hôm nay bạn muốn học gì?',
-                  style: AppTypography.headingL,
-                ),
+                Text('Hôm nay bạn muốn học gì?', style: AppTypography.headingL),
                 const SizedBox(height: AppSpacing.sp12),
 
                 // Japanese motivation
                 Text(
                   _randomMotivation,
-                  style: AppTypography.japaneseQuote.copyWith(
-                    fontSize: 13,
-                  ),
+                  style: AppTypography.japaneseQuote.copyWith(fontSize: 13),
                 ),
 
                 const SizedBox(height: AppSpacing.sp16),
@@ -156,10 +149,7 @@ class ZenGardenHeader extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(
-          color: color.withValues(alpha: 0.2),
-          width: 1,
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.2), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -211,11 +201,7 @@ class ZenGardenScenePainter extends CustomPainter {
     final centerY = size.height * 0.4;
 
     for (var i = 1; i <= 8; i++) {
-      canvas.drawCircle(
-        Offset(centerX, centerY),
-        i * 22.0,
-        sandPaint,
-      );
+      canvas.drawCircle(Offset(centerX, centerY), i * 22.0, sandPaint);
     }
 
     // ── Zen Stones ────────────────────────────────────────
@@ -225,11 +211,7 @@ class ZenGardenScenePainter extends CustomPainter {
 
     // Đá chính (luôn hiển thị)
     canvas.drawOval(
-      Rect.fromCenter(
-        center: Offset(centerX, centerY),
-        width: 28,
-        height: 20,
-      ),
+      Rect.fromCenter(center: Offset(centerX, centerY), width: 28, height: 20),
       stonePaint,
     );
 
@@ -267,16 +249,23 @@ class ZenGardenScenePainter extends CustomPainter {
       final waterPath = Path();
       waterPath.moveTo(size.width * 0.1, size.height * 0.3);
       waterPath.cubicTo(
-        size.width * 0.25, size.height * 0.35,
-        size.width * 0.35, size.height * 0.45,
-        size.width * 0.5, size.height * 0.5,
+        size.width * 0.25,
+        size.height * 0.35,
+        size.width * 0.35,
+        size.height * 0.45,
+        size.width * 0.5,
+        size.height * 0.5,
       );
       canvas.drawPath(waterPath, waterPaint);
     }
 
     // ── Bonsai (khi streak > 0) ───────────────────────────
     if (streak > 0) {
-      _drawBonsai(canvas, Offset(size.width * 0.15, size.height * 0.55), streak);
+      _drawBonsai(
+        canvas,
+        Offset(size.width * 0.15, size.height * 0.55),
+        streak,
+      );
     }
   }
 

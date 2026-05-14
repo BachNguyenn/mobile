@@ -23,13 +23,19 @@ class LessonQuestionGenerator {
     final allKanjiReadings = _uniqueNonEmpty(
       allKanji.expand((k) => [k.onyomi, k.kunyomi]),
     );
-    final allVocabMeanings = _uniqueNonEmpty(allVocabulary.map((v) => v.meaning));
-    final allVocabReadings = _uniqueNonEmpty(allVocabulary.map((v) => v.reading));
+    final allVocabMeanings = _uniqueNonEmpty(
+      allVocabulary.map((v) => v.meaning),
+    );
+    final allVocabReadings = _uniqueNonEmpty(
+      allVocabulary.map((v) => v.reading),
+    );
     final allVocabWords = _uniqueNonEmpty(allVocabulary.map((v) => v.word));
     final grammarExplanations = _uniqueNonEmpty(
       allGrammar.map((g) => g.shortExplanation),
     );
-    final grammarFormations = _uniqueNonEmpty(allGrammar.map((g) => g.formation));
+    final grammarFormations = _uniqueNonEmpty(
+      allGrammar.map((g) => g.formation),
+    );
 
     for (final grammar in lessonGrammar) {
       questions.add(
@@ -71,7 +77,9 @@ class LessonQuestionGenerator {
         payload: GrammarQuizPayload(grammar),
       );
 
-      final example = grammar.examples.isNotEmpty ? grammar.examples.first : null;
+      final example = grammar.examples.isNotEmpty
+          ? grammar.examples.first
+          : null;
       if (example != null) {
         _addMultipleChoice(
           questions,

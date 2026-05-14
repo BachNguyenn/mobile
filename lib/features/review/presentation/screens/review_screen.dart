@@ -48,6 +48,13 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     final item = widget.items[state.currentIndex];
 
     ref.listen(reviewControllerProvider(widget.items), (previous, next) {
+      final nextError = next.errorMessage;
+      if (nextError != null && nextError != previous?.errorMessage) {
+        ScaffoldMessenger.maybeOf(
+          context,
+        )?.showSnackBar(SnackBar(content: Text(nextError)));
+      }
+
       if (next.isFinished && !(previous?.isFinished ?? false)) {
         if (!mounted) return;
         final messenger = ScaffoldMessenger.maybeOf(context);
@@ -118,18 +125,23 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                       item.usesHandwriting || item.choices.isNotEmpty
                           ? 'Kiểm tra & xem đáp án'
                           : state.typedAnswer.trim().isNotEmpty
-                              ? 'Kiểm tra'
-                              : 'Xem đáp án',
+                          ? 'Kiểm tra'
+                          : 'Xem đáp án',
                       style: AppTypography.bodyMBold.copyWith(
                         color: Colors.white,
                       ),
                     ),
                   ),
                 )
+              else if (state.isSubmitting)
+                const Center(
+                  child: CircularProgressIndicator(color: AppColors.mossGreen),
+                )
               else
                 ReviewRatingButtons(
-                  onRate: (rating) {
-                    controller.handleRating(rating);
+                  enabled: !state.isSubmitting,
+                  onRate: (rating) async {
+                    await controller.handleRating(rating);
                     _canvasKey.currentState?.clear();
                   },
                 ),
@@ -336,8 +348,9 @@ class _KnowledgeReviewBody extends StatelessWidget {
                     : AppColors.white,
                 borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                 border: Border.all(
-                  color:
-                      isSelected ? AppColors.mossGreen : AppColors.slateLight,
+                  color: isSelected
+                      ? AppColors.mossGreen
+                      : AppColors.slateLight,
                 ),
               ),
               child: Text(choice, style: AppTypography.bodyM),
@@ -520,9 +533,7 @@ class _FlipCardState extends State<_FlipCard>
       decoration: BoxDecoration(
         color: AppColors.cream,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(
-          color: AppColors.mossGreen.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: AppColors.mossGreen.withValues(alpha: 0.08),
@@ -550,10 +561,7 @@ class _FlipCardState extends State<_FlipCard>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sp8),
-          Text(
-            'Chạm lại để lật',
-            style: AppTypography.caption,
-          ),
+          Text('Chạm lại để lật', style: AppTypography.caption),
         ],
       ),
     );
@@ -590,7 +598,8 @@ class _AnswerReveal extends ConsumerWidget {
             selectedChoice: state.selectedChoice ?? state.typedAnswer,
           );
 
-    final showSpeaker = item.type == ReviewItemType.vocabulary ||
+    final showSpeaker =
+        item.type == ReviewItemType.vocabulary ||
         item.type == ReviewItemType.sentence;
 
     return Center(
@@ -613,8 +622,7 @@ class _AnswerReveal extends ConsumerWidget {
               children: [
                 Icon(
                   isCorrect ? Icons.check_circle_rounded : Icons.info_rounded,
-                  color:
-                      isCorrect ? AppColors.mossGreen : AppColors.terracotta,
+                  color: isCorrect ? AppColors.mossGreen : AppColors.terracotta,
                   size: 40,
                 ),
                 if (showSpeaker) ...[
@@ -624,8 +632,9 @@ class _AnswerReveal extends ConsumerWidget {
                     onPressed: () => _speak(ref),
                     icon: const Icon(Icons.volume_up_rounded, size: 20),
                     style: IconButton.styleFrom(
-                      backgroundColor:
-                          AppColors.waterBlue.withValues(alpha: 0.12),
+                      backgroundColor: AppColors.waterBlue.withValues(
+                        alpha: 0.12,
+                      ),
                       foregroundColor: AppColors.waterBlue,
                     ),
                   ),
@@ -652,9 +661,7 @@ class _AnswerReveal extends ConsumerWidget {
               const SizedBox(height: AppSpacing.sp12),
               Text(
                 item.grammar!.formation,
-                style: AppTypography.bodyM.copyWith(
-                  color: AppColors.slateGrey,
-                ),
+                style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -687,8 +694,9 @@ class _AnswerReveal extends ConsumerWidget {
 
   Future<void> _speak(WidgetRef ref) async {
     // For vocab: speak the word (prompt), for sentence: speak the sentence text
-    final textToSpeak =
-        item.type == ReviewItemType.vocabulary ? item.prompt : item.prompt;
+    final textToSpeak = item.type == ReviewItemType.vocabulary
+        ? item.prompt
+        : item.prompt;
     try {
       await ref.read(audioServiceProvider).speakJapanese(textToSpeak);
     } catch (_) {}

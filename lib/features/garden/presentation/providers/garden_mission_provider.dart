@@ -55,8 +55,9 @@ class GardenMissionSummary {
   String get homeHint {
     final mission = nextMission;
     if (mission == null) return 'Hoàn tất nhiệm vụ hôm nay';
-    final remaining =
-        (mission.target - mission.current).clamp(0, mission.target).toInt();
+    final remaining = (mission.target - mission.current)
+        .clamp(0, mission.target)
+        .toInt();
     return 'Còn $remaining để xong: ${mission.title.toLowerCase()}';
   }
 }

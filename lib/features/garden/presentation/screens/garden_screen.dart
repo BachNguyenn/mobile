@@ -188,11 +188,9 @@ class _GardenDragSurface extends ConsumerWidget {
             final plant = details.data;
             final dx = localOffset.dx - plant.x;
             final dy = localOffset.dy - plant.y;
-            ref.read(gardenProvider.notifier).updatePlantPosition(
-                  plant.id,
-                  dx,
-                  dy,
-                );
+            ref
+                .read(gardenProvider.notifier)
+                .updatePlantPosition(plant.id, dx, dy);
           },
           builder: (context, candidateData, rejectedData) {
             final stonePositions = garden.plants
@@ -236,10 +234,7 @@ class _GardenDragSurface extends ConsumerWidget {
                       ),
                       childWhenDragging: Opacity(
                         opacity: 0.2,
-                        child: GardenPlantGraphic(
-                          plant: plant,
-                          garden: garden,
-                        ),
+                        child: GardenPlantGraphic(plant: plant, garden: garden),
                       ),
                       child: GardenPlantGraphic(plant: plant, garden: garden),
                     ),
@@ -305,9 +300,7 @@ class _GardenHud extends StatelessWidget {
                     ),
                     const SizedBox(height: AppSpacing.sp4),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(
-                        AppSpacing.radiusXL,
-                      ),
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                       child: LinearProgressIndicator(
                         value: levelProgress,
                         minHeight: 7,
@@ -650,9 +643,7 @@ class _ShopSheet extends ConsumerWidget {
               children: [
                 Text(
                   group,
-                  style: AppTypography.bodyMBold.copyWith(
-                    color: AppColors.ink,
-                  ),
+                  style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
                 ),
                 const SizedBox(height: AppSpacing.sp8),
                 ...items.map(
@@ -679,8 +670,9 @@ class _ShopSheet extends ConsumerWidget {
                                   ? 'Đã đặt ${item.name} vào vườn.'
                                   : 'Chưa đủ tài nguyên. Học thêm một chút nhé.',
                             ),
-                            backgroundColor:
-                                success ? AppColors.success : AppColors.error,
+                            backgroundColor: success
+                                ? AppColors.success
+                                : AppColors.error,
                           ),
                         );
                       },
@@ -881,9 +873,7 @@ class _MissionTile extends StatelessWidget {
               children: [
                 Text(
                   mission.title,
-                  style: AppTypography.bodyMBold.copyWith(
-                    color: AppColors.ink,
-                  ),
+                  style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
                 ),
                 const SizedBox(height: AppSpacing.sp4),
                 Text(
@@ -912,8 +902,9 @@ class _MissionTile extends StatelessWidget {
                 mission.isComplete
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked_rounded,
-                color:
-                    mission.isComplete ? AppColors.success : AppColors.slateMuted,
+                color: mission.isComplete
+                    ? AppColors.success
+                    : AppColors.slateMuted,
               ),
               const SizedBox(height: AppSpacing.sp4),
               Text(

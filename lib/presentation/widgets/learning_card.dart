@@ -80,10 +80,7 @@ class _LearningCardState extends State<LearningCard>
       child: AnimatedBuilder(
         animation: _pressController,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnim.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scaleAnim.value, child: child);
         },
         child: Container(
           constraints: const BoxConstraints(
@@ -162,8 +159,9 @@ class _LearningCardState extends State<LearningCard>
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color:
-                                      widget.accentColor.withValues(alpha: 0.08),
+                                  color: widget.accentColor.withValues(
+                                    alpha: 0.08,
+                                  ),
                                   blurRadius: 6,
                                   offset: const Offset(0, 2),
                                 ),
@@ -222,8 +220,9 @@ class _LearningCardState extends State<LearningCard>
                                 child: Icon(
                                   Icons.arrow_forward_ios_rounded,
                                   size: 12,
-                                  color:
-                                      widget.accentColor.withValues(alpha: 0.5),
+                                  color: widget.accentColor.withValues(
+                                    alpha: 0.5,
+                                  ),
                                 ),
                               ),
                             ],
@@ -287,10 +286,7 @@ class _InfoBadge extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _InfoBadge({
-    required this.label,
-    required this.color,
-  });
+  const _InfoBadge({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -302,9 +298,7 @@ class _InfoBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(
-          color: color.withValues(alpha: 0.14),
-        ),
+        border: Border.all(color: color.withValues(alpha: 0.14)),
       ),
       child: Text(
         label,
@@ -321,10 +315,7 @@ class _HighlightChip extends StatelessWidget {
   final String label;
   final Color color;
 
-  const _HighlightChip({
-    required this.label,
-    required this.color,
-  });
+  const _HighlightChip({required this.label, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -353,10 +344,7 @@ class _GradientAccentBar extends StatelessWidget {
   final double progress;
   final Color color;
 
-  const _GradientAccentBar({
-    required this.progress,
-    required this.color,
-  });
+  const _GradientAccentBar({required this.progress, required this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -390,10 +378,7 @@ class _GradientAccentBar extends StatelessWidget {
                       height: AppSpacing.progressBarHeight,
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
-                          colors: [
-                            color,
-                            color.withValues(alpha: 0.6),
-                          ],
+                          colors: [color, color.withValues(alpha: 0.6)],
                         ),
                         borderRadius: BorderRadius.circular(
                           AppSpacing.progressBarHeight / 2,

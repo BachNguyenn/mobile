@@ -88,8 +88,7 @@ class GardenAmbientPainter extends CustomPainter {
       canvas.drawCircle(
         Offset(x, y),
         mote.size * 0.4,
-        Paint()
-          ..color = AppColors.white.withValues(alpha: opacity * 0.5),
+        Paint()..color = AppColors.white.withValues(alpha: opacity * 0.5),
       );
     }
   }

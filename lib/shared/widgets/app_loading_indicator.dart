@@ -29,15 +29,11 @@ class AppLoadingIndicator extends StatelessWidget {
 
   /// Trả về widget bọc trong `SliverFillRemaining` cho CustomScrollView.
   static Widget sliver({Color? color}) {
-    return SliverFillRemaining(
-      child: AppLoadingIndicator(color: color),
-    );
+    return SliverFillRemaining(child: AppLoadingIndicator(color: color));
   }
 
   /// Trả về Scaffold toàn trang với loading indicator.
   static Widget scaffold({Color? color}) {
-    return Scaffold(
-      body: AppLoadingIndicator(color: color),
-    );
+    return Scaffold(body: AppLoadingIndicator(color: color));
   }
 }

@@ -63,20 +63,25 @@ class AnalyticsHeatmap extends StatelessWidget {
                 child: LayoutBuilder(
                   builder: (context, constraints) {
                     // Cell size based on available width
-                    final cellSize = (constraints.maxWidth - (columns - 1) * 4) / columns;
-                    
+                    final cellSize =
+                        (constraints.maxWidth - (columns - 1) * 4) / columns;
+
                     return Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: List.generate(columns, (colIndex) {
                         return Column(
                           children: List.generate(rows, (rowIndex) {
-                            final offset = (columns - 1 - colIndex) * 7 + (currentWeekday - 1 - rowIndex);
-                            
+                            final offset =
+                                (columns - 1 - colIndex) * 7 +
+                                (currentWeekday - 1 - rowIndex);
+
                             final bool isFuture = offset < 0;
                             int count = 0;
-                            
+
                             if (!isFuture) {
-                              final date = todayNormalized.subtract(Duration(days: offset));
+                              final date = todayNormalized.subtract(
+                                Duration(days: offset),
+                              );
                               count = heatmapData[date] ?? 0;
                             }
 
@@ -85,7 +90,9 @@ class AnalyticsHeatmap extends StatelessWidget {
                               height: cellSize,
                               margin: const EdgeInsets.only(bottom: 4),
                               decoration: BoxDecoration(
-                                color: isFuture ? Colors.transparent : _getColorForCount(count),
+                                color: isFuture
+                                    ? Colors.transparent
+                                    : _getColorForCount(count),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             );
@@ -105,7 +112,10 @@ class AnalyticsHeatmap extends StatelessWidget {
             children: [
               Text(
                 'Ít',
-                style: AppTypography.labelS.copyWith(color: AppColors.slateMuted, fontSize: 10),
+                style: AppTypography.labelS.copyWith(
+                  color: AppColors.slateMuted,
+                  fontSize: 10,
+                ),
               ),
               const SizedBox(width: 4),
               const _LegendBox(count: 0),
@@ -120,7 +130,10 @@ class AnalyticsHeatmap extends StatelessWidget {
               const SizedBox(width: 4),
               Text(
                 'Nhiều',
-                style: AppTypography.labelS.copyWith(color: AppColors.slateMuted, fontSize: 10),
+                style: AppTypography.labelS.copyWith(
+                  color: AppColors.slateMuted,
+                  fontSize: 10,
+                ),
               ),
             ],
           ),

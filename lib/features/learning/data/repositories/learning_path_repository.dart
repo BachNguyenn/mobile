@@ -71,15 +71,15 @@ class LearningPathRepository {
 
   Future<void> setLessonCompletion(String id, bool isCompleted) async {
     if (isCompleted) {
-      await _db.into(_db.lessonTable).insertOnConflictUpdate(
-            LessonTableCompanion.insert(
-              id: id,
-              isCompleted: const Value(true),
-            ),
+      await _db
+          .into(_db.lessonTable)
+          .insertOnConflictUpdate(
+            LessonTableCompanion.insert(id: id, isCompleted: const Value(true)),
           );
     } else {
-      await (_db.delete(_db.lessonTable)..where((table) => table.id.equals(id)))
-          .go();
+      await (_db.delete(
+        _db.lessonTable,
+      )..where((table) => table.id.equals(id))).go();
     }
   }
 
@@ -108,9 +108,7 @@ class LearningPathRepository {
   List<Lesson> _withUnlockState(List<Lesson> lessons) {
     return [
       for (var i = 0; i < lessons.length; i++)
-        lessons[i].copyWith(
-          isUnlocked: i == 0 || lessons[i - 1].isCompleted,
-        ),
+        lessons[i].copyWith(isUnlocked: i == 0 || lessons[i - 1].isCompleted),
     ];
   }
 

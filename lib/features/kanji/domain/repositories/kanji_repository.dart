@@ -3,7 +3,14 @@ import '../../../../core/srs/srs_item.dart';
 
 abstract class KanjiRepository {
   Future<List<KanjiCard>> getAllCards();
-  Future<List<KanjiCard>> getDueCards(DateTime now, {int? jlptLevel, int? limit});
+  Future<List<KanjiCard>> getDueCards(
+    DateTime now, {
+    int? jlptLevel,
+    int? limit,
+  });
+  Future<int> countCards({int? jlptLevel});
+  Future<int> countLearnedCards({int? jlptLevel});
+  Future<int> countDueCards(DateTime now, {int? jlptLevel});
   Future<KanjiCard?> getCardById(String id);
   Future<void> saveCard(KanjiCard card);
   Future<void> saveAllCards(List<KanjiCard> cards);

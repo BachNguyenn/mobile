@@ -12,7 +12,11 @@ class VocabularyEmptyState extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.search_off_rounded, size: 48, color: AppColors.slateLight),
+          const Icon(
+            Icons.search_off_rounded,
+            size: 48,
+            color: AppColors.slateLight,
+          ),
           const SizedBox(height: AppSpacing.sp12),
           Text(
             'Không tìm thấy từ vựng nào.',

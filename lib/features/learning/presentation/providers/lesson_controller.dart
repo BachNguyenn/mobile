@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/core/services/app_logger.dart';
 import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/domain/entities/quiz_question.dart';
 import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
@@ -125,7 +126,12 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
       );
 
       state = state.copyWith(questions: questions, isLoading: false);
-    } catch (_) {
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Failed to initialize lesson',
+        error: error,
+        stackTrace: stackTrace,
+      );
       state = state.copyWith(isLoading: false, questions: []);
     }
   }
@@ -150,8 +156,9 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
     state = state.copyWith(currentStrokes: []);
   }
 
-  void checkAnswer() async {
-    if (state.isAnswerChecked) return;
+  Future<void> checkAnswer() async {
+    if (state.isAnswerChecked || state.questions.isEmpty) return;
+    if (state.currentIndex >= state.questions.length) return;
 
     final currentQ = state.questions[state.currentIndex];
     bool isCorrect = false;
@@ -196,14 +203,17 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
 
     final payload = currentQ.payload;
     if (payload is KanjiQuizPayload) {
-      ref.read(emitKanjiStudyEventProvider)(payload.card.id, isCorrect ? 3 : 1);
+      await ref.read(emitKanjiStudyEventProvider)(
+        payload.card.id,
+        isCorrect ? 3 : 1,
+      );
     } else if (payload is VocabularyQuizPayload) {
-      ref.read(emitVocabularyStudyEventProvider)(
+      await ref.read(emitVocabularyStudyEventProvider)(
         payload.vocabulary.id,
         isCorrect ? 3 : 1,
       );
     } else if (payload is GrammarQuizPayload) {
-      ref.read(emitGrammarStudyEventProvider)(
+      await ref.read(emitGrammarStudyEventProvider)(
         payload.grammarPoint.id,
         isCorrect ? 3 : 1,
       );

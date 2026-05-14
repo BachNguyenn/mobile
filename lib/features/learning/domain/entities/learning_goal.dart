@@ -1,8 +1,4 @@
-enum LearningGoal {
-  jlpt,
-  conversation,
-  reading,
-}
+enum LearningGoal { jlpt, conversation, reading }
 
 extension LearningGoalX on LearningGoal {
   String get label {

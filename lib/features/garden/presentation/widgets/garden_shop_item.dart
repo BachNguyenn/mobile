@@ -83,7 +83,9 @@ class _GardenShopItemState extends ConsumerState<GardenShopItem>
       onTap: () async {
         if (_purchased) return;
 
-        final success = await ref.read(gardenProvider.notifier).buyPlant(
+        final success = await ref
+            .read(gardenProvider.notifier)
+            .buyPlant(
               widget.type,
               widget.position.dx - 40,
               widget.position.dy - 40,
@@ -200,8 +202,9 @@ class _GardenShopItemState extends ConsumerState<GardenShopItem>
                   Icon(
                     Icons.water_drop,
                     size: 12,
-                    color:
-                        canAfford ? AppColors.waterBlue : AppColors.slateMuted,
+                    color: canAfford
+                        ? AppColors.waterBlue
+                        : AppColors.slateMuted,
                   ),
                   const SizedBox(width: 2),
                   Text(
@@ -217,15 +220,15 @@ class _GardenShopItemState extends ConsumerState<GardenShopItem>
                   Icon(
                     Icons.wb_sunny,
                     size: 12,
-                    color:
-                        canAfford ? AppColors.sunGold : AppColors.slateMuted,
+                    color: canAfford ? AppColors.sunGold : AppColors.slateMuted,
                   ),
                   const SizedBox(width: 2),
                   Text(
                     '${widget.sun}',
                     style: AppTypography.labelS.copyWith(
-                      color:
-                          canAfford ? AppColors.sunGold : AppColors.slateMuted,
+                      color: canAfford
+                          ? AppColors.sunGold
+                          : AppColors.slateMuted,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

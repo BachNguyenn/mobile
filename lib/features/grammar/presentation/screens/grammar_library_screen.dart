@@ -116,7 +116,9 @@ class GrammarLibraryScreen extends ConsumerWidget {
                                 Navigator.push(
                                   context,
                                   AppRoutes.review(
-                                    dueGrammar.map(ReviewItem.fromGrammar).toList(),
+                                    dueGrammar
+                                        .map(ReviewItem.fromGrammar)
+                                        .toList(),
                                   ),
                                 );
                               } else if (dueGrammar != null) {
@@ -139,7 +141,8 @@ class GrammarLibraryScreen extends ConsumerWidget {
                             sublabel: 'Lộ trình học',
                             color: AppColors.sunGold,
                             onTap: () {
-                              final openLearningCategory = onOpenLearningCategory;
+                              final openLearningCategory =
+                                  onOpenLearningCategory;
                               if (openLearningCategory != null) {
                                 openLearningCategory(LearningCategory.grammar);
                               } else {
@@ -164,10 +167,7 @@ class GrammarLibraryScreen extends ConsumerWidget {
                         sublabel: 'Luyện tập câu ví dụ từ ngữ pháp',
                         color: AppColors.waterBlue,
                         onTap: () {
-                          Navigator.push(
-                            context,
-                            AppRoutes.sentencePractice(),
-                          );
+                          Navigator.push(context, AppRoutes.sentencePractice());
                         },
                       ),
                     ),

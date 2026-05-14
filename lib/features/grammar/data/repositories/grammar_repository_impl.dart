@@ -3,33 +3,66 @@ import '../../domain/entities/grammar_point.dart';
 import '../../domain/repositories/grammar_repository.dart';
 import '../../../../data/datasources/app_database.dart';
 import 'dart:convert';
+import '../../../review/data/study_session_service.dart';
 
 class GrammarRepositoryImpl implements GrammarRepository {
   final AppDatabase _db;
+  final StudySessionService _studySessionService;
 
-  GrammarRepositoryImpl(this._db);
+  GrammarRepositoryImpl(this._db)
+    : _studySessionService = DriftStudySessionService(_db);
 
   @override
   Future<List<GrammarPoint>> getAllGrammarPoints() async {
-    final rows = await (_db.select(_db.grammarTable)
-          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-        .get();
+    final rows = await (_db.select(
+      _db.grammarTable,
+    )..orderBy([(t) => OrderingTerm(expression: t.id)])).get();
     return rows.map((row) => _mapRowToEntity(row)).toList();
   }
 
   @override
   Future<List<GrammarPoint>> getGrammarPointsByLevel(int level) async {
-    final rows = await (_db.select(_db.grammarTable)
-          ..where((t) => t.jlptLevel.equals(level))
-          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-        .get();
+    final rows =
+        await (_db.select(_db.grammarTable)
+              ..where((t) => t.jlptLevel.equals(level))
+              ..orderBy([(t) => OrderingTerm(expression: t.id)]))
+            .get();
     return rows.map((row) => _mapRowToEntity(row)).toList();
   }
 
   @override
+  Future<int> countGrammarPoints({int? jlptLevel}) {
+    final countExp = _db.grammarTable.id.count();
+    final query = _db.selectOnly(_db.grammarTable)..addColumns([countExp]);
+    if (jlptLevel != null) {
+      query.where(_db.grammarTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
+  }
+
+  @override
+  Future<int> countLearnedGrammar({int? jlptLevel}) {
+    final countExp = _db.grammarTable.id.count();
+    final query = _db.selectOnly(_db.grammarTable)..addColumns([countExp]);
+    query.where(_db.grammarTable.isLearned.equals(true));
+    if (jlptLevel != null) {
+      query.where(_db.grammarTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
+  }
+
+  @override
+  Future<int> countDueGrammar({int? jlptLevel}) async {
+    final total = await countGrammarPoints(jlptLevel: jlptLevel);
+    final learned = await countLearnedGrammar(jlptLevel: jlptLevel);
+    return total - learned;
+  }
+
+  @override
   Future<GrammarPoint?> getGrammarPointById(String id) async {
-    final row = await (_db.select(_db.grammarTable)..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.grammarTable,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     return row != null ? _mapRowToEntity(row) : null;
   }
 
@@ -37,30 +70,36 @@ class GrammarRepositoryImpl implements GrammarRepository {
   Future<void> saveGrammarPoints(List<GrammarPoint> points) async {
     await _db.batch((batch) {
       batch.insertAllOnConflictUpdate(
-          _db.grammarTable,
-          points
-              .map((p) => GrammarTableCompanion.insert(
-                    id: p.id,
-                    title: p.title,
-                    structure: p.formation,
-                    explanation: json.encode({
-                      'short': p.shortExplanation,
-                      'long': p.longExplanation,
-                    }),
-                    example: json.encode(p.examples
-                        .map((e) => {'jp': e.jp, 'romaji': e.romaji, 'en': e.en})
-                        .toList()),
-                    jlptLevel: Value(p.jlptLevel),
-                    isLearned: Value(p.isLearned),
-                  ))
-              .toList());
+        _db.grammarTable,
+        points
+            .map(
+              (p) => GrammarTableCompanion.insert(
+                id: p.id,
+                title: p.title,
+                structure: p.formation,
+                explanation: json.encode({
+                  'short': p.shortExplanation,
+                  'long': p.longExplanation,
+                }),
+                example: json.encode(
+                  p.examples
+                      .map((e) => {'jp': e.jp, 'romaji': e.romaji, 'en': e.en})
+                      .toList(),
+                ),
+                jlptLevel: Value(p.jlptLevel),
+                isLearned: Value(p.isLearned),
+              ),
+            )
+            .toList(),
+      );
     });
   }
 
   @override
   Future<void> markAsLearned(String id, bool isLearned) async {
     await (_db.update(_db.grammarTable)..where((t) => t.id.equals(id))).write(
-        GrammarTableCompanion(isLearned: Value(isLearned)));
+      GrammarTableCompanion(isLearned: Value(isLearned)),
+    );
   }
 
   @override
@@ -72,7 +111,7 @@ class GrammarRepositoryImpl implements GrammarRepository {
     required int waterGain,
     required int sunGain,
   }) {
-    return _db.submitGrammarReview(
+    return _studySessionService.submitGrammarReview(
       grammarId: grammarId,
       rating: rating,
       durationMs: durationMs,
@@ -83,13 +122,17 @@ class GrammarRepositoryImpl implements GrammarRepository {
   }
 
   @override
-  Future<List<GrammarPoint>> searchGrammar(String query, {int? jlptLevel}) async {
+  Future<List<GrammarPoint>> searchGrammar(
+    String query, {
+    int? jlptLevel,
+  }) async {
     final queryBuilder = _db.select(_db.grammarTable);
     if (query.isNotEmpty) {
-      queryBuilder.where((t) => 
-        t.title.contains(query) | 
-        t.explanation.contains(query) | 
-        t.structure.contains(query)
+      queryBuilder.where(
+        (t) =>
+            t.title.contains(query) |
+            t.explanation.contains(query) |
+            t.structure.contains(query),
       );
     }
     if (jlptLevel != null) {
@@ -111,11 +154,10 @@ class GrammarRepositoryImpl implements GrammarRepository {
       longExplanation: explanation['long'] ?? '',
       formation: row.structure,
       examples: examplesList
-          .map((e) => GrammarExample(
-                jp: e['jp'],
-                romaji: e['romaji'],
-                en: e['en'],
-              ))
+          .map(
+            (e) =>
+                GrammarExample(jp: e['jp'], romaji: e['romaji'], en: e['en']),
+          )
           .toList(),
       jlptLevel: row.jlptLevel,
       isLearned: row.isLearned,

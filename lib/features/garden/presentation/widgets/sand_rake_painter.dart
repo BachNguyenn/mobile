@@ -78,12 +78,7 @@ class SandRakePainter extends CustomPainter {
       final path = Path();
       final x = size.width * 0.85 + i * 6;
       path.moveTo(x, 0);
-      path.quadraticBezierTo(
-        x + 10,
-        size.height * 0.5,
-        x - 5,
-        size.height,
-      );
+      path.quadraticBezierTo(x + 10, size.height * 0.5, x - 5, size.height);
       canvas.drawPath(path, edgePaint);
     }
   }
@@ -100,11 +95,7 @@ class SandRakePainter extends CustomPainter {
       final center = Offset(size.width * 0.5, size.height * 0.5);
       for (var r = 25; r < 120; r += 18) {
         canvas.drawOval(
-          Rect.fromCenter(
-            center: center,
-            width: r * 2.0,
-            height: r * 1.3,
-          ),
+          Rect.fromCenter(center: center, width: r * 2.0, height: r * 1.3),
           paint,
         );
       }
@@ -112,11 +103,7 @@ class SandRakePainter extends CustomPainter {
       for (final stone in stonePositions) {
         for (var r = 15; r < 60; r += 12) {
           canvas.drawOval(
-            Rect.fromCenter(
-              center: stone,
-              width: r * 2.0,
-              height: r * 1.4,
-            ),
+            Rect.fromCenter(center: stone, width: r * 2.0, height: r * 1.4),
             paint,
           );
         }

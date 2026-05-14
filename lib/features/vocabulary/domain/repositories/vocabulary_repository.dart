@@ -3,7 +3,14 @@ import '../../../../core/srs/srs_item.dart';
 
 abstract class VocabularyRepository {
   Future<List<Vocabulary>> getAllVocabulary();
-  Future<List<Vocabulary>> getDueVocabulary(DateTime now, {int? jlptLevel, int? limit});
+  Future<List<Vocabulary>> getDueVocabulary(
+    DateTime now, {
+    int? jlptLevel,
+    int? limit,
+  });
+  Future<int> countVocabulary({int? jlptLevel});
+  Future<int> countLearnedVocabulary({int? jlptLevel});
+  Future<int> countDueVocabulary(DateTime now, {int? jlptLevel});
   Future<List<Vocabulary>> getVocabularyByLevel(int level);
   Future<Vocabulary?> getVocabularyById(String id);
   Future<void> saveVocabulary(List<Vocabulary> vocabList);

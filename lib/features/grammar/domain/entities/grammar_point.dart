@@ -23,15 +23,15 @@ class GrammarPoint extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        shortExplanation,
-        longExplanation,
-        formation,
-        examples,
-        jlptLevel,
-        isLearned
-      ];
+    id,
+    title,
+    shortExplanation,
+    longExplanation,
+    formation,
+    examples,
+    jlptLevel,
+    isLearned,
+  ];
 }
 
 class GrammarExample extends Equatable {

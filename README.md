@@ -1,17 +1,46 @@
-# mobile
+# Zen Japanese Mobile
 
-A new Flutter project.
+Flutter app for Japanese study with JLPT libraries, sentence practice, SRS
+review, handwriting recognition, analytics, and a Zen garden reward loop.
 
-## Getting Started
+## Setup
 
-This project is a starting point for a Flutter application.
+1. Install Flutter and platform toolchains.
+2. Copy `.env.example` to `.env` for local-only settings. Do not commit `.env`.
+3. Configure Firebase:
+   - Android uses `android/app/google-services.json`.
+   - Dart initialization uses `lib/firebase_options.dart`.
+   - iOS requires adding `ios/Runner/GoogleService-Info.plist` before shipping.
+4. Install dependencies:
 
-A few resources to get you started if this is your first Flutter project:
+```bash
+flutter pub get
+```
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Checks
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+flutter analyze --no-pub
+flutter test --no-pub
+```
+
+## Android Release Signing
+
+Create `android/key.properties` locally:
+
+```properties
+storeFile=/absolute/path/to/release.jks
+storePassword=...
+keyAlias=...
+keyPassword=...
+```
+
+Then build:
+
+```bash
+flutter build appbundle --release
+```
+
+Release builds no longer sign with the debug key. If `key.properties` is
+missing, Gradle leaves release signing unset so CI/local builds do not
+accidentally produce a debug-signed production artifact.

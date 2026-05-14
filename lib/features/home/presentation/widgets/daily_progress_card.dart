@@ -17,9 +17,7 @@ class DailyProgressCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(
-          color: AppColors.slateLight.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: AppColors.ink.withValues(alpha: 0.04),
@@ -63,8 +61,9 @@ class DailyProgressCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: AppColors.mossGreen.withValues(alpha: 0.08),
-                        borderRadius:
-                            BorderRadius.circular(AppSpacing.radiusXL),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusXL,
+                        ),
                       ),
                       child: Text(
                         '${progress.todayReviewed} thẻ đã ôn',
@@ -121,10 +120,7 @@ class _GradientProgressBar extends StatelessWidget {
   final double progress;
   final LinearGradient gradient;
 
-  const _GradientProgressBar({
-    required this.progress,
-    required this.gradient,
-  });
+  const _GradientProgressBar({required this.progress, required this.gradient});
 
   @override
   Widget build(BuildContext context) {
@@ -179,8 +175,7 @@ class _GradientProgressBar extends StatelessWidget {
                           color: AppColors.white,
                           boxShadow: [
                             BoxShadow(
-                              color:
-                                  AppColors.mossGreen.withValues(alpha: 0.5),
+                              color: AppColors.mossGreen.withValues(alpha: 0.5),
                               blurRadius: 6,
                             ),
                           ],
@@ -260,9 +255,7 @@ class _MiniStatCircle extends StatelessWidget {
         const SizedBox(height: AppSpacing.sp4),
         Text(
           label,
-          style: AppTypography.labelS.copyWith(
-            color: AppColors.slateMuted,
-          ),
+          style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
         ),
       ],
     );

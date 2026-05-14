@@ -362,9 +362,12 @@ class _MiniGardenPainter extends CustomPainter {
     final path = Path();
     path.moveTo(size.width * 0.08, size.height * 0.35 + shimmer);
     path.cubicTo(
-      size.width * 0.2, size.height * 0.4 + shimmer,
-      size.width * 0.3, size.height * 0.5 - shimmer,
-      size.width * 0.42, size.height * 0.52,
+      size.width * 0.2,
+      size.height * 0.4 + shimmer,
+      size.width * 0.3,
+      size.height * 0.5 - shimmer,
+      size.width * 0.42,
+      size.height * 0.52,
     );
     canvas.drawPath(path, waterPaint);
 

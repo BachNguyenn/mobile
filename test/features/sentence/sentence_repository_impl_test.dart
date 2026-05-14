@@ -127,6 +127,31 @@ class _FakeGrammarRepository implements GrammarRepository {
   }
 
   @override
+  Future<int> countGrammarPoints({int? jlptLevel}) async {
+    return jlptLevel == null
+        ? points.length
+        : points.where((point) => point.jlptLevel == jlptLevel).length;
+  }
+
+  @override
+  Future<int> countLearnedGrammar({int? jlptLevel}) async {
+    return points
+        .where(
+          (point) =>
+              point.isLearned &&
+              (jlptLevel == null || point.jlptLevel == jlptLevel),
+        )
+        .length;
+  }
+
+  @override
+  Future<int> countDueGrammar({int? jlptLevel}) async {
+    final total = await countGrammarPoints(jlptLevel: jlptLevel);
+    final learned = await countLearnedGrammar(jlptLevel: jlptLevel);
+    return total - learned;
+  }
+
+  @override
   Future<void> markAsLearned(String id, bool isLearned) async {}
 
   @override

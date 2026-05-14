@@ -73,8 +73,9 @@ class JlptLevelSelector extends StatelessWidget {
                         color: isSelected
                             ? accentColor.withValues(alpha: 0.1)
                             : Colors.white.withValues(alpha: 0.6),
-                        borderRadius:
-                            BorderRadius.circular(AppSpacing.radiusXL),
+                        borderRadius: BorderRadius.circular(
+                          AppSpacing.radiusXL,
+                        ),
                         border: Border.all(
                           color: isSelected ? accentColor : borderColor,
                           width: isSelected ? 1.5 : 1,
@@ -86,8 +87,9 @@ class JlptLevelSelector extends StatelessWidget {
                           style: AppTypography.bodyMBold.copyWith(
                             color: isSelected
                                 ? accentColor
-                                : theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.55),
+                                : theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.55,
+                                  ),
                             fontWeight: isSelected
                                 ? FontWeight.bold
                                 : FontWeight.w600,

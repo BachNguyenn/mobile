@@ -3,11 +3,14 @@ import 'package:mobile/core/srs/srs_item.dart';
 import '../../domain/entities/vocabulary.dart';
 import '../../domain/repositories/vocabulary_repository.dart';
 import '../../../../data/datasources/app_database.dart';
+import '../../../review/data/study_session_service.dart';
 
 class VocabularyRepositoryImpl implements VocabularyRepository {
   final AppDatabase _db;
+  final StudySessionService _studySessionService;
 
-  VocabularyRepositoryImpl(this._db);
+  VocabularyRepositoryImpl(this._db)
+    : _studySessionService = DriftStudySessionService(_db);
 
   @override
   Future<List<Vocabulary>> getAllVocabulary() async {
@@ -36,6 +39,38 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
 
     final rows = await query.get();
     return rows.map((row) => _mapRowToEntity(row)).toList();
+  }
+
+  @override
+  Future<int> countVocabulary({int? jlptLevel}) {
+    final countExp = _db.vocabularyTable.id.count();
+    final query = _db.selectOnly(_db.vocabularyTable)..addColumns([countExp]);
+    if (jlptLevel != null) {
+      query.where(_db.vocabularyTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
+  }
+
+  @override
+  Future<int> countLearnedVocabulary({int? jlptLevel}) {
+    final countExp = _db.vocabularyTable.id.count();
+    final query = _db.selectOnly(_db.vocabularyTable)..addColumns([countExp]);
+    query.where(_db.vocabularyTable.reps.isBiggerThanValue(0));
+    if (jlptLevel != null) {
+      query.where(_db.vocabularyTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
+  }
+
+  @override
+  Future<int> countDueVocabulary(DateTime now, {int? jlptLevel}) {
+    final countExp = _db.vocabularyTable.id.count();
+    final query = _db.selectOnly(_db.vocabularyTable)..addColumns([countExp]);
+    query.where(_db.vocabularyTable.nextReview.isSmallerOrEqualValue(now));
+    if (jlptLevel != null) {
+      query.where(_db.vocabularyTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
   }
 
   @override
@@ -73,7 +108,13 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
                 imageUrl: Value(v.imageUrl),
                 pitchAccent: Value(v.pitchAccent),
                 partOfSpeech: Value(v.partOfSpeech),
-                nextReview: DateTime.now(),
+                stability: Value(v.stability),
+                difficulty: Value(v.difficulty),
+                lastReview: Value(v.lastReview),
+                nextReview: v.nextReview,
+                reps: Value(v.reps),
+                lapses: Value(v.lapses),
+                state: Value(v.state),
               ),
             )
             .toList(),
@@ -114,9 +155,9 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
     required int waterGain,
     required int sunGain,
   }) {
-    return _db.submitReview(
+    return _studySessionService.submitSrsReview(
       updatedItem: updatedItem,
-      itemType: 'vocabulary',
+      itemType: StudyItemType.vocabulary,
       rating: rating,
       durationMs: durationMs,
       expGain: expGain,

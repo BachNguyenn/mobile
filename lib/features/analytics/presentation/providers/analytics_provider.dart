@@ -47,19 +47,23 @@ final analyticsProvider = FutureProvider<AnalyticsData>((ref) async {
   final db = ref.watch(databaseProvider);
   // Watch progress to ensure reactivity
   await ref.watch(homeProgressProvider.future);
-  
+
   final allKanji = await db.select(db.kanjiCardTable).get();
   final allVocab = await db.select(db.vocabularyTable).get();
   final allGrammar = await db.select(db.grammarTable).get();
-  
+
   // Stats (combined across Kanji, Vocabulary, Grammar)
   final learnedKanji = allKanji.where((c) => c.reps > 0).length;
   final learnedVocab = allVocab.where((c) => c.reps > 0).length;
   final learnedGrammar = allGrammar.where((c) => c.isLearned).length;
   final learned = learnedKanji + learnedVocab + learnedGrammar;
 
-  final rememberingKanji = allKanji.where((c) => c.reps > 0 && c.lapses == 0).length;
-  final rememberingVocab = allVocab.where((c) => c.reps > 0 && c.lapses == 0).length;
+  final rememberingKanji = allKanji
+      .where((c) => c.reps > 0 && c.lapses == 0)
+      .length;
+  final rememberingVocab = allVocab
+      .where((c) => c.reps > 0 && c.lapses == 0)
+      .length;
   final remembering = rememberingKanji + rememberingVocab + learnedGrammar;
 
   final notLearnedKanji = allKanji.where((c) => c.reps == 0).length;
@@ -72,13 +76,13 @@ final analyticsProvider = FutureProvider<AnalyticsData>((ref) async {
   final Map<DateTime, int> heatmap = {};
   final now = DateTime.now();
   final todayNormalized = DateTime(now.year, now.month, now.day);
-  
+
   // Initialize last 105 days with 0
   for (int i = 0; i < 105; i++) {
     final date = todayNormalized.subtract(Duration(days: i));
     heatmap[date] = 0;
   }
-  
+
   // Aggregate study counts
   for (final log in studyLogs) {
     final logDate = DateTime(log.date.year, log.date.month, log.date.day);
@@ -112,7 +116,9 @@ final analyticsProvider = FutureProvider<AnalyticsData>((ref) async {
   }).toList();
 
   final reviewsLast30Days = recentReviews.length;
-  final successfulReviews = recentReviews.where((log) => log.rating >= 3).length;
+  final successfulReviews = recentReviews
+      .where((log) => log.rating >= 3)
+      .length;
   final successRateLast30Days = reviewsLast30Days == 0
       ? 0.0
       : successfulReviews / reviewsLast30Days;
@@ -136,8 +142,7 @@ final analyticsProvider = FutureProvider<AnalyticsData>((ref) async {
       final ok = ratings.where((rating) => rating >= 3).length;
       final rate = ratings.isEmpty ? 0.0 : ok / ratings.length;
       return MapEntry(entry.key, rate);
-    }).toList()
-      ..sort((a, b) => a.value.compareTo(b.value));
+    }).toList()..sort((a, b) => a.value.compareTo(b.value));
 
     final weakest = typeRates.first;
     weakestArea = _displayTypeName(weakest.key);
@@ -219,7 +224,9 @@ Future<_LearningPathStats> _calculateLearningPathStats(dynamic db) async {
   final decoded = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
 
   final Map<String, int> totalByLevel = {for (var i = 1; i <= 5; i++) 'N$i': 0};
-  final Map<String, int> completedByLevel = {for (var i = 1; i <= 5; i++) 'N$i': 0};
+  final Map<String, int> completedByLevel = {
+    for (var i = 1; i <= 5; i++) 'N$i': 0,
+  };
   int totalLessons = 0;
   int completedLessons = 0;
 
@@ -254,7 +261,9 @@ Future<_LearningPathStats> _calculateLearningPathStats(dynamic db) async {
     cohortByLevel[key] = total == 0 ? 0.0 : done / total;
   }
 
-  final startedLevels = cohortByLevel.entries.where((e) => e.value > 0).toList();
+  final startedLevels = cohortByLevel.entries
+      .where((e) => e.value > 0)
+      .toList();
   String dropoutPoint = 'Chưa đủ dữ liệu';
   if (startedLevels.isNotEmpty) {
     startedLevels.sort((a, b) => a.value.compareTo(b.value));
@@ -262,7 +271,9 @@ Future<_LearningPathStats> _calculateLearningPathStats(dynamic db) async {
   }
 
   return _LearningPathStats(
-    lessonCompletionRate: totalLessons == 0 ? 0.0 : completedLessons / totalLessons,
+    lessonCompletionRate: totalLessons == 0
+        ? 0.0
+        : completedLessons / totalLessons,
     dropoutPoint: dropoutPoint,
     cohortByLevel: cohortByLevel,
   );

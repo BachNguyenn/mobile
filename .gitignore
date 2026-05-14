@@ -24,6 +24,9 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
+.env
+.env.*
+!.env.example
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -35,6 +38,12 @@ migrate_working_dir/
 /build/
 /coverage/
 
+# Signing and local release credentials
+android/key.properties
+android/app/key.properties
+*.jks
+*.keystore
+
 # Symbolication related
 app.*.symbols
 
@@ -45,3 +54,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Flutter-generated Android plugin registrant
+/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java

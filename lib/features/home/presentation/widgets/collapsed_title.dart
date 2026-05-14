@@ -14,9 +14,7 @@ class CollapsedTitle extends StatelessWidget {
         SizedBox(
           width: 18,
           height: 16,
-          child: CustomPaint(
-            painter: _MiniToriiPainter(),
-          ),
+          child: CustomPaint(painter: _MiniToriiPainter()),
         ),
         const SizedBox(width: 8),
         Text(

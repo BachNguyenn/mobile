@@ -8,10 +8,7 @@ class GardenPurchaseResult {
   final bool success;
   final ZenGarden garden;
 
-  const GardenPurchaseResult({
-    required this.success,
-    required this.garden,
-  });
+  const GardenPurchaseResult({required this.success, required this.garden});
 }
 
 class GardenRepository {
@@ -34,9 +31,9 @@ class GardenRepository {
       if (days >= 1) {
         water = (water - (days * 10)).clamp(0, 999999).toInt();
         sunlight = (sunlight - (days * 10)).clamp(0, 999999).toInt();
-        await (_db.update(_db.zenGardenTable)
-              ..where((table) => table.id.equals(row.id)))
-            .write(
+        await (_db.update(
+          _db.zenGardenTable,
+        )..where((table) => table.id.equals(row.id))).write(
           ZenGardenTableCompanion(
             water: Value(water),
             sunlight: Value(sunlight),
@@ -105,13 +102,17 @@ class GardenRepository {
   }
 
   Future<void> saveGarden(ZenGarden garden) async {
-    await _db.update(_db.zenGardenTable).write(
+    await _db
+        .update(_db.zenGardenTable)
+        .write(
           ZenGardenTableCompanion(
             water: Value(garden.water),
             sunlight: Value(garden.sunlight),
             exp: Value(garden.exp),
             plantsJson: Value(
-              json.encode(garden.plants.map((plant) => plant.toJson()).toList()),
+              json.encode(
+                garden.plants.map((plant) => plant.toJson()).toList(),
+              ),
             ),
           ),
         );
@@ -120,9 +121,9 @@ class GardenRepository {
   Future<int> getTodayStudyCount() async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final row = await (_db.select(_db.studyLogTable)
-          ..where((table) => table.date.equals(today)))
-        .getSingleOrNull();
+    final row = await (_db.select(
+      _db.studyLogTable,
+    )..where((table) => table.date.equals(today))).getSingleOrNull();
     return row?.count ?? 0;
   }
 
@@ -130,16 +131,17 @@ class GardenRepository {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final tomorrow = today.add(const Duration(days: 1));
-    final rows = await (_db.select(_db.reviewLogTable)
-          ..where(
-            (table) =>
-                table.reviewTime.isBiggerOrEqualValue(today) &
-                table.reviewTime.isSmallerThanValue(tomorrow),
-          )
-          ..orderBy([
-            (table) => OrderingTerm(expression: table.reviewTime),
-          ]))
-        .get();
+    final rows =
+        await (_db.select(_db.reviewLogTable)
+              ..where(
+                (table) =>
+                    table.reviewTime.isBiggerOrEqualValue(today) &
+                    table.reviewTime.isSmallerThanValue(tomorrow),
+              )
+              ..orderBy([
+                (table) => OrderingTerm(expression: table.reviewTime),
+              ]))
+            .get();
 
     var current = 0;
     var best = 0;
@@ -156,7 +158,9 @@ class GardenRepository {
 
   Future<ZenGarden> _createInitialGarden() async {
     final now = DateTime.now();
-    await _db.into(_db.zenGardenTable).insert(
+    await _db
+        .into(_db.zenGardenTable)
+        .insert(
           ZenGardenTableCompanion.insert(
             water: const Value(100),
             sunlight: const Value(100),

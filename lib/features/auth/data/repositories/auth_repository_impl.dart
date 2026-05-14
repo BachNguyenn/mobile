@@ -19,7 +19,8 @@ class AuthRepositoryImpl implements AuthRepository {
       throw Exception('Đăng nhập bị hủy');
     }
 
-    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final GoogleSignInAuthentication googleAuth =
+        await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
       accessToken: googleAuth.accessToken,
       idToken: googleAuth.idToken,
@@ -40,7 +41,10 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<UserCredential> signUpWithEmail(String email, String password) async {
-    return _auth.createUserWithEmailAndPassword(email: email, password: password);
+    return _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 
   @override

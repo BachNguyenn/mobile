@@ -17,7 +17,7 @@ class KanjiLinker extends ConsumerWidget {
     // Regex cho dải Kanji chuẩn: [一-龯]
     final regex = RegExp(r'[\u4e00-\u9faf]');
     final matches = regex.allMatches(text);
-    
+
     if (matches.isEmpty) {
       return Text(text, style: style);
     }
@@ -43,7 +43,9 @@ class KanjiLinker extends ConsumerWidget {
               if (kanjiCard != null && context.mounted) {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => KanjiDetailScreen(kanji: kanjiCard)),
+                  MaterialPageRoute(
+                    builder: (_) => KanjiDetailScreen(kanji: kanjiCard),
+                  ),
                 );
               }
             },

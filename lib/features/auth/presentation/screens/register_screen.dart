@@ -40,7 +40,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
     setState(() => _isLoading = true);
     try {
-      await ref.read(authRepositoryProvider).signUpWithEmail(
+      await ref
+          .read(authRepositoryProvider)
+          .signUpWithEmail(
             _emailController.text.trim(),
             _passwordController.text,
           );
@@ -61,8 +63,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             message = 'Mật khẩu quá yếu. Hãy dùng ít nhất 6 ký tự.';
             break;
           case 'operation-not-allowed':
-            message =
-                'Đăng ký email chưa được bật trong Firebase Console.';
+            message = 'Đăng ký email chưa được bật trong Firebase Console.';
             break;
           case 'network-request-failed':
             message = 'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
@@ -199,8 +200,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     if (value == null || value.trim().isEmpty) {
                       return 'Vui lòng nhập email';
                     }
-                    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$')
-                        .hasMatch(value.trim())) {
+                    if (!RegExp(
+                      r'^[^@]+@[^@]+\.[^@]+$',
+                    ).hasMatch(value.trim())) {
                       return 'Email không hợp lệ';
                     }
                     return null;
@@ -220,9 +222,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     hint: 'Ít nhất 6 ký tự',
                     icon: Icons.lock_outline_rounded,
                     suffixIcon: IconButton(
-                      onPressed: () => setState(
-                        () => _obscurePassword = !_obscurePassword,
-                      ),
+                      onPressed: () =>
+                          setState(() => _obscurePassword = !_obscurePassword),
                       icon: Icon(
                         _obscurePassword
                             ? Icons.visibility_off_rounded
@@ -257,9 +258,8 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     hint: 'Nhập lại mật khẩu',
                     icon: Icons.lock_outline_rounded,
                     suffixIcon: IconButton(
-                      onPressed: () => setState(
-                        () => _obscureConfirm = !_obscureConfirm,
-                      ),
+                      onPressed: () =>
+                          setState(() => _obscureConfirm = !_obscureConfirm),
                       icon: Icon(
                         _obscureConfirm
                             ? Icons.visibility_off_rounded
@@ -291,8 +291,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         vertical: AppSpacing.sp16,
                       ),
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(AppSpacing.radiusS),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                       ),
                       textStyle: AppTypography.bodyMBold.copyWith(
                         color: AppColors.white,

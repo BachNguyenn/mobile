@@ -27,16 +27,16 @@ class Lesson extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        title,
-        kanjiIds,
-        vocabIds,
-        grammarIds,
-        isCompleted,
-        isUnlocked,
-        type,
-        level,
-      ];
+    id,
+    title,
+    kanjiIds,
+    vocabIds,
+    grammarIds,
+    isCompleted,
+    isUnlocked,
+    type,
+    level,
+  ];
 
   Lesson copyWith({
     String? id,

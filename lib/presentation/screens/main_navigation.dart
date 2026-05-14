@@ -236,80 +236,76 @@ class _PremiumBottomNav extends StatelessWidget {
         AppSpacing.sp20,
         AppSpacing.sp24,
       ),
-        height: 68,
-        decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.96),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-          border: Border.all(
-            color: AppColors.mossGreen.withValues(alpha: 0.10),
+      height: 68,
+      decoration: BoxDecoration(
+        color: AppColors.white.withValues(alpha: 0.96),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.10)),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.ink.withValues(alpha: 0.08),
+            blurRadius: 24,
+            offset: const Offset(0, 10),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.ink.withValues(alpha: 0.08),
-              blurRadius: 24,
-              offset: const Offset(0, 10),
-            ),
-            BoxShadow(
-              color: AppColors.mossGreen.withValues(alpha: 0.06),
-              blurRadius: 18,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final itemWidth = constraints.maxWidth / _navItems.length;
-              final pillWidth = (itemWidth - AppSpacing.sp8).clamp(48.0, 76.0);
+          BoxShadow(
+            color: AppColors.mossGreen.withValues(alpha: 0.06),
+            blurRadius: 18,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final itemWidth = constraints.maxWidth / _navItems.length;
+            final pillWidth = (itemWidth - AppSpacing.sp8).clamp(48.0, 76.0);
 
-              return Stack(
-                children: [
-                  // ── Sliding Pill Indicator ──────────────────
-                  AnimatedBuilder(
-                    animation: pillController,
-                    builder: (context, _) {
-                      final currentPos = pillAnimation.value;
-                      final pillLeft =
-                          currentPos * itemWidth + (itemWidth - pillWidth) / 2;
+            return Stack(
+              children: [
+                // ── Sliding Pill Indicator ──────────────────
+                AnimatedBuilder(
+                  animation: pillController,
+                  builder: (context, _) {
+                    final currentPos = pillAnimation.value;
+                    final pillLeft =
+                        currentPos * itemWidth + (itemWidth - pillWidth) / 2;
 
-                      return Positioned(
-                        left: pillLeft,
-                        top: 8,
-                        child: Container(
-                          width: pillWidth,
-                          height: 52,
-                          decoration: BoxDecoration(
-                            color: AppColors.navPillBg,
-                            borderRadius: BorderRadius.circular(
-                              AppSpacing.radiusM,
-                            ),
-                            border: Border.all(
-                              color: AppColors.mossGreen.withValues(
-                                alpha: 0.12,
-                              ),
-                            ),
+                    return Positioned(
+                      left: pillLeft,
+                      top: 8,
+                      child: Container(
+                        width: pillWidth,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: AppColors.navPillBg,
+                          borderRadius: BorderRadius.circular(
+                            AppSpacing.radiusM,
+                          ),
+                          border: Border.all(
+                            color: AppColors.mossGreen.withValues(alpha: 0.12),
                           ),
                         ),
-                      );
-                    },
-                  ),
+                      ),
+                    );
+                  },
+                ),
 
-                  // ── Nav Items Row ──────────────────────────
-                  Row(
-                    children: List.generate(_navItems.length, (index) {
-                      return Expanded(
-                        child: _NavItem(
-                          data: _navItems[index],
-                          isSelected: selectedIndex == index,
-                          onTap: () => onItemTap(index),
-                        ),
-                      );
-                    }),
-                  ),
-                ],
-              );
-            },
+                // ── Nav Items Row ──────────────────────────
+                Row(
+                  children: List.generate(_navItems.length, (index) {
+                    return Expanded(
+                      child: _NavItem(
+                        data: _navItems[index],
+                        isSelected: selectedIndex == index,
+                        onTap: () => onItemTap(index),
+                      ),
+                    );
+                  }),
+                ),
+              ],
+            );
+          },
         ),
       ),
     );

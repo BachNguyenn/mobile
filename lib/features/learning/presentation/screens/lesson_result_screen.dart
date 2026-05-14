@@ -19,7 +19,9 @@ class LessonResultScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accuracy = totalQuestions == 0 ? 0.0 : correctAnswers / totalQuestions;
+    final accuracy = totalQuestions == 0
+        ? 0.0
+        : correctAnswers / totalQuestions;
     final expGain = (correctAnswers * 8).clamp(0, 999);
     final resourceGain = (correctAnswers * 4).clamp(0, 999);
     final accuracyPercent = (accuracy * 100).round();
@@ -36,7 +38,9 @@ class LessonResultScreen extends StatelessWidget {
                 accuracy >= 0.8
                     ? Icons.emoji_events_rounded
                     : Icons.auto_stories_rounded,
-                color: accuracy >= 0.8 ? AppColors.sunGold : AppColors.mossGreen,
+                color: accuracy >= 0.8
+                    ? AppColors.sunGold
+                    : AppColors.mossGreen,
                 size: 76,
               ),
               const SizedBox(height: AppSpacing.sp20),
@@ -87,7 +91,10 @@ class LessonResultScreen extends StatelessWidget {
                       height: 56,
                       child: OutlinedButton(
                         onPressed: () => Navigator.pop(context),
-                        child: Text('Về lộ trình', style: AppTypography.bodyMBold),
+                        child: Text(
+                          'Về lộ trình',
+                          style: AppTypography.bodyMBold,
+                        ),
                       ),
                     ),
                   ),
@@ -105,8 +112,9 @@ class LessonResultScreen extends StatelessWidget {
                           foregroundColor: AppColors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AppSpacing.radiusM),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusM,
+                            ),
                           ),
                         ),
                         child: Text(

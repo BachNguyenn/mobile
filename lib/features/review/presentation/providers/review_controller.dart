@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/core/services/app_logger.dart';
 import 'package:mobile/core/services/handwriting_service.dart';
 import 'package:mobile/features/grammar/presentation/providers/grammar_library_provider.dart';
 import 'package:mobile/features/kanji/presentation/providers/kanji_library_provider.dart';
@@ -15,6 +16,8 @@ class ReviewState {
   final String? selectedChoice;
   final String typedAnswer;
   final bool isFinished;
+  final bool isSubmitting;
+  final String? errorMessage;
 
   ReviewState({
     this.currentIndex = 0,
@@ -24,6 +27,8 @@ class ReviewState {
     this.selectedChoice,
     this.typedAnswer = '',
     this.isFinished = false,
+    this.isSubmitting = false,
+    this.errorMessage,
   });
 
   ReviewState copyWith({
@@ -34,7 +39,10 @@ class ReviewState {
     String? selectedChoice,
     String? typedAnswer,
     bool? isFinished,
+    bool? isSubmitting,
+    String? errorMessage,
     bool clearAnswerData = false,
+    bool clearError = false,
   }) {
     return ReviewState(
       currentIndex: currentIndex ?? this.currentIndex,
@@ -48,6 +56,8 @@ class ReviewState {
           : selectedChoice ?? this.selectedChoice,
       typedAnswer: clearAnswerData ? '' : typedAnswer ?? this.typedAnswer,
       isFinished: isFinished ?? this.isFinished,
+      isSubmitting: isSubmitting ?? this.isSubmitting,
+      errorMessage: clearError ? null : errorMessage ?? this.errorMessage,
     );
   }
 }
@@ -73,6 +83,7 @@ class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
   }
 
   Future<void> handleCheck() async {
+    if (arg.isEmpty || state.currentIndex >= arg.length) return;
     final item = arg[state.currentIndex];
     String? text;
     if (item.usesHandwriting) {
@@ -84,30 +95,53 @@ class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
     } else {
       text = state.selectedChoice;
     }
-    state = state.copyWith(recognizedText: text, showAnswer: true);
+    state = state.copyWith(
+      recognizedText: text,
+      showAnswer: true,
+      clearError: true,
+    );
   }
 
   bool get isTypedAnswerCorrect {
+    if (arg.isEmpty || state.currentIndex >= arg.length) return false;
     final item = arg[state.currentIndex];
     return QuizAnswerNormalizer.isCorrect(state.typedAnswer, item.answer);
   }
 
-  void handleRating(int rating) {
+  Future<void> handleRating(int rating) async {
     final items = arg;
+    if (items.isEmpty || state.currentIndex >= items.length) return;
+    if (state.isSubmitting) return;
+
     final item = items[state.currentIndex];
-    switch (item.type) {
-      case ReviewItemType.kanji:
-        ref.read(emitKanjiStudyEventProvider)(item.id, rating);
-        break;
-      case ReviewItemType.vocabulary:
-        ref.read(emitVocabularyStudyEventProvider)(item.id, rating);
-        break;
-      case ReviewItemType.grammar:
-        ref.read(emitGrammarStudyEventProvider)(item.id, rating);
-        break;
-      case ReviewItemType.sentence:
-        ref.read(emitSentenceStudyEventProvider)(item.id);
-        break;
+    state = state.copyWith(isSubmitting: true, clearError: true);
+
+    try {
+      switch (item.type) {
+        case ReviewItemType.kanji:
+          await ref.read(emitKanjiStudyEventProvider)(item.id, rating);
+          break;
+        case ReviewItemType.vocabulary:
+          await ref.read(emitVocabularyStudyEventProvider)(item.id, rating);
+          break;
+        case ReviewItemType.grammar:
+          await ref.read(emitGrammarStudyEventProvider)(item.id, rating);
+          break;
+        case ReviewItemType.sentence:
+          ref.read(emitSentenceStudyEventProvider)(item.id);
+          break;
+      }
+    } catch (error, stackTrace) {
+      AppLogger.error(
+        'Failed to submit review rating',
+        error: error,
+        stackTrace: stackTrace,
+      );
+      state = state.copyWith(
+        isSubmitting: false,
+        errorMessage: 'Không thể lưu kết quả ôn tập. Vui lòng thử lại.',
+      );
+      return;
     }
 
     if (state.currentIndex < items.length - 1) {
@@ -115,10 +149,12 @@ class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
         currentIndex: state.currentIndex + 1,
         showAnswer: false,
         currentStrokes: [],
+        isSubmitting: false,
         clearAnswerData: true,
+        clearError: true,
       );
     } else {
-      state = state.copyWith(isFinished: true);
+      state = state.copyWith(isSubmitting: false, isFinished: true);
     }
   }
 

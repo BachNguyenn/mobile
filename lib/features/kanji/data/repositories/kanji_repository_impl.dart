@@ -3,25 +3,32 @@ import '../../domain/entities/kanji_card.dart';
 import '../../../../core/srs/srs_item.dart';
 import '../../domain/repositories/kanji_repository.dart';
 import '../../../../data/datasources/app_database.dart';
+import '../../../review/data/study_session_service.dart';
 
 class KanjiRepositoryImpl implements KanjiRepository {
   final AppDatabase db;
+  final StudySessionService _studySessionService;
 
-  KanjiRepositoryImpl(this.db);
+  KanjiRepositoryImpl(this.db)
+    : _studySessionService = DriftStudySessionService(db);
 
   @override
   Future<List<KanjiCard>> getAllCards() async {
-    final rows = await (db.select(db.kanjiCardTable)
-          ..orderBy([(t) => OrderingTerm(expression: t.id)]))
-        .get();
+    final rows = await (db.select(
+      db.kanjiCardTable,
+    )..orderBy([(t) => OrderingTerm(expression: t.id)])).get();
     return rows.map((r) => _toEntity(r)).toList();
   }
 
   @override
-  Future<List<KanjiCard>> getDueCards(DateTime now, {int? jlptLevel, int? limit}) async {
+  Future<List<KanjiCard>> getDueCards(
+    DateTime now, {
+    int? jlptLevel,
+    int? limit,
+  }) async {
     final query = db.select(db.kanjiCardTable)
       ..where((t) => t.nextReview.isSmallerOrEqualValue(now));
-    
+
     if (jlptLevel != null) {
       query.where((t) => t.jlptLevel.equals(jlptLevel));
     }
@@ -32,6 +39,38 @@ class KanjiRepositoryImpl implements KanjiRepository {
 
     final rows = await query.get();
     return rows.map((r) => _toEntity(r)).toList();
+  }
+
+  @override
+  Future<int> countCards({int? jlptLevel}) {
+    final countExp = db.kanjiCardTable.id.count();
+    final query = db.selectOnly(db.kanjiCardTable)..addColumns([countExp]);
+    if (jlptLevel != null) {
+      query.where(db.kanjiCardTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
+  }
+
+  @override
+  Future<int> countLearnedCards({int? jlptLevel}) {
+    final countExp = db.kanjiCardTable.id.count();
+    final query = db.selectOnly(db.kanjiCardTable)..addColumns([countExp]);
+    query.where(db.kanjiCardTable.reps.isBiggerThanValue(0));
+    if (jlptLevel != null) {
+      query.where(db.kanjiCardTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
+  }
+
+  @override
+  Future<int> countDueCards(DateTime now, {int? jlptLevel}) {
+    final countExp = db.kanjiCardTable.id.count();
+    final query = db.selectOnly(db.kanjiCardTable)..addColumns([countExp]);
+    query.where(db.kanjiCardTable.nextReview.isSmallerOrEqualValue(now));
+    if (jlptLevel != null) {
+      query.where(db.kanjiCardTable.jlptLevel.equals(jlptLevel));
+    }
+    return query.getSingle().then((row) => row.read(countExp) ?? 0);
   }
 
   @override
@@ -63,10 +102,12 @@ class KanjiRepositoryImpl implements KanjiRepository {
     List<String>? ids;
     if (query.isNotEmpty) {
       // Use FTS5 for searching
-      final searchResults = await db.customSelect(
-        'SELECT id FROM kanji_search_table WHERE kanji_search_table MATCH ?',
-        variables: [Variable.withString(query)],
-      ).get();
+      final searchResults = await db
+          .customSelect(
+            'SELECT id FROM kanji_search_table WHERE kanji_search_table MATCH ?',
+            variables: [Variable.withString(query)],
+          )
+          .get();
       ids = searchResults.map((r) => r.read<String>('id')).toList();
     }
 
@@ -94,9 +135,9 @@ class KanjiRepositoryImpl implements KanjiRepository {
     required int waterGain,
     required int sunGain,
   }) async {
-    return db.submitReview(
+    return _studySessionService.submitSrsReview(
       updatedItem: updatedItem,
-      itemType: 'kanji',
+      itemType: StudyItemType.kanji,
       rating: rating,
       durationMs: durationMs,
       expGain: expGain,
@@ -107,7 +148,8 @@ class KanjiRepositoryImpl implements KanjiRepository {
 
   @override
   Future<KanjiCard?> getCardByKanji(String kanji) async {
-    final query = db.select(db.kanjiCardTable)..where((t) => t.kanji.equals(kanji));
+    final query = db.select(db.kanjiCardTable)
+      ..where((t) => t.kanji.equals(kanji));
     final row = await query.getSingleOrNull();
     return row != null ? _toEntity(row) : null;
   }

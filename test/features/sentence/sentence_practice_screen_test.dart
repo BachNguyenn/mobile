@@ -60,10 +60,10 @@ void main() {
     );
 
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Go'));
+    await tester.tap(find.byKey(sentenceModeTypingKey));
     await tester.pumpAndSettle();
 
-    final checkButton = find.widgetWithText(ElevatedButton, 'Kiem tra');
+    final checkButton = find.byKey(sentenceCheckButtonKey);
     expect(tester.widget<ElevatedButton>(checkButton).onPressed, isNull);
 
     await tester.enterText(find.byType(TextField), '私は学生です。');
@@ -73,6 +73,6 @@ void main() {
     await tester.tap(checkButton);
     await tester.pumpAndSettle();
 
-    expect(find.text('Chinh xac'), findsOneWidget);
+    expect(find.byKey(sentenceCorrectFeedbackKey), findsOneWidget);
   });
 }

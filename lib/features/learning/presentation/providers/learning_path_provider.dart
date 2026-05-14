@@ -20,18 +20,19 @@ final selectedLevelProvider = StateProvider<int>((ref) => 5);
 
 final learningPathProvider =
     StateNotifierProvider<LearningPathNotifier, List<Lesson>>((ref) {
-  final repository = ref.watch(learningPathRepositoryProvider);
-  final category = ref.watch(learningCategoryProvider);
-  final level = ref.watch(selectedLevelProvider);
-  final settings = ref.watch(settingsProvider).valueOrNull ?? AppSettings.defaults;
-  ref.watch(databaseInitializerProvider);
-  return LearningPathNotifier(
-    repository,
-    category,
-    level,
-    settings.learningGoal,
-  );
-});
+      final repository = ref.watch(learningPathRepositoryProvider);
+      final category = ref.watch(learningCategoryProvider);
+      final level = ref.watch(selectedLevelProvider);
+      final settings =
+          ref.watch(settingsProvider).valueOrNull ?? AppSettings.defaults;
+      ref.watch(databaseInitializerProvider);
+      return LearningPathNotifier(
+        repository,
+        category,
+        level,
+        settings.learningGoal,
+      );
+    });
 
 class LearningPathNotifier extends StateNotifier<List<Lesson>> {
   final LearningPathRepository _repository;
@@ -39,8 +40,12 @@ class LearningPathNotifier extends StateNotifier<List<Lesson>> {
   final int _level;
   final LearningGoal _goal;
 
-  LearningPathNotifier(this._repository, this._category, this._level, this._goal)
-      : super([]) {
+  LearningPathNotifier(
+    this._repository,
+    this._category,
+    this._level,
+    this._goal,
+  ) : super([]) {
     loadLessons();
   }
 

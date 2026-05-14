@@ -31,7 +31,9 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
     super.initState();
     _swayController = AnimationController(
       vsync: this,
-      duration: Duration(milliseconds: 2500 + (widget.plant.id.hashCode % 1000)),
+      duration: Duration(
+        milliseconds: 2500 + (widget.plant.id.hashCode % 1000),
+      ),
     )..repeat(reverse: true);
   }
 
@@ -66,7 +68,8 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
     }
 
     final isWithered = widget.garden.water <= 0 || widget.garden.sunlight <= 0;
-    final isStone = widget.plant.type == 'zen_stone' ||
+    final isStone =
+        widget.plant.type == 'zen_stone' ||
         widget.plant.type == 'stone' ||
         widget.plant.type == 'bamboo';
 
@@ -76,8 +79,6 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
       child: Stack(
         alignment: Alignment.center,
         children: [
-
-
           // ── Plant with sway animation ──────────────────
           AnimatedBuilder(
             animation: _swayController,
@@ -85,8 +86,7 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
               // Stones don't sway
               if (isStone || widget.isDragging) return child!;
 
-              final swayAngle =
-                  sin(_swayController.value * pi * 2) * 0.02;
+              final swayAngle = sin(_swayController.value * pi * 2) * 0.02;
               return Transform.rotate(
                 angle: swayAngle,
                 alignment: Alignment.bottomCenter,
@@ -179,10 +179,26 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
         children: [
           ColorFiltered(
             colorFilter: const ColorFilter.matrix([
-              0.2126, 0.7152, 0.0722, 0, 0,
-              0.2126, 0.7152, 0.0722, 0, 0,
-              0.2126, 0.7152, 0.0722, 0, 0,
-              0, 0, 0, 1, 0,
+              0.2126,
+              0.7152,
+              0.0722,
+              0,
+              0,
+              0.2126,
+              0.7152,
+              0.0722,
+              0,
+              0,
+              0.2126,
+              0.7152,
+              0.0722,
+              0,
+              0,
+              0,
+              0,
+              0,
+              1,
+              0,
             ]),
             child: Opacity(opacity: 0.6, child: graphic),
           ),
@@ -190,7 +206,10 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
           Transform.rotate(
             angle: 0.05,
             alignment: Alignment.topCenter,
-            child: Opacity(opacity: 0, child: SizedBox(width: size, height: size)),
+            child: Opacity(
+              opacity: 0,
+              child: SizedBox(width: size, height: size),
+            ),
           ),
         ],
       );

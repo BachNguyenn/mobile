@@ -4,8 +4,8 @@ import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
+import '../../core/services/app_logger.dart';
 import '../../features/kanji/domain/entities/kanji_card.dart';
-import '../../core/srs/srs_item.dart';
 
 part 'app_database.g.dart';
 
@@ -216,7 +216,13 @@ class AppDatabase extends _$AppDatabase {
           await customStatement('DROP TRIGGER IF EXISTS kanji_card_insert;');
           await customStatement('DROP TRIGGER IF EXISTS kanji_card_update;');
           await customStatement('DROP TRIGGER IF EXISTS kanji_card_delete;');
-        } catch (_) {}
+        } catch (error, stackTrace) {
+          AppLogger.warning(
+            'Failed to drop legacy kanji search triggers',
+            error: error,
+            stackTrace: stackTrace,
+          );
+        }
 
         await customStatement('''
               CREATE TRIGGER kanji_card_insert AFTER INSERT ON kanji_card_table BEGIN
@@ -256,8 +262,12 @@ class AppDatabase extends _$AppDatabase {
   Future<void> _createTableIfNotExist(Migrator m, TableInfo table) async {
     try {
       await m.createTable(table);
-    } catch (_) {
-      // Table likely already exists
+    } catch (error, stackTrace) {
+      AppLogger.warning(
+        'Skipping table creation because it may already exist: $table',
+        error: error,
+        stackTrace: stackTrace,
+      );
     }
   }
 
@@ -271,7 +281,12 @@ class AppDatabase extends _$AppDatabase {
             .map((e) => e.toString().trim())
             .where((e) => e.isNotEmpty)
             .join(', ');
-      } catch (_) {
+      } catch (error, stackTrace) {
+        AppLogger.warning(
+          'Failed to decode legacy string list',
+          error: error,
+          stackTrace: stackTrace,
+        );
         // Fallback for malformed JSON or non-JSON strings that happen to have brackets
         String cleaned = trimmed.substring(1, trimmed.length - 1);
         cleaned = cleaned.replaceAll('"', '').replaceAll("'", '');
@@ -326,155 +341,6 @@ class AppDatabase extends _$AppDatabase {
         lapses: Value(c.lapses),
         state: Value(c.state),
       );
-
-  // Transaction for submitting review and updating gamification
-  Future<bool> submitReview({
-    required SrsItem updatedItem,
-    required String itemType,
-    required int rating,
-    required int durationMs,
-    required int expGain,
-    required int waterGain,
-    required int sunGain,
-  }) async {
-    return transaction(() async {
-      // 1. Update the correct table
-      if (itemType == 'kanji') {
-        await (update(
-          kanjiCardTable,
-        )..where((t) => t.id.equals(updatedItem.id))).write(
-          KanjiCardTableCompanion(
-            stability: Value(updatedItem.stability),
-            difficulty: Value(updatedItem.difficulty),
-            lastReview: Value(updatedItem.lastReview),
-            nextReview: Value(updatedItem.nextReview),
-            reps: Value(updatedItem.reps),
-            lapses: Value(updatedItem.lapses),
-            state: Value(updatedItem.state),
-          ),
-        );
-      } else if (itemType == 'vocab' || itemType == 'vocabulary') {
-        await (update(
-          vocabularyTable,
-        )..where((t) => t.id.equals(updatedItem.id))).write(
-          VocabularyTableCompanion(
-            stability: Value(updatedItem.stability),
-            difficulty: Value(updatedItem.difficulty),
-            lastReview: Value(updatedItem.lastReview),
-            nextReview: Value(updatedItem.nextReview),
-            reps: Value(updatedItem.reps),
-            lapses: Value(updatedItem.lapses),
-            state: Value(updatedItem.state),
-          ),
-        );
-      }
-
-      // 2. Insert ReviewLog
-      await into(reviewLogTable).insert(
-        ReviewLogTableCompanion.insert(
-          itemId: updatedItem.id,
-          itemType: itemType,
-          rating: rating,
-          reviewTime: DateTime.now(),
-          durationMs: Value(durationMs),
-        ),
-      );
-
-      // 3. Update Zen Garden
-      final gardenList = await select(zenGardenTable).get();
-      if (gardenList.isNotEmpty) {
-        final current = gardenList.first;
-        await update(zenGardenTable).replace(
-          current.copyWith(
-            exp: current.exp + expGain,
-            water: current.water + waterGain,
-            sunlight: current.sunlight + sunGain,
-            lastLogin: Value(DateTime.now()),
-          ),
-        );
-      }
-
-      // 4. Update Daily Study Log count
-      final today = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-      );
-      final logList = await (select(
-        studyLogTable,
-      )..where((t) => t.date.equals(today))).get();
-      if (logList.isNotEmpty) {
-        await (update(studyLogTable)..where((t) => t.date.equals(today))).write(
-          StudyLogTableCompanion(count: Value(logList.first.count + 1)),
-        );
-      } else {
-        await into(studyLogTable).insert(
-          StudyLogTableCompanion.insert(date: today, count: const Value(1)),
-        );
-      }
-
-      return true;
-    });
-  }
-
-  Future<bool> submitGrammarReview({
-    required String grammarId,
-    required int rating,
-    required int durationMs,
-    required int expGain,
-    required int waterGain,
-    required int sunGain,
-  }) async {
-    return transaction(() async {
-      if (rating >= 3) {
-        await (update(grammarTable)..where((t) => t.id.equals(grammarId)))
-            .write(const GrammarTableCompanion(isLearned: Value(true)));
-      }
-
-      await into(reviewLogTable).insert(
-        ReviewLogTableCompanion.insert(
-          itemId: grammarId,
-          itemType: 'grammar',
-          rating: rating,
-          reviewTime: DateTime.now(),
-          durationMs: Value(durationMs),
-        ),
-      );
-
-      final gardenList = await select(zenGardenTable).get();
-      if (gardenList.isNotEmpty) {
-        final current = gardenList.first;
-        await update(zenGardenTable).replace(
-          current.copyWith(
-            exp: current.exp + expGain,
-            water: current.water + waterGain,
-            sunlight: current.sunlight + sunGain,
-            lastLogin: Value(DateTime.now()),
-          ),
-        );
-      }
-
-      final today = DateTime(
-        DateTime.now().year,
-        DateTime.now().month,
-        DateTime.now().day,
-      );
-      final logList = await (select(
-        studyLogTable,
-      )..where((t) => t.date.equals(today))).get();
-      if (logList.isNotEmpty) {
-        await (update(studyLogTable)..where((t) => t.date.equals(today))).write(
-          StudyLogTableCompanion(count: Value(logList.first.count + 1)),
-        );
-      } else {
-        await into(studyLogTable).insert(
-          StudyLogTableCompanion.insert(date: today, count: const Value(1)),
-        );
-      }
-
-      return true;
-    });
-  }
 }
 
 LazyDatabase _openConnection() {

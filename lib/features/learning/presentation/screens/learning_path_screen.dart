@@ -169,8 +169,7 @@ class _LearningPathAppBar extends ConsumerWidget {
         IconButton(
           tooltip: 'Kiểm tra năng lực',
           onPressed: () {
-            if (!context.mounted ||
-                ModalRoute.of(context)?.isCurrent != true) {
+            if (!context.mounted || ModalRoute.of(context)?.isCurrent != true) {
               return;
             }
             Navigator.push(context, AppRoutes.placementTest());
@@ -181,7 +180,6 @@ class _LearningPathAppBar extends ConsumerWidget {
     );
   }
 }
-
 
 class _PathNode extends StatelessWidget {
   final int index;

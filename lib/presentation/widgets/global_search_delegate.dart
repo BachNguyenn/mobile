@@ -15,12 +15,12 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
   final WidgetRef ref;
 
   GlobalSearchDelegate(this.ref)
-      : super(
-          searchFieldLabel: 'Tìm Kanji, từ vựng, ngữ pháp...',
-          searchFieldStyle: AppTypography.bodyM.copyWith(
-            color: AppColors.slateGrey,
-          ),
-        );
+    : super(
+        searchFieldLabel: 'Tìm Kanji, từ vựng, ngữ pháp...',
+        searchFieldStyle: AppTypography.bodyM.copyWith(
+          color: AppColors.slateGrey,
+        ),
+      );
 
   @override
   ThemeData appBarTheme(BuildContext context) {
@@ -41,9 +41,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
           horizontal: AppSpacing.sp16,
           vertical: AppSpacing.sp12,
         ),
-        hintStyle: AppTypography.bodyM.copyWith(
-          color: AppColors.slateMuted,
-        ),
+        hintStyle: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
       ),
     );
   }
@@ -114,7 +112,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
       child: Consumer(
         builder: (context, ref, _) {
           final results = ref.watch(kanjiSearchResultsProvider(query));
-          final vocabularyResults = ref.watch(vocabularySearchResultsProvider(query));
+          final vocabularyResults = ref.watch(
+            vocabularySearchResultsProvider(query),
+          );
           final grammarResults = ref.watch(grammarSearchResultsProvider(query));
 
           return results.when(
@@ -162,7 +162,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                           ),
                           decoration: BoxDecoration(
                             color: AppColors.mossGreen.withValues(alpha: 0.1),
-                            borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+                            borderRadius: BorderRadius.circular(
+                              AppSpacing.radiusXS,
+                            ),
                           ),
                           child: Text(
                             'Chữ Hán (${kanjis.length})',
@@ -177,7 +179,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                   ),
 
                   // Kanji results
-                  ...kanjis.take(20).map((kanji) => _buildKanjiResultTile(kanji)),
+                  ...kanjis
+                      .take(20)
+                      .map((kanji) => _buildKanjiResultTile(kanji)),
 
                   if (vocabulary.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.sp24),
@@ -185,7 +189,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                       'Từ vựng (${vocabulary.length})',
                       AppColors.waterBlue,
                     ),
-                    ...vocabulary.take(10).map(
+                    ...vocabulary
+                        .take(10)
+                        .map(
                           (item) => _buildSimpleResultTile(
                             icon: Icons.menu_book_rounded,
                             title: item.word,
@@ -201,7 +207,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                       'Ngữ pháp (${grammar.length})',
                       AppColors.sunGold,
                     ),
-                    ...grammar.take(10).map(
+                    ...grammar
+                        .take(10)
+                        .map(
                           (item) => _buildSimpleResultTile(
                             icon: Icons.edit_note_rounded,
                             title: item.title,
@@ -217,9 +225,8 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
             loading: () => const Center(
               child: CircularProgressIndicator(color: AppColors.mossGreen),
             ),
-            error: (err, _) => Center(
-              child: Text('Lỗi: $err', style: AppTypography.bodyM),
-            ),
+            error: (err, _) =>
+                Center(child: Text('Lỗi: $err', style: AppTypography.bodyM)),
           );
         },
       ),
@@ -233,9 +240,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        border: Border.all(
-          color: AppColors.slateLight.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -340,9 +345,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        border: Border.all(
-          color: AppColors.slateLight.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -379,5 +382,4 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
       ),
     );
   }
-
 }

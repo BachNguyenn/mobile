@@ -3,20 +3,22 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mobile/core/services/app_logger.dart';
 import 'core/theme/app_theme.dart';
 import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'firebase_options.dart';
 import 'presentation/screens/main_navigation.dart';
 import 'package:mobile/features/auth/presentation/screens/login_screen.dart';
 import 'core/services/notification_service.dart';
 
 final firebaseInitProvider = FutureProvider<void>((ref) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 });
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   runApp(const ProviderScope(child: MyApp()));
 
   WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -37,8 +39,12 @@ Future<void> _initializeDeferredServices() async {
     } else {
       await notify.cancelDailyReminder();
     }
-  } catch (_) {
-    // Notifications should never block app startup.
+  } catch (error, stackTrace) {
+    AppLogger.warning(
+      'Deferred service initialization failed',
+      error: error,
+      stackTrace: stackTrace,
+    );
   }
 }
 
@@ -84,16 +90,18 @@ class AuthWrapper extends ConsumerWidget {
           data: (user) =>
               user != null ? const MainNavigation() : const LoginScreen(),
           loading: () => const _SplashScreen(),
-          error: (e, s) => Scaffold(
-            backgroundColor: const Color(0xFFFAF8F5),
-            body: Center(child: Text('Lỗi Auth: $e')),
+          error: (e, s) => const Scaffold(
+            backgroundColor: Color(0xFFFAF8F5),
+            body: Center(child: Text('Không thể xác thực. Vui lòng thử lại.')),
           ),
         );
       },
       loading: () => const _SplashScreen(),
-      error: (e, s) => Scaffold(
-        backgroundColor: const Color(0xFFFAF8F5),
-        body: Center(child: Text('Lỗi Khởi tạo: $e')),
+      error: (e, s) => const Scaffold(
+        backgroundColor: Color(0xFFFAF8F5),
+        body: Center(
+          child: Text('Không thể khởi tạo ứng dụng. Vui lòng thử lại.'),
+        ),
       ),
     );
   }

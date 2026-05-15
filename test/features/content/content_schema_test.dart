@@ -9,33 +9,54 @@ import 'package:mobile/features/vocabulary/data/repositories/vocabulary_reposito
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
 
 void main() {
-  test('schema v10 creates enrichment columns', () async {
-    final db = AppDatabase.forTesting(NativeDatabase.memory());
-    addTearDown(db.close);
+  test(
+    'schema v12 creates enrichment columns, indexes, and search tables',
+    () async {
+      final db = AppDatabase.forTesting(NativeDatabase.memory());
+      addTearDown(db.close);
 
-    expect(db.schemaVersion, 10);
+      expect(db.schemaVersion, 12);
 
-    final vocabularyColumns = await db
-        .customSelect("PRAGMA table_info('vocabulary_table')")
-        .get();
-    final kanjiColumns = await db
-        .customSelect("PRAGMA table_info('kanji_card_table')")
-        .get();
+      final vocabularyColumns = await db
+          .customSelect("PRAGMA table_info('vocabulary_table')")
+          .get();
+      final kanjiColumns = await db
+          .customSelect("PRAGMA table_info('kanji_card_table')")
+          .get();
 
-    expect(
-      vocabularyColumns.map((row) => row.read<String>('name')),
-      containsAll([
-        'example_sentences_json',
-        'image_url',
-        'pitch_accent',
-        'part_of_speech',
-      ]),
-    );
-    expect(
-      kanjiColumns.map((row) => row.read<String>('name')),
-      containsAll(['radicals_json', 'mnemonic', 'related_words_json']),
-    );
-  });
+      expect(
+        vocabularyColumns.map((row) => row.read<String>('name')),
+        containsAll([
+          'example_sentences_json',
+          'image_url',
+          'pitch_accent',
+          'part_of_speech',
+        ]),
+      );
+      expect(
+        kanjiColumns.map((row) => row.read<String>('name')),
+        containsAll(['radicals_json', 'mnemonic', 'related_words_json']),
+      );
+
+      final vocabularyIndexes = await db
+          .customSelect("PRAGMA index_list('vocabulary_table')")
+          .get();
+      expect(
+        vocabularyIndexes.map((row) => row.read<String>('name')),
+        contains('idx_vocabulary_due_level'),
+      );
+
+      final searchTables = await db
+          .customSelect(
+            "SELECT name FROM sqlite_master WHERE type = 'table' AND name IN ('vocabulary_search_table', 'grammar_search_table')",
+          )
+          .get();
+      expect(
+        searchTables.map((row) => row.read<String>('name')),
+        containsAll(['vocabulary_search_table', 'grammar_search_table']),
+      );
+    },
+  );
 
   test(
     'repository count queries aggregate without loading full tables',
@@ -102,6 +123,11 @@ void main() {
       expect(await grammarRepo.countGrammarPoints(jlptLevel: 5), 1);
       expect(await grammarRepo.countLearnedGrammar(jlptLevel: 5), 1);
       expect(await grammarRepo.countDueGrammar(jlptLevel: 5), 0);
+      expect(
+        await vocabularyRepo.searchVocabulary('water', limit: 10),
+        hasLength(1),
+      );
+      expect(await grammarRepo.searchGrammar('to', limit: 10), hasLength(1));
     },
   );
 }

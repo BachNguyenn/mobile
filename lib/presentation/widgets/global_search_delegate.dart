@@ -67,6 +67,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
+    if (!_shouldSearch(query)) {
+      return _buildShortQueryState();
+    }
     return _buildSearchResults();
   }
 
@@ -74,6 +77,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
   Widget buildSuggestions(BuildContext context) {
     if (query.isEmpty) {
       return _buildEmptyState();
+    }
+    if (!_shouldSearch(query)) {
+      return _buildShortQueryState();
     }
     return _buildSearchResults();
   }
@@ -104,6 +110,24 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
         ),
       ),
     );
+  }
+
+  Widget _buildShortQueryState() {
+    return Container(
+      color: AppColors.cream,
+      child: Center(
+        child: Text(
+          'Nháº­p thÃªm kÃ½ tá»± Ä‘á»ƒ tÃ¬m nhanh hÆ¡n',
+          style: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+        ),
+      ),
+    );
+  }
+
+  bool _shouldSearch(String value) {
+    final trimmed = value.trim();
+    if (trimmed.length >= 2) return true;
+    return RegExp(r'[\u3040-\u30ff\u3400-\u9fff]').hasMatch(trimmed);
   }
 
   Widget _buildSearchResults() {

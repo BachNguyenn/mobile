@@ -7,6 +7,8 @@ import 'package:mobile/features/review/presentation/providers/study_event_provid
 import '../../../../core/srs/fsrs_engine.dart';
 
 // Removed databaseInitializerProvider as it moved to core/providers/database_provider.dart
+const kanjiLibraryResultLimit = 240;
+const kanjiSearchResultLimit = 100;
 
 final kanjiListProvider = FutureProvider<List<KanjiCard>>((ref) async {
   await ref.watch(databaseInitializerProvider.future);
@@ -76,8 +78,15 @@ final kanjiSearchResultsProvider =
       await ref.watch(databaseInitializerProvider.future);
       final repo = ref.watch(kanjiRepositoryProvider);
       final jlptLevel = ref.watch(kanjiLevelFilterProvider);
+      final trimmedQuery = query.trim();
 
-      return repo.searchKanji(query, jlptLevel: jlptLevel);
+      return repo.searchKanji(
+        trimmedQuery,
+        jlptLevel: jlptLevel,
+        limit: trimmedQuery.isEmpty
+            ? kanjiLibraryResultLimit
+            : kanjiSearchResultLimit,
+      );
     });
 
 final srsServiceProvider = Provider<SrsService>((ref) => SrsService());

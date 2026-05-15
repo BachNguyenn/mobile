@@ -4,11 +4,15 @@ import 'package:mobile/features/sentence/domain/repositories/sentence_repository
 
 class SentenceRepositoryImpl implements SentenceRepository {
   final GrammarRepository _grammarRepository;
+  List<Sentence>? _cachedSentences;
 
   SentenceRepositoryImpl(this._grammarRepository);
 
   @override
   Future<List<Sentence>> getAllSentences() async {
+    final cached = _cachedSentences;
+    if (cached != null) return cached;
+
     final grammarPoints = await _grammarRepository.getAllGrammarPoints();
     final sentences = <Sentence>[];
 
@@ -30,7 +34,8 @@ class SentenceRepositoryImpl implements SentenceRepository {
       }
     }
 
-    return sentences;
+    _cachedSentences = List<Sentence>.unmodifiable(sentences);
+    return _cachedSentences!;
   }
 
   @override

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/models/progress_models.dart';
@@ -508,15 +510,36 @@ class _SentencePracticeButton extends StatelessWidget {
   }
 }
 
-class _GrammarSearchBox extends StatelessWidget {
+class _GrammarSearchBox extends StatefulWidget {
   final ValueChanged<String> onChanged;
 
   const _GrammarSearchBox({required this.onChanged});
 
   @override
+  State<_GrammarSearchBox> createState() => _GrammarSearchBoxState();
+}
+
+class _GrammarSearchBoxState extends State<_GrammarSearchBox> {
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 280), () {
+      if (!mounted) return;
+      widget.onChanged(value.trim());
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: onChanged,
+      onChanged: _onChanged,
       style: AppTypography.bodyM.copyWith(
         color: AppColors.navyDark,
         fontWeight: FontWeight.w700,

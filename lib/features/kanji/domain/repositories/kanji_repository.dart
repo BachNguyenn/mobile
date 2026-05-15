@@ -14,7 +14,11 @@ abstract class KanjiRepository {
   Future<KanjiCard?> getCardById(String id);
   Future<void> saveCard(KanjiCard card);
   Future<void> saveAllCards(List<KanjiCard> cards);
-  Future<List<KanjiCard>> searchKanji(String query, {int? jlptLevel});
+  Future<List<KanjiCard>> searchKanji(
+    String query, {
+    int? jlptLevel,
+    int? limit,
+  });
   Future<bool> submitReview({
     required SrsItem updatedItem,
     required int rating,

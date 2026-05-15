@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -5,14 +7,35 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../providers/vocabulary_library_provider.dart';
 
-class VocabularySearchBar extends ConsumerWidget {
+class VocabularySearchBar extends ConsumerStatefulWidget {
   const VocabularySearchBar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<VocabularySearchBar> createState() =>
+      _VocabularySearchBarState();
+}
+
+class _VocabularySearchBarState extends ConsumerState<VocabularySearchBar> {
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 280), () {
+      if (!mounted) return;
+      ref.read(vocabularySearchQueryProvider.notifier).state = value.trim();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return TextField(
-      onChanged: (value) =>
-          ref.read(vocabularySearchQueryProvider.notifier).state = value,
+      onChanged: _onChanged,
       style: AppTypography.bodyM.copyWith(
         color: AppColors.navyDark,
         fontWeight: FontWeight.w700,

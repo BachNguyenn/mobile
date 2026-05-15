@@ -14,7 +14,11 @@ abstract class VocabularyRepository {
   Future<List<Vocabulary>> getVocabularyByLevel(int level);
   Future<Vocabulary?> getVocabularyById(String id);
   Future<void> saveVocabulary(List<Vocabulary> vocabList);
-  Future<List<Vocabulary>> searchVocabulary(String query, {int? jlptLevel});
+  Future<List<Vocabulary>> searchVocabulary(
+    String query, {
+    int? jlptLevel,
+    int? limit,
+  });
   Future<bool> submitReview({
     required SrsItem updatedItem,
     required int rating,

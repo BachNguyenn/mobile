@@ -131,12 +131,13 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 10;
+  int get schemaVersion => 12;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (m) async {
       await m.createAll();
+      await _createPerformanceIndexes();
       // Create FTS5 table
       await customStatement('''
             CREATE VIRTUAL TABLE kanji_search_table USING fts5(
@@ -164,6 +165,8 @@ class AppDatabase extends _$AppDatabase {
               DELETE FROM kanji_search_table WHERE id = old.id;
             END;
           ''');
+      await _createVocabularySearchTable(withBackfill: false);
+      await _createGrammarSearchTable(withBackfill: false);
     },
     onUpgrade: (m, from, to) async {
       if (from < 6) {
@@ -256,8 +259,139 @@ class AppDatabase extends _$AppDatabase {
         await m.addColumn(vocabularyTable, vocabularyTable.pitchAccent);
         await m.addColumn(vocabularyTable, vocabularyTable.partOfSpeech);
       }
+      if (from < 11) {
+        await _createPerformanceIndexes();
+      }
+      if (from < 12) {
+        await _createVocabularySearchTable();
+        await _createGrammarSearchTable();
+      }
     },
   );
+
+  Future<void> _createPerformanceIndexes() async {
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_kanji_level ON kanji_card_table(jlpt_level);',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_kanji_due_level ON kanji_card_table(next_review, jlpt_level);',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_vocabulary_level ON vocabulary_table(jlpt_level);',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_vocabulary_due_level ON vocabulary_table(next_review, jlpt_level);',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_grammar_level_learned ON grammar_table(jlpt_level, is_learned);',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_review_log_time_type ON review_log_table(review_time, item_type);',
+    );
+    await customStatement(
+      'CREATE INDEX IF NOT EXISTS idx_study_log_date ON study_log_table(date);',
+    );
+  }
+
+  Future<void> _createVocabularySearchTable({bool withBackfill = true}) async {
+    await customStatement('''
+      CREATE VIRTUAL TABLE IF NOT EXISTS vocabulary_search_table USING fts5(
+        id, word, reading, meaning, example_sentences, part_of_speech,
+        tokenize='unicode61'
+      );
+    ''');
+    if (withBackfill) {
+      await customStatement('''
+        INSERT INTO vocabulary_search_table (
+          id, word, reading, meaning, example_sentences, part_of_speech
+        )
+        SELECT id, word, reading, meaning, example_sentences_json, part_of_speech
+        FROM vocabulary_table
+        WHERE id NOT IN (SELECT id FROM vocabulary_search_table);
+      ''');
+    }
+    await customStatement('DROP TRIGGER IF EXISTS vocabulary_search_insert;');
+    await customStatement('DROP TRIGGER IF EXISTS vocabulary_search_update;');
+    await customStatement('DROP TRIGGER IF EXISTS vocabulary_search_delete;');
+    await customStatement('''
+      CREATE TRIGGER vocabulary_search_insert AFTER INSERT ON vocabulary_table BEGIN
+        DELETE FROM vocabulary_search_table WHERE id = new.id;
+        INSERT INTO vocabulary_search_table (
+          id, word, reading, meaning, example_sentences, part_of_speech
+        )
+        VALUES (
+          new.id, new.word, new.reading, new.meaning,
+          new.example_sentences_json, new.part_of_speech
+        );
+      END;
+    ''');
+    await customStatement('''
+      CREATE TRIGGER vocabulary_search_update AFTER UPDATE ON vocabulary_table BEGIN
+        DELETE FROM vocabulary_search_table WHERE id = new.id;
+        INSERT INTO vocabulary_search_table (
+          id, word, reading, meaning, example_sentences, part_of_speech
+        )
+        VALUES (
+          new.id, new.word, new.reading, new.meaning,
+          new.example_sentences_json, new.part_of_speech
+        );
+      END;
+    ''');
+    await customStatement('''
+      CREATE TRIGGER vocabulary_search_delete AFTER DELETE ON vocabulary_table BEGIN
+        DELETE FROM vocabulary_search_table WHERE id = old.id;
+      END;
+    ''');
+  }
+
+  Future<void> _createGrammarSearchTable({bool withBackfill = true}) async {
+    await customStatement('''
+      CREATE VIRTUAL TABLE IF NOT EXISTS grammar_search_table USING fts5(
+        id, title, structure, explanation, example,
+        tokenize='unicode61'
+      );
+    ''');
+    if (withBackfill) {
+      await customStatement('''
+        INSERT INTO grammar_search_table (
+          id, title, structure, explanation, example
+        )
+        SELECT id, title, structure, explanation, example
+        FROM grammar_table
+        WHERE id NOT IN (SELECT id FROM grammar_search_table);
+      ''');
+    }
+    await customStatement('DROP TRIGGER IF EXISTS grammar_search_insert;');
+    await customStatement('DROP TRIGGER IF EXISTS grammar_search_update;');
+    await customStatement('DROP TRIGGER IF EXISTS grammar_search_delete;');
+    await customStatement('''
+      CREATE TRIGGER grammar_search_insert AFTER INSERT ON grammar_table BEGIN
+        DELETE FROM grammar_search_table WHERE id = new.id;
+        INSERT INTO grammar_search_table (
+          id, title, structure, explanation, example
+        )
+        VALUES (
+          new.id, new.title, new.structure, new.explanation, new.example
+        );
+      END;
+    ''');
+    await customStatement('''
+      CREATE TRIGGER grammar_search_update AFTER UPDATE ON grammar_table BEGIN
+        DELETE FROM grammar_search_table WHERE id = new.id;
+        INSERT INTO grammar_search_table (
+          id, title, structure, explanation, example
+        )
+        VALUES (
+          new.id, new.title, new.structure, new.explanation, new.example
+        );
+      END;
+    ''');
+    await customStatement('''
+      CREATE TRIGGER grammar_search_delete AFTER DELETE ON grammar_table BEGIN
+        DELETE FROM grammar_search_table WHERE id = old.id;
+      END;
+    ''');
+  }
 
   Future<void> _createTableIfNotExist(Migrator m, TableInfo table) async {
     try {
@@ -347,6 +481,12 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(p.join(dbFolder.path, 'db.sqlite'));
-    return NativeDatabase(file);
+    return NativeDatabase.createInBackground(
+      file,
+      setup: (database) {
+        database.execute('PRAGMA journal_mode = WAL;');
+        database.execute('PRAGMA synchronous = NORMAL;');
+      },
+    );
   });
 }

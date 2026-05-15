@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/services/audio_service.dart';
@@ -25,22 +27,39 @@ class DictionaryScreen extends ConsumerStatefulWidget {
 class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
   final TextEditingController _controller = TextEditingController();
   String _query = '';
+  Timer? _debounce;
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _controller.dispose();
     super.dispose();
   }
 
+  void _onSearchChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      setState(() => _query = value.trim());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    final kanjiResults = ref.watch(kanjiSearchResultsProvider(_query));
-    final vocabularyResults = ref.watch(
-      vocabularySearchResultsProvider(_query),
-    );
-    final grammarResults = ref.watch(grammarSearchResultsProvider(_query));
-    final sentenceResults = ref.watch(sentenceSearchResultsProvider(_query));
     final hasQuery = _query.trim().isNotEmpty;
+    final shouldSearch = _shouldSearch(_query);
+    final kanjiResults = shouldSearch
+        ? ref.watch(kanjiSearchResultsProvider(_query))
+        : const AsyncValue.data([]);
+    final vocabularyResults = shouldSearch
+        ? ref.watch(vocabularySearchResultsProvider(_query))
+        : const AsyncValue.data([]);
+    final grammarResults = shouldSearch
+        ? ref.watch(grammarSearchResultsProvider(_query))
+        : const AsyncValue.data([]);
+    final sentenceResults = shouldSearch
+        ? ref.watch(sentenceSearchResultsProvider(_query))
+        : const AsyncValue<List<Sentence>>.data([]);
 
     return Scaffold(
       backgroundColor: AppColors.white,
@@ -69,8 +88,9 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
               _SearchPanel(
                 controller: _controller,
                 query: _query,
-                onChanged: (value) => setState(() => _query = value),
+                onChanged: _onSearchChanged,
                 onClear: () {
+                  _debounce?.cancel();
                   _controller.clear();
                   setState(() => _query = '');
                 },
@@ -81,6 +101,13 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
                   icon: Icons.manage_search_rounded,
                   title: 'Tìm nhanh nội dung học',
                   message: 'Nhập kanji, từ vựng, ngữ pháp hoặc câu ví dụ.',
+                )
+              else if (!shouldSearch)
+                const AppEmptyState(
+                  icon: Icons.search_rounded,
+                  title: 'Nháº­p thÃªm má»™t chÃºt',
+                  message:
+                      'TÃ¬m tá»« 2 kÃ½ tá»± trá»Ÿ lÃªn, hoáº·c nháº­p trá»±c tiáº¿p má»™t kanji/kana.',
                 )
               else ...[
                 _AsyncSection(
@@ -183,6 +210,12 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
 
   String _joinPreview(List<String> parts) {
     return parts.where((part) => part.trim().isNotEmpty).join(' • ');
+  }
+
+  bool _shouldSearch(String value) {
+    final query = value.trim();
+    if (query.length >= 2) return true;
+    return RegExp(r'[\u3040-\u30ff\u3400-\u9fff]').hasMatch(query);
   }
 }
 
@@ -384,9 +417,9 @@ class _DictionaryTile extends ConsumerWidget {
                 tooltip: 'Phát âm',
                 onPressed: () async {
                   try {
-                    await ref.read(audioServiceProvider).speakJapanese(
-                          speakText!,
-                        );
+                    await ref
+                        .read(audioServiceProvider)
+                        .speakJapanese(speakText!);
                   } catch (_) {}
                 },
                 icon: const Icon(Icons.volume_up_rounded, size: 18),

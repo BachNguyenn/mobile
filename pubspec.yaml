@@ -47,11 +47,11 @@ flutter_launcher_icons:
   min_sdk_android: 21
 
 flutter_native_splash:
-  color: "#FFFFFF"
-  image: "assets/images/app_logo_clean.png"
+  color: "#F0EDE8"
+  image: "assets/images/splash_logo_padded.png"
   android_12:
-    color: "#FFFFFF"
-    image: "assets/images/app_logo_clean.png"
+    color: "#F0EDE8"
+    image: "assets/images/splash_logo_padded.png"
 
 flutter:
   uses-material-design: true

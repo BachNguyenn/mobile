@@ -42,13 +42,34 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
     _shimmerController = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 4),
-    )..repeat();
+    );
+    _syncAnimation();
+  }
+
+  @override
+  void didUpdateWidget(covariant ZenGarden2DWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.garden.water != widget.garden.water ||
+        oldWidget.streak != widget.streak) {
+      _syncAnimation();
+    }
   }
 
   @override
   void dispose() {
     _shimmerController.dispose();
     super.dispose();
+  }
+
+  bool get _hasAnimatedDetails => widget.garden.water > 0 || widget.streak >= 7;
+
+  void _syncAnimation() {
+    if (_hasAnimatedDetails) {
+      if (!_shimmerController.isAnimating) _shimmerController.repeat();
+    } else {
+      _shimmerController.stop();
+      _shimmerController.value = 0;
+    }
   }
 
   @override
@@ -77,18 +98,29 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
           child: Stack(
             children: [
               // ── 2D Garden Scene ──────────────────────────
-              AnimatedBuilder(
-                animation: _shimmerController,
-                builder: (context, _) {
-                  return CustomPaint(
-                    size: Size.infinite,
-                    painter: _MiniGardenPainter(
-                      garden: widget.garden,
-                      streak: widget.streak,
-                      animationValue: _shimmerController.value,
-                    ),
-                  );
-                },
+              RepaintBoundary(
+                child: _hasAnimatedDetails
+                    ? AnimatedBuilder(
+                        animation: _shimmerController,
+                        builder: (context, _) {
+                          return CustomPaint(
+                            size: Size.infinite,
+                            painter: _MiniGardenPainter(
+                              garden: widget.garden,
+                              streak: widget.streak,
+                              animationValue: _shimmerController.value,
+                            ),
+                          );
+                        },
+                      )
+                    : CustomPaint(
+                        size: Size.infinite,
+                        painter: _MiniGardenPainter(
+                          garden: widget.garden,
+                          streak: widget.streak,
+                          animationValue: 0,
+                        ),
+                      ),
               ),
 
               // ── Top Label ───────────────────────────────

@@ -291,7 +291,11 @@ class _RegisterHeader extends StatelessWidget {
             ],
           ),
           clipBehavior: Clip.antiAlias,
-          child: Image.asset('assets/images/app_logo_clean.png'),
+          child: Image.asset(
+            'assets/images/app_logo_clean.png',
+            cacheWidth: 192,
+            filterQuality: FilterQuality.medium,
+          ),
         ),
         const SizedBox(height: AppSpacing.sp16),
         Text(

@@ -5,6 +5,9 @@ import 'grammar_repository_provider.dart';
 import '../../../../core/models/progress_models.dart';
 import '../../../review/presentation/providers/study_event_provider.dart';
 
+const grammarLibraryResultLimit = 160;
+const grammarSearchResultLimit = 80;
+
 final grammarListProvider = FutureProvider<List<GrammarPoint>>((ref) async {
   await ref.watch(databaseInitializerProvider.future);
   final repo = ref.watch(grammarRepositoryProvider);
@@ -40,10 +43,7 @@ final dueGrammarProvider = FutureProvider<List<GrammarPoint>>((ref) async {
   final repo = ref.watch(grammarRepositoryProvider);
   final level = ref.watch(grammarLevelFilterProvider);
 
-  final grammar = level == null
-      ? await repo.getAllGrammarPoints()
-      : await repo.getGrammarPointsByLevel(level);
-  return grammar.where((g) => !g.isLearned).take(20).toList();
+  return repo.getDueGrammar(jlptLevel: level, limit: 20);
 });
 
 final totalDueGrammarCountProvider = FutureProvider<int>((ref) async {
@@ -97,6 +97,13 @@ final grammarSearchResultsProvider =
       await ref.watch(databaseInitializerProvider.future);
       final repo = ref.watch(grammarRepositoryProvider);
       final jlptLevel = ref.watch(grammarLevelFilterProvider);
+      final trimmedQuery = query.trim();
 
-      return repo.searchGrammar(query, jlptLevel: jlptLevel);
+      return repo.searchGrammar(
+        trimmedQuery,
+        jlptLevel: jlptLevel,
+        limit: trimmedQuery.isEmpty
+            ? grammarLibraryResultLimit
+            : grammarSearchResultLimit,
+      );
     });

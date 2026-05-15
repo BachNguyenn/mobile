@@ -96,16 +96,32 @@ class KanjiRepositoryImpl implements KanjiRepository {
   }
 
   @override
-  Future<List<KanjiCard>> searchKanji(String query, {int? jlptLevel}) async {
-    if (query.isEmpty && jlptLevel == null) return getAllCards();
+  Future<List<KanjiCard>> searchKanji(
+    String query, {
+    int? jlptLevel,
+    int? limit,
+  }) async {
+    final normalized = query.trim();
+    if (normalized.isEmpty && jlptLevel == null && limit == null) {
+      return getAllCards();
+    }
 
     List<String>? ids;
-    if (query.isNotEmpty) {
+    if (normalized.isNotEmpty) {
       // Use FTS5 for searching
       final searchResults = await db
           .customSelect(
-            'SELECT id FROM kanji_search_table WHERE kanji_search_table MATCH ?',
-            variables: [Variable.withString(query)],
+            '''
+            SELECT id
+            FROM kanji_search_table
+            WHERE kanji_search_table MATCH ?
+            ORDER BY rank
+            ${limit == null ? '' : 'LIMIT ?'}
+            ''',
+            variables: [
+              Variable.withString(_ftsPrefixQuery(normalized)),
+              if (limit != null) Variable.withInt(limit),
+            ],
           )
           .get();
       ids = searchResults.map((r) => r.read<String>('id')).toList();
@@ -122,8 +138,19 @@ class KanjiRepositoryImpl implements KanjiRepository {
     }
 
     mainQuery.orderBy([(t) => OrderingTerm(expression: t.id)]);
+    if (limit != null) {
+      mainQuery.limit(limit);
+    }
     final rows = await mainQuery.get();
     return rows.map((r) => _toEntity(r)).toList();
+  }
+
+  String _ftsPrefixQuery(String query) {
+    return query
+        .split(RegExp(r'\s+'))
+        .where((term) => term.isNotEmpty)
+        .map((term) => '"${term.replaceAll('"', '""')}"*')
+        .join(' ');
   }
 
   @override

@@ -8,8 +8,17 @@ import 'package:mobile/features/settings/presentation/providers/settings_provide
 
 export 'package:mobile/features/learning/domain/entities/learning_category.dart';
 
+final learningPathDataProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
+  return LearningPathRepository.loadPathDataFromAssets();
+});
+
 final learningPathRepositoryProvider = Provider<LearningPathRepository>((ref) {
-  return LearningPathRepository(ref.watch(databaseProvider));
+  return LearningPathRepository(
+    ref.watch(databaseProvider),
+    loadPathData: () => ref.read(learningPathDataProvider.future),
+  );
 });
 
 final learningCategoryProvider = StateProvider<LearningCategory>(

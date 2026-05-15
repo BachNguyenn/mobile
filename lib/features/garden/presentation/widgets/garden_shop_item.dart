@@ -152,8 +152,12 @@ class _GardenShopItemState extends ConsumerState<GardenShopItem>
                     height: 64,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: AssetImage('assets/images/${widget.type}.webp'),
+                        image: ResizeImage(
+                          AssetImage('assets/images/${widget.type}.webp'),
+                          width: 128,
+                        ),
                         fit: BoxFit.contain,
+                        filterQuality: FilterQuality.medium,
                       ),
                     ),
                   ),

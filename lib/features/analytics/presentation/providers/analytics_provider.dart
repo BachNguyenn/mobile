@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/database_provider.dart';
@@ -48,27 +50,41 @@ final analyticsProvider = FutureProvider<AnalyticsData>((ref) async {
   // Watch progress to ensure reactivity
   await ref.watch(homeProgressProvider.future);
 
-  final allKanji = await db.select(db.kanjiCardTable).get();
-  final allVocab = await db.select(db.vocabularyTable).get();
-  final allGrammar = await db.select(db.grammarTable).get();
+  final countResults = await Future.wait<int>([
+    _count(db, 'SELECT COUNT(*) AS value FROM kanji_card_table WHERE reps > 0'),
+    _count(db, 'SELECT COUNT(*) AS value FROM vocabulary_table WHERE reps > 0'),
+    _count(
+      db,
+      'SELECT COUNT(*) AS value FROM grammar_table WHERE is_learned = 1',
+    ),
+    _count(
+      db,
+      'SELECT COUNT(*) AS value FROM kanji_card_table WHERE reps > 0 AND lapses = 0',
+    ),
+    _count(
+      db,
+      'SELECT COUNT(*) AS value FROM vocabulary_table WHERE reps > 0 AND lapses = 0',
+    ),
+    _count(db, 'SELECT COUNT(*) AS value FROM kanji_card_table WHERE reps = 0'),
+    _count(db, 'SELECT COUNT(*) AS value FROM vocabulary_table WHERE reps = 0'),
+    _count(
+      db,
+      'SELECT COUNT(*) AS value FROM grammar_table WHERE is_learned = 0',
+    ),
+  ]);
 
-  // Stats (combined across Kanji, Vocabulary, Grammar)
-  final learnedKanji = allKanji.where((c) => c.reps > 0).length;
-  final learnedVocab = allVocab.where((c) => c.reps > 0).length;
-  final learnedGrammar = allGrammar.where((c) => c.isLearned).length;
+  final learnedKanji = countResults[0];
+  final learnedVocab = countResults[1];
+  final learnedGrammar = countResults[2];
   final learned = learnedKanji + learnedVocab + learnedGrammar;
 
-  final rememberingKanji = allKanji
-      .where((c) => c.reps > 0 && c.lapses == 0)
-      .length;
-  final rememberingVocab = allVocab
-      .where((c) => c.reps > 0 && c.lapses == 0)
-      .length;
+  final rememberingKanji = countResults[3];
+  final rememberingVocab = countResults[4];
   final remembering = rememberingKanji + rememberingVocab + learnedGrammar;
 
-  final notLearnedKanji = allKanji.where((c) => c.reps == 0).length;
-  final notLearnedVocab = allVocab.where((c) => c.reps == 0).length;
-  final notLearnedGrammar = allGrammar.where((c) => !c.isLearned).length;
+  final notLearnedKanji = countResults[5];
+  final notLearnedVocab = countResults[6];
+  final notLearnedGrammar = countResults[7];
   final notLearned = notLearnedKanji + notLearnedVocab + notLearnedGrammar;
 
   // Heatmap Data for last 105 days (15 weeks)
@@ -92,28 +108,13 @@ final analyticsProvider = FutureProvider<AnalyticsData>((ref) async {
   }
 
   // JLPT Distribution
-  final Map<String, double> jlpt = {};
-  for (int level = 1; level <= 5; level++) {
-    final levelCards = allKanji.where((c) => c.jlptLevel == level).toList();
-    if (levelCards.isEmpty) {
-      jlpt['N$level'] = 0.0;
-    } else {
-      final learnedCount = levelCards.where((c) => c.reps > 0).length;
-      jlpt['N$level'] = learnedCount / levelCards.length;
-    }
-  }
+  final jlpt = await _loadJlptProgress(db);
 
   // Review behavior insights (last 30 days)
-  final reviewLogs = await db.select(db.reviewLogTable).get();
   final thirtyDaysAgo = todayNormalized.subtract(const Duration(days: 29));
-  final recentReviews = reviewLogs.where((log) {
-    final reviewDay = DateTime(
-      log.reviewTime.year,
-      log.reviewTime.month,
-      log.reviewTime.day,
-    );
-    return !reviewDay.isBefore(thirtyDaysAgo);
-  }).toList();
+  final recentReviews = await (db.select(
+    db.reviewLogTable,
+  )..where((log) => log.reviewTime.isBiggerOrEqualValue(thirtyDaysAgo))).get();
 
   final reviewsLast30Days = recentReviews.length;
   final successfulReviews = recentReviews
@@ -173,6 +174,37 @@ final analyticsProvider = FutureProvider<AnalyticsData>((ref) async {
   );
 });
 
+Future<int> _count(
+  dynamic db,
+  String sql, [
+  List<Variable> variables = const [],
+]) {
+  return db
+      .customSelect(sql, variables: variables)
+      .getSingle()
+      .then((row) => row.read<int>('value'));
+}
+
+Future<Map<String, double>> _loadJlptProgress(dynamic db) async {
+  final rows = await db.customSelect('''
+        SELECT
+          jlpt_level,
+          COUNT(*) AS total,
+          SUM(CASE WHEN reps > 0 THEN 1 ELSE 0 END) AS learned
+        FROM kanji_card_table
+        GROUP BY jlpt_level
+      ''').get();
+
+  final progress = {for (var level = 1; level <= 5; level++) 'N$level': 0.0};
+  for (final row in rows) {
+    final level = row.read<int>('jlpt_level');
+    final total = row.read<int>('total');
+    final learned = row.read<int>('learned');
+    progress['N$level'] = total == 0 ? 0.0 : learned / total;
+  }
+  return progress;
+}
+
 String _displayTypeName(String itemType) {
   switch (itemType) {
     case 'kanji':
@@ -221,7 +253,7 @@ Future<_LearningPathStats> _calculateLearningPathStats(dynamic db) async {
   final completedIds = lessonRows.map((row) => row.id).toSet();
 
   final json = await rootBundle.loadString('assets/data/unified_path.json');
-  final decoded = (jsonDecode(json) as List).cast<Map<String, dynamic>>();
+  final decoded = await compute(_decodeLearningPathItems, json);
 
   final Map<String, int> totalByLevel = {for (var i = 1; i <= 5; i++) 'N$i': 0};
   final Map<String, int> completedByLevel = {
@@ -277,6 +309,12 @@ Future<_LearningPathStats> _calculateLearningPathStats(dynamic db) async {
     dropoutPoint: dropoutPoint,
     cohortByLevel: cohortByLevel,
   );
+}
+
+List<Map<String, dynamic>> _decodeLearningPathItems(String source) {
+  return (jsonDecode(source) as List)
+      .map((item) => Map<String, dynamic>.from(item as Map))
+      .toList(growable: false);
 }
 
 class _LearningPathStats {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -5,11 +7,33 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../providers/kanji_library_provider.dart';
 
-class KanjiLibrarySearchBar extends ConsumerWidget {
+class KanjiLibrarySearchBar extends ConsumerStatefulWidget {
   const KanjiLibrarySearchBar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<KanjiLibrarySearchBar> createState() =>
+      _KanjiLibrarySearchBarState();
+}
+
+class _KanjiLibrarySearchBarState extends ConsumerState<KanjiLibrarySearchBar> {
+  Timer? _debounce;
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onChanged(String value) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 280), () {
+      if (!mounted) return;
+      ref.read(kanjiSearchQueryProvider.notifier).state = value.trim();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.sp16,
@@ -18,8 +42,7 @@ class KanjiLibrarySearchBar extends ConsumerWidget {
         AppSpacing.sp8,
       ),
       child: TextField(
-        onChanged: (value) =>
-            ref.read(kanjiSearchQueryProvider.notifier).state = value,
+        onChanged: _onChanged,
         style: AppTypography.bodyM.copyWith(
           color: AppColors.navyDark,
           fontWeight: FontWeight.w700,

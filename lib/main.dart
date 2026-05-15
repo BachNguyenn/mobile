@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
@@ -24,6 +25,7 @@ final firebaseInitProvider = FutureProvider<void>((ref) async {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  GoogleFonts.config.allowRuntimeFetching = false;
 
   runApp(const ProviderScope(child: MyApp()));
 
@@ -160,6 +162,8 @@ class _SplashScreen extends StatelessWidget {
                   child: Image.asset(
                     'assets/images/app_logo_clean.png',
                     fit: BoxFit.contain,
+                    cacheWidth: 240,
+                    filterQuality: FilterQuality.medium,
                   ),
                 ),
               ),

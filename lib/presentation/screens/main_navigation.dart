@@ -112,28 +112,33 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
     return IndexedStack(
       index: _selectedIndex,
       children: [
-        _initializedIndices.contains(0)
-            ? HomePage(
-                onOpenTab: _openTab,
-                onOpenLearningCategory: _openLearningCategory,
-              )
-            : const SizedBox.shrink(),
-        _initializedIndices.contains(1)
-            ? LearningPathScreen(
-                isNavBarMode: true,
-                initialCategory: _learningCategory,
-              )
-            : const SizedBox.shrink(),
-        _initializedIndices.contains(2)
-            ? const VocabularyLibraryScreen()
-            : const SizedBox.shrink(),
-        _initializedIndices.contains(3)
-            ? const GrammarLibraryScreen()
-            : const SizedBox.shrink(),
-        _initializedIndices.contains(4)
-            ? const KanjiLibraryScreen()
-            : const SizedBox.shrink(),
+        _buildTab(
+          0,
+          HomePage(
+            onOpenTab: _openTab,
+            onOpenLearningCategory: _openLearningCategory,
+          ),
+        ),
+        _buildTab(
+          1,
+          LearningPathScreen(
+            isNavBarMode: true,
+            initialCategory: _learningCategory,
+          ),
+        ),
+        _buildTab(2, const VocabularyLibraryScreen()),
+        _buildTab(3, const GrammarLibraryScreen()),
+        _buildTab(4, const KanjiLibraryScreen()),
       ],
+    );
+  }
+
+  Widget _buildTab(int index, Widget child) {
+    if (!_initializedIndices.contains(index)) return const SizedBox.shrink();
+
+    return TickerMode(
+      enabled: _selectedIndex == index,
+      child: RepaintBoundary(child: child),
     );
   }
 

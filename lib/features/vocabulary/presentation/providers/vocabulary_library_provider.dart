@@ -6,6 +6,9 @@ import '../../../../core/srs/fsrs_engine.dart';
 import '../../../review/presentation/providers/study_event_provider.dart';
 import 'vocabulary_repository_provider.dart';
 
+const vocabularyLibraryResultLimit = 180;
+const vocabularySearchResultLimit = 80;
+
 final vocabularyListProvider = FutureProvider<List<Vocabulary>>((ref) async {
   await ref.watch(databaseInitializerProvider.future);
   final repo = ref.watch(vocabularyRepositoryProvider);
@@ -113,6 +116,13 @@ final vocabularySearchResultsProvider =
       await ref.watch(databaseInitializerProvider.future);
       final repo = ref.watch(vocabularyRepositoryProvider);
       final jlptLevel = ref.watch(vocabularyLevelFilterProvider);
+      final trimmedQuery = query.trim();
 
-      return repo.searchVocabulary(query, jlptLevel: jlptLevel);
+      return repo.searchVocabulary(
+        trimmedQuery,
+        jlptLevel: jlptLevel,
+        limit: trimmedQuery.isEmpty
+            ? vocabularyLibraryResultLimit
+            : vocabularySearchResultLimit,
+      );
     });

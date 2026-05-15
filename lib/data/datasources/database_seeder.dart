@@ -34,7 +34,7 @@ class DatabaseSeeder {
           'assets/data/$level/kanji.json',
         );
         final String response = utf8.decode(bytes.buffer.asUint8List());
-        final List<dynamic> data = json.decode(response);
+        final List<dynamic> data = await _decodeJsonList(response);
 
         final List<KanjiCard> cards = data.map((json) {
           final char = json['character'] as String;
@@ -68,7 +68,7 @@ class DatabaseSeeder {
           'assets/data/$level/grammar.json',
         );
         final String response = utf8.decode(bytes.buffer.asUint8List());
-        final List<dynamic> data = json.decode(response);
+        final List<dynamic> data = await _decodeJsonList(response);
 
         final List<GrammarPoint> points = data.map((json) {
           final title = json['title'] as String;
@@ -107,7 +107,7 @@ class DatabaseSeeder {
           'assets/data/$level/vocabulary.json',
         );
         final String response = utf8.decode(bytes.buffer.asUint8List());
-        final List<dynamic> data = json.decode(response);
+        final List<dynamic> data = await _decodeJsonList(response);
 
         final List<Vocabulary> vocabList = data.map((json) {
           final word = json['word'] as String;
@@ -141,6 +141,14 @@ class DatabaseSeeder {
   String? _optionalString(Object? value) {
     final text = value?.toString().trim();
     return text == null || text.isEmpty ? null : text;
+  }
+
+  Future<List<dynamic>> _decodeJsonList(String source) {
+    return compute(_parseJsonList, source);
+  }
+
+  static List<dynamic> _parseJsonList(String source) {
+    return json.decode(source) as List<dynamic>;
   }
 
   Future<List<String>> _levelsWithAsset(String fileName) async {

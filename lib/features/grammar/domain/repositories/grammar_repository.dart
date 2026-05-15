@@ -6,6 +6,7 @@ abstract class GrammarRepository {
   Future<int> countGrammarPoints({int? jlptLevel});
   Future<int> countLearnedGrammar({int? jlptLevel});
   Future<int> countDueGrammar({int? jlptLevel});
+  Future<List<GrammarPoint>> getDueGrammar({int? jlptLevel, int? limit});
   Future<GrammarPoint?> getGrammarPointById(String id);
   Future<void> saveGrammarPoints(List<GrammarPoint> points);
   Future<void> markAsLearned(String id, bool isLearned);
@@ -17,5 +18,9 @@ abstract class GrammarRepository {
     required int waterGain,
     required int sunGain,
   });
-  Future<List<GrammarPoint>> searchGrammar(String query, {int? jlptLevel});
+  Future<List<GrammarPoint>> searchGrammar(
+    String query, {
+    int? jlptLevel,
+    int? limit,
+  });
 }

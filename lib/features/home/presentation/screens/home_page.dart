@@ -143,7 +143,11 @@ class _TopBar extends StatelessWidget {
             border: Border.all(color: AppColors.navySoft),
           ),
           clipBehavior: Clip.antiAlias,
-          child: Image.asset('assets/images/app_logo_clean.png'),
+          child: Image.asset(
+            'assets/images/app_logo_clean.png',
+            cacheWidth: 96,
+            filterQuality: FilterQuality.medium,
+          ),
         ),
         const SizedBox(width: AppSpacing.sp12),
         Expanded(
@@ -169,13 +173,22 @@ class _TopBar extends StatelessWidget {
             ],
           ),
         ),
-        IconButton(
-          tooltip: 'Tìm kiếm',
-          onPressed: () => Navigator.push(context, AppRoutes.dictionary()),
-          icon: const Icon(Icons.search_rounded),
-          color: AppColors.zenBlue,
+        const SizedBox(width: AppSpacing.sp8),
+        SizedBox.square(
+          dimension: 44,
+          child: IconButton(
+            tooltip: 'Tìm kiếm',
+            onPressed: () => Navigator.push(context, AppRoutes.dictionary()),
+            icon: const Icon(Icons.search_rounded),
+            color: AppColors.zenBlue,
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints.tightFor(width: 44, height: 44),
+            visualDensity: VisualDensity.compact,
+          ),
         ),
+        const SizedBox(width: AppSpacing.sp4),
         ProfileAvatar(user: user),
+        const SizedBox(width: 2),
       ],
     );
   }
@@ -749,6 +762,8 @@ class _ZenGardenCard extends StatelessWidget {
                 'assets/images/zen_bonsai.webp',
                 fit: BoxFit.cover,
                 alignment: Alignment.centerRight,
+                cacheWidth: 720,
+                filterQuality: FilterQuality.medium,
               ),
               DecoratedBox(
                 decoration: BoxDecoration(

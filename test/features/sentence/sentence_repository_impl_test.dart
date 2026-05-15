@@ -152,6 +152,18 @@ class _FakeGrammarRepository implements GrammarRepository {
   }
 
   @override
+  Future<List<GrammarPoint>> getDueGrammar({int? jlptLevel, int? limit}) async {
+    final results = points
+        .where(
+          (point) =>
+              !point.isLearned &&
+              (jlptLevel == null || point.jlptLevel == jlptLevel),
+        )
+        .toList();
+    return limit == null ? results : results.take(limit).toList();
+  }
+
+  @override
   Future<void> markAsLearned(String id, bool isLearned) async {}
 
   @override
@@ -161,8 +173,9 @@ class _FakeGrammarRepository implements GrammarRepository {
   Future<List<GrammarPoint>> searchGrammar(
     String query, {
     int? jlptLevel,
+    int? limit,
   }) async {
-    return points;
+    return limit == null ? points : points.take(limit).toList();
   }
 
   @override

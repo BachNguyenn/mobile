@@ -23,23 +23,32 @@ class GardenPlantGraphic extends StatefulWidget {
 
 class _GardenPlantGraphicState extends State<GardenPlantGraphic>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _swayController;
+  AnimationController? _swayController;
 
   @override
   void initState() {
     super.initState();
-    _swayController = AnimationController(
-      vsync: this,
-      duration: Duration(
-        milliseconds: 2500 + (widget.plant.id.hashCode % 1000),
-      ),
-    )..repeat(reverse: true);
+    if (_canAnimatePlant(widget.plant)) {
+      _swayController = AnimationController(
+        vsync: this,
+        duration: Duration(
+          milliseconds: 2500 + (widget.plant.id.hashCode % 1000),
+        ),
+      )..repeat(reverse: true);
+    }
   }
 
   @override
   void dispose() {
-    _swayController.dispose();
+    _swayController?.dispose();
     super.dispose();
+  }
+
+  bool _canAnimatePlant(Plant plant) {
+    return plant.type == 'zen_bonsai' ||
+        plant.type == 'bonsai' ||
+        plant.type == 'zen_sakura' ||
+        plant.type == 'flower';
   }
 
   @override
@@ -79,21 +88,7 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
         alignment: Alignment.center,
         children: [
           // ── Plant with sway animation ──────────────────
-          AnimatedBuilder(
-            animation: _swayController,
-            builder: (context, child) {
-              // Stones don't sway
-              if (isStone || widget.isDragging) return child!;
-
-              final swayAngle = sin(_swayController.value * pi * 2) * 0.02;
-              return Transform.rotate(
-                angle: swayAngle,
-                alignment: Alignment.bottomCenter,
-                child: child,
-              );
-            },
-            child: _buildPlantImage(assetPath, size, isWithered),
-          ),
+          _buildAnimatedPlant(assetPath, size, isWithered, isStone),
 
           // ── Sakura sparkles ────────────────────────────
           if ((widget.plant.type == 'zen_sakura' ||
@@ -101,12 +96,12 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
               !isWithered &&
               !widget.isDragging)
             AnimatedBuilder(
-              animation: _swayController,
+              animation: _swayController!,
               builder: (context, _) {
                 return CustomPaint(
                   size: Size(size + 20, size + 20),
                   painter: _SparklePainter(
-                    animationValue: _swayController.value,
+                    animationValue: _swayController!.value,
                     color: AppColors.petalGlow,
                   ),
                 );
@@ -114,6 +109,30 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
             ),
         ],
       ),
+    );
+  }
+
+  Widget _buildAnimatedPlant(
+    String? assetPath,
+    double size,
+    bool isWithered,
+    bool isStone,
+  ) {
+    final child = _buildPlantImage(assetPath, size, isWithered);
+    final controller = _swayController;
+    if (controller == null || isStone || widget.isDragging) return child;
+
+    return AnimatedBuilder(
+      animation: controller,
+      child: child,
+      builder: (context, child) {
+        final swayAngle = sin(controller.value * pi * 2) * 0.02;
+        return Transform.rotate(
+          angle: swayAngle,
+          alignment: Alignment.bottomCenter,
+          child: child,
+        );
+      },
     );
   }
 
@@ -125,8 +144,9 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
         height: size,
         decoration: BoxDecoration(
           image: DecorationImage(
-            image: AssetImage(assetPath),
+            image: ResizeImage(AssetImage(assetPath), width: size.round() * 2),
             fit: BoxFit.contain,
+            filterQuality: FilterQuality.medium,
           ),
         ),
       );
@@ -187,7 +207,6 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
 class _SparklePainter extends CustomPainter {
   final double animationValue;
   final Color color;
-  static final _rng = Random(42);
 
   _SparklePainter({required this.animationValue, required this.color});
 
@@ -200,8 +219,9 @@ class _SparklePainter extends CustomPainter {
 
       if (opacity <= 0) continue;
 
-      final x = size.width * (0.2 + _rng.nextDouble() * 0.6);
-      final y = size.height * (0.1 + _rng.nextDouble() * 0.5);
+      final seed = (i + 1) * 1.618;
+      final x = size.width * (0.25 + (sin(seed) + 1) * 0.25);
+      final y = size.height * (0.12 + (cos(seed * 1.7) + 1) * 0.20);
       final dx = sin(t * pi * 2) * 4;
       final dy = t * 8;
 

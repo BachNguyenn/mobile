@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:drift/drift.dart';
 import 'package:mobile/core/providers/database_provider.dart';
 import 'package:mobile/domain/entities/lesson.dart';
-import 'package:mobile/features/analytics/presentation/providers/analytics_provider.dart';
 import 'package:mobile/features/grammar/presentation/providers/grammar_repository_provider.dart';
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
 import 'package:mobile/features/home/presentation/providers/home_progress_provider.dart';
@@ -20,6 +20,36 @@ final dailyStudyCoachProvider = Provider<DailyStudyCoach>((ref) {
   return const DailyStudyCoach();
 });
 
+final weakestStudyAreaProvider = FutureProvider<LearningCategory?>((ref) async {
+  await ref.watch(databaseInitializerProvider.future);
+  ref.watch(studyEventStreamProvider);
+
+  final db = ref.watch(databaseProvider);
+  final now = DateTime.now();
+  final today = DateTime(now.year, now.month, now.day);
+  final thirtyDaysAgo = today.subtract(const Duration(days: 29));
+
+  final logs =
+      await (db.select(db.reviewLogTable)..where(
+            (table) => table.reviewTime.isBiggerOrEqualValue(thirtyDaysAgo),
+          ))
+          .get();
+  if (logs.isEmpty) return null;
+
+  final ratingsByType = <String, List<int>>{};
+  for (final log in logs) {
+    ratingsByType.putIfAbsent(log.itemType, () => <int>[]).add(log.rating);
+  }
+
+  final rates = ratingsByType.entries.map((entry) {
+    final ratings = entry.value;
+    final successful = ratings.where((rating) => rating >= 3).length;
+    return MapEntry(entry.key, successful / ratings.length);
+  }).toList()..sort((a, b) => a.value.compareTo(b.value));
+
+  return _categoryFromAnalyticsType(rates.first.key);
+});
+
 final dailyStudyPlanProvider = FutureProvider<DailyStudyPlan>((ref) async {
   await ref.watch(databaseInitializerProvider.future);
   ref.watch(studyEventStreamProvider);
@@ -30,8 +60,7 @@ final dailyStudyPlanProvider = FutureProvider<DailyStudyPlan>((ref) async {
   final now = DateTime.now();
 
   final progress = await ref.watch(homeProgressProvider.future);
-  final analytics = await ref.watch(analyticsProvider.future);
-  final weakestCategory = _categoryFromAnalyticsType(analytics.weakestAreaType);
+  final weakestCategory = await ref.watch(weakestStudyAreaProvider.future);
 
   final kanjiRepository = ref.read(kanjiRepositoryProvider);
   final vocabularyRepository = ref.read(vocabularyRepositoryProvider);
@@ -146,12 +175,8 @@ Future<List<ReviewItem>> loadReviewItemsForPlan(
     case LearningCategory.grammar:
       final grammar = await ref
           .read(grammarRepositoryProvider)
-          .getGrammarPointsByLevel(plan.level);
-      return grammar
-          .where((item) => !item.isLearned)
-          .take(20)
-          .map(ReviewItem.fromGrammar)
-          .toList(growable: false);
+          .getDueGrammar(jlptLevel: plan.level, limit: 20);
+      return grammar.map(ReviewItem.fromGrammar).toList(growable: false);
     case LearningCategory.mixed:
       final kanji = await ref
           .read(kanjiRepositoryProvider)
@@ -161,14 +186,11 @@ Future<List<ReviewItem>> loadReviewItemsForPlan(
           .getDueVocabulary(now, jlptLevel: plan.level, limit: 8);
       final grammar = await ref
           .read(grammarRepositoryProvider)
-          .getGrammarPointsByLevel(plan.level);
+          .getDueGrammar(jlptLevel: plan.level, limit: 4);
       return [
         ...kanji.map(ReviewItem.fromKanji),
         ...vocabulary.map((item) => ReviewItem.fromVocabulary(item)),
-        ...grammar
-            .where((item) => !item.isLearned)
-            .take(4)
-            .map(ReviewItem.fromGrammar),
+        ...grammar.map(ReviewItem.fromGrammar),
       ];
   }
 }

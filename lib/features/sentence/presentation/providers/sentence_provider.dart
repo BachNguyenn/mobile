@@ -11,6 +11,7 @@ final sentenceRepositoryProvider = Provider<SentenceRepository>((ref) {
 
 final sentenceSearchQueryProvider = StateProvider<String>((ref) => '');
 final sentenceLevelFilterProvider = StateProvider<int?>((ref) => null);
+const sentenceSearchResultLimit = 80;
 
 final sentenceListProvider = FutureProvider<List<Sentence>>((ref) async {
   await ref.watch(databaseInitializerProvider.future);
@@ -33,5 +34,9 @@ final sentenceSearchResultsProvider =
       await ref.watch(databaseInitializerProvider.future);
       final repo = ref.watch(sentenceRepositoryProvider);
       final level = ref.watch(sentenceLevelFilterProvider);
-      return repo.searchSentences(query, jlptLevel: level);
+      final results = await repo.searchSentences(
+        query.trim(),
+        jlptLevel: level,
+      );
+      return results.take(sentenceSearchResultLimit).toList(growable: false);
     });

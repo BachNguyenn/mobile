@@ -68,6 +68,8 @@ class HeroHeader extends StatelessWidget {
                       child: Image.asset(
                         'assets/images/app_logo_clean.png',
                         fit: BoxFit.cover,
+                        cacheWidth: 88,
+                        filterQuality: FilterQuality.medium,
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sp12),

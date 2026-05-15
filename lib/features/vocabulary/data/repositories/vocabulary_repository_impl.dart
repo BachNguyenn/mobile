@@ -126,24 +126,52 @@ class VocabularyRepositoryImpl implements VocabularyRepository {
   Future<List<Vocabulary>> searchVocabulary(
     String query, {
     int? jlptLevel,
+    int? limit,
   }) async {
+    final normalized = query.trim();
+    List<String>? ids;
+    if (normalized.isNotEmpty) {
+      final rows = await _db
+          .customSelect(
+            '''
+            SELECT id
+            FROM vocabulary_search_table
+            WHERE vocabulary_search_table MATCH ?
+            ORDER BY rank
+            ${limit == null ? '' : 'LIMIT ?'}
+            ''',
+            variables: [
+              Variable.withString(_ftsPrefixQuery(normalized)),
+              if (limit != null) Variable.withInt(limit),
+            ],
+          )
+          .get();
+      ids = rows.map((row) => row.read<String>('id')).toList();
+    }
+
     final queryBuilder = _db.select(_db.vocabularyTable);
-    if (query.isNotEmpty) {
-      queryBuilder.where(
-        (t) =>
-            t.word.contains(query) |
-            t.meaning.contains(query) |
-            t.reading.contains(query) |
-            t.exampleSentencesJson.contains(query) |
-            t.partOfSpeech.contains(query),
-      );
+    final searchIds = ids;
+    if (searchIds != null) {
+      if (searchIds.isEmpty) return [];
+      queryBuilder.where((t) => t.id.isIn(searchIds));
     }
     if (jlptLevel != null) {
       queryBuilder.where((t) => t.jlptLevel.equals(jlptLevel));
     }
     queryBuilder.orderBy([(t) => OrderingTerm(expression: t.id)]);
+    if (normalized.isEmpty && limit != null) {
+      queryBuilder.limit(limit);
+    }
     final rows = await queryBuilder.get();
     return rows.map((row) => _mapRowToEntity(row)).toList();
+  }
+
+  String _ftsPrefixQuery(String query) {
+    return query
+        .split(RegExp(r'\s+'))
+        .where((term) => term.isNotEmpty)
+        .map((term) => '"${term.replaceAll('"', '""')}"*')
+        .join(' ');
   }
 
   @override

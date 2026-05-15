@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile/data/datasources/app_database.dart';
 import 'package:mobile/domain/entities/lesson.dart';
@@ -9,9 +10,21 @@ import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 
 class LearningPathRepository {
   final AppDatabase _db;
-  List<Map<String, dynamic>>? _cachedPathData;
+  final Future<List<Map<String, dynamic>>> Function() _loadPathData;
 
-  LearningPathRepository(this._db);
+  LearningPathRepository(
+    this._db, {
+    required Future<List<Map<String, dynamic>>> Function() loadPathData,
+  }) : _loadPathData = loadPathData;
+
+  static Future<List<Map<String, dynamic>>> loadPathDataFromAssets() async {
+    final bytes = await rootBundle.load('assets/data/unified_path.json');
+    final jsonString = utf8.decode(
+      bytes.buffer.asUint8List(),
+      allowMalformed: true,
+    );
+    return compute(_decodePathData, jsonString);
+  }
 
   Future<List<Lesson>> getLessons({
     required LearningCategory category,
@@ -83,23 +96,6 @@ class LearningPathRepository {
     }
   }
 
-  Future<List<Map<String, dynamic>>> _loadPathData() async {
-    final cached = _cachedPathData;
-    if (cached != null) return cached;
-
-    final bytes = await rootBundle.load('assets/data/unified_path.json');
-    final jsonString = utf8.decode(
-      bytes.buffer.asUint8List(),
-      allowMalformed: true,
-    );
-    final decoded = json.decode(jsonString) as List<dynamic>;
-    final data = decoded
-        .map((item) => Map<String, dynamic>.from(item as Map))
-        .toList(growable: false);
-    _cachedPathData = data;
-    return data;
-  }
-
   int _parseLevel(Object? levelValue) {
     if (levelValue is int) return levelValue;
     return int.tryParse(levelValue?.toString() ?? '') ?? 0;
@@ -128,4 +124,11 @@ class LearningPathRepository {
     sorted.sort((a, b) => scoreFor(b).compareTo(scoreFor(a)));
     return sorted;
   }
+}
+
+List<Map<String, dynamic>> _decodePathData(String source) {
+  final decoded = json.decode(source) as List<dynamic>;
+  return decoded
+      .map((item) => Map<String, dynamic>.from(item as Map))
+      .toList(growable: false);
 }

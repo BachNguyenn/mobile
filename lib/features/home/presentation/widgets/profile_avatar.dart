@@ -16,10 +16,18 @@ class ProfileAvatar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Tooltip(
       message: 'Tài khoản',
-      child: InkWell(
-        onTap: () => _showProfileMenu(context, ref),
-        customBorder: const CircleBorder(),
-        child: _UserAvatar(user: user, size: 36),
+      child: SizedBox.square(
+        dimension: 44,
+        child: Material(
+          color: Colors.transparent,
+          shape: const CircleBorder(),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () => _showProfileMenu(context, ref),
+            customBorder: const CircleBorder(),
+            child: Center(child: _UserAvatar(user: user, size: 36)),
+          ),
+        ),
       ),
     );
   }

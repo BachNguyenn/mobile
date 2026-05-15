@@ -1124,8 +1124,12 @@ class _ShopCatalogTile extends StatelessWidget {
                   image: item.assetPath == null
                       ? null
                       : DecorationImage(
-                          image: AssetImage(item.assetPath!),
+                          image: ResizeImage(
+                            AssetImage(item.assetPath!),
+                            width: 112,
+                          ),
                           fit: BoxFit.cover,
+                          filterQuality: FilterQuality.medium,
                         ),
                 ),
                 child: item.assetPath == null

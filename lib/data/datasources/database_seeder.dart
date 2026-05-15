@@ -26,7 +26,7 @@ class DatabaseSeeder {
   }
 
   Future<void> seedKanjiData() async {
-    final levels = ['n5', 'n4', 'n3', 'n2', 'n1'];
+    final levels = await _levelsWithAsset('kanji.json');
 
     for (final level in levels) {
       try {
@@ -60,7 +60,7 @@ class DatabaseSeeder {
   }
 
   Future<void> seedGrammarData() async {
-    final levels = ['n5', 'n4', 'n3'];
+    final levels = await _levelsWithAsset('grammar.json');
 
     for (final level in levels) {
       try {
@@ -99,7 +99,7 @@ class DatabaseSeeder {
   }
 
   Future<void> seedVocabData() async {
-    final levels = ['n5', 'n4', 'n3', 'n2', 'n1'];
+    final levels = await _levelsWithAsset('vocabulary.json');
 
     for (final level in levels) {
       try {
@@ -141,5 +141,22 @@ class DatabaseSeeder {
   String? _optionalString(Object? value) {
     final text = value?.toString().trim();
     return text == null || text.isEmpty ? null : text;
+  }
+
+  Future<List<String>> _levelsWithAsset(String fileName) async {
+    final manifestString = await rootBundle.loadString('AssetManifest.json');
+    final manifest = json.decode(manifestString) as Map<String, dynamic>;
+    final pattern = RegExp('^assets/data/(n\\d+)/${RegExp.escape(fileName)}\$');
+    final levels = manifest.keys
+        .map((path) => pattern.firstMatch(path)?.group(1))
+        .nonNulls
+        .toSet()
+        .toList();
+    levels.sort((a, b) => _levelNumber(b).compareTo(_levelNumber(a)));
+    return levels;
+  }
+
+  int _levelNumber(String value) {
+    return int.tryParse(value.replaceAll('n', '')) ?? 0;
   }
 }

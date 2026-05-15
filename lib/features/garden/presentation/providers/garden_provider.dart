@@ -36,8 +36,21 @@ class GardenNotifier extends StateNotifier<ZenGarden> {
     loadGarden();
   }
 
-  Future<bool> buyPlant(String type, double x, double y) async {
-    final result = await _repository.buyPlant(state, type, x, y);
+  Future<bool> buyPlant(
+    String type,
+    double x,
+    double y, {
+    required int waterCost,
+    required int sunCost,
+  }) async {
+    final result = await _repository.buyPlant(
+      state,
+      type,
+      x,
+      y,
+      waterCost,
+      sunCost,
+    );
     state = result.garden;
     return result.success;
   }

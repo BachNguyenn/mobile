@@ -14,6 +14,7 @@ class AppSettings {
   final String appLanguage;
   final double fontScale;
   final LearningGoal learningGoal;
+  final int currentJlptLevel;
 
   const AppSettings({
     required this.dailyReminderEnabled,
@@ -25,6 +26,7 @@ class AppSettings {
     required this.appLanguage,
     required this.fontScale,
     required this.learningGoal,
+    required this.currentJlptLevel,
   });
 
   static const defaults = AppSettings(
@@ -37,6 +39,7 @@ class AppSettings {
     appLanguage: 'vi',
     fontScale: 1.0,
     learningGoal: LearningGoal.jlpt,
+    currentJlptLevel: 5,
   );
 
   AppSettings copyWith({
@@ -49,6 +52,7 @@ class AppSettings {
     String? appLanguage,
     double? fontScale,
     LearningGoal? learningGoal,
+    int? currentJlptLevel,
   }) {
     return AppSettings(
       dailyReminderEnabled: dailyReminderEnabled ?? this.dailyReminderEnabled,
@@ -61,6 +65,7 @@ class AppSettings {
       appLanguage: appLanguage ?? this.appLanguage,
       fontScale: fontScale ?? this.fontScale,
       learningGoal: learningGoal ?? this.learningGoal,
+      currentJlptLevel: currentJlptLevel ?? this.currentJlptLevel,
     );
   }
 }
@@ -75,6 +80,7 @@ abstract final class AppSettingsStore {
   static const _appLanguageKey = 'settings.appLanguage';
   static const _fontScaleKey = 'settings.fontScale';
   static const _learningGoalKey = 'settings.learningGoal';
+  static const _currentJlptLevelKey = 'settings.currentJlptLevel';
 
   static Future<AppSettings> load() async {
     final prefs = await SharedPreferences.getInstance();
@@ -103,6 +109,7 @@ abstract final class AppSettingsStore {
       fontScale:
           prefs.getDouble(_fontScaleKey) ?? AppSettings.defaults.fontScale,
       learningGoal: _learningGoalFromString(prefs.getString(_learningGoalKey)),
+      currentJlptLevel: _levelFromInt(prefs.getInt(_currentJlptLevelKey)),
     );
   }
 
@@ -123,6 +130,7 @@ abstract final class AppSettingsStore {
     await prefs.setString(_appLanguageKey, settings.appLanguage);
     await prefs.setDouble(_fontScaleKey, settings.fontScale);
     await prefs.setString(_learningGoalKey, settings.learningGoal.name);
+    await prefs.setInt(_currentJlptLevelKey, settings.currentJlptLevel);
   }
 
   static LearningCategory _categoryFromString(String? value) {
@@ -144,6 +152,12 @@ abstract final class AppSettingsStore {
       (goal) => goal.name == value,
       orElse: () => AppSettings.defaults.learningGoal,
     );
+  }
+
+  static int _levelFromInt(int? value) {
+    if (value == null) return AppSettings.defaults.currentJlptLevel;
+    if (value < 1 || value > 5) return AppSettings.defaults.currentJlptLevel;
+    return value;
   }
 }
 
@@ -208,6 +222,12 @@ class SettingsController extends StateNotifier<AsyncValue<AppSettings>> {
   Future<void> updateLearningGoal(LearningGoal goal) {
     return _update((settings) {
       return settings.copyWith(learningGoal: goal);
+    });
+  }
+
+  Future<void> updateCurrentJlptLevel(int level) {
+    return _update((settings) {
+      return settings.copyWith(currentJlptLevel: level.clamp(1, 5).toInt());
     });
   }
 

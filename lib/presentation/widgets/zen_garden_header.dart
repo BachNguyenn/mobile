@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/core/content/app_content_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -15,7 +17,7 @@ import '../../domain/entities/zen_garden.dart';
 /// - overdueCount > 5: Background chuyển vàng nhạt (cảnh báo)
 /// - EXP cao: Nhiều cây/đá trong vườn hơn
 /// - water: Suối chảy trong vườn
-class ZenGardenHeader extends StatelessWidget {
+class ZenGardenHeader extends ConsumerWidget {
   final ZenGarden garden;
   final int streak;
   final int overdueCount;
@@ -29,24 +31,17 @@ class ZenGardenHeader extends StatelessWidget {
     required this.todayReviewed,
   });
 
-  /// Danh sách câu động viên tiếng Nhật ngẫu nhiên
-  static const _japaneseMotivations = [
-    '一期一会 — Mỗi khoảnh khắc là duy nhất',
-    '七転び八起き — Ngã bảy lần, đứng dậy tám',
-    '継続は力なり — Kiên trì là sức mạnh',
-    '花鳥風月 — Vẻ đẹp của thiên nhiên',
-    '石の上にも三年 — Kiên nhẫn sẽ thành công',
-    '初心忘るべからず — Đừng quên tâm ban đầu',
-  ];
-
-  String get _randomMotivation {
-    final index = DateTime.now().day % _japaneseMotivations.length;
-    return _japaneseMotivations[index];
+  String _motivation(WidgetRef ref) {
+    final motivations = ref.watch(appContentProvider).valueOrNull?.motivations;
+    if (motivations == null || motivations.isEmpty) return '';
+    final index = DateTime.now().day % motivations.length;
+    return motivations[index];
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final isWarning = overdueCount > 5;
+    final motivation = _motivation(ref);
 
     return AnimatedContainer(
       duration: const Duration(milliseconds: 800),
@@ -94,11 +89,11 @@ class ZenGardenHeader extends StatelessWidget {
                 Text('Hôm nay bạn muốn học gì?', style: AppTypography.headingL),
                 const SizedBox(height: AppSpacing.sp12),
 
-                // Japanese motivation
-                Text(
-                  _randomMotivation,
-                  style: AppTypography.japaneseQuote.copyWith(fontSize: 13),
-                ),
+                if (motivation.isNotEmpty)
+                  Text(
+                    motivation,
+                    style: AppTypography.japaneseQuote.copyWith(fontSize: 13),
+                  ),
 
                 const SizedBox(height: AppSpacing.sp16),
 

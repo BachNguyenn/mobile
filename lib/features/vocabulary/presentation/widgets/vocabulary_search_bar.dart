@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
+import '../../../../core/theme/app_typography.dart';
 import '../providers/vocabulary_library_provider.dart';
 
 class VocabularySearchBar extends ConsumerWidget {
@@ -12,27 +13,36 @@ class VocabularySearchBar extends ConsumerWidget {
     return TextField(
       onChanged: (value) =>
           ref.read(vocabularySearchQueryProvider.notifier).state = value,
+      style: AppTypography.bodyM.copyWith(
+        color: AppColors.navyDark,
+        fontWeight: FontWeight.w700,
+      ),
       decoration: InputDecoration(
-        hintText: 'Tìm kiếm từ vựng, nghĩa...',
+        hintText: 'Tìm từ, cách đọc hoặc nghĩa...',
+        hintStyle: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
         prefixIcon: const Icon(
           Icons.search_rounded,
-          color: AppColors.waterBlue,
+          color: AppColors.leafGreen,
         ),
         filled: true,
         fillColor: AppColors.white,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           borderSide: BorderSide.none,
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           borderSide: BorderSide(
-            color: AppColors.slateLight.withValues(alpha: 0.3),
+            color: AppColors.slateLight.withValues(alpha: 0.32),
           ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-          borderSide: const BorderSide(color: AppColors.waterBlue, width: 1.5),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+          borderSide: const BorderSide(color: AppColors.leafGreen, width: 1.4),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.sp16,
+          vertical: AppSpacing.sp16,
         ),
       ),
     );

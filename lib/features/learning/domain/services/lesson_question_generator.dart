@@ -19,6 +19,7 @@ class LessonQuestionGenerator {
     List<GrammarPoint> allGrammar = const [],
   }) {
     final questions = <QuizQuestion>[];
+    final grammarQuestions = <QuizQuestion>[];
     final allKanjiMeanings = _uniqueNonEmpty(allKanji.map((k) => k.meanings));
     final allKanjiReadings = _uniqueNonEmpty(
       allKanji.expand((k) => [k.onyomi, k.kunyomi]),
@@ -30,17 +31,18 @@ class LessonQuestionGenerator {
       allVocabulary.map((v) => v.reading),
     );
     final allVocabWords = _uniqueNonEmpty(allVocabulary.map((v) => v.word));
+    final grammarPool = allGrammar.isEmpty ? lessonGrammar : allGrammar;
     final grammarExplanations = _uniqueNonEmpty(
-      allGrammar.map((g) => g.shortExplanation),
+      grammarPool.map((g) => g.shortExplanation),
     );
     final grammarFormations = _uniqueNonEmpty(
-      allGrammar.map((g) => g.formation),
+      grammarPool.map((g) => g.formation),
     );
 
     for (final grammar in lessonGrammar) {
-      questions.add(
+      grammarQuestions.add(
         QuizQuestion(
-          id: grammar.id,
+          id: '${grammar.id}-study',
           type: QuizType.grammarStudy,
           prompt: grammar.title,
           answer: '',
@@ -52,28 +54,26 @@ class LessonQuestionGenerator {
       );
 
       _addMultipleChoice(
-        questions,
-        id: grammar.id,
+        grammarQuestions,
+        id: '${grammar.id}-meaning',
         type: QuizType.grammarMeaning,
-        prompt: grammar.title,
+        prompt: _grammarMeaningPrompt(grammar),
         answer: grammar.shortExplanation,
         pool: grammarExplanations,
         hint: grammar.formation,
-        explanation: grammar.longExplanation,
+        explanation: _grammarExplanation(grammar),
         payload: GrammarQuizPayload(grammar),
       );
 
       _addMultipleChoice(
-        questions,
-        id: grammar.id,
+        grammarQuestions,
+        id: '${grammar.id}-formation',
         type: QuizType.grammarFormation,
-        prompt: grammar.shortExplanation.isNotEmpty
-            ? grammar.shortExplanation
-            : grammar.title,
+        prompt: _grammarFormationPrompt(grammar),
         answer: grammar.formation,
         pool: grammarFormations,
         hint: grammar.title,
-        explanation: grammar.longExplanation,
+        explanation: _grammarExplanation(grammar),
         payload: GrammarQuizPayload(grammar),
       );
 
@@ -82,14 +82,14 @@ class LessonQuestionGenerator {
           : null;
       if (example != null) {
         _addMultipleChoice(
-          questions,
+          grammarQuestions,
           id: '${grammar.id}-usage',
           type: QuizType.grammarUsage,
-          prompt: example.jp,
-          answer: grammar.formation,
-          pool: grammarFormations,
-          hint: example.romaji,
-          explanation: example.en,
+          prompt: _grammarUsagePrompt(example),
+          answer: grammar.shortExplanation,
+          pool: grammarExplanations,
+          hint: 'Cấu trúc: ${grammar.formation}',
+          explanation: _grammarUsageExplanation(grammar, example),
           payload: GrammarQuizPayload(grammar),
         );
       }
@@ -165,7 +165,7 @@ class LessonQuestionGenerator {
     }
 
     questions.shuffle(_random);
-    return questions;
+    return [...grammarQuestions, ...questions];
   }
 
   void _addVocabQuestions(
@@ -265,6 +265,45 @@ class LessonQuestionGenerator {
 
   List<String> _uniqueNonEmpty(Iterable<String> values) =>
       values.where((value) => value.trim().isNotEmpty).toSet().toList();
+
+  String _grammarMeaningPrompt(GrammarPoint grammar) {
+    return 'Mẫu ${grammar.title} dùng để diễn tả ý nào?';
+  }
+
+  String _grammarFormationPrompt(GrammarPoint grammar) {
+    final meaning = grammar.shortExplanation.isNotEmpty
+        ? grammar.shortExplanation
+        : grammar.title;
+    return 'Chọn cấu trúc phù hợp với ý:\n$meaning';
+  }
+
+  String _grammarUsagePrompt(GrammarExample example) {
+    return 'Trong ví dụ này, mẫu câu đang diễn tả ý nào?\n${example.jp}';
+  }
+
+  String _grammarExplanation(GrammarPoint grammar) {
+    final parts = <String>[
+      if (grammar.shortExplanation.isNotEmpty)
+        'Ý nghĩa: ${grammar.shortExplanation}',
+      if (grammar.formation.isNotEmpty) 'Cấu trúc: ${grammar.formation}',
+      if (grammar.longExplanation.isNotEmpty) grammar.longExplanation,
+    ];
+    return parts.join('\n\n');
+  }
+
+  String _grammarUsageExplanation(
+    GrammarPoint grammar,
+    GrammarExample example,
+  ) {
+    final parts = <String>[
+      if (example.jp.isNotEmpty) 'Ví dụ: ${example.jp}',
+      if (example.en.isNotEmpty) 'Nghĩa: ${example.en}',
+      if (grammar.shortExplanation.isNotEmpty)
+        'Ý chính: ${grammar.shortExplanation}',
+      if (grammar.formation.isNotEmpty) 'Cấu trúc: ${grammar.formation}',
+    ];
+    return parts.join('\n');
+  }
 
   String _primaryReading(KanjiCard kanji) {
     if (kanji.onyomi.isNotEmpty) return kanji.onyomi;

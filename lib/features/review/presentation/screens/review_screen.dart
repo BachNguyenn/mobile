@@ -5,13 +5,19 @@ import 'package:mobile/core/services/audio_service.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
+import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
+import 'package:mobile/features/home/presentation/providers/daily_study_plan_provider.dart';
 import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/features/review/presentation/providers/review_controller.dart';
 import 'package:mobile/features/review/presentation/widgets/review_handwriting_area.dart';
 import 'package:mobile/features/review/presentation/widgets/review_rating_buttons.dart';
 import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
+import 'package:mobile/shared/widgets/app_card.dart';
+import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
+import 'package:mobile/shared/widgets/jlpt_level_badge.dart';
+import 'package:mobile/shared/widgets/primary_button.dart';
 
 class ReviewScreen extends ConsumerStatefulWidget {
   final List<ReviewItem> items;
@@ -36,7 +42,13 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           elevation: 0,
         ),
         body: const AppPageBackground(
-          child: Center(child: Text('Không có mục nào để ôn tập')),
+          child: Center(
+            child: AppEmptyState(
+              icon: Icons.task_alt_rounded,
+              title: 'Không có mục cần ôn',
+              message: 'Các thẻ hôm nay đã gọn gàng. Quay lại học bài mới nhé.',
+            ),
+          ),
         ),
       );
     }
@@ -45,8 +57,6 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     final controller = ref.read(
       reviewControllerProvider(widget.items).notifier,
     );
-    final item = widget.items[state.currentIndex];
-
     ref.listen(reviewControllerProvider(widget.items), (previous, next) {
       final nextError = next.errorMessage;
       if (nextError != null && nextError != previous?.errorMessage) {
@@ -54,41 +64,52 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
           context,
         )?.showSnackBar(SnackBar(content: Text(nextError)));
       }
-
-      if (next.isFinished && !(previous?.isFinished ?? false)) {
-        if (!mounted) return;
-        final messenger = ScaffoldMessenger.maybeOf(context);
-        final navigator = Navigator.of(context);
-        if (navigator.canPop()) {
-          navigator.pop();
-        }
-        messenger?.showSnackBar(
-          const SnackBar(
-            content: Text('Chúc mừng! Bạn đã hoàn thành phiên ôn tập.'),
-          ),
-        );
-      }
     });
+
+    if (state.isFinished) {
+      return _ReviewCompleteView(reviewedCount: widget.items.length);
+    }
+
+    final item = widget.items[state.currentIndex];
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          'Ôn tập (${state.currentIndex + 1}/${widget.items.length})',
-          style: AppTypography.headingM,
-        ),
+        title: Text('SRS Review', style: AppTypography.headingM),
         backgroundColor: AppColors.cream.withValues(alpha: 0.94),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         foregroundColor: AppColors.slateGrey,
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(8),
+          child: LinearProgressIndicator(
+            value: (state.currentIndex + 1) / widget.items.length,
+            minHeight: 8,
+            backgroundColor: AppColors.creamDark,
+            valueColor: const AlwaysStoppedAnimation<Color>(
+              AppColors.leafGreen,
+            ),
+          ),
+        ),
       ),
       body: AppPageBackground(
         child: Padding(
-          padding: const EdgeInsets.all(AppSpacing.sp24),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.sp20,
+            AppSpacing.sp16,
+            AppSpacing.sp20,
+            AppSpacing.sp20,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              _ReviewSessionHeader(
+                current: state.currentIndex + 1,
+                total: widget.items.length,
+                item: item,
+              ),
+              const SizedBox(height: AppSpacing.sp16),
               _ReviewPrompt(item: item),
-              const SizedBox(height: AppSpacing.sp24),
+              const SizedBox(height: AppSpacing.sp16),
               Expanded(
                 child: item.usesHandwriting
                     ? _KanjiReviewBody(
@@ -106,32 +127,17 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
               ),
               const SizedBox(height: AppSpacing.sp24),
               if (!state.showAnswer)
-                SizedBox(
-                  height: 56,
-                  child: ElevatedButton(
-                    onPressed: _canSubmit(item, state)
-                        ? () => controller.handleCheck()
-                        : null,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.mossGreen,
-                      foregroundColor: Colors.white,
-                      disabledBackgroundColor: AppColors.slateLight,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-                      ),
-                      elevation: 0,
-                    ),
-                    child: Text(
-                      item.usesHandwriting || item.choices.isNotEmpty
-                          ? 'Kiểm tra & xem đáp án'
-                          : state.typedAnswer.trim().isNotEmpty
-                          ? 'Kiểm tra'
-                          : 'Xem đáp án',
-                      style: AppTypography.bodyMBold.copyWith(
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
+                PrimaryButton(
+                  icon: Icons.fact_check_rounded,
+                  color: AppColors.leafGreen,
+                  onPressed: _canSubmit(item, state)
+                      ? () => controller.handleCheck()
+                      : null,
+                  label: item.usesHandwriting || item.choices.isNotEmpty
+                      ? 'Kiểm tra & xem đáp án'
+                      : state.typedAnswer.trim().isNotEmpty
+                      ? 'Kiểm tra'
+                      : 'Xem đáp án',
                 )
               else if (state.isSubmitting)
                 const Center(
@@ -158,6 +164,139 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
   }
 }
 
+class _ReviewCompleteView extends ConsumerWidget {
+  final int reviewedCount;
+
+  const _ReviewCompleteView({required this.reviewedCount});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final nextPlan = ref.watch(dailyStudyPlanProvider);
+
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      body: AppPageBackground(
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(AppSpacing.sp20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Spacer(),
+                AppCard(
+                  color: AppColors.white,
+                  borderColor: AppColors.leafGreen.withValues(alpha: 0.18),
+                  child: Column(
+                    children: [
+                      Container(
+                        width: 76,
+                        height: 76,
+                        decoration: BoxDecoration(
+                          color: AppColors.leafGreen.withValues(alpha: 0.12),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.task_alt_rounded,
+                          color: AppColors.leafGreen,
+                          size: 42,
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sp20),
+                      Text(
+                        'Hoàn thành phiên ôn',
+                        style: AppTypography.headingL.copyWith(
+                          color: AppColors.ink,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: AppSpacing.sp8),
+                      Text(
+                        'Bạn đã xử lý $reviewedCount mục. App đã chọn bước tiếp theo dựa trên dữ liệu mới nhất.',
+                        style: AppTypography.bodyM.copyWith(
+                          color: AppColors.slateGrey,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _ReviewNextActionCard(plan: nextPlan),
+                const Spacer(),
+                OutlinedButton.icon(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.home_rounded),
+                  label: const Text('Về trang trước'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ReviewNextActionCard extends ConsumerWidget {
+  final AsyncValue<DailyStudyPlan> plan;
+
+  const _ReviewNextActionCard({required this.plan});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final next = plan.valueOrNull;
+    if (next == null) {
+      return const AppCard(
+        child: SizedBox(
+          height: 48,
+          child: Center(
+            child: CircularProgressIndicator(color: AppColors.leafGreen),
+          ),
+        ),
+      );
+    }
+
+    return AppCard(
+      onTap: () => openDailyStudyPlan(context, ref, next),
+      color: AppColors.leafGreen.withValues(alpha: 0.08),
+      borderColor: AppColors.leafGreen.withValues(alpha: 0.18),
+      child: Row(
+        children: [
+          const Icon(Icons.auto_awesome_rounded, color: AppColors.leafGreen),
+          const SizedBox(width: AppSpacing.sp12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Tiếp theo',
+                  style: AppTypography.label.copyWith(
+                    color: AppColors.leafGreen,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+                Text(
+                  next.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+                ),
+                Text(
+                  next.reason,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.label,
+                ),
+              ],
+            ),
+          ),
+          const Icon(Icons.arrow_forward_rounded, color: AppColors.leafGreen),
+        ],
+      ),
+    );
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════
 // Review Prompt — with TTS speaker button
 // ═══════════════════════════════════════════════════════════════
@@ -173,48 +312,62 @@ class _ReviewPrompt extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Flexible(
-              child: Text(
-                item.prompt,
-                style: item.type == ReviewItemType.kanji
-                    ? AppTypography.headingL.copyWith(color: AppColors.ink)
-                    : AppTypography.headingM.copyWith(color: AppColors.ink),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            if (_showSpeaker) ...[
-              const SizedBox(width: AppSpacing.sp8),
-              IconButton.filledTonal(
-                tooltip: 'Phát âm',
-                onPressed: () => _speak(ref, item.prompt),
-                icon: const Icon(Icons.volume_up_rounded, size: 20),
-                style: IconButton.styleFrom(
-                  backgroundColor: AppColors.waterBlue.withValues(alpha: 0.12),
-                  foregroundColor: AppColors.waterBlue,
+    final accent = switch (item.type) {
+      ReviewItemType.vocabulary => AppColors.waterBlue,
+      ReviewItemType.grammar => AppColors.sunGold,
+      ReviewItemType.kanji => AppColors.leafGreen,
+      ReviewItemType.sentence => AppColors.terracotta,
+    };
+
+    return AppCard(
+      color: AppColors.white,
+      borderColor: accent.withValues(alpha: 0.16),
+      shadowColor: accent.withValues(alpha: 0.06),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              JlptLevelBadge(level: item.jlptLevel, color: accent),
+              if (_showSpeaker) ...[
+                const SizedBox(width: AppSpacing.sp8),
+                IconButton.filledTonal(
+                  tooltip: 'Phát âm',
+                  onPressed: () => _speak(ref, item.prompt),
+                  icon: const Icon(Icons.volume_up_rounded, size: 20),
+                  style: IconButton.styleFrom(
+                    backgroundColor: accent.withValues(alpha: 0.12),
+                    foregroundColor: accent,
+                  ),
                 ),
-              ),
+              ],
             ],
-          ],
-        ),
-        if (item.subtitle != null && item.subtitle!.isNotEmpty) ...[
-          const SizedBox(height: AppSpacing.sp8),
+          ),
+          const SizedBox(height: AppSpacing.sp16),
           Text(
-            item.subtitle!,
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            item.prompt,
+            style:
+                (item.type == ReviewItemType.kanji ||
+                            item.type == ReviewItemType.vocabulary ||
+                            item.type == ReviewItemType.sentence
+                        ? AppTypography.kanjiHero
+                        : AppTypography.headingL)
+                    .copyWith(
+                      color: AppColors.ink,
+                      fontSize: item.type == ReviewItemType.kanji ? 42 : null,
+                    ),
             textAlign: TextAlign.center,
           ),
+          if (item.subtitle != null && item.subtitle!.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sp8),
+            Text(
+              item.subtitle!,
+              style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+              textAlign: TextAlign.center,
+            ),
+          ],
         ],
-        const SizedBox(height: AppSpacing.sp8),
-        Text(
-          'N${item.jlptLevel}',
-          style: AppTypography.label.copyWith(color: AppColors.mossGreen),
-        ),
-      ],
+      ),
     );
   }
 
@@ -224,6 +377,59 @@ class _ReviewPrompt extends ConsumerWidget {
     } catch (_) {
       // Silently fail if TTS not available
     }
+  }
+}
+
+class _ReviewSessionHeader extends StatelessWidget {
+  final int current;
+  final int total;
+  final ReviewItem item;
+
+  const _ReviewSessionHeader({
+    required this.current,
+    required this.total,
+    required this.item,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final typeLabel = switch (item.type) {
+      ReviewItemType.vocabulary => 'Từ vựng',
+      ReviewItemType.grammar => 'Ngữ pháp',
+      ReviewItemType.kanji => 'Chữ Hán',
+      ReviewItemType.sentence => 'Câu ví dụ',
+    };
+
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            '$current/$total thẻ',
+            style: AppTypography.bodyMBold.copyWith(
+              color: AppColors.ink,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sp12,
+            vertical: AppSpacing.sp8,
+          ),
+          decoration: BoxDecoration(
+            color: AppColors.leafGreen.withValues(alpha: 0.10),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+          ),
+          child: Text(
+            typeLabel,
+            style: AppTypography.label.copyWith(
+              color: AppColors.leafGreen,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 
@@ -257,7 +463,10 @@ class _KanjiReviewBody extends StatelessWidget {
         if (state.showAnswer)
           Positioned.fill(
             child: Container(
-              color: Colors.white.withValues(alpha: 0.92),
+              decoration: BoxDecoration(
+                color: AppColors.white.withValues(alpha: 0.92),
+                borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+              ),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -289,10 +498,12 @@ class _KanjiReviewBody extends StatelessWidget {
         Positioned(
           top: 12,
           right: 12,
-          child: IconButton(
-            icon: const Icon(
-              Icons.refresh_rounded,
-              color: AppColors.slateLight,
+          child: IconButton.filledTonal(
+            tooltip: 'Xóa nét viết',
+            icon: const Icon(Icons.refresh_rounded),
+            style: IconButton.styleFrom(
+              backgroundColor: AppColors.white.withValues(alpha: 0.88),
+              foregroundColor: AppColors.leafGreen,
             ),
             onPressed: () {
               canvasKey.currentState?.clear();
@@ -337,23 +548,24 @@ class _KnowledgeReviewBody extends StatelessWidget {
         itemBuilder: (context, index) {
           final choice = item.choices[index];
           final isSelected = state.selectedChoice == choice;
-          return InkWell(
+          return AppCard(
             onTap: () => onSelectChoice(choice),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-            child: Container(
-              padding: const EdgeInsets.all(AppSpacing.sp16),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.mossGreen.withValues(alpha: 0.12)
-                    : AppColors.white,
-                borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                border: Border.all(
-                  color: isSelected
-                      ? AppColors.mossGreen
-                      : AppColors.slateLight,
-                ),
+            color: isSelected
+                ? AppColors.mossGreen.withValues(alpha: 0.10)
+                : AppColors.white,
+            borderColor: isSelected
+                ? AppColors.mossGreen
+                : AppColors.slateLight.withValues(alpha: 0.35),
+            shadowColor: isSelected
+                ? AppColors.mossGreen.withValues(alpha: 0.06)
+                : AppColors.ink.withValues(alpha: 0.03),
+            padding: const EdgeInsets.all(AppSpacing.sp16),
+            child: Text(
+              choice,
+              style: AppTypography.bodyM.copyWith(
+                color: isSelected ? AppColors.mossGreen : AppColors.ink,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
               ),
-              child: Text(choice, style: AppTypography.bodyM),
             ),
           );
         },
@@ -487,21 +699,13 @@ class _FlipCardState extends State<_FlipCard>
   }
 
   Widget _buildFront() {
-    return Container(
-      width: double.infinity,
+    final isGrammar = widget.item.type == ReviewItemType.grammar;
+
+    return AppCard(
       padding: const EdgeInsets.all(AppSpacing.sp24),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.3)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.06),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
+      color: AppColors.white,
+      borderColor: AppColors.slateLight.withValues(alpha: 0.3),
+      shadowColor: AppColors.ink.withValues(alpha: 0.06),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -512,12 +716,14 @@ class _FlipCardState extends State<_FlipCard>
           ),
           const SizedBox(height: AppSpacing.sp12),
           Text(
-            'Chạm để xem gợi ý',
+            isGrammar ? 'Tự nhớ ý nghĩa trước' : 'Chạm để xem gợi ý',
             style: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
           ),
           const SizedBox(height: AppSpacing.sp4),
           Text(
-            'Tự nhớ đáp án rồi bấm "Xem đáp án" bên dưới.',
+            isGrammar
+                ? 'Nói trong đầu mẫu này dùng khi nào, rồi xem cấu trúc/ví dụ để kiểm tra.'
+                : 'Tự nhớ đáp án rồi bấm "Xem đáp án" bên dưới.',
             style: AppTypography.caption,
             textAlign: TextAlign.center,
           ),
@@ -527,24 +733,26 @@ class _FlipCardState extends State<_FlipCard>
   }
 
   Widget _buildBack() {
-    return Container(
-      width: double.infinity,
+    final isGrammar = widget.item.type == ReviewItemType.grammar;
+
+    return AppCard(
       padding: const EdgeInsets.all(AppSpacing.sp24),
-      decoration: BoxDecoration(
-        color: AppColors.cream,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.mossGreen.withValues(alpha: 0.08),
-            blurRadius: 16,
-            offset: const Offset(0, 6),
-          ),
-        ],
-      ),
+      color: AppColors.cream,
+      borderColor: AppColors.mossGreen.withValues(alpha: 0.2),
+      shadowColor: AppColors.mossGreen.withValues(alpha: 0.08),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (isGrammar) ...[
+            Text(
+              'Gợi ý, chưa phải đáp án',
+              style: AppTypography.label.copyWith(
+                color: AppColors.mossGreen,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            const SizedBox(height: AppSpacing.sp12),
+          ],
           if (widget.item.grammar?.formation.isNotEmpty ?? false) ...[
             Text(
               widget.item.grammar!.formation,
@@ -561,7 +769,13 @@ class _FlipCardState extends State<_FlipCard>
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sp8),
-          Text('Chạm lại để lật', style: AppTypography.caption),
+          Text(
+            isGrammar
+                ? 'Bấm "Kiểm tra & xem đáp án" để xem ý chính'
+                : 'Chạm lại để lật',
+            style: AppTypography.caption,
+            textAlign: TextAlign.center,
+          ),
         ],
       ),
     );
@@ -603,17 +817,13 @@ class _AnswerReveal extends ConsumerWidget {
         item.type == ReviewItemType.sentence;
 
     return Center(
-      child: Container(
-        width: double.infinity,
+      child: AppCard(
         padding: const EdgeInsets.all(AppSpacing.sp20),
-        decoration: BoxDecoration(
-          color: AppColors.white,
-          borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-          border: Border.all(
-            color: (isCorrect ? AppColors.mossGreen : AppColors.terracotta)
-                .withValues(alpha: 0.3),
-          ),
-        ),
+        color: AppColors.white,
+        borderColor: (isCorrect ? AppColors.mossGreen : AppColors.terracotta)
+            .withValues(alpha: 0.3),
+        shadowColor: (isCorrect ? AppColors.mossGreen : AppColors.terracotta)
+            .withValues(alpha: 0.05),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -643,7 +853,9 @@ class _AnswerReveal extends ConsumerWidget {
             ),
             const SizedBox(height: AppSpacing.sp12),
             Text(
-              item.answer,
+              item.type == ReviewItemType.grammar
+                  ? 'Ý nghĩa: ${item.answer}'
+                  : item.answer,
               style: AppTypography.headingS.copyWith(color: AppColors.ink),
               textAlign: TextAlign.center,
             ),

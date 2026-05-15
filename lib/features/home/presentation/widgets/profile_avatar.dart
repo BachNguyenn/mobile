@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
@@ -14,188 +14,227 @@ class ProfileAvatar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () {
-        _showProfileMenu(context, ref);
-      },
-      child: Container(
-        width: 32,
-        height: 32,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: AppColors.mossGreen.withValues(alpha: 0.12),
-          border: Border.all(
-            color: AppColors.mossGreen.withValues(alpha: 0.3),
-            width: 1.5,
-          ),
-        ),
-        child: ClipOval(
-          child: user?.photoURL != null
-              ? Image.network(
-                  user!.photoURL!,
-                  width: 32,
-                  height: 32,
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, e, st) => _buildFallbackAvatar(),
-                )
-              : _buildFallbackAvatar(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFallbackAvatar() {
-    final initial = user?.displayName?.isNotEmpty == true
-        ? user!.displayName![0].toUpperCase()
-        : user?.email?.isNotEmpty == true
-        ? user!.email![0].toUpperCase()
-        : '禅';
-
-    return Center(
-      child: Text(
-        initial,
-        style: AppTypography.label.copyWith(
-          color: AppColors.mossGreen,
-          fontWeight: FontWeight.w700,
-          fontSize: 14,
-        ),
+    return Tooltip(
+      message: 'Tài khoản',
+      child: InkWell(
+        onTap: () => _showProfileMenu(context, ref),
+        customBorder: const CircleBorder(),
+        child: _UserAvatar(user: user, size: 36),
       ),
     );
   }
 
   void _showProfileMenu(BuildContext context, WidgetRef ref) {
+    final name = _displayName(user);
+    final email = user?.email ?? '';
+
     showModalBottomSheet(
       context: context,
       backgroundColor: Colors.transparent,
       builder: (sheetContext) {
-        return Container(
-          margin: const EdgeInsets.all(AppSpacing.sp16),
-          padding: AppSpacing.cardPadding,
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar
-              Container(
-                width: 36,
-                height: 4,
-                margin: const EdgeInsets.only(bottom: AppSpacing.sp16),
-                decoration: BoxDecoration(
-                  color: AppColors.slateLight,
-                  borderRadius: BorderRadius.circular(2),
+        return SafeArea(
+          child: Container(
+            margin: const EdgeInsets.all(AppSpacing.sp16),
+            padding: const EdgeInsets.all(AppSpacing.sp20),
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.zenBlue.withValues(alpha: 0.12),
+                  blurRadius: 30,
+                  offset: const Offset(0, -8),
                 ),
-              ),
-              // User info
-              Row(
-                children: [
-                  Container(
-                    width: 48,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.mossGreen.withValues(alpha: 0.12),
-                    ),
-                    child: Center(
-                      child: Text(
-                        user?.displayName?.isNotEmpty == true
-                            ? user!.displayName![0].toUpperCase()
-                            : '禅',
-                        style: AppTypography.headingS.copyWith(
-                          color: AppColors.mossGreen,
-                        ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 36,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: AppSpacing.sp16),
+                  decoration: BoxDecoration(
+                    color: AppColors.slateLight,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Row(
+                  children: [
+                    _UserAvatar(user: user, size: 58),
+                    const SizedBox(width: AppSpacing.sp16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            name,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.headingS.copyWith(
+                              color: AppColors.ink,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            email.isEmpty ? 'Tài khoản khách' : email,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.caption,
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.sp16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          user?.displayName ?? 'Zen Learner',
-                          style: AppTypography.bodyMBold.copyWith(
-                            color: AppColors.ink,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          user?.email ?? '',
-                          style: AppTypography.caption,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sp20),
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp20),
+                _SheetButton(
+                  icon: Icons.bar_chart_rounded,
+                  label: 'Hồ sơ học tập',
+                  color: AppColors.zenBlue,
+                  filled: true,
                   onPressed: () {
-                    final navigator = Navigator.of(sheetContext);
-                    if (navigator.canPop()) {
-                      navigator.pop();
-                    }
+                    Navigator.of(sheetContext).pop();
+                    Navigator.of(context).push(AppRoutes.analytics());
+                  },
+                ),
+                const SizedBox(height: AppSpacing.sp8),
+                _SheetButton(
+                  icon: Icons.settings_rounded,
+                  label: 'Cài đặt',
+                  color: AppColors.leafGreen,
+                  onPressed: () {
+                    Navigator.of(sheetContext).pop();
                     Navigator.of(context).push(AppRoutes.settings());
                   },
-                  icon: const Icon(Icons.settings_rounded, size: 18),
-                  label: const Text('Cài đặt'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.mossGreen,
-                    side: BorderSide(
-                      color: AppColors.mossGreen.withValues(alpha: 0.3),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sp12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                    ),
-                  ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.sp8),
-              // Sign out button
-              SizedBox(
-                width: double.infinity,
-                child: OutlinedButton.icon(
+                const SizedBox(height: AppSpacing.sp8),
+                _SheetButton(
+                  icon: Icons.logout_rounded,
+                  label: 'Đăng xuất',
+                  color: AppColors.error,
                   onPressed: () async {
-                    final authRepository = ref.read(authRepositoryProvider);
-                    final navigator = Navigator.of(sheetContext);
-                    if (navigator.canPop()) {
-                      navigator.pop();
-                      await Future<void>.delayed(
-                        const Duration(milliseconds: 350),
-                      );
-                    }
-                    // Đợi bottom sheet đóng xong để tránh lỗi assertion _dependents.isEmpty
-                    await authRepository.signOut();
+                    Navigator.of(sheetContext).pop();
+                    await Future<void>.delayed(
+                      const Duration(milliseconds: 250),
+                    );
+                    await ref.read(authRepositoryProvider).signOut();
                   },
-                  icon: const Icon(Icons.logout_rounded, size: 18),
-                  label: const Text('Đăng xuất'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.error,
-                    side: BorderSide(
-                      color: AppColors.error.withValues(alpha: 0.3),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      vertical: AppSpacing.sp12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                    ),
-                  ),
                 ),
-              ),
-              const SizedBox(height: AppSpacing.sp8),
-            ],
+              ],
+            ),
           ),
         );
       },
+    );
+  }
+
+  String _displayName(User? user) {
+    final displayName = user?.displayName?.trim();
+    if (displayName != null && displayName.isNotEmpty) return displayName;
+    final email = user?.email?.trim();
+    if (email != null && email.isNotEmpty) return email.split('@').first;
+    return 'Zen Learner';
+  }
+}
+
+class _UserAvatar extends StatelessWidget {
+  final User? user;
+  final double size;
+
+  const _UserAvatar({required this.user, required this.size});
+
+  @override
+  Widget build(BuildContext context) {
+    final photoUrl = user?.photoURL;
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColors.navySoft,
+        border: Border.all(
+          color: AppColors.zenBlue.withValues(alpha: 0.12),
+          width: 1.5,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: photoUrl != null
+          ? Image.network(
+              photoUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => _AvatarFallback(user: user),
+            )
+          : _AvatarFallback(user: user),
+    );
+  }
+}
+
+class _AvatarFallback extends StatelessWidget {
+  final User? user;
+
+  const _AvatarFallback({required this.user});
+
+  @override
+  Widget build(BuildContext context) {
+    final displayName = user?.displayName?.trim();
+    final email = user?.email?.trim();
+    final initial = displayName?.isNotEmpty == true
+        ? displayName![0].toUpperCase()
+        : email?.isNotEmpty == true
+        ? email![0].toUpperCase()
+        : '禅';
+
+    return Center(
+      child: Text(
+        initial,
+        style: AppTypography.bodyMBold.copyWith(
+          color: AppColors.zenBlue,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
+class _SheetButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onPressed;
+  final bool filled;
+
+  const _SheetButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onPressed,
+    this.filled = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground = filled ? AppColors.white : color;
+    final background = filled ? color : AppColors.white;
+
+    return SizedBox(
+      width: double.infinity,
+      height: 50,
+      child: OutlinedButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 18),
+        label: Text(label),
+        style: OutlinedButton.styleFrom(
+          backgroundColor: background,
+          foregroundColor: foreground,
+          side: BorderSide(color: color.withValues(alpha: filled ? 0.0 : 0.28)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+          ),
+        ),
+      ),
     );
   }
 }

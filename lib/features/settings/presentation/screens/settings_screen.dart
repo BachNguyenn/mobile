@@ -8,7 +8,10 @@ import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'package:mobile/shared/widgets/app_empty_state.dart';
+import 'package:mobile/shared/widgets/app_loading_indicator.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
+import 'package:mobile/shared/widgets/app_card.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -21,8 +24,14 @@ class SettingsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cài đặt', style: AppTypography.headingM),
-        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        title: Text(
+          'Cài đặt',
+          style: AppTypography.headingM.copyWith(
+            color: AppColors.zenBlue,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+        backgroundColor: AppColors.white.withValues(alpha: 0.98),
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
@@ -32,15 +41,10 @@ class SettingsScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.all(AppSpacing.sp16),
               children: [
-                _SettingsSection(
-                  title: 'Hồ sơ',
-                  children: [
-                    _ProfileTile(
-                      name: user?.displayName ?? 'Zen Learner',
-                      email: user?.email ?? '',
-                      photoUrl: user?.photoURL,
-                    ),
-                  ],
+                _ProfileSummaryCard(
+                  name: _displayName(user),
+                  email: user?.email ?? '',
+                  photoUrl: user?.photoURL,
                 ),
                 const SizedBox(height: AppSpacing.sp16),
                 _SettingsSection(
@@ -207,11 +211,16 @@ class SettingsScreen extends ConsumerWidget {
             ),
           );
         },
-        loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.mossGreen),
+        loading: () => const AppPageBackground(
+          child: AppLoadingIndicator(color: AppColors.mossGreen),
         ),
-        error: (error, _) =>
-            Center(child: Text('Lỗi: $error', style: AppTypography.bodyM)),
+        error: (error, _) => AppPageBackground(
+          child: AppEmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Không tải được cài đặt',
+            message: 'Lỗi: $error',
+          ),
+        ),
       ),
     );
   }
@@ -256,6 +265,14 @@ class SettingsScreen extends ConsumerWidget {
     final m = minute.toString().padLeft(2, '0');
     return '$h:$m';
   }
+
+  String _displayName(dynamic user) {
+    final displayName = user?.displayName?.trim();
+    if (displayName != null && displayName.isNotEmpty) return displayName;
+    final email = user?.email?.trim();
+    if (email != null && email.isNotEmpty) return email.split('@').first;
+    return 'Zen Learner';
+  }
 }
 
 class _SettingsSection extends StatelessWidget {
@@ -274,27 +291,18 @@ class _SettingsSection extends StatelessWidget {
             left: AppSpacing.sp4,
             bottom: AppSpacing.sp8,
           ),
-          child: Text(title, style: AppTypography.headingS),
+          child: Text(
+            title,
+            style: AppTypography.headingS.copyWith(
+              color: AppColors.ink,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
         ),
-        Container(
-          width: double.infinity,
+        AppCard(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.sp16,
             vertical: AppSpacing.sp8,
-          ),
-          decoration: BoxDecoration(
-            color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-            border: Border.all(
-              color: AppColors.slateLight.withValues(alpha: 0.25),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.ink.withValues(alpha: 0.04),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
           ),
           child: Column(children: children),
         ),
@@ -303,51 +311,80 @@ class _SettingsSection extends StatelessWidget {
   }
 }
 
-class _ProfileTile extends StatelessWidget {
+class _ProfileSummaryCard extends StatelessWidget {
   final String name;
   final String email;
   final String? photoUrl;
 
-  const _ProfileTile({required this.name, required this.email, this.photoUrl});
+  const _ProfileSummaryCard({
+    required this.name,
+    required this.email,
+    this.photoUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        CircleAvatar(
-          radius: 26,
-          backgroundColor: AppColors.mossGreen.withValues(alpha: 0.12),
-          backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
-          child: photoUrl == null
-              ? Text(
-                  name.isNotEmpty ? name[0].toUpperCase() : '禅',
+    return AppCard(
+      color: AppColors.zenBlue,
+      borderColor: AppColors.zenBlue,
+      shadowColor: AppColors.zenBlue.withValues(alpha: 0.14),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 30,
+            backgroundColor: AppColors.white.withValues(alpha: 0.14),
+            backgroundImage: photoUrl != null ? NetworkImage(photoUrl!) : null,
+            child: photoUrl == null
+                ? Text(
+                    name.isNotEmpty ? name[0].toUpperCase() : '禅',
+                    style: AppTypography.headingS.copyWith(
+                      color: AppColors.white,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  )
+                : null,
+          ),
+          const SizedBox(width: AppSpacing.sp16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: AppTypography.headingS.copyWith(
-                    color: AppColors.mossGreen,
+                    color: AppColors.white,
+                    fontWeight: FontWeight.w900,
                   ),
-                )
-              : null,
-        ),
-        const SizedBox(width: AppSpacing.sp16),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                name,
-                style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
-              ),
-              if (email.isNotEmpty) ...[
+                ),
                 const SizedBox(height: 2),
                 Text(
-                  email,
-                  style: AppTypography.caption,
+                  email.isEmpty ? 'Tài khoản khách' : email,
+                  maxLines: 1,
                   overflow: TextOverflow.ellipsis,
+                  style: AppTypography.caption.copyWith(
+                    color: AppColors.white.withValues(alpha: 0.72),
+                  ),
                 ),
               ],
-            ],
+            ),
           ),
-        ),
-      ],
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.white.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+            ),
+            child: const Icon(
+              Icons.settings_rounded,
+              color: AppColors.white,
+              size: 20,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -530,40 +567,39 @@ class _CategoryPickerTile extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          margin: const EdgeInsets.all(AppSpacing.sp16),
-          padding: AppSpacing.cardPadding,
-          decoration: BoxDecoration(
+        return Padding(
+          padding: const EdgeInsets.all(AppSpacing.sp16),
+          child: AppCard(
+            padding: AppSpacing.cardPadding,
             color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: LearningCategory.values.map((category) {
-              final isSelected = category == selected;
-              return ListTile(
-                leading: Icon(
-                  _iconFor(category),
-                  color: isSelected
-                      ? AppColors.mossGreen
-                      : AppColors.slateMuted,
-                ),
-                title: Text(
-                  _labelFor(category),
-                  style: AppTypography.bodyMBold,
-                ),
-                trailing: isSelected
-                    ? const Icon(
-                        Icons.check_rounded,
-                        color: AppColors.mossGreen,
-                      )
-                    : null,
-                onTap: () {
-                  onChanged(category);
-                  Navigator.pop(context);
-                },
-              );
-            }).toList(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: LearningCategory.values.map((category) {
+                final isSelected = category == selected;
+                return ListTile(
+                  leading: Icon(
+                    _iconFor(category),
+                    color: isSelected
+                        ? AppColors.mossGreen
+                        : AppColors.slateMuted,
+                  ),
+                  title: Text(
+                    _labelFor(category),
+                    style: AppTypography.bodyMBold,
+                  ),
+                  trailing: isSelected
+                      ? const Icon(
+                          Icons.check_rounded,
+                          color: AppColors.mossGreen,
+                        )
+                      : null,
+                  onTap: () {
+                    onChanged(category);
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ),
           ),
         );
       },
@@ -620,31 +656,30 @@ class _LearningGoalTile extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) {
-        return Container(
-          margin: const EdgeInsets.all(AppSpacing.sp16),
-          padding: AppSpacing.cardPadding,
-          decoration: BoxDecoration(
+        return Padding(
+          padding: const EdgeInsets.all(AppSpacing.sp16),
+          child: AppCard(
+            padding: AppSpacing.cardPadding,
             color: Theme.of(context).cardColor,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: LearningGoal.values.map((goal) {
-              final isSelected = goal == selected;
-              return ListTile(
-                title: Text(goal.label, style: AppTypography.bodyMBold),
-                trailing: isSelected
-                    ? const Icon(
-                        Icons.check_rounded,
-                        color: AppColors.mossGreen,
-                      )
-                    : null,
-                onTap: () {
-                  onChanged(goal);
-                  Navigator.pop(context);
-                },
-              );
-            }).toList(),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: LearningGoal.values.map((goal) {
+                final isSelected = goal == selected;
+                return ListTile(
+                  title: Text(goal.label, style: AppTypography.bodyMBold),
+                  trailing: isSelected
+                      ? const Icon(
+                          Icons.check_rounded,
+                          color: AppColors.mossGreen,
+                        )
+                      : null,
+                  onTap: () {
+                    onChanged(goal);
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ),
           ),
         );
       },

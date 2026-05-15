@@ -57,15 +57,16 @@ class GardenRepository {
     String type,
     double x,
     double y,
+    int waterCost,
+    int sunCost,
   ) async {
-    final cost = _plantCost(type);
-    if (garden.water < cost.water || garden.sunlight < cost.sun) {
+    if (garden.water < waterCost || garden.sunlight < sunCost) {
       return GardenPurchaseResult(success: false, garden: garden);
     }
 
     final updatedGarden = garden.copyWith(
-      water: garden.water - cost.water,
-      sunlight: garden.sunlight - cost.sun,
+      water: garden.water - waterCost,
+      sunlight: garden.sunlight - sunCost,
       plants: [
         ...garden.plants,
         Plant(
@@ -170,14 +171,5 @@ class GardenRepository {
           ),
         );
     return ZenGarden(water: 100, sunlight: 100, lastLogin: now);
-  }
-
-  ({int water, int sun}) _plantCost(String type) {
-    return switch (type) {
-      'zen_bonsai' => (water: 50, sun: 50),
-      'zen_sakura' => (water: 80, sun: 80),
-      'zen_stone' => (water: 20, sun: 10),
-      _ => (water: 30, sun: 30),
-    };
   }
 }

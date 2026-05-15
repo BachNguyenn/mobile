@@ -177,7 +177,7 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
         children: [
           _QuizHeader(
             title: _titleFor(question.type),
-            subtitle: 'Nháº­p Ä‘Ã¡p Ã¡n rá»“i kiá»ƒm tra',
+            subtitle: 'Nhập đáp án rồi kiểm tra',
             question: question,
             showHint: _showHint,
             onToggleHint: _toggleHint,
@@ -192,7 +192,7 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
             decoration: InputDecoration(
               filled: true,
               fillColor: AppColors.white,
-              hintText: 'Nháº­p Ä‘Ã¡p Ã¡n',
+              hintText: 'Nhập đáp án',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppSpacing.radiusL),
                 borderSide: BorderSide(

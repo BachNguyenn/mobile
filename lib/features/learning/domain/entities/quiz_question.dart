@@ -64,4 +64,6 @@ class QuizQuestion {
     this.inputMode = QuizInputMode.multipleChoice,
     this.payload,
   });
+
+  bool get isScored => inputMode != QuizInputMode.study;
 }

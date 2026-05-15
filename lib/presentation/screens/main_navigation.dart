@@ -4,29 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-
+import 'package:mobile/features/grammar/presentation/screens/grammar_library_screen.dart';
 import 'package:mobile/features/home/presentation/screens/home_page.dart';
 import 'package:mobile/features/kanji/presentation/screens/kanji_library_screen.dart';
-import 'package:mobile/features/vocabulary/presentation/screens/vocabulary_library_screen.dart';
-import 'package:mobile/features/grammar/presentation/screens/grammar_library_screen.dart';
 import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
 import 'package:mobile/features/learning/presentation/screens/learning_path_screen.dart';
 import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'package:mobile/features/vocabulary/presentation/screens/vocabulary_library_screen.dart';
 
-/// Main Navigation — Bottom Navigation Bar với 4 Tab (Premium Redesign)
-///
-/// Tabs:
-/// 0: Trang chủ (HomePage)
-/// 1: Từ vựng (placeholder)
-/// 2: Ngữ pháp (placeholder)
-/// 3: Chữ Hán (KanjiLibraryScreen)
-///
-/// Features:
-/// - Animated pill indicator trượt mượt theo tab active
-/// - Icon scale animation khi active
-/// - InkWell + haptic feedback cho mỗi nav item
-/// - Profile avatar + search icon trên AppBar
-/// - IndexedStack giữ state các tab khi chuyển đổi
 class MainNavigation extends ConsumerStatefulWidget {
   const MainNavigation({super.key});
 
@@ -65,7 +50,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   }
 
   void _openTab(int index, {bool resetLearningCategory = true}) {
-    if (index < 0 || index >= 5) return;
+    if (index < 0 || index >= _navItems.length) return;
     final settings = ref.read(settingsProvider).valueOrNull;
     final targetLearningCategory = resetLearningCategory && index == 1
         ? settings?.defaultLearningCategory ?? LearningCategory.mixed
@@ -157,8 +142,6 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
     return Scaffold(
       extendBody: true,
       body: _buildCurrentScreen(),
-
-      // ── Premium Bottom Navigation Bar ──────────────────────
       bottomNavigationBar: _PremiumBottomNav(
         selectedIndex: _selectedIndex,
         pillAnimation: _pillAnimation,
@@ -169,11 +152,6 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   }
 }
 
-// ═══════════════════════════════════════════════════════════════
-// Premium Bottom Navigation Bar
-// ═══════════════════════════════════════════════════════════════
-
-/// Bottom Nav data
 class _NavItemData {
   final IconData icon;
   final IconData activeIcon;
@@ -240,15 +218,15 @@ class _PremiumBottomNav extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white.withValues(alpha: 0.96),
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.10)),
+        border: Border.all(color: AppColors.zenBlue.withValues(alpha: 0.10)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.08),
+            color: AppColors.navyDark.withValues(alpha: 0.10),
             blurRadius: 24,
             offset: const Offset(0, 10),
           ),
           BoxShadow(
-            color: AppColors.mossGreen.withValues(alpha: 0.06),
+            color: AppColors.zenBlue.withValues(alpha: 0.06),
             blurRadius: 18,
             offset: const Offset(0, 6),
           ),
@@ -263,7 +241,6 @@ class _PremiumBottomNav extends StatelessWidget {
 
             return Stack(
               children: [
-                // ── Sliding Pill Indicator ──────────────────
                 AnimatedBuilder(
                   animation: pillController,
                   builder: (context, _) {
@@ -283,15 +260,13 @@ class _PremiumBottomNav extends StatelessWidget {
                             AppSpacing.radiusM,
                           ),
                           border: Border.all(
-                            color: AppColors.mossGreen.withValues(alpha: 0.12),
+                            color: AppColors.zenBlue.withValues(alpha: 0.10),
                           ),
                         ),
                       ),
                     );
                   },
                 ),
-
-                // ── Nav Items Row ──────────────────────────
                 Row(
                   children: List.generate(_navItems.length, (index) {
                     return Expanded(
@@ -312,7 +287,6 @@ class _PremiumBottomNav extends StatelessWidget {
   }
 }
 
-/// Single nav item with animated icon scale + color transition
 class _NavItem extends StatelessWidget {
   final _NavItemData data;
   final bool isSelected;
@@ -330,14 +304,13 @@ class _NavItem extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        splashColor: AppColors.mossGreen.withValues(alpha: 0.08),
+        splashColor: AppColors.zenBlue.withValues(alpha: 0.08),
         highlightColor: Colors.transparent,
         child: SizedBox(
           height: 68,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Icon with scale animation
               TweenAnimationBuilder<double>(
                 tween: Tween(begin: 1.0, end: isSelected ? 1.15 : 1.0),
                 duration: const Duration(milliseconds: 250),
@@ -352,18 +325,16 @@ class _NavItem extends StatelessWidget {
                     key: ValueKey('${data.label}_$isSelected'),
                     size: 24,
                     color: isSelected
-                        ? AppColors.mossGreen
+                        ? AppColors.zenBlue
                         : AppColors.slateMuted,
                   ),
                 ),
               ),
               const SizedBox(height: AppSpacing.sp4),
-
-              // Label with animated color
               AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 200),
                 style: AppTypography.labelS.copyWith(
-                  color: isSelected ? AppColors.mossDark : AppColors.slateMuted,
+                  color: isSelected ? AppColors.zenBlue : AppColors.slateMuted,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                   fontSize: 10,
                 ),
@@ -380,10 +351,3 @@ class _NavItem extends StatelessWidget {
     );
   }
 }
-
-// ═══════════════════════════════════════════════════════════════
-// Placeholder Tabs
-// ═══════════════════════════════════════════════════════════════
-
-/// Placeholder tab cho Từ vựng / Ngữ pháp — giữ nguyên theo yêu cầu
-// End of MainNavigation

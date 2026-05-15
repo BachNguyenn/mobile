@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 
-/// Glassmorphism resource chip for the garden app bar.
+/// Resource chip for the garden app bar.
 class GardenResourceChip extends StatelessWidget {
   final IconData icon;
   final String value;

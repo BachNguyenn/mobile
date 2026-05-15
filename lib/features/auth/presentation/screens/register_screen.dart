@@ -5,12 +5,9 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:mobile/shared/widgets/app_card.dart';
+import 'package:mobile/shared/widgets/app_page_background.dart';
 
-/// Màn hình Đăng ký — Japandi Minimalism
-///
-/// Cho phép đăng ký bằng email/mật khẩu.
-/// Sau khi đăng ký thành công, Firebase Auth tự động đăng nhập
-/// và AuthWrapper sẽ chuyển sang MainNavigation.
 class RegisterScreen extends ConsumerStatefulWidget {
   const RegisterScreen({super.key});
 
@@ -46,40 +43,9 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             _emailController.text.trim(),
             _passwordController.text,
           );
-      // Đăng ký thành công → Firebase tự đăng nhập → AuthWrapper xử lý navigation
     } catch (e) {
       if (!mounted) return;
-
-      String message = 'Đăng ký thất bại';
-      if (e is FirebaseAuthException) {
-        switch (e.code) {
-          case 'email-already-in-use':
-            message = 'Email này đã được sử dụng. Hãy thử đăng nhập.';
-            break;
-          case 'invalid-email':
-            message = 'Địa chỉ email không hợp lệ.';
-            break;
-          case 'weak-password':
-            message = 'Mật khẩu quá yếu. Hãy dùng ít nhất 6 ký tự.';
-            break;
-          case 'operation-not-allowed':
-            message = 'Đăng ký email chưa được bật trong Firebase Console.';
-            break;
-          case 'network-request-failed':
-            message = 'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
-            break;
-          default:
-            message = 'Lỗi: ${e.message ?? e.code}';
-        }
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(message),
-          behavior: SnackBarBehavior.floating,
-          backgroundColor: AppColors.terracotta,
-        ),
-      );
+      _showError(_messageForRegisterError(e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -88,256 +54,166 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.cream,
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.cream,
-        elevation: 0,
+        backgroundColor: AppColors.white,
+        surfaceTintColor: Colors.transparent,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_rounded),
-          color: AppColors.ink,
+          color: AppColors.zenBlue,
         ),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: AppSpacing.paddingH24,
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: AppSpacing.sp16),
-
-                // ── Logo Header ─────────────────────────────
-                Center(
+      body: AppPageBackground(
+        child: SafeArea(
+          top: false,
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(
+              AppSpacing.sp24,
+              AppSpacing.sp12,
+              AppSpacing.sp24,
+              AppSpacing.sp24,
+            ),
+            children: [
+              const _RegisterHeader(),
+              const SizedBox(height: AppSpacing.sp24),
+              AppCard(
+                padding: const EdgeInsets.all(AppSpacing.sp20),
+                borderColor: AppColors.zenBlue.withValues(alpha: 0.12),
+                shadowColor: AppColors.zenBlue.withValues(alpha: 0.07),
+                child: Form(
+                  key: _formKey,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
-                      Container(
-                        height: 100,
-                        width: 100,
-                        decoration: BoxDecoration(
-                          color: Colors.transparent,
-                          borderRadius: BorderRadius.circular(24),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.ink.withValues(alpha: 0.08),
-                              blurRadius: 25,
-                              offset: const Offset(0, 8),
-                            ),
-                          ],
+                      Text(
+                        'Tạo tài khoản',
+                        style: AppTypography.headingM.copyWith(
+                          color: AppColors.ink,
+                          fontWeight: FontWeight.w900,
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(24),
-                          child: Image.asset(
-                            'assets/images/app_logo_clean.png',
-                            fit: BoxFit.contain,
+                      ),
+                      const SizedBox(height: AppSpacing.sp4),
+                      Text(
+                        'Đăng ký để lưu tiến độ học và ôn tập SRS.',
+                        style: AppTypography.caption,
+                      ),
+                      const SizedBox(height: AppSpacing.sp20),
+                      TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        style: AppTypography.bodyM.copyWith(
+                          color: AppColors.ink,
+                        ),
+                        decoration: _inputDecoration(
+                          label: 'Email',
+                          hint: 'you@email.com',
+                          icon: Icons.mail_outline_rounded,
+                        ),
+                        validator: _validateEmail,
+                      ),
+                      const SizedBox(height: AppSpacing.sp16),
+                      TextFormField(
+                        controller: _passwordController,
+                        obscureText: _obscurePassword,
+                        textInputAction: TextInputAction.next,
+                        style: AppTypography.bodyM.copyWith(
+                          color: AppColors.ink,
+                        ),
+                        decoration: _inputDecoration(
+                          label: 'Mật khẩu',
+                          hint: 'Ít nhất 6 ký tự',
+                          icon: Icons.lock_outline_rounded,
+                          suffixIcon: _VisibilityButton(
+                            isObscured: _obscurePassword,
+                            onPressed: () => setState(
+                              () => _obscurePassword = !_obscurePassword,
+                            ),
                           ),
                         ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Vui lòng nhập mật khẩu';
+                          }
+                          if (value.length < 6) {
+                            return 'Mật khẩu phải có ít nhất 6 ký tự';
+                          }
+                          return null;
+                        },
                       ),
-                      const SizedBox(height: AppSpacing.sp24),
-                      Text(
-                        'Zen Japanese',
-                        style: AppTypography.displayLarge.copyWith(
-                          letterSpacing: 1.2,
-                          color: AppColors.zenBlue,
-                          fontSize: 28,
+                      const SizedBox(height: AppSpacing.sp16),
+                      TextFormField(
+                        controller: _confirmPasswordController,
+                        obscureText: _obscureConfirm,
+                        textInputAction: TextInputAction.done,
+                        onFieldSubmitted: (_) => _handleRegister(),
+                        style: AppTypography.bodyM.copyWith(
+                          color: AppColors.ink,
                         ),
+                        decoration: _inputDecoration(
+                          label: 'Xác nhận mật khẩu',
+                          hint: 'Nhập lại mật khẩu',
+                          icon: Icons.lock_outline_rounded,
+                          suffixIcon: _VisibilityButton(
+                            isObscured: _obscureConfirm,
+                            onPressed: () => setState(
+                              () => _obscureConfirm = !_obscureConfirm,
+                            ),
+                          ),
+                        ),
+                        validator: (value) {
+                          if (value != _passwordController.text) {
+                            return 'Mật khẩu không khớp';
+                          }
+                          return null;
+                        },
                       ),
-                      const SizedBox(height: AppSpacing.sp8),
-                      Text(
-                        '日本語を学ぼう',
-                        style: AppTypography.japaneseQuote.copyWith(
-                          fontSize: 16,
-                          color: AppColors.mossGreen,
-                          fontWeight: FontWeight.w500,
+                      const SizedBox(height: AppSpacing.sp20),
+                      SizedBox(
+                        height: 54,
+                        child: FilledButton(
+                          onPressed: _isLoading ? null : _handleRegister,
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.white,
+                                  ),
+                                )
+                              : const Text('Đăng ký'),
                         ),
                       ),
                     ],
                   ),
                 ),
-
-                const SizedBox(height: AppSpacing.sp48),
-
-                // ── Header ──────────────────────────────────
-                Text(
-                  'Tạo tài khoản',
-                  style: AppTypography.displayLarge.copyWith(
-                    color: AppColors.zenBlue,
-                    fontSize: 24,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sp8),
-                Text(
-                  '登録して学び始めよう',
-                  style: AppTypography.japaneseQuote.copyWith(
-                    fontSize: 16,
-                    color: AppColors.mossGreen,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sp8),
-                Text(
-                  'Đăng ký để bắt đầu hành trình học tiếng Nhật',
-                  style: AppTypography.bodyM.copyWith(
-                    color: AppColors.slateGrey,
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.sp32),
-
-                // ── Email Field ─────────────────────────────
-                TextFormField(
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                  textInputAction: TextInputAction.next,
-                  style: AppTypography.bodyM.copyWith(color: AppColors.ink),
-                  decoration: _inputDecoration(
-                    label: 'Email',
-                    hint: 'your@email.com',
-                    icon: Icons.mail_outline_rounded,
-                  ),
-                  validator: (value) {
-                    if (value == null || value.trim().isEmpty) {
-                      return 'Vui lòng nhập email';
-                    }
-                    if (!RegExp(
-                      r'^[^@]+@[^@]+\.[^@]+$',
-                    ).hasMatch(value.trim())) {
-                      return 'Email không hợp lệ';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: AppSpacing.sp16),
-
-                // ── Password Field ──────────────────────────
-                TextFormField(
-                  controller: _passwordController,
-                  obscureText: _obscurePassword,
-                  textInputAction: TextInputAction.next,
-                  style: AppTypography.bodyM.copyWith(color: AppColors.ink),
-                  decoration: _inputDecoration(
-                    label: 'Mật khẩu',
-                    hint: 'Ít nhất 6 ký tự',
-                    icon: Icons.lock_outline_rounded,
-                    suffixIcon: IconButton(
-                      onPressed: () =>
-                          setState(() => _obscurePassword = !_obscurePassword),
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off_rounded
-                            : Icons.visibility_rounded,
-                        color: AppColors.slateMuted,
-                        size: 20,
+              ),
+              const SizedBox(height: AppSpacing.sp20),
+              Center(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text.rich(
+                    TextSpan(
+                      text: 'Đã có tài khoản? ',
+                      style: AppTypography.bodyM.copyWith(
+                        color: AppColors.slateGrey,
                       ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Vui lòng nhập mật khẩu';
-                    }
-                    if (value.length < 6) {
-                      return 'Mật khẩu phải có ít nhất 6 ký tự';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: AppSpacing.sp16),
-
-                // ── Confirm Password Field ──────────────────
-                TextFormField(
-                  controller: _confirmPasswordController,
-                  obscureText: _obscureConfirm,
-                  textInputAction: TextInputAction.done,
-                  onFieldSubmitted: (_) => _handleRegister(),
-                  style: AppTypography.bodyM.copyWith(color: AppColors.ink),
-                  decoration: _inputDecoration(
-                    label: 'Xác nhận mật khẩu',
-                    hint: 'Nhập lại mật khẩu',
-                    icon: Icons.lock_outline_rounded,
-                    suffixIcon: IconButton(
-                      onPressed: () =>
-                          setState(() => _obscureConfirm = !_obscureConfirm),
-                      icon: Icon(
-                        _obscureConfirm
-                            ? Icons.visibility_off_rounded
-                            : Icons.visibility_rounded,
-                        color: AppColors.slateMuted,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                  validator: (value) {
-                    if (value != _passwordController.text) {
-                      return 'Mật khẩu không khớp';
-                    }
-                    return null;
-                  },
-                ),
-
-                const SizedBox(height: AppSpacing.sp32),
-
-                // ── Register Button ─────────────────────────
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: _isLoading ? null : _handleRegister,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.zenBlue,
-                      foregroundColor: AppColors.white,
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AppSpacing.sp16,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                      ),
-                      textStyle: AppTypography.bodyMBold.copyWith(
-                        color: AppColors.white,
-                      ),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: AppColors.white,
-                            ),
-                          )
-                        : const Text('Đăng ký'),
-                  ),
-                ),
-
-                const SizedBox(height: AppSpacing.sp20),
-
-                // ── Back to Login ───────────────────────────
-                Center(
-                  child: GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: RichText(
-                      text: TextSpan(
-                        text: 'Đã có tài khoản? ',
-                        style: AppTypography.bodyM.copyWith(
-                          color: AppColors.slateGrey,
-                        ),
-                        children: [
-                          TextSpan(
-                            text: 'Đăng nhập',
-                            style: AppTypography.bodyMBold.copyWith(
-                              color: AppColors.mossGreen,
-                            ),
+                      children: [
+                        TextSpan(
+                          text: 'Đăng nhập',
+                          style: AppTypography.bodyMBold.copyWith(
+                            color: AppColors.leafGreen,
+                            fontWeight: FontWeight.w900,
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
-
-                const SizedBox(height: AppSpacing.sp32),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -355,37 +231,105 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
       hintText: hint,
       prefixIcon: Icon(icon, color: AppColors.zenBlue, size: 20),
       suffixIcon: suffixIcon,
-      labelStyle: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
-      hintStyle: AppTypography.bodyM.copyWith(color: AppColors.slateLight),
-      filled: true,
-      fillColor: AppColors.white,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sp16,
-        vertical: AppSpacing.sp16,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        borderSide: BorderSide(
-          color: AppColors.slateLight.withValues(alpha: 0.5),
+    );
+  }
+
+  String? _validateEmail(String? value) {
+    final email = value?.trim() ?? '';
+    if (email.isEmpty) return 'Vui lòng nhập email';
+    if (!RegExp(r'^[^@]+@[^@]+\.[^@]+$').hasMatch(email)) {
+      return 'Email không hợp lệ';
+    }
+    return null;
+  }
+
+  String _messageForRegisterError(Object error) {
+    if (error is! FirebaseAuthException) return 'Đăng ký thất bại';
+    switch (error.code) {
+      case 'email-already-in-use':
+        return 'Email này đã được sử dụng. Hãy thử đăng nhập.';
+      case 'invalid-email':
+        return 'Địa chỉ email không hợp lệ.';
+      case 'weak-password':
+        return 'Mật khẩu quá yếu. Hãy dùng ít nhất 6 ký tự.';
+      case 'operation-not-allowed':
+        return 'Đăng ký email chưa được bật trong Firebase Console.';
+      case 'network-request-failed':
+        return 'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
+      default:
+        return 'Lỗi: ${error.message ?? error.code}';
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message), backgroundColor: AppColors.error),
+    );
+  }
+}
+
+class _RegisterHeader extends StatelessWidget {
+  const _RegisterHeader();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 88,
+          height: 88,
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(color: AppColors.navySoft),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.zenBlue.withValues(alpha: 0.10),
+                blurRadius: 24,
+                offset: const Offset(0, 12),
+              ),
+            ],
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Image.asset('assets/images/app_logo_clean.png'),
         ),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        borderSide: BorderSide(
-          color: AppColors.slateLight.withValues(alpha: 0.5),
+        const SizedBox(height: AppSpacing.sp16),
+        Text(
+          'Zen Japanese',
+          style: AppTypography.headingL.copyWith(
+            color: AppColors.zenBlue,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        borderSide: const BorderSide(color: AppColors.zenBlue, width: 1.5),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        borderSide: const BorderSide(color: AppColors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        borderSide: const BorderSide(color: AppColors.error, width: 1.5),
+        const SizedBox(height: AppSpacing.sp4),
+        Text(
+          '登録して学び始めよう',
+          style: AppTypography.japaneseQuote.copyWith(
+            color: AppColors.leafDark,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 0,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _VisibilityButton extends StatelessWidget {
+  final bool isObscured;
+  final VoidCallback onPressed;
+
+  const _VisibilityButton({required this.isObscured, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: isObscured ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
+      onPressed: onPressed,
+      icon: Icon(
+        isObscured ? Icons.visibility_off_rounded : Icons.visibility_rounded,
+        color: AppColors.slateMuted,
+        size: 20,
       ),
     );
   }

@@ -64,12 +64,12 @@ void main() {
     await tester.pumpAndSettle();
 
     final checkButton = find.byKey(sentenceCheckButtonKey);
-    expect(tester.widget<ElevatedButton>(checkButton).onPressed, isNull);
+    expect(tester.widget<FilledButton>(checkButton).onPressed, isNull);
 
     await tester.enterText(find.byType(TextField), '私は学生です。');
     await tester.pump();
 
-    expect(tester.widget<ElevatedButton>(checkButton).onPressed, isNotNull);
+    expect(tester.widget<FilledButton>(checkButton).onPressed, isNotNull);
     await tester.tap(checkButton);
     await tester.pumpAndSettle();
 

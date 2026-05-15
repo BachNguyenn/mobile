@@ -17,12 +17,16 @@ class ReviewRatingButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text('Bạn thấy chữ này thế nào?', style: AppTypography.bodyS),
+        Text(
+          'Bạn nhớ thẻ này thế nào?',
+          style: AppTypography.bodyS.copyWith(fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: AppSpacing.sp16),
         Row(
           children: [
             _RatingButton(
               label: 'Quên',
+              icon: Icons.close_rounded,
               color: AppColors.terracotta,
               rating: 1,
               onRate: onRate,
@@ -31,6 +35,7 @@ class ReviewRatingButtons extends StatelessWidget {
             const SizedBox(width: 8),
             _RatingButton(
               label: 'Khó',
+              icon: Icons.priority_high_rounded,
               color: AppColors.sunGold,
               rating: 2,
               onRate: onRate,
@@ -39,6 +44,7 @@ class ReviewRatingButtons extends StatelessWidget {
             const SizedBox(width: 8),
             _RatingButton(
               label: 'Tốt',
+              icon: Icons.check_rounded,
               color: AppColors.mossGreen,
               rating: 3,
               onRate: onRate,
@@ -47,6 +53,7 @@ class ReviewRatingButtons extends StatelessWidget {
             const SizedBox(width: 8),
             _RatingButton(
               label: 'Dễ',
+              icon: Icons.bolt_rounded,
               color: AppColors.waterBlue,
               rating: 4,
               onRate: onRate,
@@ -61,6 +68,7 @@ class ReviewRatingButtons extends StatelessWidget {
 
 class _RatingButton extends StatelessWidget {
   final String label;
+  final IconData icon;
   final Color color;
   final int rating;
   final Future<void> Function(int) onRate;
@@ -68,6 +76,7 @@ class _RatingButton extends StatelessWidget {
 
   const _RatingButton({
     required this.label,
+    required this.icon,
     required this.color,
     required this.rating,
     required this.onRate,
@@ -79,21 +88,25 @@ class _RatingButton extends StatelessWidget {
     return Expanded(
       child: SizedBox(
         height: 56,
-        child: ElevatedButton(
+        child: FilledButton.icon(
           onPressed: enabled ? () => onRate(rating) : null,
-          style: ElevatedButton.styleFrom(
+          style: FilledButton.styleFrom(
             backgroundColor: color.withValues(alpha: 0.1),
             foregroundColor: color,
-            elevation: 0,
+            disabledBackgroundColor: AppColors.slateLight.withValues(
+              alpha: 0.32,
+            ),
+            disabledForegroundColor: AppColors.slateMuted,
             side: BorderSide(color: color.withValues(alpha: 0.3)),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusS),
             ),
             padding: EdgeInsets.zero,
           ),
-          child: Text(
+          icon: Icon(icon, size: 18),
+          label: Text(
             label,
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
           ),
         ),
       ),

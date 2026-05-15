@@ -11,18 +11,20 @@ abstract final class AppTheme {
 
   static ThemeData _buildTheme(Brightness brightness) {
     final isDark = brightness == Brightness.dark;
-    final surface = isDark ? const Color(0xFF171A1F) : AppColors.cream;
-    final card = isDark ? const Color(0xFF22262D) : AppColors.white;
-    final text = isDark ? const Color(0xFFE8EDF2) : AppColors.ink;
+    final surface = isDark ? const Color(0xFF111629) : AppColors.cream;
+    final card = isDark ? const Color(0xFF1B2136) : AppColors.white;
+    final text = isDark ? const Color(0xFFF1F4FA) : AppColors.ink;
     final body = isDark ? const Color(0xFFC7D0DA) : AppColors.slateGrey;
     final muted = isDark ? const Color(0xFF97A3AF) : AppColors.slateMuted;
-    final border = isDark ? const Color(0xFF3A414A) : AppColors.slateLight;
+    final border = isDark ? const Color(0xFF30384E) : AppColors.slateLight;
+    final primary = isDark ? const Color(0xFFAAB6E5) : AppColors.zenBlue;
+    final secondary = isDark ? AppColors.leafLight : AppColors.leafGreen;
 
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.mossGreen,
-      primary: AppColors.mossGreen,
+      seedColor: AppColors.zenBlue,
+      primary: primary,
       onPrimary: AppColors.white,
-      secondary: AppColors.terracotta,
+      secondary: secondary,
       onSecondary: AppColors.white,
       surface: surface,
       onSurface: text,
@@ -37,7 +39,7 @@ abstract final class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: surface,
       cardColor: card,
-      textTheme: GoogleFonts.notoSansTextTheme().copyWith(
+      textTheme: GoogleFonts.notoSansJpTextTheme().copyWith(
         headlineLarge: GoogleFonts.notoSerif(
           fontSize: 24,
           fontWeight: FontWeight.w700,
@@ -48,16 +50,16 @@ abstract final class AppTheme {
           fontWeight: FontWeight.w600,
           color: body,
         ),
-        bodyLarge: GoogleFonts.notoSans(fontSize: 16, color: body),
-        bodyMedium: GoogleFonts.notoSans(fontSize: 14, color: body),
-        labelSmall: GoogleFonts.notoSans(
+        bodyLarge: GoogleFonts.notoSansJp(fontSize: 16, color: body),
+        bodyMedium: GoogleFonts.notoSansJp(fontSize: 14, color: body),
+        labelSmall: GoogleFonts.notoSansJp(
           fontSize: 11,
           fontWeight: FontWeight.w500,
           color: muted,
         ),
       ),
       appBarTheme: AppBarTheme(
-        backgroundColor: surface,
+        backgroundColor: isDark ? surface : AppColors.porcelain,
         foregroundColor: text,
         elevation: 0,
         scrolledUnderElevation: 0.5,
@@ -71,9 +73,38 @@ abstract final class AppTheme {
           color: text,
         ),
       ),
+      snackBarTheme: SnackBarThemeData(
+        backgroundColor: isDark ? const Color(0xFF20263B) : AppColors.ink,
+        contentTextStyle: GoogleFonts.notoSansJp(
+          fontSize: 14,
+          color: AppColors.white,
+          fontWeight: FontWeight.w600,
+        ),
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: primary,
+          foregroundColor: AppColors.white,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sp20,
+            vertical: AppSpacing.sp12,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+          ),
+          textStyle: GoogleFonts.notoSansJp(
+            fontSize: 15,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: card,
-        selectedItemColor: AppColors.mossGreen,
+        selectedItemColor: primary,
         unselectedItemColor: muted,
         type: BottomNavigationBarType.fixed,
         elevation: 0,
@@ -99,7 +130,7 @@ abstract final class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.mossGreen,
+          backgroundColor: primary,
           foregroundColor: AppColors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
@@ -117,8 +148,8 @@ abstract final class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: AppColors.mossGreen,
-          side: const BorderSide(color: AppColors.mossGreen),
+          foregroundColor: primary,
+          side: BorderSide(color: primary),
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.sp24,
             vertical: AppSpacing.sp16,
@@ -145,16 +176,16 @@ abstract final class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-          borderSide: const BorderSide(color: AppColors.mossGreen, width: 1.5),
+          borderSide: BorderSide(color: primary, width: 1.5),
         ),
         hintStyle: GoogleFonts.notoSans(fontSize: 14, color: muted),
         prefixIconColor: muted,
       ),
       dividerTheme: DividerThemeData(color: border, thickness: 0.5, space: 0),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: AppColors.mossGreen,
+        color: primary,
         linearTrackColor: isDark
-            ? const Color(0xFF2C3138)
+            ? const Color(0xFF2A3044)
             : AppColors.creamDark,
         linearMinHeight: 6,
       ),

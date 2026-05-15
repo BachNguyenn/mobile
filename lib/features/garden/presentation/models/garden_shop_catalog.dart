@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/core/content/app_content_provider.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 
 class GardenShopCatalogItem {
@@ -27,52 +29,45 @@ class GardenShopCatalogItem {
   });
 }
 
-const gardenShopCatalog = [
-  GardenShopCatalogItem(
-    type: 'zen_stone',
-    name: 'Đá thiền',
-    group: 'Đá',
-    description: 'Mở đầu khu vườn với một điểm nhấn tĩnh.',
-    waterCost: 20,
-    sunCost: 10,
-    unlockLevel: 1,
-    icon: Icons.landscape_rounded,
-    color: AppColors.slateGrey,
-    assetPath: 'assets/images/zen_stone.webp',
-  ),
-  GardenShopCatalogItem(
-    type: 'zen_bonsai',
-    name: 'Bonsai',
-    group: 'Cây',
-    description: 'Thưởng cho nhịp học đều và bền.',
-    waterCost: 50,
-    sunCost: 50,
-    unlockLevel: 2,
-    icon: Icons.park_rounded,
-    color: AppColors.mossGreen,
-    assetPath: 'assets/images/zen_bonsai.webp',
-  ),
-  GardenShopCatalogItem(
-    type: 'zen_sakura',
-    name: 'Hoa đào',
-    group: 'Cây',
-    description: 'Một góc sáng khi bạn giữ tiến độ tốt.',
-    waterCost: 80,
-    sunCost: 80,
-    unlockLevel: 3,
-    icon: Icons.local_florist_rounded,
-    color: AppColors.sakura,
-    assetPath: 'assets/images/zen_sakura.webp',
-  ),
-  GardenShopCatalogItem(
-    type: 'locked_lantern',
-    name: 'Đèn đá',
-    group: 'Trang trí',
-    description: 'Sắp ra mắt khi vườn đạt cấp cao hơn.',
-    waterCost: 120,
-    sunCost: 140,
-    unlockLevel: 4,
-    icon: Icons.light_mode_rounded,
-    color: AppColors.sunGold,
-  ),
-];
+final gardenShopCatalogProvider = FutureProvider<List<GardenShopCatalogItem>>((
+  ref,
+) async {
+  final content = await ref.watch(appContentProvider.future);
+  return content.gardenShopCatalog
+      .where((item) => item.type.isNotEmpty)
+      .map(
+        (item) => GardenShopCatalogItem(
+          type: item.type,
+          name: item.name,
+          group: item.group,
+          description: item.description,
+          waterCost: item.waterCost,
+          sunCost: item.sunCost,
+          unlockLevel: item.unlockLevel,
+          icon: _catalogIcon(item.icon),
+          color: _catalogColor(item.color),
+          assetPath: item.assetPath,
+        ),
+      )
+      .toList(growable: false);
+});
+
+IconData _catalogIcon(String key) {
+  return switch (key) {
+    'landscape' => Icons.landscape_rounded,
+    'park' => Icons.park_rounded,
+    'local_florist' => Icons.local_florist_rounded,
+    'light_mode' => Icons.light_mode_rounded,
+    _ => Icons.spa_rounded,
+  };
+}
+
+Color _catalogColor(String key) {
+  return switch (key) {
+    'slateGrey' => AppColors.slateGrey,
+    'mossGreen' => AppColors.mossGreen,
+    'sakura' => AppColors.sakura,
+    'sunGold' => AppColors.sunGold,
+    _ => AppColors.leafGreen,
+  };
+}

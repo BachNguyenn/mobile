@@ -31,83 +31,68 @@ class LessonBottomBar extends StatelessWidget {
       };
 
       return _BarSurface(
-        child: SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: ElevatedButton(
-            onPressed: canCheck ? onCheck : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.mossGreen,
-              foregroundColor: AppColors.white,
-              disabledBackgroundColor: AppColors.slateLight,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-              ),
-              elevation: 0,
-            ),
-            child: Text(
-              isStudy ? 'Tiếp tục' : 'Kiểm tra',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-          ),
+        child: _PrimaryLessonButton(
+          icon: isStudy
+              ? Icons.arrow_forward_rounded
+              : Icons.fact_check_rounded,
+          label: isStudy ? 'Tiếp tục' : 'Kiểm tra',
+          color: AppColors.leafGreen,
+          onPressed: canCheck ? onCheck : null,
         ),
       );
     }
 
     final isStudy = currentQ.inputMode == QuizInputMode.study;
     final color = isStudy
-        ? AppColors.mossGreen
+        ? AppColors.leafGreen
         : state.isCorrect
-        ? AppColors.mossGreen
+        ? AppColors.leafGreen
         : AppColors.terracotta;
     final message = isStudy
-        ? 'Đã hiểu!'
+        ? 'Đã sẵn sàng luyện tập'
         : state.isCorrect
-        ? 'Chính xác!'
+        ? 'Chính xác'
         : 'Chưa đúng';
     final icon = isStudy
         ? Icons.auto_stories_rounded
         : state.isCorrect
         ? Icons.check_circle_rounded
-        : Icons.cancel_rounded;
+        : Icons.info_rounded;
 
     return _BarSurface(
-      backgroundColor: color.withValues(alpha: 0.08),
-      borderColor: color.withValues(alpha: 0.25),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            children: [
-              Icon(icon, color: color, size: 30),
-              const SizedBox(width: AppSpacing.sp12),
-              Expanded(
-                child: Text(
-                  message,
-                  style: AppTypography.headingM.copyWith(color: color),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sp20),
-          SizedBox(
+          Container(
             width: double.infinity,
-            height: 56,
-            child: ElevatedButton(
-              onPressed: onNext,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: color,
-                foregroundColor: AppColors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-                ),
-                elevation: 0,
-              ),
-              child: const Text(
-                'Tiếp tục',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+            padding: const EdgeInsets.all(AppSpacing.sp12),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.08),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+              border: Border.all(color: color.withValues(alpha: 0.20)),
             ),
+            child: Row(
+              children: [
+                Icon(icon, color: color, size: 22),
+                const SizedBox(width: AppSpacing.sp8),
+                Expanded(
+                  child: Text(
+                    message,
+                    style: AppTypography.bodyMBold.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AppSpacing.sp12),
+          _PrimaryLessonButton(
+            icon: Icons.arrow_forward_rounded,
+            label: 'Tiếp tục',
+            color: color,
+            onPressed: onNext,
           ),
         ],
       ),
@@ -115,26 +100,78 @@ class LessonBottomBar extends StatelessWidget {
   }
 }
 
-class _BarSurface extends StatelessWidget {
-  final Widget child;
-  final Color backgroundColor;
-  final Color borderColor;
+class _PrimaryLessonButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback? onPressed;
 
-  const _BarSurface({
-    required this.child,
-    this.backgroundColor = AppColors.white,
-    this.borderColor = const Color(0xFFE7E2DA),
+  const _PrimaryLessonButton({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onPressed,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp24),
-      decoration: BoxDecoration(
-        color: backgroundColor,
-        border: Border(top: BorderSide(color: borderColor)),
+    return SizedBox(
+      width: double.infinity,
+      height: 54,
+      child: FilledButton.icon(
+        onPressed: onPressed,
+        icon: Icon(icon, size: 20),
+        label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+        style: FilledButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: AppColors.white,
+          disabledBackgroundColor: AppColors.slateLight,
+          disabledForegroundColor: AppColors.white.withValues(alpha: 0.74),
+          textStyle: AppTypography.bodyMBold.copyWith(
+            fontWeight: FontWeight.w900,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+          ),
+        ),
       ),
-      child: child,
+    );
+  }
+}
+
+class _BarSurface extends StatelessWidget {
+  final Widget child;
+
+  const _BarSurface({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.sp16,
+          AppSpacing.sp12,
+          AppSpacing.sp16,
+          AppSpacing.sp16,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.white.withValues(alpha: 0.96),
+          border: Border(
+            top: BorderSide(
+              color: AppColors.slateLight.withValues(alpha: 0.32),
+            ),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.ink.withValues(alpha: 0.06),
+              blurRadius: 18,
+              offset: const Offset(0, -8),
+            ),
+          ],
+        ),
+        child: child,
+      ),
     );
   }
 }

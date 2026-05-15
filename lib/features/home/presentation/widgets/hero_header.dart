@@ -1,15 +1,16 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:mobile/core/models/progress_models.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/core/models/progress_models.dart';
 
-class HeroHeader extends StatefulWidget {
+class HeroHeader extends StatelessWidget {
   final HomeProgress progress;
   final int streak;
   final int overdueCount;
   final int todayReviewed;
+  final VoidCallback? onStartLearning;
+  final VoidCallback? onSearch;
 
   const HeroHeader({
     super.key,
@@ -17,202 +18,159 @@ class HeroHeader extends StatefulWidget {
     required this.streak,
     required this.overdueCount,
     required this.todayReviewed,
+    this.onStartLearning,
+    this.onSearch,
   });
 
   @override
-  State<HeroHeader> createState() => _HeroHeaderState();
-}
-
-class _HeroHeaderState extends State<HeroHeader>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _petalController;
-
-  /// Danh sách câu động viên tiếng Nhật ngẫu nhiên (theo ngày)
-  static const _japaneseMotivations = [
-    '一期一会 — Mỗi khoảnh khắc là duy nhất',
-    '七転び八起き — Ngã bảy lần, đứng dậy tám',
-    '継続 là sức mạnh — Kiên trì là sức mạnh',
-    '花鳥風月 — Vẻ đẹp của thiên nhiên',
-    '石の上にも三年 — Kiên nhẫn sẽ thành công',
-    '初心忘るべからず — Đừng quên tâm ban đầu',
-  ];
-
-  @override
-  void initState() {
-    super.initState();
-    _petalController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 6),
-    )..repeat();
-  }
-
-  @override
-  void dispose() {
-    _petalController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    final isWarning = widget.overdueCount > 5;
-    final motivation =
-        _japaneseMotivations[DateTime.now().day % _japaneseMotivations.length];
+    final isWarning = overdueCount > 5;
 
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 800),
-      curve: Curves.easeInOutCubic,
+    return Container(
       decoration: BoxDecoration(
         gradient: isWarning
             ? AppColors.heroWarningGradient
             : AppColors.heroGradient,
-      ),
-      child: Stack(
-        children: [
-          // ── Torii Gate Silhouette ──────────────────────
-          Positioned(
-            right: -20,
-            top: 30,
-            child: Opacity(
-              opacity: 0.06,
-              child: CustomPaint(
-                size: const Size(180, 160),
-                painter: _ToriiGatePainter(),
-              ),
-            ),
-          ),
-
-          // ── Floating Sakura Petals ────────────────────
-          AnimatedBuilder(
-            animation: _petalController,
-            builder: (context, _) {
-              return CustomPaint(
-                size: Size.infinite,
-                painter: _SakuraPetalsPainter(
-                  animationValue: _petalController.value,
-                ),
-              );
-            },
-          ),
-
-          // ── Content ──────────────────────────────────
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.sp24,
-                AppSpacing.sp48,
-                AppSpacing.sp24,
-                AppSpacing.sp24,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // Greeting
-                  Text(
-                    'Chào mừng bạn trở lại,',
-                    style: AppTypography.bodyM.copyWith(
-                      color: AppColors.slateMuted,
-                    ),
-                  ),
-                  const SizedBox(height: AppSpacing.sp4),
-                  Text(
-                    'Hôm nay bạn muốn học gì?',
-                    style: AppTypography.headingL,
-                  ),
-                  const SizedBox(height: AppSpacing.sp12),
-
-                  // Japanese motivation — paper card style
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AppSpacing.sp16,
-                      vertical: AppSpacing.sp8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.white.withValues(alpha: 0.6),
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-                      border: Border.all(
-                        color: AppColors.gardenSandDark.withValues(alpha: 0.3),
-                      ),
-                    ),
-                    child: Text(
-                      motivation,
-                      style: AppTypography.japaneseQuote.copyWith(
-                        fontSize: 13,
-                        color: AppColors.slateMuted.withValues(alpha: 0.8),
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: AppSpacing.sp16),
-
-                  // Stat Chips Row — glassmorphism
-                  Wrap(
-                    spacing: AppSpacing.sp8,
-                    runSpacing: AppSpacing.sp8,
-                    children: [
-                      _buildGlassStatChip(
-                        icon: Icons.local_fire_department_rounded,
-                        value: '${widget.streak} ngày',
-                        color: widget.streak > 0
-                            ? AppColors.terracotta
-                            : AppColors.slateMuted,
-                      ),
-                      _buildGlassStatChip(
-                        icon: Icons.schedule_rounded,
-                        value: '${widget.overdueCount} cần ôn',
-                        color: widget.overdueCount > 5
-                            ? AppColors.warning
-                            : AppColors.slateMuted,
-                      ),
-                      _buildGlassStatChip(
-                        icon: Icons.check_circle_outline_rounded,
-                        value: '${widget.todayReviewed} hôm nay',
-                        color: AppColors.success,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGlassStatChip({
-    required IconData icon,
-    required String value,
-    required Color color,
-  }) {
-    return Container(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sp12,
-        vertical: AppSpacing.sp4,
-      ),
-      decoration: BoxDecoration(
-        color: AppColors.glassBg,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(color: color.withValues(alpha: 0.25), width: 1),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
         boxShadow: [
           BoxShadow(
-            color: color.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
+            color: AppColors.navyDark.withValues(alpha: 0.20),
+            blurRadius: 28,
+            offset: const Offset(0, 16),
           ),
         ],
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          Icon(icon, size: 14, color: color),
-          const SizedBox(width: AppSpacing.sp4),
-          Text(
-            value,
-            style: AppTypography.labelS.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
+          Positioned.fill(
+            child: CustomPaint(
+              painter: _InkCirclePainter(
+                color: AppColors.white.withValues(alpha: 0.10),
+              ),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.sp20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: AppColors.white.withValues(alpha: 0.94),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+                      ),
+                      clipBehavior: Clip.antiAlias,
+                      child: Image.asset(
+                        'assets/images/app_logo_clean.png',
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sp12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Zen Japanese',
+                            style: AppTypography.label.copyWith(
+                              color: AppColors.white.withValues(alpha: 0.78),
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Trang chủ',
+                            style: AppTypography.headingS.copyWith(
+                              color: AppColors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    _HeroIconButton(
+                      icon: Icons.search_rounded,
+                      tooltip: 'Tìm kiếm',
+                      onTap: onSearch,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp24),
+                Text(
+                  'Chào bạn trở lại',
+                  style: AppTypography.bodyM.copyWith(
+                    color: AppColors.white.withValues(alpha: 0.74),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sp4),
+                Text(
+                  overdueCount > 0
+                      ? 'Có $overdueCount mục đang chờ ôn.'
+                      : 'Hôm nay bắt đầu nhẹ nhàng thôi.',
+                  style: AppTypography.headingL.copyWith(
+                    color: AppColors.white,
+                    fontSize: 26,
+                    height: 1.18,
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sp20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _HeroStatTile(
+                        icon: Icons.check_circle_rounded,
+                        value: '$todayReviewed',
+                        label: 'Đã ôn',
+                        color: AppColors.leafLight,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sp8),
+                    Expanded(
+                      child: _HeroStatTile(
+                        icon: Icons.schedule_rounded,
+                        value: '$overdueCount',
+                        label: 'Cần ôn',
+                        color: overdueCount > 0
+                            ? AppColors.sunGold
+                            : AppColors.white,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sp8),
+                    Expanded(
+                      child: _HeroStatTile(
+                        icon: Icons.local_fire_department_rounded,
+                        value: '$streak',
+                        label: 'Streak',
+                        color: streak > 0
+                            ? AppColors.terracotta
+                            : AppColors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _PrimaryHeroButton(
+                        label: 'Bắt đầu học',
+                        icon: Icons.play_arrow_rounded,
+                        onTap: onStartLearning,
+                      ),
+                    ),
+                    const SizedBox(width: AppSpacing.sp8),
+                    _SecondaryHeroButton(
+                      icon: Icons.manage_search_rounded,
+                      label: 'Tra cứu',
+                      onTap: onSearch,
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ],
@@ -221,101 +179,206 @@ class _HeroHeaderState extends State<HeroHeader>
   }
 }
 
-/// Torii Gate silhouette painter — decorative background element
-class _ToriiGatePainter extends CustomPainter {
+class _HeroIconButton extends StatelessWidget {
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback? onTap;
+
+  const _HeroIconButton({
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
+  });
+
   @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.ink
-      ..style = PaintingStyle.fill;
-
-    final w = size.width;
-    final h = size.height;
-
-    // Top beam (kasagi) — curved
-    final topBeam = Path();
-    topBeam.moveTo(w * 0.05, h * 0.12);
-    topBeam.quadraticBezierTo(w * 0.5, h * 0.02, w * 0.95, h * 0.12);
-    topBeam.lineTo(w * 0.93, h * 0.18);
-    topBeam.quadraticBezierTo(w * 0.5, h * 0.09, w * 0.07, h * 0.18);
-    topBeam.close();
-    canvas.drawPath(topBeam, paint);
-
-    // Secondary beam (nuki) — straight
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.15, h * 0.25, w * 0.7, h * 0.04),
-        const Radius.circular(2),
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: tooltip,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        child: Container(
+          width: 44,
+          height: 44,
+          decoration: BoxDecoration(
+            color: AppColors.white.withValues(alpha: 0.14),
+            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+            border: Border.all(color: AppColors.white.withValues(alpha: 0.18)),
+          ),
+          child: Icon(icon, color: AppColors.white, size: 22),
+        ),
       ),
-      paint,
-    );
-
-    // Left pillar (hashira)
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.22, h * 0.12, w * 0.06, h * 0.88),
-        const Radius.circular(3),
-      ),
-      paint,
-    );
-
-    // Right pillar (hashira)
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(w * 0.72, h * 0.12, w * 0.06, h * 0.88),
-        const Radius.circular(3),
-      ),
-      paint,
     );
   }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// Floating sakura petals — subtle ambient animation
-class _SakuraPetalsPainter extends CustomPainter {
-  final double animationValue;
-  static final _rng = Random(42);
+class _HeroStatTile extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
 
-  _SakuraPetalsPainter({required this.animationValue});
+  const _HeroStatTile({
+    required this.icon,
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.sp12),
+      decoration: BoxDecoration(
+        color: AppColors.white.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        border: Border.all(color: AppColors.white.withValues(alpha: 0.14)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: 16, color: color),
+          const SizedBox(height: AppSpacing.sp4),
+          Text(
+            value,
+            style: AppTypography.statNumber.copyWith(
+              color: AppColors.white,
+              fontSize: 20,
+            ),
+          ),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.labelS.copyWith(
+              color: AppColors.white.withValues(alpha: 0.68),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrimaryHeroButton extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final VoidCallback? onTap;
+
+  const _PrimaryHeroButton({
+    required this.label,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      color: AppColors.white,
+      borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        child: Container(
+          height: 52,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: AppColors.zenBlue, size: 22),
+              const SizedBox(width: AppSpacing.sp8),
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.bodyMBold.copyWith(
+                    color: AppColors.zenBlue,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _SecondaryHeroButton extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback? onTap;
+
+  const _SecondaryHeroButton({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Tooltip(
+      message: label,
+      child: Material(
+        color: AppColors.white.withValues(alpha: 0.14),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+          child: SizedBox(
+            width: 52,
+            height: 52,
+            child: Icon(icon, color: AppColors.white, size: 22),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _InkCirclePainter extends CustomPainter {
+  final Color color;
+
+  const _InkCirclePainter({required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color = AppColors.sakura.withValues(alpha: 0.15)
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 24
+      ..strokeCap = StrokeCap.round;
+
+    final rect = Rect.fromCircle(
+      center: Offset(size.width * 0.90, size.height * 0.16),
+      radius: size.width * 0.35,
+    );
+    canvas.drawArc(rect, 0.30, 4.9, false, paint);
+
+    final leafPaint = Paint()
+      ..color = AppColors.leafLight.withValues(alpha: 0.16)
       ..style = PaintingStyle.fill;
-
-    for (var i = 0; i < 5; i++) {
-      final baseX = _rng.nextDouble() * size.width;
-      final baseY = _rng.nextDouble() * size.height * 0.7;
-      final phase = i * 0.18;
-      final t = (animationValue + phase) % 1.0;
-
-      final dx = sin(t * pi * 2 + i) * 8;
-      final dy = t * size.height * 0.25;
-      final rotation = t * pi * 2;
-      final opacity = (sin(t * pi) * 0.15).clamp(0.0, 0.15);
-
-      canvas.save();
-      canvas.translate(baseX + dx, baseY + dy);
-      canvas.rotate(rotation);
-
-      paint.color = AppColors.sakura.withValues(alpha: opacity);
-      canvas.drawOval(
-        Rect.fromCenter(
-          center: Offset.zero,
-          width: 4 + _rng.nextDouble() * 3,
-          height: 2.5 + _rng.nextDouble() * 1.5,
-        ),
-        paint,
+    final leaf = Path()
+      ..moveTo(size.width * 0.80, size.height * 0.05)
+      ..quadraticBezierTo(
+        size.width * 1.05,
+        size.height * 0.03,
+        size.width * 0.96,
+        size.height * 0.31,
+      )
+      ..quadraticBezierTo(
+        size.width * 0.77,
+        size.height * 0.26,
+        size.width * 0.80,
+        size.height * 0.05,
       );
-      canvas.restore();
-    }
+    canvas.drawPath(leaf, leafPaint);
   }
 
   @override
-  bool shouldRepaint(_SakuraPetalsPainter oldDelegate) {
-    return oldDelegate.animationValue != animationValue;
+  bool shouldRepaint(covariant _InkCirclePainter oldDelegate) {
+    return oldDelegate.color != color;
   }
 }

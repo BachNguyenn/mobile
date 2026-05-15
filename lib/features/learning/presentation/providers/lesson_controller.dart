@@ -176,11 +176,10 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
         correctAnswers: state.correctAnswers + (isCorrect ? 1 : 0),
       );
     } else if (currentQ.type == QuizType.grammarStudy) {
-      isCorrect = true; // Grammar study is always "correct" when you press next
+      isCorrect = true;
       state = state.copyWith(
         isCorrect: true,
         isAnswerChecked: true,
-        correctAnswers: state.correctAnswers + 1,
       );
     } else if (currentQ.inputMode == QuizInputMode.typing) {
       isCorrect = QuizAnswerNormalizer.isCorrect(
@@ -200,6 +199,8 @@ class LessonController extends FamilyNotifier<LessonState, Lesson> {
         correctAnswers: state.correctAnswers + (isCorrect ? 1 : 0),
       );
     }
+
+    if (!currentQ.isScored) return;
 
     final payload = currentQ.payload;
     if (payload is KanjiQuizPayload) {

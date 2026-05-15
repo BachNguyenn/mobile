@@ -89,6 +89,8 @@ class _GardenShopItemState extends ConsumerState<GardenShopItem>
               widget.type,
               widget.position.dx - 40,
               widget.position.dy - 40,
+              waterCost: widget.water,
+              sunCost: widget.sun,
             );
 
         if (context.mounted) {

@@ -47,7 +47,7 @@ abstract final class AppTypography {
   // ─── Body — Noto Sans JP ──────────────────────────────────
 
   /// 16sp Regular — Body text chính
-  static TextStyle bodyL = GoogleFonts.notoSans(
+  static TextStyle bodyL = GoogleFonts.notoSansJp(
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: AppColors.slateGrey,
@@ -55,7 +55,7 @@ abstract final class AppTypography {
   );
 
   /// 14sp Regular — Body text phụ
-  static TextStyle bodyM = GoogleFonts.notoSans(
+  static TextStyle bodyM = GoogleFonts.notoSansJp(
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.slateGrey,
@@ -63,7 +63,7 @@ abstract final class AppTypography {
   );
 
   /// 14sp Medium — Body text nhấn mạnh
-  static TextStyle bodyMBold = GoogleFonts.notoSans(
+  static TextStyle bodyMBold = GoogleFonts.notoSansJp(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: AppColors.slateGrey,
@@ -71,7 +71,7 @@ abstract final class AppTypography {
   );
 
   /// 13sp Regular — Body text nhỏ
-  static TextStyle bodyS = GoogleFonts.notoSans(
+  static TextStyle bodyS = GoogleFonts.notoSansJp(
     fontSize: 13,
     fontWeight: FontWeight.w400,
     color: AppColors.slateGrey,
@@ -81,7 +81,7 @@ abstract final class AppTypography {
   // ─── Caption / Label ──────────────────────────────────────
 
   /// 13sp Regular — Caption, hint text
-  static TextStyle caption = GoogleFonts.notoSans(
+  static TextStyle caption = GoogleFonts.notoSansJp(
     fontSize: 13,
     fontWeight: FontWeight.w400,
     color: AppColors.slateMuted,
@@ -89,7 +89,7 @@ abstract final class AppTypography {
   );
 
   /// 12sp Medium — Label, chip text, badge
-  static TextStyle label = GoogleFonts.notoSans(
+  static TextStyle label = GoogleFonts.notoSansJp(
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: AppColors.slateMuted,
@@ -97,7 +97,7 @@ abstract final class AppTypography {
   );
 
   /// 11sp Medium — Micro label, nav bar label
-  static TextStyle labelS = GoogleFonts.notoSans(
+  static TextStyle labelS = GoogleFonts.notoSansJp(
     fontSize: 11,
     fontWeight: FontWeight.w500,
     color: AppColors.slateMuted,
@@ -132,7 +132,7 @@ abstract final class AppTypography {
   );
 
   /// 24sp Bold — Số thống kê (streak count, percentage)
-  static TextStyle statNumber = GoogleFonts.notoSans(
+  static TextStyle statNumber = GoogleFonts.notoSansJp(
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: AppColors.ink,
@@ -140,7 +140,7 @@ abstract final class AppTypography {
   );
 
   /// 14sp Medium — Stat label
-  static TextStyle statLabel = GoogleFonts.notoSans(
+  static TextStyle statLabel = GoogleFonts.notoSansJp(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: AppColors.slateMuted,

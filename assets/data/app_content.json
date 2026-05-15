@@ -1,0 +1,91 @@
+{
+  "motivations": [
+    "一期一会 - Mỗi khoảnh khắc là duy nhất",
+    "七転び八起き - Ngã bảy lần, đứng dậy tám",
+    "継続は力なり - Kiên trì là sức mạnh",
+    "花鳥風月 - Vẻ đẹp của thiên nhiên",
+    "石の上にも三年 - Kiên nhẫn sẽ thành công",
+    "初心忘るべからず - Đừng quên tâm ban đầu"
+  ],
+  "garden_missions": [
+    {
+      "id": "daily_review",
+      "title": "Ôn 5 thẻ",
+      "subtitle": "Giữ nhịp nhớ bằng một phiên ôn ngắn.",
+      "icon": "auto_stories",
+      "color": "mossGreen",
+      "metric": "todayStudyCount",
+      "target": 5,
+      "rewardText": "+EXP, nước và nắng"
+    },
+    {
+      "id": "daily_lesson",
+      "title": "Hoàn thành 1 bài học",
+      "subtitle": "Học đủ một phiên 10 câu để tính như một bài.",
+      "icon": "route",
+      "color": "waterBlue",
+      "metric": "lessonProxyProgress",
+      "target": 10,
+      "rewardText": "Mở khóa tiến trình vườn"
+    },
+    {
+      "id": "correct_streak",
+      "title": "Đúng 3 câu liên tiếp",
+      "subtitle": "Tập trung để tạo chuỗi trả lời chính xác.",
+      "icon": "local_fire_department",
+      "color": "terracotta",
+      "metric": "maxCorrectStreak",
+      "target": 3,
+      "rewardText": "Tăng động lực streak"
+    }
+  ],
+  "garden_shop_catalog": [
+    {
+      "type": "zen_stone",
+      "name": "Đá thiền",
+      "group": "Đá",
+      "description": "Mở đầu khu vườn với một điểm nhấn tĩnh.",
+      "waterCost": 20,
+      "sunCost": 10,
+      "unlockLevel": 1,
+      "icon": "landscape",
+      "color": "slateGrey",
+      "assetPath": "assets/images/zen_stone.webp"
+    },
+    {
+      "type": "zen_bonsai",
+      "name": "Bonsai",
+      "group": "Cây",
+      "description": "Thưởng cho nhịp học đều và bền.",
+      "waterCost": 50,
+      "sunCost": 50,
+      "unlockLevel": 2,
+      "icon": "park",
+      "color": "mossGreen",
+      "assetPath": "assets/images/zen_bonsai.webp"
+    },
+    {
+      "type": "zen_sakura",
+      "name": "Hoa đào",
+      "group": "Cây",
+      "description": "Một góc sáng khi bạn giữ tiến độ tốt.",
+      "waterCost": 80,
+      "sunCost": 80,
+      "unlockLevel": 3,
+      "icon": "local_florist",
+      "color": "sakura",
+      "assetPath": "assets/images/zen_sakura.webp"
+    },
+    {
+      "type": "locked_lantern",
+      "name": "Đèn đá",
+      "group": "Trang trí",
+      "description": "Sắp ra mắt khi vườn đạt cấp cao hơn.",
+      "waterCost": 120,
+      "sunCost": 140,
+      "unlockLevel": 4,
+      "icon": "light_mode",
+      "color": "sunGold"
+    }
+  ]
+}

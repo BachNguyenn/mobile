@@ -90,19 +90,19 @@ class _LearningCardState extends State<LearningCard>
             color: AppColors.white,
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             border: Border.all(
-              color: AppColors.slateLight.withValues(alpha: 0.2),
+              color: AppColors.zenBlue.withValues(alpha: 0.08),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: AppColors.ink.withValues(alpha: 0.04),
-                blurRadius: 16,
-                offset: const Offset(0, 6),
-              ),
-              BoxShadow(
-                color: widget.accentColor.withValues(alpha: 0.04),
+                color: AppColors.navyDark.withValues(alpha: 0.05),
                 blurRadius: 20,
                 offset: const Offset(0, 8),
+              ),
+              BoxShadow(
+                color: widget.accentColor.withValues(alpha: 0.05),
+                blurRadius: 24,
+                offset: const Offset(0, 10),
               ),
             ],
           ),
@@ -148,8 +148,8 @@ class _LearningCardState extends State<LearningCard>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  widget.accentColor.withValues(alpha: 0.12),
-                                  widget.accentColor.withValues(alpha: 0.06),
+                                  widget.accentColor.withValues(alpha: 0.14),
+                                  widget.accentColor.withValues(alpha: 0.07),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -298,7 +298,7 @@ class _InfoBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(color: color.withValues(alpha: 0.14)),
+        border: Border.all(color: color.withValues(alpha: 0.16)),
       ),
       child: Text(
         label,
@@ -331,7 +331,7 @@ class _HighlightChip extends StatelessWidget {
       child: Text(
         label,
         style: AppTypography.label.copyWith(
-          color: color,
+          color: AppColors.ink,
           fontWeight: FontWeight.w600,
         ),
       ),

@@ -1,11 +1,10 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mobile/core/theme/app_colors.dart';
-import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/domain/entities/zen_garden.dart';
 
 /// Animated plant graphic with sway animation, sparkle effects,
-/// and level badge for the Zen Garden.
+/// for the Zen Garden.
 class GardenPlantGraphic extends StatefulWidget {
   final Plant plant;
   final ZenGarden garden;
@@ -112,41 +111,6 @@ class _GardenPlantGraphicState extends State<GardenPlantGraphic>
                   ),
                 );
               },
-            ),
-
-          // ── Level badge ────────────────────────────────
-          if (!widget.isDragging)
-            Positioned(
-              bottom: 0,
-              right: 2,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColors.white,
-                  border: Border.all(
-                    color: AppColors.mossGreen.withValues(alpha: 0.4),
-                    width: 1.5,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.1),
-                      blurRadius: 4,
-                    ),
-                  ],
-                ),
-                child: Center(
-                  child: Text(
-                    '${widget.plant.level}',
-                    style: AppTypography.labelS.copyWith(
-                      color: AppColors.mossGreen,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 9,
-                    ),
-                  ),
-                ),
-              ),
             ),
         ],
       ),

@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/services/audio_service.dart';
-import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_spacing.dart';
-import '../../../../core/theme/app_typography.dart';
-import '../../domain/entities/kanji_card.dart';
+import 'package:mobile/core/services/audio_service.dart';
+import 'package:mobile/core/theme/app_colors.dart';
+import 'package:mobile/core/theme/app_spacing.dart';
+import 'package:mobile/core/theme/app_typography.dart';
+import 'package:mobile/features/kanji/domain/entities/kanji_card.dart';
+import 'package:mobile/shared/widgets/app_card.dart';
+import 'package:mobile/shared/widgets/app_page_background.dart';
+import 'package:mobile/shared/widgets/jlpt_level_badge.dart';
 
 class KanjiDetailScreen extends ConsumerWidget {
   final KanjiCard kanji;
@@ -14,323 +17,263 @@ class KanjiDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            pinned: true,
-            backgroundColor: AppColors.mossGreen,
-            foregroundColor: AppColors.white,
-            title: Text(
-              kanji.kanji,
-              style: AppTypography.headingS.copyWith(color: AppColors.white),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              height: 210,
-              decoration: const BoxDecoration(gradient: AppColors.mossGradient),
-              child: Center(
-                child: Text(
-                  kanji.kanji,
-                  style: AppTypography.kanjiDisplay.copyWith(
-                    fontSize: 100,
-                    color: AppColors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.sp24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeaderSection(),
-                  const SizedBox(height: AppSpacing.sp32),
-                  _buildInfoCard(
-                    'Ý nghĩa',
-                    kanji.meanings,
-                    Icons.translate_rounded,
-                    AppColors.waterBlue,
-                  ),
-                  const SizedBox(height: AppSpacing.sp16),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: _buildInfoCardWithSpeaker(
-                          ref,
-                          'Onyomi',
-                          kanji.onyomi,
-                          Icons.record_voice_over_rounded,
-                          AppColors.terracotta,
-                        ),
-                      ),
-                      const SizedBox(width: AppSpacing.sp16),
-                      Expanded(
-                        child: _buildInfoCardWithSpeaker(
-                          ref,
-                          'Kunyomi',
-                          kanji.kunyomi,
-                          Icons.record_voice_over_outlined,
-                          AppColors.mossGreen,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (kanji.radicals.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.sp16),
-                    _buildListCard(
-                      'Radicals',
-                      kanji.radicals,
-                      Icons.account_tree_rounded,
-                      AppColors.sunGold,
-                    ),
-                  ],
-                  if (kanji.mnemonic?.isNotEmpty ?? false) ...[
-                    const SizedBox(height: AppSpacing.sp16),
-                    _buildInfoCard(
-                      'Mnemonic',
-                      kanji.mnemonic!,
-                      Icons.lightbulb_rounded,
-                      AppColors.terracotta,
-                    ),
-                  ],
-                  if (kanji.relatedWords.isNotEmpty) ...[
-                    const SizedBox(height: AppSpacing.sp16),
-                    _buildListCard(
-                      'Related words',
-                      kanji.relatedWords,
-                      Icons.link_rounded,
-                      AppColors.waterBlue,
-                    ),
-                  ],
-                  const SizedBox(height: AppSpacing.sp32),
-                  Text('Ghi chú ôn tập', style: AppTypography.headingS),
-                  const SizedBox(height: AppSpacing.sp12),
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(AppSpacing.sp16),
-                    decoration: BoxDecoration(
-                      color: AppColors.white,
-                      borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-                      border: Border.all(
-                        color: AppColors.slateLight.withValues(alpha: 0.2),
-                      ),
-                    ),
-                    child: Text(
-                      'Lần ôn tập tiếp theo: ${_formatDate(kanji.nextReview)}',
-                      style: AppTypography.bodyM.copyWith(
-                        color: AppColors.slateGrey,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
+      backgroundColor: AppColors.white,
+      appBar: AppBar(
+        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        foregroundColor: AppColors.slateGrey,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        title: Text(
+          'Chi tiết chữ Hán',
+          style: AppTypography.headingS.copyWith(color: AppColors.navyDark),
+        ),
       ),
-    );
-  }
-
-  Widget _buildHeaderSection() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: AppPageBackground(
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.sp16,
+            AppSpacing.sp12,
+            AppSpacing.sp16,
+            AppSpacing.sp32,
+          ),
           children: [
-            Text(
-              'Trình độ',
-              style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
+            _KanjiHeroCard(kanji: kanji),
+            const SizedBox(height: AppSpacing.sp16),
+            _InfoCard(
+              title: 'Ý nghĩa',
+              content: kanji.meanings,
+              icon: Icons.translate_rounded,
+              color: AppColors.waterBlue,
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.sp12,
-                vertical: AppSpacing.sp4,
-              ),
-              decoration: BoxDecoration(
-                color: AppColors.mossGreen.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-              ),
-              child: Text(
-                'JLPT N${kanji.jlptLevel}',
-                style: AppTypography.bodyMBold.copyWith(
-                  color: AppColors.mossGreen,
+            const SizedBox(height: AppSpacing.sp16),
+            Row(
+              children: [
+                Expanded(
+                  child: _ReadingCard(
+                    ref: ref,
+                    title: 'Onyomi',
+                    content: kanji.onyomi,
+                    icon: Icons.record_voice_over_rounded,
+                    color: AppColors.terracotta,
+                  ),
                 ),
-              ),
+                const SizedBox(width: AppSpacing.sp12),
+                Expanded(
+                  child: _ReadingCard(
+                    ref: ref,
+                    title: 'Kunyomi',
+                    content: kanji.kunyomi,
+                    icon: Icons.record_voice_over_outlined,
+                    color: AppColors.leafGreen,
+                  ),
+                ),
+              ],
             ),
+            if (kanji.radicals.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sp16),
+              _ListCard(
+                title: 'Bộ phận',
+                items: kanji.radicals,
+                icon: Icons.account_tree_rounded,
+                color: AppColors.sunGold,
+              ),
+            ],
+            if (kanji.mnemonic?.isNotEmpty ?? false) ...[
+              const SizedBox(height: AppSpacing.sp16),
+              _InfoCard(
+                title: 'Gợi nhớ',
+                content: kanji.mnemonic!,
+                icon: Icons.lightbulb_rounded,
+                color: AppColors.terracotta,
+              ),
+            ],
+            if (kanji.relatedWords.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sp16),
+              _ListCard(
+                title: 'Từ liên quan',
+                items: kanji.relatedWords,
+                icon: Icons.link_rounded,
+                color: AppColors.waterBlue,
+              ),
+            ],
+            const SizedBox(height: AppSpacing.sp16),
+            _ReviewNote(nextReview: kanji.nextReview),
           ],
         ),
-        _buildStatCircle('Sẻ chia', Icons.share_rounded),
-      ],
-    );
-  }
-
-  Widget _buildStatCircle(String label, IconData icon) {
-    return Column(
-      children: [
-        Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: AppColors.slateLight.withValues(alpha: 0.2),
-            ),
-          ),
-          child: Icon(icon, size: 20, color: AppColors.slateGrey),
-        ),
-        const SizedBox(height: AppSpacing.sp4),
-        Text(
-          label,
-          style: AppTypography.labelS.copyWith(color: AppColors.slateMuted),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildInfoCardWithSpeaker(
-    WidgetRef ref,
-    String title,
-    String content,
-    IconData icon,
-    Color themeColor,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.sp20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: themeColor.withValues(alpha: 0.1)),
       ),
+    );
+  }
+}
+
+class _KanjiHeroCard extends StatelessWidget {
+  final KanjiCard kanji;
+
+  const _KanjiHeroCard({required this.kanji});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      gradient: AppColors.brandLeafGradient,
+      borderColor: AppColors.white.withValues(alpha: 0.18),
+      shadowColor: AppColors.navyDark.withValues(alpha: 0.10),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(icon, size: 18, color: themeColor),
-              const SizedBox(width: 8),
+              JlptLevelBadge(level: kanji.jlptLevel, color: AppColors.white),
+              const Spacer(),
+              Icon(
+                Icons.brush_rounded,
+                color: AppColors.white.withValues(alpha: 0.76),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sp16),
+          Text(
+            kanji.kanji,
+            style: AppTypography.kanjiHero.copyWith(
+              color: AppColors.white,
+              fontSize: 96,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: AppSpacing.sp8),
+          Text(
+            kanji.meanings,
+            style: AppTypography.bodyM.copyWith(
+              color: AppColors.white.withValues(alpha: 0.82),
+              fontWeight: FontWeight.w700,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReadingCard extends StatelessWidget {
+  final WidgetRef ref;
+  final String title;
+  final String content;
+  final IconData icon;
+  final Color color;
+
+  const _ReadingCard({
+    required this.ref,
+    required this.title,
+    required this.content,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      color: AppColors.white,
+      borderColor: color.withValues(alpha: 0.14),
+      shadowColor: color.withValues(alpha: 0.035),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CardLabel(icon: icon, label: title, color: color),
+          const SizedBox(height: AppSpacing.sp12),
+          Row(
+            children: [
               Expanded(
                 child: Text(
-                  title,
-                  style: AppTypography.bodyMBold.copyWith(color: themeColor),
+                  content.isEmpty ? '---' : content,
+                  style: AppTypography.bodyL.copyWith(
+                    color: AppColors.ink,
+                    fontWeight: FontWeight.w800,
+                  ),
                 ),
               ),
               if (content.isNotEmpty)
-                GestureDetector(
-                  onTap: () async {
+                IconButton.filledTonal(
+                  tooltip: 'Phát âm',
+                  onPressed: () async {
                     try {
-                      await ref
-                          .read(audioServiceProvider)
-                          .speakJapanese(content);
+                      await ref.read(audioServiceProvider).speakJapanese(
+                            content,
+                          );
                     } catch (_) {}
                   },
-                  child: Icon(
-                    Icons.volume_up_rounded,
-                    size: 20,
-                    color: themeColor.withValues(alpha: 0.7),
+                  icon: const Icon(Icons.volume_up_rounded, size: 18),
+                  style: IconButton.styleFrom(
+                    backgroundColor: color.withValues(alpha: 0.10),
+                    foregroundColor: color,
                   ),
                 ),
             ],
           ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoCard extends StatelessWidget {
+  final String title;
+  final String content;
+  final IconData icon;
+  final Color color;
+
+  const _InfoCard({
+    required this.title,
+    required this.content,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      color: AppColors.white,
+      borderColor: color.withValues(alpha: 0.14),
+      shadowColor: color.withValues(alpha: 0.035),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CardLabel(icon: icon, label: title, color: color),
           const SizedBox(height: AppSpacing.sp12),
           Text(
             content.isEmpty ? '---' : content,
             style: AppTypography.bodyL.copyWith(
               color: AppColors.ink,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
       ),
     );
   }
+}
 
-  Widget _buildInfoCard(
-    String title,
-    String content,
-    IconData icon,
-    Color themeColor,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.sp20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.03),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-        border: Border.all(color: themeColor.withValues(alpha: 0.1)),
-      ),
+class _ListCard extends StatelessWidget {
+  final String title;
+  final List<String> items;
+  final IconData icon;
+  final Color color;
+
+  const _ListCard({
+    required this.title,
+    required this.items,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      color: AppColors.white,
+      borderColor: color.withValues(alpha: 0.14),
+      shadowColor: color.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: themeColor),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: AppTypography.bodyMBold.copyWith(color: themeColor),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sp12),
-          Text(
-            content.isEmpty ? '---' : content,
-            style: AppTypography.bodyL.copyWith(
-              color: AppColors.ink,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildListCard(
-    String title,
-    List<String> items,
-    IconData icon,
-    Color themeColor,
-  ) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.sp20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: themeColor.withValues(alpha: 0.1)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(icon, size: 18, color: themeColor),
-              const SizedBox(width: 8),
-              Text(
-                title,
-                style: AppTypography.bodyMBold.copyWith(color: themeColor),
-              ),
-            ],
-          ),
+          _CardLabel(icon: icon, label: title, color: color),
           const SizedBox(height: AppSpacing.sp12),
           Wrap(
             spacing: AppSpacing.sp8,
@@ -343,12 +286,15 @@ class KanjiDetailScreen extends ConsumerWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: themeColor.withValues(alpha: 0.10),
+                    color: color.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                   ),
                   child: Text(
                     item,
-                    style: AppTypography.label.copyWith(color: themeColor),
+                    style: AppTypography.label.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
             ],
@@ -357,8 +303,67 @@ class KanjiDetailScreen extends ConsumerWidget {
       ),
     );
   }
+}
+
+class _ReviewNote extends StatelessWidget {
+  final DateTime nextReview;
+
+  const _ReviewNote({required this.nextReview});
+
+  @override
+  Widget build(BuildContext context) {
+    return AppCard(
+      color: AppColors.white,
+      borderColor: AppColors.leafGreen.withValues(alpha: 0.14),
+      shadowColor: AppColors.leafGreen.withValues(alpha: 0.035),
+      child: Row(
+        children: [
+          const Icon(Icons.event_available_rounded, color: AppColors.leafGreen),
+          const SizedBox(width: AppSpacing.sp12),
+          Expanded(
+            child: Text(
+              'Lần ôn tiếp theo: ${_formatDate(nextReview)}',
+              style: AppTypography.bodyM.copyWith(
+                color: AppColors.slateGrey,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
+  }
+}
+
+class _CardLabel extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  const _CardLabel({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Icon(icon, color: color, size: 18),
+        const SizedBox(width: AppSpacing.sp8),
+        Text(
+          label,
+          style: AppTypography.bodyMBold.copyWith(
+            color: color,
+            fontWeight: FontWeight.w900,
+          ),
+        ),
+      ],
+    );
   }
 }

@@ -9,13 +9,7 @@ class AppPageBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DecoratedBox(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.cream, Color(0xFFF7F2EA), AppColors.cream],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
+      decoration: const BoxDecoration(gradient: AppColors.pageGradient),
       child: child,
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mobile/core/content/app_content_provider.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/features/garden/presentation/providers/garden_provider.dart';
 import 'package:mobile/features/review/presentation/providers/study_event_provider.dart';
@@ -67,45 +68,54 @@ final gardenMissionProvider = FutureProvider<GardenMissionSummary>((ref) async {
   ref.watch(studyEventStreamProvider);
 
   final repository = ref.watch(gardenRepositoryProvider);
+  final content = await ref.watch(appContentProvider.future);
   final todayStudyCount = await repository.getTodayStudyCount();
   final maxCorrectStreak = await repository.getTodayMaxCorrectStreak();
 
   final lessonProxyProgress = todayStudyCount.clamp(0, 10).toInt();
+  final metrics = <String, int>{
+    'todayStudyCount': todayStudyCount,
+    'maxCorrectStreak': maxCorrectStreak,
+    'lessonProxyProgress': lessonProxyProgress,
+  };
 
   return GardenMissionSummary(
     todayStudyCount: todayStudyCount,
     maxCorrectStreak: maxCorrectStreak,
-    missions: [
-      GardenMission(
-        id: 'daily_review',
-        title: 'Ôn 5 thẻ',
-        subtitle: 'Giữ nhịp nhớ bằng một phiên ôn ngắn.',
-        icon: Icons.auto_stories_rounded,
-        color: AppColors.mossGreen,
-        current: todayStudyCount.clamp(0, 5).toInt(),
-        target: 5,
-        rewardText: '+EXP, nước và nắng',
-      ),
-      GardenMission(
-        id: 'daily_lesson',
-        title: 'Hoàn thành 1 bài học',
-        subtitle: 'Học đủ một phiên 10 câu để tính như một bài.',
-        icon: Icons.route_rounded,
-        color: AppColors.waterBlue,
-        current: lessonProxyProgress,
-        target: 10,
-        rewardText: 'Mở khóa tiến trình vườn',
-      ),
-      GardenMission(
-        id: 'correct_streak',
-        title: 'Đúng 3 câu liên tiếp',
-        subtitle: 'Tập trung để tạo chuỗi trả lời chính xác.',
-        icon: Icons.local_fire_department_rounded,
-        color: AppColors.terracotta,
-        current: maxCorrectStreak.clamp(0, 3).toInt(),
-        target: 3,
-        rewardText: 'Tăng động lực streak',
-      ),
-    ],
+    missions: content.gardenMissions
+        .where((mission) => mission.id.isNotEmpty && mission.target > 0)
+        .map(
+          (mission) => GardenMission(
+            id: mission.id,
+            title: mission.title,
+            subtitle: mission.subtitle,
+            icon: _missionIcon(mission.icon),
+            color: _missionColor(mission.color),
+            current: (metrics[mission.metric] ?? 0)
+                .clamp(0, mission.target)
+                .toInt(),
+            target: mission.target,
+            rewardText: mission.rewardText,
+          ),
+        )
+        .toList(growable: false),
   );
 });
+
+IconData _missionIcon(String key) {
+  return switch (key) {
+    'auto_stories' => Icons.auto_stories_rounded,
+    'route' => Icons.route_rounded,
+    'local_fire_department' => Icons.local_fire_department_rounded,
+    _ => Icons.flag_rounded,
+  };
+}
+
+Color _missionColor(String key) {
+  return switch (key) {
+    'mossGreen' => AppColors.mossGreen,
+    'waterBlue' => AppColors.waterBlue,
+    'terracotta' => AppColors.terracotta,
+    _ => AppColors.leafGreen,
+  };
+}

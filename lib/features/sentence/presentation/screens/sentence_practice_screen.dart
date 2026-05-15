@@ -7,6 +7,9 @@ import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
 import 'package:mobile/features/sentence/domain/entities/sentence.dart';
 import 'package:mobile/features/sentence/presentation/providers/sentence_provider.dart';
+import 'package:mobile/shared/widgets/app_card.dart';
+import 'package:mobile/shared/widgets/app_empty_state.dart';
+import 'package:mobile/shared/widgets/app_loading_indicator.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
 import 'package:mobile/shared/widgets/jlpt_level_selector.dart';
 
@@ -26,8 +29,7 @@ class SentencePracticeScreen extends ConsumerStatefulWidget {
       _SentencePracticeScreenState();
 }
 
-class _SentencePracticeScreenState
-    extends ConsumerState<SentencePracticeScreen> {
+class _SentencePracticeScreenState extends ConsumerState<SentencePracticeScreen> {
   SentencePracticeMode _mode = SentencePracticeMode.readToMeaning;
   int _currentIndex = 0;
   String? _selectedAnswer;
@@ -40,8 +42,12 @@ class _SentencePracticeScreenState
     final sentencesAsync = ref.watch(dueSentencePracticeProvider);
 
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        title: Text('Luyện câu', style: AppTypography.headingM),
+        title: Text(
+          'Luyện câu',
+          style: AppTypography.headingS.copyWith(color: AppColors.navyDark),
+        ),
         backgroundColor: AppColors.cream.withValues(alpha: 0.94),
         surfaceTintColor: Colors.transparent,
         foregroundColor: AppColors.slateGrey,
@@ -52,13 +58,10 @@ class _SentencePracticeScreenState
           data: (sentences) {
             final allSentences = _prioritizeInitial(sentences);
             if (allSentences.isEmpty) {
-              return Center(
-                child: Text(
-                  'Chưa có câu ví dụ để luyện tập.',
-                  style: AppTypography.bodyM.copyWith(
-                    color: AppColors.slateMuted,
-                  ),
-                ),
+              return const AppEmptyState(
+                icon: Icons.subject_rounded,
+                title: 'Chưa có câu ví dụ',
+                message: 'Hãy quay lại sau khi dữ liệu câu được bổ sung.',
               );
             }
 
@@ -96,17 +99,16 @@ class _SentencePracticeScreenState
                         ),
                       ),
                       const SizedBox(width: AppSpacing.sp16),
-                      Text(
-                        '${_currentIndex + 1}/${allSentences.length}',
-                        style: AppTypography.label.copyWith(
-                          color: AppColors.slateGrey,
-                        ),
+                      _ProgressBadge(
+                        current: _currentIndex + 1,
+                        total: allSentences.length,
                       ),
                     ],
                   ),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
+                    physics: const BouncingScrollPhysics(),
                     padding: const EdgeInsets.all(AppSpacing.sp16),
                     child: _PracticeCard(
                       sentence: sentence,
@@ -124,7 +126,7 @@ class _SentencePracticeScreenState
                         if (_isChecked) return;
                         setState(() => _typedAnswer = answer);
                       },
-                      onSpeak: (text) => _speak(text),
+                      onSpeak: _speak,
                     ),
                   ),
                 ),
@@ -143,14 +145,12 @@ class _SentencePracticeScreenState
               ],
             );
           },
-          loading: () => const Center(
-            child: CircularProgressIndicator(color: AppColors.terracotta),
-          ),
-          error: (error, _) => Center(
-            child: Text(
-              'Lỗi tải câu: $error',
-              style: AppTypography.bodyM.copyWith(color: AppColors.terracotta),
-            ),
+          loading: () =>
+              const AppLoadingIndicator(color: AppColors.terracotta),
+          error: (error, _) => AppEmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Không thể tải câu',
+            message: '$error',
           ),
         ),
       ),
@@ -259,15 +259,10 @@ class _PracticeCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.sp20),
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-            border: Border.all(
-              color: AppColors.terracotta.withValues(alpha: 0.16),
-            ),
-          ),
+        AppCard(
+          color: AppColors.white,
+          borderColor: AppColors.terracotta.withValues(alpha: 0.16),
+          shadowColor: AppColors.terracotta.withValues(alpha: 0.04),
           child: Column(
             children: [
               Wrap(
@@ -301,6 +296,12 @@ class _PracticeCard extends StatelessWidget {
                       tooltip: 'Phát âm',
                       onPressed: () => onSpeak(sentence.text),
                       icon: const Icon(Icons.volume_up_rounded),
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.terracotta.withValues(
+                          alpha: 0.10,
+                        ),
+                        foregroundColor: AppColors.terracotta,
+                      ),
                     ),
                   ],
                 ],
@@ -420,7 +421,7 @@ class _OptionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = correct
-        ? AppColors.mossGreen
+        ? AppColors.leafGreen
         : wrong
         ? AppColors.terracotta
         : selected
@@ -467,14 +468,11 @@ class _AnswerCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isCorrect ? AppColors.mossGreen : AppColors.terracotta;
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp16),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: color.withValues(alpha: 0.22)),
-      ),
+    final color = isCorrect ? AppColors.leafGreen : AppColors.terracotta;
+    return AppCard(
+      color: color.withValues(alpha: 0.08),
+      borderColor: color.withValues(alpha: 0.22),
+      shadowColor: color.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -541,6 +539,34 @@ class _Pill extends StatelessWidget {
   }
 }
 
+class _ProgressBadge extends StatelessWidget {
+  final int current;
+  final int total;
+
+  const _ProgressBadge({required this.current, required this.total});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sp12,
+        vertical: AppSpacing.sp8,
+      ),
+      decoration: BoxDecoration(
+        color: AppColors.terracotta.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+      ),
+      child: Text(
+        '$current/$total',
+        style: AppTypography.label.copyWith(
+          color: AppColors.terracotta,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    );
+  }
+}
+
 class _BottomBar extends StatelessWidget {
   final bool canCheck;
   final bool isChecked;
@@ -558,31 +584,50 @@ class _BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isCorrect ? AppColors.mossGreen : AppColors.terracotta;
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp16),
-      decoration: const BoxDecoration(
-        color: AppColors.white,
-        border: Border(top: BorderSide(color: Color(0xFFE7E2DA))),
-      ),
-      child: SizedBox(
-        width: double.infinity,
-        height: 54,
-        child: ElevatedButton(
-          key: sentenceCheckButtonKey,
-          onPressed: isChecked ? onNext : (canCheck ? onCheck : null),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: isChecked ? color : AppColors.terracotta,
-            foregroundColor: AppColors.white,
-            disabledBackgroundColor: AppColors.slateLight,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+    final color = isCorrect ? AppColors.leafGreen : AppColors.terracotta;
+    return SafeArea(
+      top: false,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.sp16,
+          AppSpacing.sp12,
+          AppSpacing.sp16,
+          AppSpacing.sp16,
+        ),
+        decoration: BoxDecoration(
+          color: AppColors.white.withValues(alpha: 0.96),
+          border: Border(
+            top: BorderSide(
+              color: AppColors.slateLight.withValues(alpha: 0.32),
             ),
-            elevation: 0,
           ),
-          child: Text(
-            isChecked ? 'Tiếp tục' : 'Kiểm tra',
-            style: AppTypography.bodyMBold.copyWith(color: AppColors.white),
+          boxShadow: [
+            BoxShadow(
+              color: AppColors.ink.withValues(alpha: 0.06),
+              blurRadius: 18,
+              offset: const Offset(0, -8),
+            ),
+          ],
+        ),
+        child: SizedBox(
+          width: double.infinity,
+          height: 54,
+          child: FilledButton(
+            key: sentenceCheckButtonKey,
+            onPressed: isChecked ? onNext : (canCheck ? onCheck : null),
+            style: FilledButton.styleFrom(
+              backgroundColor: isChecked ? color : AppColors.terracotta,
+              foregroundColor: AppColors.white,
+              disabledBackgroundColor: AppColors.slateLight,
+              disabledForegroundColor: AppColors.white.withValues(alpha: 0.74),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+              ),
+            ),
+            child: Text(
+              isChecked ? 'Tiếp tục' : 'Kiểm tra',
+              style: AppTypography.bodyMBold.copyWith(color: AppColors.white),
+            ),
           ),
         ),
       ),

@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mobile/core/theme/app_colors.dart';
+import 'package:mobile/core/theme/app_spacing.dart';
+import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/core/services/app_logger.dart';
 import 'core/theme/app_theme.dart';
 import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
@@ -11,6 +14,9 @@ import 'firebase_options.dart';
 import 'presentation/screens/main_navigation.dart';
 import 'package:mobile/features/auth/presentation/screens/login_screen.dart';
 import 'core/services/notification_service.dart';
+import 'shared/widgets/app_empty_state.dart';
+import 'shared/widgets/app_loading_indicator.dart';
+import 'shared/widgets/app_page_background.dart';
 
 final firebaseInitProvider = FutureProvider<void>((ref) async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -90,17 +96,33 @@ class AuthWrapper extends ConsumerWidget {
           data: (user) =>
               user != null ? const MainNavigation() : const LoginScreen(),
           loading: () => const _SplashScreen(),
-          error: (e, s) => const Scaffold(
-            backgroundColor: Color(0xFFFAF8F5),
-            body: Center(child: Text('Không thể xác thực. Vui lòng thử lại.')),
+          error: (e, s) => const _StartupError(
+            message: 'Không thể xác thực. Vui lòng thử lại.',
           ),
         );
       },
       loading: () => const _SplashScreen(),
-      error: (e, s) => const Scaffold(
-        backgroundColor: Color(0xFFFAF8F5),
-        body: Center(
-          child: Text('Không thể khởi tạo ứng dụng. Vui lòng thử lại.'),
+      error: (e, s) => const _StartupError(
+        message: 'Không thể khởi tạo ứng dụng. Vui lòng thử lại.',
+      ),
+    );
+  }
+}
+
+class _StartupError extends StatelessWidget {
+  final String message;
+
+  const _StartupError({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.white,
+      body: AppPageBackground(
+        child: AppEmptyState(
+          icon: Icons.error_outline_rounded,
+          title: 'Có lỗi xảy ra',
+          message: message,
         ),
       ),
     );
@@ -113,54 +135,50 @@ class _SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFFAF8F5), // app_colors.dart: background
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Zen Logo
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                color: Colors.transparent,
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFF2D3748).withValues(alpha: 0.08),
-                    blurRadius: 25,
-                    offset: const Offset(0, 8),
+      backgroundColor: AppColors.white,
+      body: AppPageBackground(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.navyDark.withValues(alpha: 0.08),
+                      blurRadius: 25,
+                      offset: const Offset(0, 8),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+                  child: Image.asset(
+                    'assets/images/app_logo_clean.png',
+                    fit: BoxFit.contain,
                   ),
-                ],
-              ),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(28),
-                child: Image.asset(
-                  'assets/images/app_logo_clean.png',
-                  fit: BoxFit.contain,
                 ),
               ),
-            ),
-            const SizedBox(height: 24),
-            const Text(
-              'Zen Japanese',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF2D312E), // ink
-                letterSpacing: 0.5,
+              const SizedBox(height: AppSpacing.sp24),
+              Text(
+                'Zen Japanese',
+                style: AppTypography.headingM.copyWith(
+                  color: AppColors.navyDark,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
-            ),
-            const SizedBox(height: 32),
-            const SizedBox(
-              width: 24,
-              height: 24,
-              child: CircularProgressIndicator(
-                strokeWidth: 2.5,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4A6B53)),
+              const SizedBox(height: AppSpacing.sp32),
+              const SizedBox(
+                width: 28,
+                height: 28,
+                child: AppLoadingIndicator(color: AppColors.leafGreen),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -17,20 +17,8 @@ class AnalyticsHeatmap extends StatelessWidget {
     final todayNormalized = DateTime(now.year, now.month, now.day);
     final currentWeekday = now.weekday; // 1 (Mon) to 7 (Sun)
 
-    return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp16),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.04),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
+    return Padding(
+      padding: const EdgeInsets.all(AppSpacing.sp4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -5,6 +5,7 @@ import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../grammar/presentation/providers/grammar_library_provider.dart';
 import '../../../kanji/presentation/providers/kanji_library_provider.dart';
+import '../../../auth/presentation/providers/auth_provider.dart';
 import '../providers/analytics_provider.dart';
 import '../widgets/analytics_stat_card.dart';
 import '../widgets/analytics_heatmap.dart';
@@ -13,6 +14,10 @@ import '../../../review/domain/entities/review_item.dart';
 import '../../../vocabulary/presentation/providers/vocabulary_library_provider.dart';
 import '../../../../presentation/navigation/app_routes.dart';
 import '../../../../shared/widgets/app_page_background.dart';
+import '../../../../shared/widgets/app_card.dart';
+import '../../../../shared/widgets/app_empty_state.dart';
+import '../../../../shared/widgets/app_loading_indicator.dart';
+import '../../../../shared/widgets/section_header.dart';
 
 class AnalyticsScreen extends ConsumerWidget {
   const AnalyticsScreen({super.key});
@@ -20,10 +25,11 @@ class AnalyticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final analyticsAsync = ref.watch(analyticsProvider);
+    final user = ref.watch(authStateProvider).valueOrNull;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Thống kê học tập', style: AppTypography.headingM),
+        title: Text('Hồ sơ học tập', style: AppTypography.headingM),
         backgroundColor: AppColors.cream.withValues(alpha: 0.94),
         surfaceTintColor: Colors.transparent,
       ),
@@ -34,6 +40,20 @@ class AnalyticsScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _ProfileSummaryCard(
+                  name: user?.displayName ?? 'Zen Learner',
+                  email: user?.email ?? '',
+                  photoUrl: user?.photoURL,
+                  data: data,
+                ),
+                const SizedBox(height: AppSpacing.sp24),
+                const SectionHeader(
+                  icon: Icons.insights_rounded,
+                  title: 'Tổng quan',
+                  subtitle: 'Nhịp học, ghi nhớ và hoàn thành trong một nơi.',
+                  color: AppColors.zenBlue,
+                ),
+                const SizedBox(height: AppSpacing.sp12),
                 Row(
                   children: [
                     Expanded(
@@ -118,13 +138,22 @@ class AnalyticsScreen extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sp32),
-                Text(
-                  'Mức độ hoạt động',
-                  style: AppTypography.headingS.copyWith(color: AppColors.ink),
+                const SectionHeader(
+                  icon: Icons.calendar_month_rounded,
+                  title: 'Mức độ hoạt động',
+                  subtitle: 'Các ngày bạn có tương tác học tập gần đây.',
+                  color: AppColors.mossGreen,
                 ),
                 const SizedBox(height: AppSpacing.sp16),
-                AnalyticsHeatmap(heatmapData: data.heatmapData),
+                AppCard(child: AnalyticsHeatmap(heatmapData: data.heatmapData)),
                 const SizedBox(height: AppSpacing.sp32),
+                const SectionHeader(
+                  icon: Icons.workspace_premium_rounded,
+                  title: 'Tiến độ JLPT',
+                  subtitle: 'Theo dõi mức độ bao phủ từng cấp độ.',
+                  color: AppColors.sunGold,
+                ),
+                const SizedBox(height: AppSpacing.sp16),
                 AnalyticsJlptProgress(progress: data.jlptProgress),
                 const SizedBox(height: AppSpacing.sp24),
                 _WeakAreaInsightCard(
@@ -143,9 +172,147 @@ class AnalyticsScreen extends ConsumerWidget {
             ),
           ),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (err, stack) => Center(child: Text('Lỗi: $err')),
+        loading: () => const AppPageBackground(
+          child: AppLoadingIndicator(color: AppColors.leafGreen),
+        ),
+        error: (err, stack) => AppPageBackground(
+          child: AppEmptyState(
+            icon: Icons.error_outline_rounded,
+            title: 'Không tải được hồ sơ',
+            message: 'Lỗi: $err',
+          ),
+        ),
       ),
+    );
+  }
+}
+
+class _ProfileSummaryCard extends StatelessWidget {
+  final String name;
+  final String email;
+  final String? photoUrl;
+  final AnalyticsData data;
+
+  const _ProfileSummaryCard({
+    required this.name,
+    required this.email,
+    required this.photoUrl,
+    required this.data,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final success = (data.successRateLast30Days * 100).round();
+
+    return AppCard(
+      gradient: AppColors.brandLeafGradient,
+      borderColor: AppColors.white.withValues(alpha: 0.14),
+      shadowColor: AppColors.zenBlue.withValues(alpha: 0.18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: AppColors.white.withValues(alpha: 0.18),
+                backgroundImage: photoUrl == null
+                    ? null
+                    : NetworkImage(photoUrl!),
+                child: photoUrl == null
+                    ? Text(
+                        name.isNotEmpty ? name[0].toUpperCase() : '禅',
+                        style: AppTypography.headingS.copyWith(
+                          color: AppColors.white,
+                        ),
+                      )
+                    : null,
+              ),
+              const SizedBox(width: AppSpacing.sp16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.headingM.copyWith(
+                        color: AppColors.white,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    if (email.isNotEmpty) ...[
+                      const SizedBox(height: 2),
+                      Text(
+                        email,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.label.copyWith(
+                          color: AppColors.white.withValues(alpha: 0.72),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sp20),
+          Row(
+            children: [
+              Expanded(
+                child: _HeroStat(
+                  label: 'Đã học',
+                  value: data.learned.toString(),
+                ),
+              ),
+              Expanded(
+                child: _HeroStat(
+                  label: 'Ngày/30',
+                  value: data.activeDaysLast30Days.toString(),
+                ),
+              ),
+              Expanded(
+                child: _HeroStat(label: 'Tỉ lệ nhớ', value: '$success%'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HeroStat extends StatelessWidget {
+  final String label;
+  final String value;
+
+  const _HeroStat({required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          value,
+          style: AppTypography.statNumber.copyWith(
+            color: AppColors.white,
+            fontSize: 22,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          label,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: AppTypography.labelS.copyWith(
+            color: AppColors.white.withValues(alpha: 0.72),
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -164,14 +331,11 @@ class _RetentionInsightCard extends StatelessWidget {
     final sortedKeys = cohortByLevel.keys.toList()
       ..sort((a, b) => b.compareTo(a));
 
-    return Container(
-      width: double.infinity,
+    return AppCard(
       padding: AppSpacing.cardPadding,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
-      ),
+      color: AppColors.white,
+      borderColor: AppColors.slateLight.withValues(alpha: 0.2),
+      shadowColor: AppColors.navyDark.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -256,14 +420,11 @@ class _WeakAreaInsightCard extends StatelessWidget {
     final percent = (successRate * 100).round();
     final hasData = areaType != null;
 
-    return Container(
-      width: double.infinity,
+    return AppCard(
       padding: AppSpacing.cardPadding,
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.2)),
-      ),
+      color: AppColors.white,
+      borderColor: AppColors.slateLight.withValues(alpha: 0.2),
+      shadowColor: AppColors.navyDark.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

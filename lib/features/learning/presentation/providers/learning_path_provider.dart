@@ -16,7 +16,10 @@ final learningCategoryProvider = StateProvider<LearningCategory>(
   (ref) => LearningCategory.mixed,
 );
 
-final selectedLevelProvider = StateProvider<int>((ref) => 5);
+final selectedLevelProvider = StateProvider<int>((ref) {
+  final settings = ref.watch(settingsProvider).valueOrNull;
+  return settings?.currentJlptLevel ?? AppSettings.defaults.currentJlptLevel;
+});
 
 final learningPathProvider =
     StateNotifierProvider<LearningPathNotifier, List<Lesson>>((ref) {

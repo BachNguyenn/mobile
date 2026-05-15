@@ -5,6 +5,9 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
+import 'package:mobile/shared/widgets/app_card.dart';
+import 'package:mobile/shared/widgets/app_page_background.dart';
+import 'package:mobile/shared/widgets/jlpt_level_badge.dart';
 
 class VocabularyDetailScreen extends ConsumerWidget {
   final Vocabulary vocabulary;
@@ -14,84 +17,105 @@ class VocabularyDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
+      backgroundColor: AppColors.white,
       appBar: AppBar(
-        backgroundColor: AppColors.waterBlue,
-        foregroundColor: AppColors.white,
+        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        foregroundColor: AppColors.slateGrey,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
         title: Text(
-          vocabulary.word,
-          style: AppTypography.headingS.copyWith(color: AppColors.white),
+          'Chi tiết từ vựng',
+          style: AppTypography.headingS.copyWith(color: AppColors.navyDark),
         ),
         actions: [
-          IconButton(
-            tooltip: 'Phat am',
+          IconButton.filledTonal(
+            tooltip: 'Phát âm',
             icon: const Icon(Icons.volume_up_rounded),
             onPressed: () => _speak(context, ref),
+            style: IconButton.styleFrom(
+              backgroundColor: AppColors.waterBlue.withValues(alpha: 0.10),
+              foregroundColor: AppColors.waterBlue,
+            ),
           ),
+          const SizedBox(width: AppSpacing.sp8),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.sp24),
-        children: [
-          _HeroCard(
-            vocabulary: vocabulary,
-            onSpeak: () => _speak(context, ref),
+      body: AppPageBackground(
+        child: ListView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.sp16,
+            AppSpacing.sp12,
+            AppSpacing.sp16,
+            AppSpacing.sp32,
           ),
-          const SizedBox(height: AppSpacing.sp20),
-          if (_hasMetadata) ...[
-            Wrap(
-              spacing: AppSpacing.sp8,
-              runSpacing: AppSpacing.sp8,
-              children: [
-                if (vocabulary.partOfSpeech?.isNotEmpty ?? false)
-                  _MetaPill(vocabulary.partOfSpeech!),
-                if (vocabulary.pitchAccent?.isNotEmpty ?? false)
-                  _MetaPill('Pitch: ${vocabulary.pitchAccent}'),
-                _MetaPill('N${vocabulary.jlptLevel}'),
-              ],
+          children: [
+            _HeroCard(
+              vocabulary: vocabulary,
+              onSpeak: () => _speak(context, ref),
             ),
-            const SizedBox(height: AppSpacing.sp20),
-          ],
-          if (vocabulary.imageUrl?.isNotEmpty ?? false) ...[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-              child: Image.network(
-                vocabulary.imageUrl!,
-                height: 180,
-                fit: BoxFit.cover,
-                errorBuilder: (_, _, _) => const SizedBox.shrink(),
-              ),
-            ),
-            const SizedBox(height: AppSpacing.sp20),
-          ],
-          _InfoCard(
-            title: 'Meaning',
-            icon: Icons.translate_rounded,
-            color: AppColors.waterBlue,
-            child: Text(
-              vocabulary.meaning,
-              style: AppTypography.bodyL.copyWith(color: AppColors.ink),
-            ),
-          ),
-          if (vocabulary.exampleSentences.isNotEmpty) ...[
             const SizedBox(height: AppSpacing.sp16),
-            _InfoCard(
-              title: 'Example sentences',
-              icon: Icons.subject_rounded,
-              color: AppColors.terracotta,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            if (_hasMetadata) ...[
+              Wrap(
+                spacing: AppSpacing.sp8,
+                runSpacing: AppSpacing.sp8,
                 children: [
-                  for (final example in vocabulary.exampleSentences)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppSpacing.sp12),
-                      child: _ExampleBlock(example: example),
-                    ),
+                  if (vocabulary.partOfSpeech?.isNotEmpty ?? false)
+                    _MetaPill(vocabulary.partOfSpeech!),
+                  if (vocabulary.pitchAccent?.isNotEmpty ?? false)
+                    _MetaPill('Pitch: ${vocabulary.pitchAccent}'),
+                  JlptLevelBadge(
+                    level: vocabulary.jlptLevel,
+                    color: AppColors.waterBlue,
+                  ),
                 ],
               ),
+              const SizedBox(height: AppSpacing.sp16),
+            ],
+            if (vocabulary.imageUrl?.isNotEmpty ?? false) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+                child: Image.network(
+                  vocabulary.imageUrl!,
+                  height: 180,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => const SizedBox.shrink(),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sp16),
+            ],
+            _InfoCard(
+              title: 'Nghĩa',
+              icon: Icons.translate_rounded,
+              color: AppColors.waterBlue,
+              child: Text(
+                vocabulary.meaning,
+                style: AppTypography.bodyL.copyWith(
+                  color: AppColors.ink,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
             ),
+            if (vocabulary.exampleSentences.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sp16),
+              _InfoCard(
+                title: 'Câu ví dụ',
+                icon: Icons.subject_rounded,
+                color: AppColors.terracotta,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (final example in vocabulary.exampleSentences)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.sp12),
+                        child: _ExampleBlock(example: example),
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ],
-          const SizedBox(height: AppSpacing.sp32),
-        ],
+        ),
       ),
     );
   }
@@ -108,7 +132,7 @@ class VocabularyDetailScreen extends ConsumerWidget {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Khong the phat am thanh tren thiet bi nay.'),
+          content: Text('Không thể phát âm thanh trên thiết bị này.'),
         ),
       );
     }
@@ -123,14 +147,10 @@ class _HeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.sp24),
-      decoration: BoxDecoration(
-        color: AppColors.waterBlue.withValues(alpha: 0.10),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.waterBlue.withValues(alpha: 0.16)),
-      ),
+    return AppCard(
+      color: AppColors.white,
+      borderColor: AppColors.waterBlue.withValues(alpha: 0.16),
+      shadowColor: AppColors.waterBlue.withValues(alpha: 0.05),
       child: Column(
         children: [
           Text(
@@ -146,14 +166,21 @@ class _HeroCard extends StatelessWidget {
             Text(
               vocabulary.reading,
               textAlign: TextAlign.center,
-              style: AppTypography.bodyL.copyWith(color: AppColors.slateGrey),
+              style: AppTypography.bodyL.copyWith(
+                color: AppColors.slateGrey,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ],
-          const SizedBox(height: AppSpacing.sp12),
+          const SizedBox(height: AppSpacing.sp16),
           IconButton.filledTonal(
-            tooltip: 'Phat am',
+            tooltip: 'Phát âm',
             onPressed: onSpeak,
             icon: const Icon(Icons.volume_up_rounded),
+            style: IconButton.styleFrom(
+              backgroundColor: AppColors.waterBlue.withValues(alpha: 0.10),
+              foregroundColor: AppColors.waterBlue,
+            ),
           ),
         ],
       ),
@@ -179,7 +206,10 @@ class _MetaPill extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: AppTypography.label.copyWith(color: AppColors.waterBlue),
+        style: AppTypography.label.copyWith(
+          color: AppColors.waterBlue,
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }
@@ -200,14 +230,10 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(AppSpacing.sp20),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: color.withValues(alpha: 0.14)),
-      ),
+    return AppCard(
+      color: AppColors.white,
+      borderColor: color.withValues(alpha: 0.14),
+      shadowColor: color.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -217,7 +243,10 @@ class _InfoCard extends StatelessWidget {
               const SizedBox(width: AppSpacing.sp8),
               Text(
                 title,
-                style: AppTypography.bodyMBold.copyWith(color: color),
+                style: AppTypography.bodyMBold.copyWith(
+                  color: color,
+                  fontWeight: FontWeight.w900,
+                ),
               ),
             ],
           ),
@@ -236,24 +265,36 @@ class _ExampleBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          example.text,
-          style: AppTypography.bodyL.copyWith(
-            color: AppColors.ink,
-            fontWeight: FontWeight.w700,
-          ),
-        ),
-        if (example.reading.isNotEmpty)
-          Text(example.reading, style: AppTypography.caption),
-        if (example.meaning.isNotEmpty)
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(AppSpacing.sp12),
+      decoration: BoxDecoration(
+        color: AppColors.navySoft.withValues(alpha: 0.62),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Text(
-            example.meaning,
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            example.text,
+            style: AppTypography.bodyL.copyWith(
+              color: AppColors.ink,
+              fontWeight: FontWeight.w800,
+            ),
           ),
-      ],
+          if (example.reading.isNotEmpty) ...[
+            const SizedBox(height: 2),
+            Text(example.reading, style: AppTypography.caption),
+          ],
+          if (example.meaning.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.sp4),
+            Text(
+              example.meaning,
+              style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            ),
+          ],
+        ],
+      ),
     );
   }
 }

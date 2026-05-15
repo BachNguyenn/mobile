@@ -10,18 +10,22 @@ import 'package:mobile/features/learning/domain/entities/learning_category.dart'
 import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/features/vocabulary/presentation/providers/vocabulary_library_provider.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
+import 'package:mobile/shared/widgets/feature_tile.dart';
 
 typedef LearningCategoryCallback = void Function(LearningCategory category);
+typedef TabSwitchCallback = void Function(int index);
 
 class QuickActionChips extends StatefulWidget {
   final WidgetRef ref;
   final BuildContext context;
+  final TabSwitchCallback? onOpenTab;
   final LearningCategoryCallback? onOpenLearningCategory;
 
   const QuickActionChips({
     super.key,
     required this.ref,
     required this.context,
+    this.onOpenTab,
     this.onOpenLearningCategory,
   });
 
@@ -31,36 +35,45 @@ class QuickActionChips extends StatefulWidget {
 
 class _QuickActionChipsState extends State<QuickActionChips>
     with SingleTickerProviderStateMixin {
-  late final AnimationController _shimmerController;
+  late final AnimationController _entranceController;
 
   @override
   void initState() {
     super.initState();
-    _shimmerController = AnimationController(
+    _entranceController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1800),
+      duration: const Duration(milliseconds: 850),
     )..forward();
   }
 
   @override
   void dispose() {
-    _shimmerController.dispose();
+    _entranceController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext outerContext) {
-    final chips = [
-      _ChipData(
-        icon: Icons.add_circle_outline_rounded,
-        label: 'Bài mới',
-        color: AppColors.mossGreen,
-        gradient: LinearGradient(
-          colors: [
-            AppColors.mossGreen.withValues(alpha: 0.08),
-            AppColors.mossLight.withValues(alpha: 0.12),
-          ],
-        ),
+    final actions = [
+      _ActionData(
+        icon: Icons.menu_book_rounded,
+        label: 'Từ vựng',
+        helper: 'Xem thẻ từ mới',
+        color: AppColors.waterBlue,
+        onTap: () => widget.onOpenTab?.call(2),
+      ),
+      _ActionData(
+        icon: Icons.edit_note_rounded,
+        label: 'Ngữ pháp',
+        helper: 'Mẫu câu dễ đọc',
+        color: AppColors.sunGold,
+        onTap: () => widget.onOpenTab?.call(3),
+      ),
+      _ActionData(
+        icon: Icons.quiz_rounded,
+        label: 'Quiz',
+        helper: 'Tiếp tục lộ trình',
+        color: AppColors.zenBlue,
         onTap: () {
           final openLearningCategory = widget.onOpenLearningCategory;
           if (openLearningCategory != null) {
@@ -70,98 +83,75 @@ class _QuickActionChipsState extends State<QuickActionChips>
           }
         },
       ),
-      _ChipData(
+      _ActionData(
+        icon: Icons.replay_rounded,
+        label: 'SRS Review',
+        helper: 'Ôn mục đến hạn',
+        color: AppColors.leafGreen,
+        onTap: () async {
+          await openWeakAreaReview(widget.context, widget.ref);
+        },
+      ),
+      _ActionData(
+        icon: Icons.task_alt_rounded,
+        label: 'Nhiệm vụ',
+        helper: 'Mục tiêu hôm nay',
+        color: AppColors.terracotta,
+        onTap: () {
+          Navigator.push(widget.context, AppRoutes.garden());
+        },
+      ),
+      _ActionData(
         icon: Icons.bar_chart_rounded,
-        label: 'Thống kê',
-        color: AppColors.sunGold,
-        gradient: LinearGradient(
-          colors: [
-            AppColors.sunGold.withValues(alpha: 0.08),
-            AppColors.sunGold.withValues(alpha: 0.14),
-          ],
-        ),
+        label: 'Hồ sơ',
+        helper: 'Tiến độ học tập',
+        color: AppColors.slateGrey,
         onTap: () {
           Navigator.push(widget.context, AppRoutes.analytics());
         },
       ),
-      _ChipData(
-        icon: Icons.track_changes_rounded,
-        label: 'Luyện điểm yếu',
-        color: AppColors.terracotta,
-        gradient: LinearGradient(
-          colors: [
-            AppColors.terracotta.withValues(alpha: 0.08),
-            AppColors.terracotta.withValues(alpha: 0.14),
-          ],
-        ),
-        onTap: () async {
-          await _openWeakAreaReview(widget.context, widget.ref);
-        },
-      ),
-      _ChipData(
-        icon: Icons.subject_rounded,
-        label: 'Luyện câu',
-        color: AppColors.waterBlue,
-        gradient: LinearGradient(
-          colors: [
-            AppColors.waterBlue.withValues(alpha: 0.08),
-            AppColors.waterBlue.withValues(alpha: 0.14),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(widget.context, AppRoutes.sentencePractice());
-        },
-      ),
-      _ChipData(
-        icon: Icons.search_rounded,
-        label: 'Tra cứu',
-        color: AppColors.slateGrey,
-        gradient: LinearGradient(
-          colors: [
-            AppColors.slateGrey.withValues(alpha: 0.05),
-            AppColors.slateGrey.withValues(alpha: 0.10),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(widget.context, AppRoutes.dictionary());
-        },
-      ),
     ];
 
-    return SizedBox(
-      height: AppSpacing.quickActionChipHeight,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: AppSpacing.paddingH24,
-        physics: const BouncingScrollPhysics(),
-        itemCount: chips.length,
-        separatorBuilder: (_, _) => const SizedBox(width: AppSpacing.sp12),
-        itemBuilder: (context, index) {
-          return AnimatedBuilder(
-            animation: _shimmerController,
-            builder: (context, child) {
-              final delay = index * 0.15;
-              final progress = ((_shimmerController.value - delay) / 0.5).clamp(
-                0.0,
-                1.0,
-              );
-              return Transform.translate(
-                offset: Offset(
-                  0,
-                  12 * (1 - Curves.easeOutCubic.transform(progress)),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        const spacing = AppSpacing.sp12;
+        final itemWidth = (constraints.maxWidth - spacing) / 2;
+
+        return Wrap(
+          spacing: spacing,
+          runSpacing: spacing,
+          children: List.generate(actions.length, (index) {
+            final action = actions[index];
+            return AnimatedBuilder(
+              animation: _entranceController,
+              builder: (context, child) {
+                final raw = ((_entranceController.value - index * 0.07) / 0.45)
+                    .clamp(0.0, 1.0);
+                final curve = Curves.easeOutCubic.transform(raw);
+                return Transform.translate(
+                  offset: Offset(0, 12 * (1 - curve)),
+                  child: Opacity(opacity: curve, child: child),
+                );
+              },
+              child: SizedBox(
+                width: itemWidth,
+                child: FeatureTile(
+                  icon: action.icon,
+                  title: action.label,
+                  subtitle: action.helper,
+                  color: action.color,
+                  onTap: action.onTap,
                 ),
-                child: Opacity(opacity: progress, child: child),
-              );
-            },
-            child: _ActionChip(data: chips[index]),
-          );
-        },
-      ),
+              ),
+            );
+          }),
+        );
+      },
     );
   }
 }
 
-Future<void> _openWeakAreaReview(BuildContext context, WidgetRef ref) async {
+Future<void> openWeakAreaReview(BuildContext context, WidgetRef ref) async {
   final analytics = await ref.read(analyticsProvider.future);
   final weakestAreaType = analytics.weakestAreaType;
   if (weakestAreaType == null) {
@@ -194,16 +184,16 @@ Future<void> _openWeakAreaReview(BuildContext context, WidgetRef ref) async {
   Navigator.push(context, AppRoutes.review(items));
 }
 
-class _ActionChip extends StatefulWidget {
-  final _ChipData data;
+class _ActionCard extends StatefulWidget {
+  final _ActionData data;
 
-  const _ActionChip({required this.data});
+  const _ActionCard({required this.data});
 
   @override
-  State<_ActionChip> createState() => _ActionChipState();
+  State<_ActionCard> createState() => _ActionCardState();
 }
 
-class _ActionChipState extends State<_ActionChip>
+class _ActionCardState extends State<_ActionCard>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pressController;
   late final Animation<double> _scaleAnimation;
@@ -215,7 +205,7 @@ class _ActionChipState extends State<_ActionChip>
       vsync: this,
       duration: const Duration(milliseconds: 150),
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
       CurvedAnimation(parent: _pressController, curve: Curves.easeInOut),
     );
   }
@@ -241,44 +231,60 @@ class _ActionChipState extends State<_ActionChip>
           return Transform.scale(scale: _scaleAnimation.value, child: child);
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp16),
+          height: 78,
+          padding: const EdgeInsets.all(AppSpacing.sp12),
           decoration: BoxDecoration(
-            gradient: widget.data.gradient,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+            color: AppColors.white,
+            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             border: Border.all(
-              color: widget.data.color.withValues(alpha: 0.15),
+              color: widget.data.color.withValues(alpha: 0.12),
             ),
             boxShadow: [
               BoxShadow(
-                color: widget.data.color.withValues(alpha: 0.06),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
+                color: AppColors.navyDark.withValues(alpha: 0.05),
+                blurRadius: 18,
+                offset: const Offset(0, 8),
               ),
             ],
           ),
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
-              // Icon with subtle glow ring
               Container(
-                width: 28,
-                height: 28,
+                width: 42,
+                height: 42,
                 decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: widget.data.color.withValues(alpha: 0.1),
+                  color: widget.data.color.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                 ),
                 child: Icon(
                   widget.data.icon,
-                  size: 16,
                   color: widget.data.color,
+                  size: 22,
                 ),
               ),
-              const SizedBox(width: AppSpacing.sp8),
-              Text(
-                widget.data.label,
-                style: AppTypography.label.copyWith(
-                  color: AppColors.ink,
-                  fontWeight: FontWeight.w600,
+              const SizedBox(width: AppSpacing.sp12),
+              Expanded(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.data.label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.bodyMBold.copyWith(
+                        color: AppColors.ink,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      widget.data.helper,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.labelS,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -289,18 +295,18 @@ class _ActionChipState extends State<_ActionChip>
   }
 }
 
-class _ChipData {
+class _ActionData {
   final IconData icon;
   final String label;
+  final String helper;
   final Color color;
-  final LinearGradient gradient;
   final VoidCallback onTap;
 
-  _ChipData({
+  const _ActionData({
     required this.icon,
     required this.label,
+    required this.helper,
     required this.color,
-    required this.gradient,
     required this.onTap,
   });
 }

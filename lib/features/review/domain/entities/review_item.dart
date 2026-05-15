@@ -67,7 +67,7 @@ class ReviewItem {
     return ReviewItem(
       id: grammar.id,
       type: ReviewItemType.grammar,
-      prompt: grammar.title,
+      prompt: 'Mẫu ${grammar.title} dùng để diễn tả ý gì?',
       answer: grammar.shortExplanation.isNotEmpty
           ? grammar.shortExplanation
           : grammar.longExplanation,

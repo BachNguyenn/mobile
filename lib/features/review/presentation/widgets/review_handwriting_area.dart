@@ -8,12 +8,14 @@ class ReviewHandwritingArea extends StatelessWidget {
   final GlobalKey<HandwritingCanvasState> canvasKey;
   final ValueChanged<List<List<HandwritingPoint>>> onDrawingChanged;
   final VoidCallback onClear;
+  final Color accent;
 
   const ReviewHandwritingArea({
     super.key,
     required this.canvasKey,
     required this.onDrawingChanged,
     required this.onClear,
+    this.accent = AppColors.leafGreen,
   });
 
   @override
@@ -22,10 +24,10 @@ class ReviewHandwritingArea extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.mossGreen.withValues(alpha: 0.2)),
+        border: Border.all(color: accent.withValues(alpha: 0.22)),
         boxShadow: [
           BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.04),
+            color: accent.withValues(alpha: 0.06),
             blurRadius: 20,
             offset: const Offset(0, 10),
           ),

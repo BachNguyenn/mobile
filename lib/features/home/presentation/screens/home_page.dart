@@ -225,20 +225,18 @@ class _DailyStudyCard extends StatelessWidget {
     final subtitle =
         currentPlan?.subtitle ?? 'Đang chọn phiên học phù hợp cho bạn.';
     final reason = currentPlan?.reason ?? 'Dựa trên tiến độ hiện tại';
-    final icon = switch (currentPlan?.actionType) {
-      DailyStudyActionType.review => Icons.replay_rounded,
-      DailyStudyActionType.lesson => Icons.route_rounded,
-      DailyStudyActionType.placement => Icons.fact_check_rounded,
-      DailyStudyActionType.sentencePractice => Icons.subject_rounded,
-      null => Icons.psychology_alt_rounded,
-    };
-
+    final compactReason = reason.replaceFirst(' đến hạn', '');
     return AppCard(
       onTap: currentPlan == null ? null : () => onTap(currentPlan),
       color: AppColors.zenBlue,
       borderColor: AppColors.zenBlue,
       shadowColor: AppColors.zenBlue.withValues(alpha: 0.16),
-      padding: const EdgeInsets.all(AppSpacing.sp20),
+      padding: const EdgeInsets.fromLTRB(
+        AppSpacing.sp16,
+        AppSpacing.sp12,
+        AppSpacing.sp16,
+        AppSpacing.sp12,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -246,8 +244,8 @@ class _DailyStudyCard extends StatelessWidget {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sp12,
-                  vertical: AppSpacing.sp8,
+                  horizontal: AppSpacing.sp8,
+                  vertical: AppSpacing.sp4,
                 ),
                 decoration: BoxDecoration(
                   color: AppColors.white.withValues(alpha: 0.12),
@@ -280,95 +278,67 @@ class _DailyStudyCard extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sp20),
-          Row(
+          const SizedBox(height: AppSpacing.sp12),
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.headingM.copyWith(
-                        color: AppColors.white,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sp8),
-                    Text(
-                      subtitle,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: AppTypography.bodyM.copyWith(
-                        color: AppColors.white.withValues(alpha: 0.74),
-                      ),
-                    ),
-                  ],
+              Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.headingM.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 19,
+                  height: 1.2,
                 ),
               ),
-              const SizedBox(width: AppSpacing.sp16),
-              Container(
-                width: 74,
-                height: 74,
-                decoration: BoxDecoration(
-                  color: AppColors.white.withValues(alpha: 0.10),
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: plan.isLoading
-                      ? const SizedBox(
-                          width: 22,
-                          height: 22,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2.5,
-                            color: AppColors.white,
-                          ),
-                        )
-                      : Icon(icon, color: AppColors.white, size: 32),
+              const SizedBox(height: AppSpacing.sp4),
+              Text(
+                subtitle,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.bodyS.copyWith(
+                  color: AppColors.white.withValues(alpha: 0.74),
+                  height: 1.35,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sp20),
+          const SizedBox(height: AppSpacing.sp12),
           Wrap(
             spacing: AppSpacing.sp8,
             runSpacing: AppSpacing.sp8,
             children: [
               _DailyStudyPill(
                 icon: Icons.tips_and_updates_rounded,
-                label: reason,
+                label: compactReason,
               ),
               if (currentPlan != null && currentPlan.itemCount > 0)
                 _DailyStudyPill(
                   icon: Icons.format_list_numbered_rounded,
                   label: '${currentPlan.itemCount} mục',
                 ),
-              _DailyStudyPill(
-                icon: Icons.insights_rounded,
-                label: '$percent% tiến độ',
-              ),
+              _DailyStudyPill(icon: Icons.insights_rounded, label: '$percent%'),
               _DailyStudyPill(
                 icon: Icons.local_fire_department_rounded,
                 label: '${progress.streak} ngày',
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.sp20),
+          const SizedBox(height: AppSpacing.sp12),
           ClipRRect(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
             child: LinearProgressIndicator(
               value: progress.overallPercentage.clamp(0.0, 1.0).toDouble(),
-              minHeight: 8,
+              minHeight: 6,
               backgroundColor: AppColors.white.withValues(alpha: 0.14),
               valueColor: const AlwaysStoppedAnimation<Color>(
                 AppColors.leafLight,
               ),
             ),
           ),
-          const SizedBox(height: AppSpacing.sp16),
+          const SizedBox(height: AppSpacing.sp8),
           Row(
             children: [
               Text(
@@ -404,8 +374,8 @@ class _DailyStudyPill extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sp12,
-        vertical: AppSpacing.sp8,
+        horizontal: AppSpacing.sp8,
+        vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
         color: AppColors.white.withValues(alpha: 0.10),
@@ -415,7 +385,7 @@ class _DailyStudyPill extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 15, color: AppColors.white.withValues(alpha: 0.82)),
+          Icon(icon, size: 14, color: AppColors.white.withValues(alpha: 0.82)),
           const SizedBox(width: AppSpacing.sp4),
           Text(
             label,

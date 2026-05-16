@@ -74,16 +74,16 @@ final sessionStudyCountProvider = StateProvider<int>((ref) => 0);
 ///
 /// Sentence chưa có SRS riêng, nên chỉ emit event + tăng study count.
 final emitSentenceStudyEventProvider =
-    Provider<void Function(String sentenceId)>((ref) {
+    Provider<void Function(String sentenceId, [int qualityRating])>((ref) {
       final eventController = ref.watch(studyEventControllerProvider);
 
-      return (String sentenceId) {
+      return (String sentenceId, [int qualityRating = 3]) {
         eventController.addEvent(
           StudyEvent(
             cardId: sentenceId,
             type: 'sentence',
             timestamp: DateTime.now(),
-            qualityRating: 3,
+            qualityRating: qualityRating.clamp(1, 4).toInt(),
           ),
         );
       };

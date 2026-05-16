@@ -236,81 +236,104 @@ class _KanjiHeroCard extends StatelessWidget {
         : progress.percentage.clamp(0.0, 1.0);
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp20),
+      padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        gradient: AppColors.brandGradient,
+        gradient: const LinearGradient(
+          colors: [AppColors.navyDark, AppColors.navy, AppColors.slateGrey],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          Row(
+          Positioned(
+            right: -6,
+            bottom: -20,
+            child: Text(
+              '字',
+              style: AppTypography.kanjiHero.copyWith(
+                color: AppColors.white.withValues(alpha: 0.09),
+                fontSize: 112,
+                height: 1,
+              ),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  'Hán tự hôm nay',
-                  style: AppTypography.headingS.copyWith(
-                    color: AppColors.white,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Hán tự hôm nay',
+                      style: AppTypography.headingS.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+                  _HeroBadge(
+                    icon: Icons.brush_rounded,
+                    label: dueTotal == 0 ? 'Đã xong' : '$dueTotal cần ôn',
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sp8),
+              Text(
+                'Nhận mặt chữ, ôn âm đọc và ghi nhớ nghĩa theo từng cấp JLPT.',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.bodyS.copyWith(
+                  color: AppColors.white.withValues(alpha: 0.78),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sp12),
+              Row(
+                children: [
+                  _HeroStat(value: '${progress.learned}', label: 'đã học'),
+                  const SizedBox(width: AppSpacing.sp8),
+                  _HeroStat(value: '${progress.total}', label: 'tổng chữ'),
+                  const SizedBox(width: AppSpacing.sp8),
+                  _HeroStat(
+                    value: isLoading ? '...' : '$dueLoaded',
+                    label: 'sẵn sàng',
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sp12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+                child: LinearProgressIndicator(
+                  value: percent,
+                  minHeight: 6,
+                  backgroundColor: AppColors.white.withValues(alpha: 0.16),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.waterBlue,
                   ),
                 ),
               ),
-              _HeroBadge(
-                icon: Icons.bolt_rounded,
-                label: dueTotal == 0 ? 'Đã xong' : '$dueTotal cần ôn',
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sp8),
-          Text(
-            'Nhận mặt chữ, ôn âm đọc và ghi nhớ nghĩa theo từng cấp JLPT.',
-            style: AppTypography.bodyS.copyWith(
-              color: AppColors.white.withValues(alpha: 0.78),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sp20),
-          Row(
-            children: [
-              _HeroStat(value: '${progress.learned}', label: 'đã học'),
-              const SizedBox(width: AppSpacing.sp12),
-              _HeroStat(value: '${progress.total}', label: 'tổng chữ'),
-              const SizedBox(width: AppSpacing.sp12),
-              _HeroStat(
-                value: isLoading ? '...' : '$dueLoaded',
-                label: 'sẵn sàng',
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sp16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-            child: LinearProgressIndicator(
-              value: percent,
-              minHeight: 8,
-              backgroundColor: AppColors.white.withValues(alpha: 0.16),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.leafLight,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sp16),
-          Row(
-            children: [
-              Expanded(
-                child: _HeroActionButton(
-                  icon: Icons.play_arrow_rounded,
-                  label: 'Ôn tập',
-                  filled: true,
-                  onTap: onReview,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sp12),
-              Expanded(
-                child: _HeroActionButton(
-                  icon: Icons.add_rounded,
-                  label: 'Bài mới',
-                  filled: false,
-                  onTap: onNewLesson,
-                ),
+              const SizedBox(height: AppSpacing.sp12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _HeroActionButton(
+                      icon: Icons.play_arrow_rounded,
+                      label: 'Ôn chữ',
+                      filled: true,
+                      onTap: onReview,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sp8),
+                  Expanded(
+                    child: _HeroActionButton(
+                      icon: Icons.translate_rounded,
+                      label: 'Chữ mới',
+                      filled: false,
+                      onTap: onNewLesson,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -330,8 +353,8 @@ class _HeroBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sp12,
-        vertical: AppSpacing.sp8,
+        horizontal: AppSpacing.sp8,
+        vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
         color: AppColors.white.withValues(alpha: 0.14),
@@ -340,11 +363,11 @@ class _HeroBadge extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.white, size: 16),
+          Icon(icon, color: AppColors.white, size: 14),
           const SizedBox(width: AppSpacing.sp4),
           Text(
             label,
-            style: AppTypography.label.copyWith(
+            style: AppTypography.labelS.copyWith(
               color: AppColors.white,
               fontWeight: FontWeight.w800,
             ),
@@ -365,17 +388,21 @@ class _HeroStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sp12),
+        padding: const EdgeInsets.all(AppSpacing.sp8),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               value,
-              style: AppTypography.headingS.copyWith(color: AppColors.white),
+              style: AppTypography.bodyMBold.copyWith(
+                color: AppColors.white,
+                fontSize: 16,
+                height: 1.2,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
@@ -414,8 +441,8 @@ class _HeroActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
         child: Ink(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sp16,
-            vertical: AppSpacing.sp12,
+            horizontal: AppSpacing.sp12,
+            vertical: AppSpacing.sp8,
           ),
           decoration: BoxDecoration(
             color: filled
@@ -430,13 +457,14 @@ class _HeroActionButton extends StatelessWidget {
               Icon(
                 icon,
                 color: filled ? AppColors.navy : AppColors.white,
-                size: 20,
+                size: 18,
               ),
               const SizedBox(width: AppSpacing.sp8),
               Text(
                 label,
-                style: AppTypography.bodyMBold.copyWith(
+                style: AppTypography.label.copyWith(
                   color: filled ? AppColors.navy : AppColors.white,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],

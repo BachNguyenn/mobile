@@ -398,7 +398,11 @@ class _LearningOverviewCard extends StatelessWidget {
 
     return AppCard(
       padding: EdgeInsets.zero,
-      gradient: AppColors.heroGradient,
+      gradient: const LinearGradient(
+        colors: [AppColors.navy, AppColors.terracotta, AppColors.leafGreen],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
       shadowColor: AppColors.navy.withValues(alpha: 0.16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
@@ -408,8 +412,8 @@ class _LearningOverviewCard extends StatelessWidget {
               right: -34,
               top: -30,
               child: Container(
-                width: 150,
-                height: 150,
+                width: 112,
+                height: 112,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.white.withValues(alpha: 0.07),
@@ -420,21 +424,21 @@ class _LearningOverviewCard extends StatelessWidget {
               right: 26,
               bottom: 18,
               child: Icon(
-                Icons.route_rounded,
-                size: 92,
+                Icons.hub_rounded,
+                size: 72,
                 color: AppColors.white.withValues(alpha: 0.08),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(AppSpacing.sp20),
+              padding: const EdgeInsets.all(AppSpacing.sp16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
-                        width: 50,
-                        height: 50,
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(
@@ -442,11 +446,12 @@ class _LearningOverviewCard extends StatelessWidget {
                           ),
                         ),
                         child: const Icon(
-                          Icons.auto_stories_rounded,
+                          Icons.hub_rounded,
                           color: AppColors.white,
+                          size: 22,
                         ),
                       ),
-                      const SizedBox(width: AppSpacing.sp12),
+                      const SizedBox(width: AppSpacing.sp8),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -456,12 +461,17 @@ class _LearningOverviewCard extends StatelessWidget {
                               style: AppTypography.headingL.copyWith(
                                 color: AppColors.white,
                                 fontWeight: FontWeight.w800,
+                                fontSize: 20,
+                                height: 1.2,
                               ),
                             ),
                             Text(
                               'Lộ trình trộn từ vựng, ngữ pháp và chữ Hán.',
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: AppTypography.bodyS.copyWith(
                                 color: AppColors.white.withValues(alpha: 0.76),
+                                height: 1.35,
                               ),
                             ),
                           ],
@@ -469,23 +479,23 @@ class _LearningOverviewCard extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.sp20),
+                  const SizedBox(height: AppSpacing.sp12),
                   Row(
                     children: [
                       _OverviewStat(value: '$completed/$total', label: 'chặng'),
-                      const SizedBox(width: AppSpacing.sp12),
+                      const SizedBox(width: AppSpacing.sp8),
                       _OverviewStat(
                         value: '${(progress * 100).round()}%',
                         label: 'tiến độ',
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.sp16),
+                  const SizedBox(height: AppSpacing.sp12),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                     child: LinearProgressIndicator(
                       value: progress,
-                      minHeight: 8,
+                      minHeight: 6,
                       backgroundColor: AppColors.white.withValues(alpha: 0.16),
                       valueColor: const AlwaysStoppedAnimation<Color>(
                         AppColors.leafLight,
@@ -493,12 +503,12 @@ class _LearningOverviewCard extends StatelessWidget {
                     ),
                   ),
                   if (current != null) ...[
-                    const SizedBox(height: AppSpacing.sp16),
+                    const SizedBox(height: AppSpacing.sp12),
                     Container(
-                      padding: const EdgeInsets.all(AppSpacing.sp12),
+                      padding: const EdgeInsets.all(AppSpacing.sp8),
                       decoration: BoxDecoration(
                         color: AppColors.white.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                         border: Border.all(
                           color: AppColors.white.withValues(alpha: 0.16),
                         ),
@@ -566,19 +576,21 @@ class _OverviewStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sp12),
+        padding: const EdgeInsets.all(AppSpacing.sp8),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               value,
-              style: AppTypography.headingS.copyWith(
+              style: AppTypography.bodyMBold.copyWith(
                 color: AppColors.white,
                 fontWeight: FontWeight.w800,
+                fontSize: 16,
+                height: 1.2,
               ),
             ),
             Text(
@@ -722,8 +734,8 @@ class _FocusedLearningHero extends StatelessWidget {
               right: -30,
               top: -34,
               child: Container(
-                width: 144,
-                height: 144,
+                width: 112,
+                height: 112,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.white.withValues(alpha: 0.08),
@@ -735,29 +747,33 @@ class _FocusedLearningHero extends StatelessWidget {
               bottom: 14,
               child: Icon(
                 spec.icon,
-                size: 96,
+                size: 72,
                 color: AppColors.white.withValues(alpha: 0.09),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(AppSpacing.sp20),
+              padding: const EdgeInsets.all(AppSpacing.sp16),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
                       Container(
-                        width: 50,
-                        height: 50,
+                        width: 42,
+                        height: 42,
                         decoration: BoxDecoration(
                           color: AppColors.white.withValues(alpha: 0.14),
                           borderRadius: BorderRadius.circular(
                             AppSpacing.radiusM,
                           ),
                         ),
-                        child: Icon(spec.icon, color: AppColors.white),
+                        child: Icon(
+                          spec.icon,
+                          color: AppColors.white,
+                          size: 22,
+                        ),
                       ),
-                      const SizedBox(width: AppSpacing.sp12),
+                      const SizedBox(width: AppSpacing.sp8),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -767,12 +783,17 @@ class _FocusedLearningHero extends StatelessWidget {
                               style: AppTypography.headingL.copyWith(
                                 color: AppColors.white,
                                 fontWeight: FontWeight.w800,
+                                fontSize: 20,
+                                height: 1.2,
                               ),
                             ),
                             Text(
                               spec.heroSubtitle,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                               style: AppTypography.bodyS.copyWith(
                                 color: AppColors.white.withValues(alpha: 0.76),
+                                height: 1.35,
                               ),
                             ),
                           ],
@@ -780,25 +801,25 @@ class _FocusedLearningHero extends StatelessWidget {
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.sp20),
+                  const SizedBox(height: AppSpacing.sp12),
                   Row(
                     children: [
                       _OverviewStat(value: '$completed/$total', label: 'bài'),
-                      const SizedBox(width: AppSpacing.sp12),
+                      const SizedBox(width: AppSpacing.sp8),
                       _OverviewStat(value: '$itemCount', label: spec.itemUnit),
-                      const SizedBox(width: AppSpacing.sp12),
+                      const SizedBox(width: AppSpacing.sp8),
                       _OverviewStat(
                         value: '${(progress * 100).round()}%',
                         label: 'tiến độ',
                       ),
                     ],
                   ),
-                  const SizedBox(height: AppSpacing.sp16),
+                  const SizedBox(height: AppSpacing.sp12),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                     child: LinearProgressIndicator(
                       value: progress,
-                      minHeight: 8,
+                      minHeight: 6,
                       backgroundColor: AppColors.white.withValues(alpha: 0.16),
                       valueColor: const AlwaysStoppedAnimation<Color>(
                         AppColors.leafLight,
@@ -806,12 +827,12 @@ class _FocusedLearningHero extends StatelessWidget {
                     ),
                   ),
                   if (current != null) ...[
-                    const SizedBox(height: AppSpacing.sp16),
+                    const SizedBox(height: AppSpacing.sp12),
                     Container(
-                      padding: const EdgeInsets.all(AppSpacing.sp12),
+                      padding: const EdgeInsets.all(AppSpacing.sp8),
                       decoration: BoxDecoration(
                         color: AppColors.white.withValues(alpha: 0.12),
-                        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+                        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                         border: Border.all(
                           color: AppColors.white.withValues(alpha: 0.16),
                         ),
@@ -1053,7 +1074,11 @@ class _LearningCategorySpec {
         itemUnit: 'từ mới',
         icon: Icons.menu_book_rounded,
         accent: AppColors.waterBlue,
-        gradient: AppColors.brandLeafGradient,
+        gradient: LinearGradient(
+          colors: [AppColors.waterBlue, AppColors.leafGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       LearningCategory.grammar => const _LearningCategorySpec(
         heroTitle: 'Bài mới ngữ pháp',
@@ -1064,7 +1089,11 @@ class _LearningCategorySpec {
         itemUnit: 'mẫu',
         icon: Icons.edit_note_rounded,
         accent: AppColors.leafGreen,
-        gradient: AppColors.brandLeafGradient,
+        gradient: LinearGradient(
+          colors: [AppColors.terracotta, AppColors.sunGold, AppColors.leafDark],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       LearningCategory.kanji => const _LearningCategorySpec(
         heroTitle: 'Bài mới chữ Hán',
@@ -1075,7 +1104,11 @@ class _LearningCategorySpec {
         itemUnit: 'chữ',
         icon: Icons.translate_rounded,
         accent: AppColors.navy,
-        gradient: AppColors.brandGradient,
+        gradient: LinearGradient(
+          colors: [AppColors.navyDark, AppColors.navy, AppColors.slateGrey],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
       LearningCategory.mixed => const _LearningCategorySpec(
         heroTitle: 'Bài mới tổng hợp',
@@ -1084,9 +1117,13 @@ class _LearningCategorySpec {
         sectionSubtitle: 'Đi từng chặng nhỏ và kiểm tra đúng lúc.',
         lessonSubtitle: 'Một chặng học ngắn, trộn đủ kỹ năng chính.',
         itemUnit: 'mục',
-        icon: Icons.auto_stories_rounded,
+        icon: Icons.hub_rounded,
         accent: AppColors.leafGreen,
-        gradient: AppColors.heroGradient,
+        gradient: LinearGradient(
+          colors: [AppColors.navy, AppColors.terracotta, AppColors.leafGreen],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
     };
   }

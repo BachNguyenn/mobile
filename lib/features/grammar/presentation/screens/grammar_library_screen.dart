@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/models/progress_models.dart';
@@ -8,6 +6,7 @@ import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
 import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
+import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
@@ -176,7 +175,10 @@ class GrammarLibraryScreen extends ConsumerWidget {
       return;
     }
 
-    Navigator.push(context, AppRoutes.grammarReview(dueGrammar));
+    Navigator.push(
+      context,
+      AppRoutes.review(dueGrammar.map(ReviewItem.fromGrammar).toList()),
+    );
   }
 }
 
@@ -253,86 +255,106 @@ class _GrammarHeroCard extends StatelessWidget {
         : progress.percentage.clamp(0.0, 1.0);
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp20),
+      padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        gradient: AppColors.brandLeafGradient,
+        gradient: const LinearGradient(
+          colors: [AppColors.terracotta, AppColors.sunGold, AppColors.leafDark],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      clipBehavior: Clip.antiAlias,
+      child: Stack(
         children: [
-          Row(
+          Positioned(
+            right: -8,
+            bottom: -18,
+            child: Icon(
+              Icons.schema_rounded,
+              size: 108,
+              color: AppColors.white.withValues(alpha: 0.08),
+            ),
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Text(
-                  'Ôn ý nghĩa ngữ pháp',
-                  style: AppTypography.headingS.copyWith(
-                    color: AppColors.white,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      'Xây câu chắc hơn',
+                      style: AppTypography.headingS.copyWith(
+                        color: AppColors.white,
+                      ),
+                    ),
+                  ),
+                  _HeroBadge(
+                    icon: Icons.account_tree_rounded,
+                    label: dueTotal == 0 ? 'Đã xong' : '$dueTotal cần học',
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sp8),
+              Text(
+                'Nắm mẫu câu, xem ví dụ và luyện lại những điểm chưa chắc.',
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.bodyS.copyWith(
+                  color: AppColors.white.withValues(alpha: 0.78),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.sp12),
+              Row(
+                children: [
+                  _HeroStat(value: '${progress.learned}', label: 'đã học'),
+                  const SizedBox(width: AppSpacing.sp8),
+                  _HeroStat(value: '${progress.total}', label: 'tổng mẫu'),
+                  const SizedBox(width: AppSpacing.sp8),
+                  _HeroStat(
+                    value: isLoading ? '...' : '$dueLoaded',
+                    label: 'sẵn sàng',
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sp12),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+                child: LinearProgressIndicator(
+                  value: percent,
+                  minHeight: 6,
+                  backgroundColor: AppColors.white.withValues(alpha: 0.16),
+                  valueColor: const AlwaysStoppedAnimation<Color>(
+                    AppColors.sunGold,
                   ),
                 ),
               ),
-              _HeroBadge(
-                icon: Icons.task_alt_rounded,
-                label: dueTotal == 0 ? 'Đã xong' : '$dueTotal cần học',
+              const SizedBox(height: AppSpacing.sp12),
+              Row(
+                children: [
+                  Expanded(
+                    child: _HeroActionButton(
+                      icon: Icons.play_arrow_rounded,
+                      label: 'Ôn mẫu',
+                      filled: true,
+                      onTap: onReview,
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sp8),
+                  Expanded(
+                    child: _HeroActionButton(
+                      icon: Icons.edit_note_rounded,
+                      label: 'Mẫu mới',
+                      filled: false,
+                      onTap: onNewLesson,
+                    ),
+                  ),
+                ],
               ),
+              const SizedBox(height: AppSpacing.sp8),
+              _SentencePracticeButton(onTap: onSentencePractice),
             ],
           ),
-          const SizedBox(height: AppSpacing.sp8),
-          Text(
-            'Tự nhớ mẫu này dùng để nói ý gì, sau đó đối chiếu cấu trúc và ví dụ.',
-            style: AppTypography.bodyS.copyWith(
-              color: AppColors.white.withValues(alpha: 0.78),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sp20),
-          Row(
-            children: [
-              _HeroStat(value: '${progress.learned}', label: 'đã học'),
-              const SizedBox(width: AppSpacing.sp12),
-              _HeroStat(value: '${progress.total}', label: 'tổng mẫu'),
-              const SizedBox(width: AppSpacing.sp12),
-              _HeroStat(
-                value: isLoading ? '...' : '$dueLoaded',
-                label: 'sẵn sàng',
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sp16),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-            child: LinearProgressIndicator(
-              value: percent,
-              minHeight: 8,
-              backgroundColor: AppColors.white.withValues(alpha: 0.16),
-              valueColor: const AlwaysStoppedAnimation<Color>(
-                AppColors.leafLight,
-              ),
-            ),
-          ),
-          const SizedBox(height: AppSpacing.sp16),
-          Row(
-            children: [
-              Expanded(
-                child: _HeroActionButton(
-                  icon: Icons.play_arrow_rounded,
-                  label: 'Ôn ý',
-                  filled: true,
-                  onTap: onReview,
-                ),
-              ),
-              const SizedBox(width: AppSpacing.sp12),
-              Expanded(
-                child: _HeroActionButton(
-                  icon: Icons.add_rounded,
-                  label: 'Bài mới',
-                  filled: false,
-                  onTap: onNewLesson,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.sp12),
-          _SentencePracticeButton(onTap: onSentencePractice),
         ],
       ),
     );
@@ -349,8 +371,8 @@ class _HeroBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.sp12,
-        vertical: AppSpacing.sp8,
+        horizontal: AppSpacing.sp8,
+        vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
         color: AppColors.white.withValues(alpha: 0.14),
@@ -359,11 +381,11 @@ class _HeroBadge extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: AppColors.white, size: 16),
+          Icon(icon, color: AppColors.white, size: 14),
           const SizedBox(width: AppSpacing.sp4),
           Text(
             label,
-            style: AppTypography.label.copyWith(
+            style: AppTypography.labelS.copyWith(
               color: AppColors.white,
               fontWeight: FontWeight.w800,
             ),
@@ -384,17 +406,21 @@ class _HeroStat extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sp12),
+        padding: const EdgeInsets.all(AppSpacing.sp8),
         decoration: BoxDecoration(
           color: AppColors.white.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               value,
-              style: AppTypography.headingS.copyWith(color: AppColors.white),
+              style: AppTypography.bodyMBold.copyWith(
+                color: AppColors.white,
+                fontSize: 16,
+                height: 1.2,
+              ),
             ),
             const SizedBox(height: 2),
             Text(
@@ -433,8 +459,8 @@ class _HeroActionButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
         child: Ink(
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sp16,
-            vertical: AppSpacing.sp12,
+            horizontal: AppSpacing.sp12,
+            vertical: AppSpacing.sp8,
           ),
           decoration: BoxDecoration(
             color: filled
@@ -449,13 +475,14 @@ class _HeroActionButton extends StatelessWidget {
               Icon(
                 icon,
                 color: filled ? AppColors.navy : AppColors.white,
-                size: 20,
+                size: 18,
               ),
               const SizedBox(width: AppSpacing.sp8),
               Text(
                 label,
-                style: AppTypography.bodyMBold.copyWith(
+                style: AppTypography.label.copyWith(
                   color: filled ? AppColors.navy : AppColors.white,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
             ],
@@ -481,8 +508,8 @@ class _SentencePracticeButton extends StatelessWidget {
         child: Ink(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.sp16,
-            vertical: AppSpacing.sp12,
+            horizontal: AppSpacing.sp12,
+            vertical: AppSpacing.sp8,
           ),
           decoration: BoxDecoration(
             color: AppColors.white.withValues(alpha: 0.12),
@@ -495,12 +522,15 @@ class _SentencePracticeButton extends StatelessWidget {
               const Icon(
                 Icons.subject_rounded,
                 color: AppColors.white,
-                size: 20,
+                size: 18,
               ),
               const SizedBox(width: AppSpacing.sp8),
               Text(
                 'Luyện câu',
-                style: AppTypography.bodyMBold.copyWith(color: AppColors.white),
+                style: AppTypography.label.copyWith(
+                  color: AppColors.white,
+                  fontWeight: FontWeight.w800,
+                ),
               ),
             ],
           ),
@@ -510,36 +540,15 @@ class _SentencePracticeButton extends StatelessWidget {
   }
 }
 
-class _GrammarSearchBox extends StatefulWidget {
+class _GrammarSearchBox extends StatelessWidget {
   final ValueChanged<String> onChanged;
 
   const _GrammarSearchBox({required this.onChanged});
 
   @override
-  State<_GrammarSearchBox> createState() => _GrammarSearchBoxState();
-}
-
-class _GrammarSearchBoxState extends State<_GrammarSearchBox> {
-  Timer? _debounce;
-
-  @override
-  void dispose() {
-    _debounce?.cancel();
-    super.dispose();
-  }
-
-  void _onChanged(String value) {
-    _debounce?.cancel();
-    _debounce = Timer(const Duration(milliseconds: 280), () {
-      if (!mounted) return;
-      widget.onChanged(value.trim());
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: _onChanged,
+      onChanged: onChanged,
       style: AppTypography.bodyM.copyWith(
         color: AppColors.navyDark,
         fontWeight: FontWeight.w700,

@@ -1,15 +1,17 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/models/progress_models.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
-import 'package:mobile/features/garden/presentation/providers/garden_mission_provider.dart';
+import 'package:mobile/features/auth/application/providers/auth_provider.dart';
+import 'package:mobile/features/auth/domain/entities/auth_user.dart';
+import 'package:mobile/features/garden/application/providers/garden_mission_provider.dart';
+import 'package:mobile/features/garden/presentation/models/garden_mission_style.dart';
+import 'package:mobile/features/home/application/providers/daily_study_plan_provider.dart';
+import 'package:mobile/features/home/application/providers/home_progress_provider.dart';
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
-import 'package:mobile/features/home/presentation/providers/daily_study_plan_provider.dart';
-import 'package:mobile/features/home/presentation/providers/home_progress_provider.dart';
+import 'package:mobile/features/home/presentation/navigation/daily_study_navigation.dart';
 import 'package:mobile/features/home/presentation/widgets/profile_avatar.dart';
 import 'package:mobile/features/home/presentation/widgets/quick_action_chips.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
@@ -93,8 +95,10 @@ class HomePage extends ConsumerWidget {
                       onTap: () => Navigator.push(context, AppRoutes.garden()),
                     ),
                     const SizedBox(height: AppSpacing.sp24),
-                    _ZenGardenCard(
-                      onTap: () => Navigator.push(context, AppRoutes.garden()),
+                    RepaintBoundary(
+                      child: _ZenGardenCard(
+                        onTap: () => Navigator.push(context, AppRoutes.garden()),
+                      ),
                     ),
                     const SizedBox(height: AppSpacing.sp24),
                     const _SectionTitle(
@@ -124,7 +128,7 @@ class HomePage extends ConsumerWidget {
 }
 
 class _TopBar extends StatelessWidget {
-  final User? user;
+  final AuthUser? user;
 
   const _TopBar({required this.user});
 
@@ -193,7 +197,7 @@ class _TopBar extends StatelessWidget {
     );
   }
 
-  String _displayName(User? user) {
+  String _displayName(AuthUser? user) {
     final displayName = user?.displayName?.trim();
     if (displayName != null && displayName.isNotEmpty) return displayName;
 
@@ -224,8 +228,9 @@ class _DailyStudyCard extends StatelessWidget {
     final title = currentPlan?.title ?? 'Đang chọn phiên học';
     final subtitle =
         currentPlan?.subtitle ?? 'Đang chọn phiên học phù hợp cho bạn.';
-    final reason = currentPlan?.reason ?? 'Dựa trên tiến độ hiện tại';
-    final compactReason = reason.replaceFirst(' đến hạn', '');
+    final compactReason =
+        currentPlan?.reason.replaceFirst(' đến hạn', '') ??
+        'Dựa trên tiến độ hiện tại';
     return AppCard(
       onTap: currentPlan == null ? null : () => onTap(currentPlan),
       color: AppColors.zenBlue,
@@ -487,65 +492,68 @@ class _LearningGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final items = [
-      _MenuItem(
-        title: 'Từ vựng',
-        icon: Icons.menu_book_rounded,
-        color: AppColors.zenBlue,
-        onTap: onVocabulary,
-      ),
-      _MenuItem(
-        title: 'Ngữ pháp',
-        icon: Icons.edit_note_rounded,
-        color: AppColors.leafGreen,
-        onTap: onGrammar,
-      ),
-      _MenuItem(
-        title: 'Chữ Hán',
-        icon: Icons.translate_rounded,
-        color: AppColors.waterBlue,
-        onTap: onKanji,
-      ),
-      _MenuItem(
-        title: 'Quiz',
-        icon: Icons.quiz_rounded,
-        color: AppColors.zenBlue,
-        onTap: onQuiz,
-      ),
-      _MenuItem(
-        title: 'Vườn',
-        icon: Icons.flag_rounded,
-        color: AppColors.leafGreen,
-        onTap: onMission,
-      ),
-      _MenuItem(
-        title: 'Hồ sơ',
-        icon: Icons.insights_rounded,
-        color: AppColors.slateGrey,
-        onTap: onProfile,
-      ),
-    ];
-
-    return GridView.builder(
+    return GridView.count(
       padding: EdgeInsets.zero,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: items.length,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: AppSpacing.sp8,
-        mainAxisSpacing: AppSpacing.sp8,
-        mainAxisExtent: 112,
-      ),
-      itemBuilder: (context, index) => _MenuTile(item: items[index]),
+      crossAxisCount: 3,
+      crossAxisSpacing: AppSpacing.sp8,
+      mainAxisSpacing: AppSpacing.sp8,
+      childAspectRatio: 3 / 2.7,
+      children: [
+        _MenuTile(
+          title: 'Từ vựng',
+          icon: Icons.menu_book_rounded,
+          color: AppColors.zenBlue,
+          onTap: onVocabulary,
+        ),
+        _MenuTile(
+          title: 'Ngữ pháp',
+          icon: Icons.edit_note_rounded,
+          color: AppColors.leafGreen,
+          onTap: onGrammar,
+        ),
+        _MenuTile(
+          title: 'Chữ Hán',
+          icon: Icons.translate_rounded,
+          color: AppColors.waterBlue,
+          onTap: onKanji,
+        ),
+        _MenuTile(
+          title: 'Quiz',
+          icon: Icons.quiz_rounded,
+          color: AppColors.zenBlue,
+          onTap: onQuiz,
+        ),
+        _MenuTile(
+          title: 'Vườn',
+          icon: Icons.flag_rounded,
+          color: AppColors.leafGreen,
+          onTap: onMission,
+        ),
+        _MenuTile(
+          title: 'Hồ sơ',
+          icon: Icons.insights_rounded,
+          color: AppColors.slateGrey,
+          onTap: onProfile,
+        ),
+      ],
     );
   }
 }
 
 class _MenuTile extends StatelessWidget {
-  final _MenuItem item;
+  final String title;
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onTap;
 
-  const _MenuTile({required this.item});
+  const _MenuTile({
+    required this.title,
+    required this.icon,
+    required this.color,
+    this.onTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -553,7 +561,7 @@ class _MenuTile extends StatelessWidget {
       color: AppColors.white,
       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
       child: InkWell(
-        onTap: item.onTap,
+        onTap: onTap,
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
         child: Container(
           padding: const EdgeInsets.all(AppSpacing.sp12),
@@ -570,14 +578,14 @@ class _MenuTile extends StatelessWidget {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: item.color.withValues(alpha: 0.10),
+                  color: color.withValues(alpha: 0.10),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(item.icon, color: item.color, size: 22),
+                child: Icon(icon, color: color, size: 22),
               ),
               const SizedBox(height: AppSpacing.sp8),
               Text(
-                item.title,
+                title,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.label.copyWith(
@@ -949,16 +957,4 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _MenuItem {
-  final String title;
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
 
-  const _MenuItem({
-    required this.title,
-    required this.icon,
-    required this.color,
-    this.onTap,
-  });
-}

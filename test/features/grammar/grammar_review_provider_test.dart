@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
-import 'package:mobile/features/grammar/presentation/providers/grammar_library_provider.dart';
-import 'package:mobile/features/grammar/presentation/providers/grammar_review_provider.dart';
+import 'package:mobile/features/grammar/application/providers/grammar_library_provider.dart';
+import 'package:mobile/features/grammar/application/providers/grammar_review_provider.dart';
 
 void main() {
   group('GrammarReviewQuestionGenerator', () {

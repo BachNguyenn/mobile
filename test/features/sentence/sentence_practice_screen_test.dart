@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/features/sentence/domain/entities/sentence.dart';
-import 'package:mobile/features/sentence/presentation/providers/sentence_provider.dart';
+import 'package:mobile/features/sentence/application/providers/sentence_provider.dart';
 import 'package:mobile/features/sentence/presentation/screens/sentence_practice_screen.dart';
 
 void main() {

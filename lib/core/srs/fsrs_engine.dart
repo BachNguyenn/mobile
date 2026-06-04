@@ -1,7 +1,6 @@
 import 'dart:math' as math;
 
-import '../../features/kanji/domain/entities/kanji_card.dart';
-import '../../features/vocabulary/domain/entities/vocabulary.dart';
+import 'srs_item.dart';
 
 class SrsService {
   static const double _defaultDifficulty = 5.0;
@@ -9,51 +8,21 @@ class SrsService {
   static const double _targetRetention = 0.9;
   static const FsrsParameters _params = FsrsParameters.defaultSet();
 
-  /// FSRS-lite calculation based on rating (1: Again, 2: Hard, 3: Good, 4: Easy)
-  /// Updates stability/difficulty and schedules next review from those values.
-  KanjiCard calculateNextReview(KanjiCard card, int rating) {
-    final values = _calculateValues(
-      stability: card.stability,
-      difficulty: card.difficulty,
-      reps: card.reps,
-      lapses: card.lapses,
-      state: card.state,
+  /// FSRS-lite calculation based on rating (1: Again, 2: Hard, 3: Good, 4: Easy).
+  /// Returns pure scheduling fields; feature/application layers copy them into
+  /// their own entities.
+  SrsReviewState calculateNext(SrsItem item, int rating) {
+    return _calculateValues(
+      stability: item.stability,
+      difficulty: item.difficulty,
+      reps: item.reps,
+      lapses: item.lapses,
+      state: item.state,
       rating: rating,
-    );
-
-    return card.copyWith(
-      stability: values.stability,
-      difficulty: values.difficulty,
-      reps: values.reps,
-      lapses: values.lapses,
-      state: values.state,
-      lastReview: values.lastReview,
-      nextReview: values.nextReview,
     );
   }
 
-  Vocabulary calculateNextVocabularyReview(Vocabulary vocabulary, int rating) {
-    final values = _calculateValues(
-      stability: vocabulary.stability,
-      difficulty: vocabulary.difficulty,
-      reps: vocabulary.reps,
-      lapses: vocabulary.lapses,
-      state: vocabulary.state,
-      rating: rating,
-    );
-
-    return vocabulary.copyWith(
-      stability: values.stability,
-      difficulty: values.difficulty,
-      reps: values.reps,
-      lapses: values.lapses,
-      state: values.state,
-      lastReview: values.lastReview,
-      nextReview: values.nextReview,
-    );
-  }
-
-  _SrsValues _calculateValues({
+  SrsReviewState _calculateValues({
     required double stability,
     required double difficulty,
     required int reps,
@@ -109,7 +78,7 @@ class SrsService {
       newNextReview = now.add(interval);
     }
 
-    return _SrsValues(
+    return SrsReviewState(
       stability: newStability,
       difficulty: newDifficulty,
       reps: newReps,
@@ -234,7 +203,7 @@ class FsrsParameters {
       easyIntervalMultiplier = 1.3;
 }
 
-class _SrsValues {
+class SrsReviewState {
   final DateTime lastReview;
   final DateTime nextReview;
   final double stability;
@@ -243,7 +212,7 @@ class _SrsValues {
   final int lapses;
   final int state;
 
-  const _SrsValues({
+  const SrsReviewState({
     required this.lastReview,
     required this.nextReview,
     required this.stability,

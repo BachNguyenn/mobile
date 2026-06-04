@@ -348,69 +348,67 @@ class _GradientAccentBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0, end: progress),
-      duration: const Duration(milliseconds: 800),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, _) {
-        final clampedValue = value.clamp(0.0, 1.0);
-        return SizedBox(
-          height: AppSpacing.progressBarHeight,
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final fillWidth = constraints.maxWidth * clampedValue;
-              return Stack(
-                children: [
-                  // Track
-                  Container(
+    final clampedProgress = progress.clamp(0.0, 1.0);
+    return SizedBox(
+      height: AppSpacing.progressBarHeight,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final fillWidth = constraints.maxWidth * clampedProgress;
+          return Stack(
+            children: [
+              // Track
+              Container(
+                height: AppSpacing.progressBarHeight,
+                decoration: BoxDecoration(
+                  color: AppColors.creamDark,
+                  borderRadius: BorderRadius.circular(
+                    AppSpacing.progressBarHeight / 2,
+                  ),
+                ),
+              ),
+              // Fill
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutCubic,
+                width: fillWidth,
+                height: AppSpacing.progressBarHeight,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [color, color.withValues(alpha: 0.6)],
+                  ),
+                  borderRadius: BorderRadius.circular(
+                    AppSpacing.progressBarHeight / 2,
+                  ),
+                ),
+              ),
+              // Leading dot
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 800),
+                curve: Curves.easeOutCubic,
+                left: fillWidth > 3 ? fillWidth - 3 : 0,
+                top: 0,
+                child: Visibility(
+                  visible: fillWidth > 3,
+                  child: Container(
+                    width: AppSpacing.progressBarHeight,
                     height: AppSpacing.progressBarHeight,
                     decoration: BoxDecoration(
-                      color: AppColors.creamDark,
-                      borderRadius: BorderRadius.circular(
-                        AppSpacing.progressBarHeight / 2,
-                      ),
+                      shape: BoxShape.circle,
+                      color: AppColors.white,
+                      boxShadow: [
+                        BoxShadow(
+                          color: color.withValues(alpha: 0.4),
+                          blurRadius: 4,
+                        ),
+                      ],
                     ),
                   ),
-                  // Fill
-                  if (fillWidth > 0)
-                    Container(
-                      width: fillWidth,
-                      height: AppSpacing.progressBarHeight,
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [color, color.withValues(alpha: 0.6)],
-                        ),
-                        borderRadius: BorderRadius.circular(
-                          AppSpacing.progressBarHeight / 2,
-                        ),
-                      ),
-                    ),
-                  // Leading dot
-                  if (fillWidth > 3)
-                    Positioned(
-                      left: fillWidth - 3,
-                      top: 0,
-                      child: Container(
-                        width: AppSpacing.progressBarHeight,
-                        height: AppSpacing.progressBarHeight,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: AppColors.white,
-                          boxShadow: [
-                            BoxShadow(
-                              color: color.withValues(alpha: 0.4),
-                              blurRadius: 4,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-        );
-      },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }

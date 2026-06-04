@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/analytics/presentation/providers/analytics_provider.dart';
-import 'package:mobile/features/grammar/presentation/providers/grammar_library_provider.dart';
-import 'package:mobile/features/kanji/presentation/providers/kanji_library_provider.dart';
+import 'package:mobile/features/analytics/application/providers/analytics_provider.dart';
+import 'package:mobile/features/grammar/application/providers/grammar_library_provider.dart';
+import 'package:mobile/features/kanji/application/providers/kanji_library_provider.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
-import 'package:mobile/features/vocabulary/presentation/providers/vocabulary_library_provider.dart';
+import 'package:mobile/features/vocabulary/application/providers/vocabulary_library_provider.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/shared/widgets/feature_tile.dart';
 

@@ -13,6 +13,9 @@ class DatabaseSeeder {
   final GrammarRepository grammarRepository;
   final VocabularyRepository vocabularyRepository;
 
+  /// Cached asset manifest to avoid re-parsing for each seed method.
+  Map<String, dynamic>? _manifestCache;
+
   DatabaseSeeder({
     required this.kanjiRepository,
     required this.grammarRepository,
@@ -20,115 +23,143 @@ class DatabaseSeeder {
   });
 
   Future<void> seedAll() async {
-    await seedKanjiData();
-    await seedGrammarData();
-    await seedVocabData();
+    // Pre-cache the manifest once, then seed all three in parallel.
+    await _ensureManifest();
+    await Future.wait([
+      seedKanjiData(),
+      seedGrammarData(),
+      seedVocabData(),
+    ]);
   }
 
   Future<void> seedKanjiData() async {
     final levels = await _levelsWithAsset('kanji.json');
 
-    for (final level in levels) {
+    // Load and parse all levels in parallel
+    final parsed = await Future.wait(levels.map((level) async {
       try {
-        final ByteData bytes = await rootBundle.load(
-          'assets/data/$level/kanji.json',
-        );
-        final String response = utf8.decode(bytes.buffer.asUint8List());
-        final List<dynamic> data = await _decodeJsonList(response);
-
-        final List<KanjiCard> cards = data.map((json) {
-          final char = json['character'] as String;
-          return KanjiCard(
-            id: '${level}_$char',
-            kanji: char,
-            meanings: (json['meanings'] as List).join(', '),
-            onyomi: (json['on_reading'] as List).join(', '),
-            kunyomi: (json['kun_reading'] as List).join(', '),
-            jlptLevel: int.parse(level.replaceAll('n', '')),
-            radicalsJson: _encodeList(json['radicals']),
-            mnemonic: _optionalString(json['mnemonic']),
-            relatedWordsJson: _encodeList(json['related_words']),
-            nextReview: DateTime.now(),
-          );
-        }).toList();
-
-        await kanjiRepository.saveAllCards(cards);
+        final bytes = await rootBundle.load('assets/data/$level/kanji.json');
+        final response = utf8.decode(bytes.buffer.asUint8List());
+        return MapEntry(level, await _decodeJsonList(response));
       } catch (e) {
-        debugPrint('Error seeding $level kanji: $e');
+        debugPrint('Error loading $level kanji: $e');
+        return null;
       }
+    }));
+
+    // Build all cards then batch-save
+    final allCards = <KanjiCard>[];
+    for (final entry in parsed) {
+      if (entry == null) continue;
+      final level = entry.key;
+      final data = entry.value;
+      for (final json in data) {
+        final char = json['character'] as String;
+        allCards.add(KanjiCard(
+          id: '${level}_$char',
+          kanji: char,
+          meanings: (json['meanings'] as List).join(', '),
+          onyomi: (json['on_reading'] as List).join(', '),
+          kunyomi: (json['kun_reading'] as List).join(', '),
+          jlptLevel: int.parse(level.replaceAll('n', '')),
+          radicalsJson: _encodeList(json['radicals']),
+          mnemonic: _optionalString(json['mnemonic']),
+          relatedWordsJson: _encodeList(json['related_words']),
+          nextReview: DateTime.now(),
+        ));
+      }
+    }
+
+    if (allCards.isNotEmpty) {
+      await kanjiRepository.saveAllCards(allCards);
     }
   }
 
   Future<void> seedGrammarData() async {
     final levels = await _levelsWithAsset('grammar.json');
 
-    for (final level in levels) {
+    final parsed = await Future.wait(levels.map((level) async {
       try {
-        final ByteData bytes = await rootBundle.load(
-          'assets/data/$level/grammar.json',
-        );
-        final String response = utf8.decode(bytes.buffer.asUint8List());
-        final List<dynamic> data = await _decodeJsonList(response);
-
-        final List<GrammarPoint> points = data.map((json) {
-          final title = json['title'] as String;
-          return GrammarPoint(
-            id: '${level}_$title',
-            title: title,
-            shortExplanation: json['short_explanation'] ?? '',
-            longExplanation: json['long_explanation'] ?? '',
-            formation: json['formation'] ?? '',
-            jlptLevel: int.parse(level.replaceAll('n', '')),
-            examples: (json['examples'] as List)
-                .map(
-                  (e) => GrammarExample(
-                    jp: e['jp'] ?? '',
-                    romaji: e['romaji'] ?? '',
-                    en: e['en'] ?? '',
-                  ),
-                )
-                .toList(),
-          );
-        }).toList();
-
-        await grammarRepository.saveGrammarPoints(points);
+        final bytes = await rootBundle.load('assets/data/$level/grammar.json');
+        final response = utf8.decode(bytes.buffer.asUint8List());
+        return MapEntry(level, await _decodeJsonList(response));
       } catch (e) {
-        debugPrint('Error seeding $level grammar: $e');
+        debugPrint('Error loading $level grammar: $e');
+        return null;
       }
+    }));
+
+    final allPoints = <GrammarPoint>[];
+    for (final entry in parsed) {
+      if (entry == null) continue;
+      final level = entry.key;
+      final data = entry.value;
+      for (final json in data) {
+        final title = json['title'] as String;
+        allPoints.add(GrammarPoint(
+          id: '${level}_$title',
+          title: title,
+          shortExplanation: json['short_explanation'] ?? '',
+          longExplanation: json['long_explanation'] ?? '',
+          formation: json['formation'] ?? '',
+          jlptLevel: int.parse(level.replaceAll('n', '')),
+          examples: (json['examples'] as List)
+              .map(
+                (e) => GrammarExample(
+                  jp: e['jp'] ?? '',
+                  romaji: e['romaji'] ?? '',
+                  en: e['en'] ?? '',
+                ),
+              )
+              .toList(),
+        ));
+      }
+    }
+
+    if (allPoints.isNotEmpty) {
+      await grammarRepository.saveGrammarPoints(allPoints);
     }
   }
 
   Future<void> seedVocabData() async {
     final levels = await _levelsWithAsset('vocabulary.json');
 
-    for (final level in levels) {
+    final parsed = await Future.wait(levels.map((level) async {
       try {
-        final ByteData bytes = await rootBundle.load(
-          'assets/data/$level/vocabulary.json',
-        );
-        final String response = utf8.decode(bytes.buffer.asUint8List());
-        final List<dynamic> data = await _decodeJsonList(response);
-
-        final List<Vocabulary> vocabList = data.map((json) {
-          final word = json['word'] as String;
-          return Vocabulary(
-            id: '${level}_$word',
-            word: word,
-            reading: json['reading'] ?? '',
-            meaning: json['meaning'] ?? '',
-            jlptLevel: int.parse(level.replaceAll('n', '')),
-            exampleSentencesJson: _encodeList(json['example_sentences']),
-            imageUrl: _optionalString(json['image_url']),
-            pitchAccent: _optionalString(json['pitch_accent']),
-            partOfSpeech: _optionalString(json['part_of_speech']),
-            nextReview: DateTime.now(),
-          );
-        }).toList();
-
-        await vocabularyRepository.saveVocabulary(vocabList);
+        final bytes =
+            await rootBundle.load('assets/data/$level/vocabulary.json');
+        final response = utf8.decode(bytes.buffer.asUint8List());
+        return MapEntry(level, await _decodeJsonList(response));
       } catch (e) {
-        debugPrint('Error seeding $level vocabulary: $e');
+        debugPrint('Error loading $level vocabulary: $e');
+        return null;
       }
+    }));
+
+    final allVocab = <Vocabulary>[];
+    for (final entry in parsed) {
+      if (entry == null) continue;
+      final level = entry.key;
+      final data = entry.value;
+      for (final json in data) {
+        final word = json['word'] as String;
+        allVocab.add(Vocabulary(
+          id: '${level}_$word',
+          word: word,
+          reading: json['reading'] ?? '',
+          meaning: json['meaning'] ?? '',
+          jlptLevel: int.parse(level.replaceAll('n', '')),
+          exampleSentencesJson: _encodeList(json['example_sentences']),
+          imageUrl: _optionalString(json['image_url']),
+          pitchAccent: _optionalString(json['pitch_accent']),
+          partOfSpeech: _optionalString(json['part_of_speech']),
+          nextReview: DateTime.now(),
+        ));
+      }
+    }
+
+    if (allVocab.isNotEmpty) {
+      await vocabularyRepository.saveVocabulary(allVocab);
     }
   }
 
@@ -151,9 +182,15 @@ class DatabaseSeeder {
     return json.decode(source) as List<dynamic>;
   }
 
+  Future<void> _ensureManifest() async {
+    _manifestCache ??= json.decode(
+      await rootBundle.loadString('AssetManifest.json'),
+    ) as Map<String, dynamic>;
+  }
+
   Future<List<String>> _levelsWithAsset(String fileName) async {
-    final manifestString = await rootBundle.loadString('AssetManifest.json');
-    final manifest = json.decode(manifestString) as Map<String, dynamic>;
+    await _ensureManifest();
+    final manifest = _manifestCache!;
     final pattern = RegExp('^assets/data/(n\\d+)/${RegExp.escape(fileName)}\$');
     final levels = manifest.keys
         .map((path) => pattern.firstMatch(path)?.group(1))

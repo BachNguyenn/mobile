@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 /// Typography presets cho Japandi Design System
@@ -13,7 +12,8 @@ abstract final class AppTypography {
   // ─── Display / Heading — Noto Serif ────────────────────────
 
   /// 28sp Bold — Tiêu đề trang chính (ít dùng)
-  static TextStyle displayLarge = GoogleFonts.notoSerif(
+  static const TextStyle displayLarge = TextStyle(
+    fontFamily: 'NotoSerif',
     fontSize: 28,
     fontWeight: FontWeight.w700,
     color: AppColors.ink,
@@ -21,7 +21,8 @@ abstract final class AppTypography {
   );
 
   /// 24sp Bold — Heading lớn: "Hôm nay bạn muốn học gì?"
-  static TextStyle headingL = GoogleFonts.notoSerif(
+  static const TextStyle headingL = TextStyle(
+    fontFamily: 'NotoSerif',
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: AppColors.ink,
@@ -29,7 +30,8 @@ abstract final class AppTypography {
   );
 
   /// 20sp SemiBold — Heading trung bình: section title
-  static TextStyle headingM = GoogleFonts.notoSerif(
+  static const TextStyle headingM = TextStyle(
+    fontFamily: 'NotoSerif',
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: AppColors.slateGrey,
@@ -37,7 +39,8 @@ abstract final class AppTypography {
   );
 
   /// 18sp SemiBold — Heading nhỏ: card title
-  static TextStyle headingS = GoogleFonts.notoSerif(
+  static const TextStyle headingS = TextStyle(
+    fontFamily: 'NotoSerif',
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColors.slateGrey,
@@ -47,7 +50,8 @@ abstract final class AppTypography {
   // ─── Body — Noto Sans JP ──────────────────────────────────
 
   /// 16sp Regular — Body text chính
-  static TextStyle bodyL = GoogleFonts.notoSansJp(
+  static const TextStyle bodyL = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: AppColors.slateGrey,
@@ -55,7 +59,8 @@ abstract final class AppTypography {
   );
 
   /// 14sp Regular — Body text phụ
-  static TextStyle bodyM = GoogleFonts.notoSansJp(
+  static const TextStyle bodyM = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.slateGrey,
@@ -63,7 +68,8 @@ abstract final class AppTypography {
   );
 
   /// 14sp Medium — Body text nhấn mạnh
-  static TextStyle bodyMBold = GoogleFonts.notoSansJp(
+  static const TextStyle bodyMBold = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: AppColors.slateGrey,
@@ -71,7 +77,8 @@ abstract final class AppTypography {
   );
 
   /// 13sp Regular — Body text nhỏ
-  static TextStyle bodyS = GoogleFonts.notoSansJp(
+  static const TextStyle bodyS = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 13,
     fontWeight: FontWeight.w400,
     color: AppColors.slateGrey,
@@ -81,7 +88,8 @@ abstract final class AppTypography {
   // ─── Caption / Label ──────────────────────────────────────
 
   /// 13sp Regular — Caption, hint text
-  static TextStyle caption = GoogleFonts.notoSansJp(
+  static const TextStyle caption = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 13,
     fontWeight: FontWeight.w400,
     color: AppColors.slateMuted,
@@ -89,7 +97,8 @@ abstract final class AppTypography {
   );
 
   /// 12sp Medium — Label, chip text, badge
-  static TextStyle label = GoogleFonts.notoSansJp(
+  static const TextStyle label = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 12,
     fontWeight: FontWeight.w500,
     color: AppColors.slateMuted,
@@ -97,7 +106,8 @@ abstract final class AppTypography {
   );
 
   /// 11sp Medium — Micro label, nav bar label
-  static TextStyle labelS = GoogleFonts.notoSansJp(
+  static const TextStyle labelS = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 11,
     fontWeight: FontWeight.w500,
     color: AppColors.slateMuted,
@@ -107,7 +117,8 @@ abstract final class AppTypography {
   // ─── Special ──────────────────────────────────────────────
 
   /// 32sp Bold — Kanji display lớn
-  static TextStyle kanjiDisplay = GoogleFonts.notoSerif(
+  static const TextStyle kanjiDisplay = TextStyle(
+    fontFamily: 'NotoSerif',
     fontSize: 32,
     fontWeight: FontWeight.w700,
     color: AppColors.ink,
@@ -115,7 +126,8 @@ abstract final class AppTypography {
   );
 
   /// 48sp Bold — Kanji hero (detail screen)
-  static TextStyle kanjiHero = GoogleFonts.notoSerif(
+  static const TextStyle kanjiHero = TextStyle(
+    fontFamily: 'NotoSerif',
     fontSize: 48,
     fontWeight: FontWeight.w700,
     color: AppColors.ink,
@@ -123,7 +135,8 @@ abstract final class AppTypography {
   );
 
   /// 16sp — Japanese motivational text
-  static TextStyle japaneseQuote = GoogleFonts.notoSerif(
+  static const TextStyle japaneseQuote = TextStyle(
+    fontFamily: 'NotoSerif',
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: AppColors.slateMuted,
@@ -132,7 +145,8 @@ abstract final class AppTypography {
   );
 
   /// 24sp Bold — Số thống kê (streak count, percentage)
-  static TextStyle statNumber = GoogleFonts.notoSansJp(
+  static const TextStyle statNumber = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 24,
     fontWeight: FontWeight.w700,
     color: AppColors.ink,
@@ -140,7 +154,8 @@ abstract final class AppTypography {
   );
 
   /// 14sp Medium — Stat label
-  static TextStyle statLabel = GoogleFonts.notoSansJp(
+  static const TextStyle statLabel = TextStyle(
+    fontFamily: 'NotoSansJP',
     fontSize: 14,
     fontWeight: FontWeight.w500,
     color: AppColors.slateMuted,

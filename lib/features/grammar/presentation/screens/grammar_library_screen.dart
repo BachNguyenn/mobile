@@ -4,8 +4,9 @@ import 'package:mobile/core/models/progress_models.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
+import 'package:mobile/features/grammar/application/providers/grammar_library_provider.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
-import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
+import 'package:mobile/features/learning/application/providers/learning_path_provider.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
@@ -13,8 +14,6 @@ import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
 import 'package:mobile/shared/widgets/jlpt_level_badge.dart';
-
-import '../providers/grammar_library_provider.dart';
 
 class GrammarLibraryScreen extends ConsumerWidget {
   final ValueChanged<LearningCategory>? onOpenLearningCategory;

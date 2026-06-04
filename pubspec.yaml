@@ -1,5 +1,5 @@
 name: mobile
-description: "A new Flutter project."
+description: "A Flutter app for Japanese study with JLPT libraries, SRS review, handwriting recognition, analytics, and a Zen garden reward loop."
 publish_to: 'none'
 version: 1.0.0+1
 
@@ -23,7 +23,6 @@ dependencies:
   flutter_local_notifications: ^21.0.0
   flutter_tts: ^4.2.3
   path_drawing: ^1.0.1
-  google_fonts: ^8.0.2
   timezone: ^0.11.0
   shared_preferences: ^2.5.5
 
@@ -64,3 +63,13 @@ flutter:
     - assets/data/unified_path.json
     - assets/data/app_content.json
     - assets/images/
+  fonts:
+    - family: NotoSerif
+      fonts:
+        - asset: assets/fonts/NotoSerif-Variable.ttf
+    - family: NotoSansJP
+      fonts:
+        - asset: assets/fonts/NotoSansJP-Variable.ttf
+    - family: NotoSans
+      fonts:
+        - asset: assets/fonts/NotoSans-Variable.ttf

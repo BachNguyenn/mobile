@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/garden/presentation/providers/garden_provider.dart';
+import 'package:mobile/features/garden/application/providers/garden_provider.dart';
 
 /// Premium shop item card with gradient background, affordability state,
 /// and purchase confirmation animation.

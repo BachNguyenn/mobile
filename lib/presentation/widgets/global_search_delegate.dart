@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
-import '../../features/grammar/presentation/providers/grammar_library_provider.dart';
-import '../../features/kanji/presentation/providers/kanji_library_provider.dart';
-import '../../features/vocabulary/presentation/providers/vocabulary_library_provider.dart';
+import '../../features/grammar/application/providers/grammar_library_provider.dart';
+import '../../features/kanji/application/providers/kanji_library_provider.dart';
+import '../../features/vocabulary/application/providers/vocabulary_library_provider.dart';
 
 /// Global Search Delegate — tìm kiếm xuyên suốt Kanji, Từ vựng, Ngữ pháp
 ///
@@ -102,7 +102,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
               style: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
             ),
             const SizedBox(height: AppSpacing.sp8),
-            Text(
+            const Text(
               'Hỗ trợ tìm theo Hán tự, nghĩa, hoặc cách đọc',
               style: AppTypography.caption,
             ),

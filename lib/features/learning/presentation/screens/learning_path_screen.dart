@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
+import 'package:mobile/features/learning/application/providers/learning_path_provider.dart';
 import 'package:mobile/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/presentation/screens/lesson_detail_screen.dart';
-import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'package:mobile/features/settings/application/providers/settings_provider.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/core/theme/app_spacing.dart';

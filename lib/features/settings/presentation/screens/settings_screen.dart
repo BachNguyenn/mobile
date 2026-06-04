@@ -4,10 +4,11 @@ import 'package:mobile/core/services/notification_service.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:mobile/features/auth/application/providers/auth_provider.dart';
+import 'package:mobile/features/auth/domain/entities/auth_user.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
-import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'package:mobile/features/settings/application/providers/settings_provider.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
@@ -44,7 +45,7 @@ class SettingsScreen extends ConsumerWidget {
                 _ProfileSummaryCard(
                   name: _displayName(user),
                   email: user?.email ?? '',
-                  photoUrl: user?.photoURL,
+                  photoUrl: user?.photoUrl,
                 ),
                 const SizedBox(height: AppSpacing.sp16),
                 _SettingsSection(
@@ -117,7 +118,7 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(
+                      title: const Text(
                         'Nhắc học hằng ngày',
                         style: AppTypography.bodyMBold,
                       ),
@@ -145,7 +146,7 @@ class SettingsScreen extends ConsumerWidget {
                         Icons.schedule_rounded,
                         color: AppColors.mossGreen,
                       ),
-                      title: Text(
+                      title: const Text(
                         'Giờ nhắc học',
                         style: AppTypography.bodyMBold,
                       ),
@@ -169,11 +170,11 @@ class SettingsScreen extends ConsumerWidget {
                   children: [
                     SwitchListTile.adaptive(
                       contentPadding: EdgeInsets.zero,
-                      title: Text(
+                      title: const Text(
                         'Rung nhẹ khi thao tác',
                         style: AppTypography.bodyMBold,
                       ),
-                      subtitle: Text(
+                      subtitle: const Text(
                         'Áp dụng cho thanh điều hướng',
                         style: AppTypography.caption,
                       ),
@@ -266,7 +267,7 @@ class SettingsScreen extends ConsumerWidget {
     return '$h:$m';
   }
 
-  String _displayName(dynamic user) {
+  String _displayName(AuthUser? user) {
     final displayName = user?.displayName?.trim();
     if (displayName != null && displayName.isNotEmpty) return displayName;
     final email = user?.email?.trim();
@@ -555,7 +556,7 @@ class _CategoryPickerTile extends StatelessWidget {
         Icons.auto_stories_rounded,
         color: AppColors.mossGreen,
       ),
-      title: Text('Lộ trình mặc định', style: AppTypography.bodyMBold),
+      title: const Text('Lộ trình mặc định', style: AppTypography.bodyMBold),
       subtitle: Text(_labelFor(selected), style: AppTypography.caption),
       trailing: const Icon(Icons.chevron_right_rounded),
       onTap: () => _showCategoryPicker(context),
@@ -644,7 +645,7 @@ class _LearningGoalTile extends StatelessWidget {
     return ListTile(
       contentPadding: EdgeInsets.zero,
       leading: const Icon(Icons.flag_rounded, color: AppColors.mossGreen),
-      title: Text('Mục tiêu học', style: AppTypography.bodyMBold),
+      title: const Text('Mục tiêu học', style: AppTypography.bodyMBold),
       subtitle: Text(selected.label, style: AppTypography.caption),
       trailing: const Icon(Icons.chevron_right_rounded),
       onTap: () => _showGoalPicker(context),

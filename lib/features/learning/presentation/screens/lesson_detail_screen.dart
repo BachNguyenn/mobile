@@ -4,7 +4,7 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/domain/entities/lesson.dart';
-import 'package:mobile/features/learning/presentation/providers/lesson_controller.dart';
+import 'package:mobile/features/learning/application/controllers/lesson_controller.dart';
 import 'package:mobile/features/learning/presentation/screens/lesson_result_screen.dart';
 import 'package:mobile/features/learning/presentation/widgets/lesson_bottom_bar.dart';
 import 'package:mobile/features/learning/presentation/widgets/lesson_quiz_content.dart';

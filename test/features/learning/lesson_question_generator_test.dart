@@ -5,62 +5,65 @@ import 'package:mobile/features/learning/domain/services/lesson_question_generat
 
 void main() {
   group('LessonQuestionGenerator grammar flow', () {
-    test('teaches a grammar point before asking meaning and usage questions', () {
-      final target = _grammar(
-        id: 'g1',
-        title: '〜てもいい',
-        meaning: 'Xin phép hoặc cho phép làm gì đó.',
-        formation: 'Verb te-form + もいい',
-        example: 'ここで写真を撮ってもいいです。',
-      );
-      final questions = LessonQuestionGenerator().generate(
-        lessonKanji: const [],
-        lessonVocabulary: const [],
-        lessonGrammar: [target],
-        allKanji: const [],
-        allVocabulary: const [],
-        allGrammar: [
-          target,
-          _grammar(
-            id: 'g2',
-            title: '〜なければならない',
-            meaning: 'Phải làm gì đó.',
-            formation: 'Verb nai-stem + なければならない',
-            example: '宿題をしなければなりません。',
-          ),
-          _grammar(
-            id: 'g3',
-            title: '〜たことがある',
-            meaning: 'Có kinh nghiệm từng làm gì đó.',
-            formation: 'Verb ta-form + ことがある',
-            example: '日本へ行ったことがあります。',
-          ),
-          _grammar(
-            id: 'g4',
-            title: '〜ながら',
-            meaning: 'Vừa làm việc này vừa làm việc khác.',
-            formation: 'Verb masu-stem + ながら',
-            example: '音楽を聞きながら勉強します。',
-          ),
-        ],
-      );
+    test(
+      'teaches a grammar point before asking meaning and usage questions',
+      () {
+        final target = _grammar(
+          id: 'g1',
+          title: '〜てもいい',
+          meaning: 'Xin phép hoặc cho phép làm gì đó.',
+          formation: 'Verb te-form + もいい',
+          example: 'ここで写真を撮ってもいいです。',
+        );
+        final questions = LessonQuestionGenerator().generate(
+          lessonKanji: const [],
+          lessonVocabulary: const [],
+          lessonGrammar: [target],
+          allKanji: const [],
+          allVocabulary: const [],
+          allGrammar: [
+            target,
+            _grammar(
+              id: 'g2',
+              title: '〜なければならない',
+              meaning: 'Phải làm gì đó.',
+              formation: 'Verb nai-stem + なければならない',
+              example: '宿題をしなければなりません。',
+            ),
+            _grammar(
+              id: 'g3',
+              title: '〜たことがある',
+              meaning: 'Có kinh nghiệm từng làm gì đó.',
+              formation: 'Verb ta-form + ことがある',
+              example: '日本へ行ったことがあります。',
+            ),
+            _grammar(
+              id: 'g4',
+              title: '〜ながら',
+              meaning: 'Vừa làm việc này vừa làm việc khác.',
+              formation: 'Verb masu-stem + ながら',
+              example: '音楽を聞きながら勉強します。',
+            ),
+          ],
+        );
 
-      expect(questions[0].type, QuizType.grammarStudy);
-      expect(questions[0].isScored, isFalse);
+        expect(questions[0].type, QuizType.grammarStudy);
+        expect(questions[0].isScored, isFalse);
 
-      final meaning = questions.firstWhere(
-        (question) => question.type == QuizType.grammarMeaning,
-      );
-      expect(meaning.prompt, contains('dùng để diễn tả ý nào'));
-      expect(meaning.answer, target.shortExplanation);
+        final meaning = questions.firstWhere(
+          (question) => question.type == QuizType.grammarMeaning,
+        );
+        expect(meaning.prompt, contains('dùng để diễn tả ý nào'));
+        expect(meaning.answer, target.shortExplanation);
 
-      final usage = questions.firstWhere(
-        (question) => question.type == QuizType.grammarUsage,
-      );
-      expect(usage.prompt, contains(target.examples.first.jp));
-      expect(usage.answer, target.shortExplanation);
-      expect(usage.explanation, contains('Ý chính'));
-    });
+        final usage = questions.firstWhere(
+          (question) => question.type == QuizType.grammarUsage,
+        );
+        expect(usage.prompt, contains(target.examples.first.jp));
+        expect(usage.answer, target.shortExplanation);
+        expect(usage.explanation, contains('Ý chính'));
+      },
+    );
   });
 }
 

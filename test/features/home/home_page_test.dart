@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/models/progress_models.dart';
-import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
-import 'package:mobile/features/garden/presentation/providers/garden_mission_provider.dart';
+import 'package:mobile/features/auth/application/providers/auth_provider.dart';
+import 'package:mobile/features/garden/application/providers/garden_mission_provider.dart';
+import 'package:mobile/features/home/application/providers/daily_study_plan_provider.dart';
+import 'package:mobile/features/home/application/providers/home_progress_provider.dart';
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
-import 'package:mobile/features/home/presentation/providers/daily_study_plan_provider.dart';
-import 'package:mobile/features/home/presentation/providers/home_progress_provider.dart';
 import 'package:mobile/features/home/presentation/screens/home_page.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 
@@ -44,7 +44,8 @@ void main() {
 
     expect(find.text('Hôm nay học gì?'), findsOneWidget);
     expect(find.text('Ôn lại từ vựng'), findsOneWidget);
-    expect(find.text('12 thẻ đến hạn'), findsOneWidget);
+    expect(find.text('12 thẻ'), findsOneWidget);
+    expect(find.text('12 mục'), findsOneWidget);
     expect(find.text('Bắt đầu ngay'), findsOneWidget);
   });
 }

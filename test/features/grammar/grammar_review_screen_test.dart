@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
-import 'package:mobile/features/grammar/presentation/providers/grammar_library_provider.dart';
+import 'package:mobile/features/grammar/application/providers/grammar_library_provider.dart';
 import 'package:mobile/features/grammar/presentation/screens/grammar_review_screen.dart';
 
 void main() {

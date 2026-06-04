@@ -5,9 +5,9 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
-import 'package:mobile/features/review/presentation/providers/study_event_provider.dart';
+import 'package:mobile/features/review/application/providers/study_event_provider.dart';
 import 'package:mobile/features/sentence/domain/entities/sentence.dart';
-import 'package:mobile/features/sentence/presentation/providers/sentence_provider.dart';
+import 'package:mobile/features/sentence/application/providers/sentence_provider.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
@@ -274,7 +274,7 @@ class _SentencePracticeScreenState
 
   PreferredSizeWidget _buildAppBar(double progress) {
     return AppBar(
-      title: Text('Luyện câu', style: AppTypography.headingM),
+      title: const Text('Luyện câu', style: AppTypography.headingM),
       backgroundColor: AppColors.cream.withValues(alpha: 0.94),
       foregroundColor: AppColors.slateGrey,
       surfaceTintColor: Colors.transparent,

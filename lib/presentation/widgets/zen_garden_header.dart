@@ -86,7 +86,7 @@ class ZenGardenHeader extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sp4),
-                Text('Hôm nay bạn muốn học gì?', style: AppTypography.headingL),
+                const Text('Hôm nay bạn muốn học gì?', style: AppTypography.headingL),
                 const SizedBox(height: AppSpacing.sp12),
 
                 if (motivation.isNotEmpty)

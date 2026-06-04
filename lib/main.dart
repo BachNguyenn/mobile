@@ -3,14 +3,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/core/services/app_logger.dart';
 import 'core/theme/app_theme.dart';
-import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
-import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'package:mobile/features/auth/application/providers/auth_provider.dart';
+import 'package:mobile/features/settings/application/providers/settings_provider.dart';
 import 'firebase_options.dart';
 import 'presentation/screens/main_navigation.dart';
 import 'package:mobile/features/auth/presentation/screens/login_screen.dart';
@@ -25,7 +24,6 @@ final firebaseInitProvider = FutureProvider<void>((ref) async {
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  GoogleFonts.config.allowRuntimeFetching = false;
 
   runApp(const ProviderScope(child: MyApp()));
 

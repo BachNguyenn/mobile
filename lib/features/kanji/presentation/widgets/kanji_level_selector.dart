@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../providers/kanji_library_provider.dart';
+import '../../application/providers/kanji_library_provider.dart';
 
 class KanjiLevelSelector extends ConsumerWidget {
   const KanjiLevelSelector({super.key});

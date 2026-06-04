@@ -1,14 +1,14 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:mobile/features/auth/application/providers/auth_provider.dart';
+import 'package:mobile/features/auth/domain/entities/auth_user.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 
 class ProfileAvatar extends ConsumerWidget {
-  final User? user;
+  final AuthUser? user;
 
   const ProfileAvatar({super.key, this.user});
 
@@ -138,7 +138,7 @@ class ProfileAvatar extends ConsumerWidget {
     );
   }
 
-  String _displayName(User? user) {
+  String _displayName(AuthUser? user) {
     final displayName = user?.displayName?.trim();
     if (displayName != null && displayName.isNotEmpty) return displayName;
     final email = user?.email?.trim();
@@ -148,14 +148,14 @@ class ProfileAvatar extends ConsumerWidget {
 }
 
 class _UserAvatar extends StatelessWidget {
-  final User? user;
+  final AuthUser? user;
   final double size;
 
   const _UserAvatar({required this.user, required this.size});
 
   @override
   Widget build(BuildContext context) {
-    final photoUrl = user?.photoURL;
+    final photoUrl = user?.photoUrl;
 
     return Container(
       width: size,
@@ -181,7 +181,7 @@ class _UserAvatar extends StatelessWidget {
 }
 
 class _AvatarFallback extends StatelessWidget {
-  final User? user;
+  final AuthUser? user;
 
   const _AvatarFallback({required this.user});
 

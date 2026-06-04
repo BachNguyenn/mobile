@@ -5,11 +5,12 @@ import 'package:mobile/core/services/audio_service.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
+import 'package:mobile/features/home/application/providers/daily_study_plan_provider.dart';
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
-import 'package:mobile/features/home/presentation/providers/daily_study_plan_provider.dart';
+import 'package:mobile/features/home/presentation/navigation/daily_study_navigation.dart';
 import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
-import 'package:mobile/features/review/presentation/providers/review_controller.dart';
+import 'package:mobile/features/review/application/providers/review_controller.dart';
 import 'package:mobile/features/review/presentation/widgets/review_handwriting_area.dart';
 import 'package:mobile/features/review/presentation/widgets/review_rating_buttons.dart';
 import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
@@ -74,7 +75,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Ôn tập SRS', style: AppTypography.headingS),
+        title: const Text('Ôn tập SRS', style: AppTypography.headingS),
         backgroundColor: AppColors.cream.withValues(alpha: 0.94),
         surfaceTintColor: Colors.transparent,
         elevation: 0,

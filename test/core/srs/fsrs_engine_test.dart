@@ -23,7 +23,7 @@ void main() {
           difficulty: 4.5,
         );
 
-        final updated = service.calculateNextReview(card, 1);
+        final updated = service.calculateNext(card, 1);
 
         expect(updated.reps, 0);
         expect(updated.lapses, 2);
@@ -51,7 +51,7 @@ void main() {
         difficulty: 6.0,
       );
 
-      final updated = service.calculateNextReview(card, 3);
+      final updated = service.calculateNext(card, 3);
 
       expect(updated.reps, 3);
       expect(updated.lapses, 0);
@@ -75,8 +75,8 @@ void main() {
           difficulty: 5.0,
         );
 
-        final hard = service.calculateNextReview(baseline, 2);
-        final easy = service.calculateNextReview(baseline, 4);
+        final hard = service.calculateNext(baseline, 2);
+        final easy = service.calculateNext(baseline, 4);
 
         expect(easy.stability, greaterThan(hard.stability));
         expect(easy.nextReview.isAfter(hard.nextReview), isTrue);
@@ -92,7 +92,7 @@ void main() {
         difficulty: 5.5,
       );
 
-      final updated = service.calculateNextVocabularyReview(vocab, 3);
+      final updated = service.calculateNext(vocab, 3);
 
       expect(updated.reps, 2);
       expect(updated.state, 2);

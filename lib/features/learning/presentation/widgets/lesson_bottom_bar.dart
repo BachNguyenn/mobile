@@ -3,7 +3,7 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/learning/domain/entities/quiz_question.dart';
-import 'package:mobile/features/learning/presentation/providers/lesson_controller.dart';
+import 'package:mobile/features/learning/application/controllers/lesson_controller.dart';
 
 class LessonBottomBar extends StatelessWidget {
   final LessonState state;

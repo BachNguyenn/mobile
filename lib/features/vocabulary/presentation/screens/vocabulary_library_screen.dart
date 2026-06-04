@@ -4,15 +4,15 @@ import 'package:mobile/core/models/progress_models.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
+import 'package:mobile/features/learning/application/providers/learning_path_provider.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
+import 'package:mobile/features/vocabulary/application/providers/vocabulary_library_provider.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
 
-import '../providers/vocabulary_library_provider.dart';
 import '../widgets/vocabulary_list_item.dart';
 import '../widgets/vocabulary_search_bar.dart';
 

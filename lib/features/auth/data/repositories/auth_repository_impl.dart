@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:mobile/features/auth/domain/entities/auth_failure.dart';
+import 'package:mobile/features/auth/domain/entities/auth_user.dart';
 import 'package:mobile/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
@@ -7,49 +9,101 @@ class AuthRepositoryImpl implements AuthRepository {
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
-  Stream<User?> get authStateChanges => _auth.authStateChanges();
+  Stream<AuthUser?> get authStateChanges =>
+      _auth.authStateChanges().map(_toDomainUser);
 
   @override
-  User? get currentUser => _auth.currentUser;
+  AuthUser? get currentUser => _toDomainUser(_auth.currentUser);
 
   @override
-  Future<UserCredential> signInWithGoogle() async {
-    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-    if (googleUser == null) {
-      throw Exception('Đăng nhập bị hủy');
+  Future<AuthUser?> signInWithGoogle() async {
+    try {
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        throw const AuthFailure(AuthFailureCode.canceled);
+      }
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final result = await _auth.signInWithCredential(credential);
+      return _toDomainUser(result.user);
+    } on FirebaseAuthException catch (error) {
+      throw _mapFirebaseError(error);
     }
-
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-
-    return _auth.signInWithCredential(credential);
   }
 
   @override
-  Future<UserCredential> signInAnonymously() async {
-    return _auth.signInAnonymously();
+  Future<AuthUser?> signInAnonymously() async {
+    try {
+      final result = await _auth.signInAnonymously();
+      return _toDomainUser(result.user);
+    } on FirebaseAuthException catch (error) {
+      throw _mapFirebaseError(error);
+    }
   }
 
   @override
-  Future<UserCredential> signInWithEmail(String email, String password) async {
-    return _auth.signInWithEmailAndPassword(email: email, password: password);
+  Future<AuthUser?> signInWithEmail(String email, String password) async {
+    try {
+      final result = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return _toDomainUser(result.user);
+    } on FirebaseAuthException catch (error) {
+      throw _mapFirebaseError(error);
+    }
   }
 
   @override
-  Future<UserCredential> signUpWithEmail(String email, String password) async {
-    return _auth.createUserWithEmailAndPassword(
-      email: email,
-      password: password,
-    );
+  Future<AuthUser?> signUpWithEmail(String email, String password) async {
+    try {
+      final result = await _auth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return _toDomainUser(result.user);
+    } on FirebaseAuthException catch (error) {
+      throw _mapFirebaseError(error);
+    }
   }
 
   @override
   Future<void> signOut() async {
     await _googleSignIn.signOut();
     await _auth.signOut();
+  }
+
+  AuthUser? _toDomainUser(User? user) {
+    if (user == null) return null;
+    return AuthUser(
+      id: user.uid,
+      email: user.email,
+      displayName: user.displayName,
+      photoUrl: user.photoURL,
+      isAnonymous: user.isAnonymous,
+    );
+  }
+
+  AuthFailure _mapFirebaseError(FirebaseAuthException error) {
+    final code = switch (error.code) {
+      'email-already-in-use' => AuthFailureCode.emailAlreadyInUse,
+      'invalid-credential' => AuthFailureCode.invalidCredential,
+      'invalid-email' => AuthFailureCode.invalidEmail,
+      'network-request-failed' => AuthFailureCode.networkRequestFailed,
+      'operation-not-allowed' => AuthFailureCode.operationNotAllowed,
+      'too-many-requests' => AuthFailureCode.tooManyRequests,
+      'user-disabled' => AuthFailureCode.userDisabled,
+      'user-not-found' => AuthFailureCode.userNotFound,
+      'weak-password' => AuthFailureCode.weakPassword,
+      'wrong-password' => AuthFailureCode.wrongPassword,
+      _ => AuthFailureCode.unknown,
+    };
+    return AuthFailure(code, message: error.message ?? error.code);
   }
 }

@@ -5,7 +5,7 @@ import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
 import 'package:mobile/features/learning/domain/entities/quiz_question.dart';
-import 'package:mobile/features/learning/presentation/providers/lesson_controller.dart';
+import 'package:mobile/features/learning/application/controllers/lesson_controller.dart';
 import 'package:mobile/presentation/widgets/handwriting_canvas.dart';
 
 void _noopString(String _) {}

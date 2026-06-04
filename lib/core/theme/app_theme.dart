@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'app_spacing.dart';
 
@@ -33,29 +32,38 @@ abstract final class AppTheme {
       brightness: brightness,
     );
 
+    final baseTextTheme = ThemeData(brightness: brightness).textTheme;
+
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: surface,
       cardColor: card,
-      textTheme: GoogleFonts.notoSansJpTextTheme().copyWith(
-        headlineLarge: GoogleFonts.notoSerif(
+      textTheme: baseTextTheme.apply(
+        fontFamily: 'NotoSansJP',
+        bodyColor: body,
+        displayColor: text,
+      ).copyWith(
+        headlineLarge: TextStyle(
+          fontFamily: 'NotoSerif',
           fontSize: 24,
           fontWeight: FontWeight.w700,
           color: text,
         ),
-        headlineMedium: GoogleFonts.notoSerif(
+        headlineMedium: TextStyle(
+          fontFamily: 'NotoSerif',
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: body,
         ),
-        bodyLarge: GoogleFonts.notoSansJp(fontSize: 16, color: body),
-        bodyMedium: GoogleFonts.notoSansJp(fontSize: 14, color: body),
-        labelSmall: GoogleFonts.notoSansJp(
+        bodyLarge: TextStyle(fontSize: 16, color: body, fontFamily: 'NotoSansJP'),
+        bodyMedium: TextStyle(fontSize: 14, color: body, fontFamily: 'NotoSansJP'),
+        labelSmall: TextStyle(
           fontSize: 11,
           fontWeight: FontWeight.w500,
           color: muted,
+          fontFamily: 'NotoSansJP',
         ),
       ),
       appBarTheme: AppBarTheme(
@@ -67,7 +75,8 @@ abstract final class AppTheme {
         systemOverlayStyle: isDark
             ? SystemUiOverlayStyle.light
             : SystemUiOverlayStyle.dark,
-        titleTextStyle: GoogleFonts.notoSerif(
+        titleTextStyle: TextStyle(
+          fontFamily: 'NotoSerif',
           fontSize: 20,
           fontWeight: FontWeight.w600,
           color: text,
@@ -75,7 +84,8 @@ abstract final class AppTheme {
       ),
       snackBarTheme: SnackBarThemeData(
         backgroundColor: isDark ? const Color(0xFF20263B) : AppColors.ink,
-        contentTextStyle: GoogleFonts.notoSansJp(
+        contentTextStyle: const TextStyle(
+          fontFamily: 'NotoSansJP',
           fontSize: 14,
           color: AppColors.white,
           fontWeight: FontWeight.w600,
@@ -96,7 +106,8 @@ abstract final class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           ),
-          textStyle: GoogleFonts.notoSansJp(
+          textStyle: const TextStyle(
+            fontFamily: 'NotoSansJP',
             fontSize: 15,
             fontWeight: FontWeight.w800,
           ),
@@ -110,11 +121,13 @@ abstract final class AppTheme {
         elevation: 0,
         showSelectedLabels: true,
         showUnselectedLabels: true,
-        selectedLabelStyle: GoogleFonts.notoSans(
+        selectedLabelStyle: const TextStyle(
+          fontFamily: 'NotoSans',
           fontSize: 11,
           fontWeight: FontWeight.w600,
         ),
-        unselectedLabelStyle: GoogleFonts.notoSans(
+        unselectedLabelStyle: const TextStyle(
+          fontFamily: 'NotoSans',
           fontSize: 11,
           fontWeight: FontWeight.w500,
         ),
@@ -140,7 +153,8 @@ abstract final class AppTheme {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusS),
           ),
-          textStyle: GoogleFonts.notoSans(
+          textStyle: const TextStyle(
+            fontFamily: 'NotoSans',
             fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
@@ -178,7 +192,7 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
           borderSide: BorderSide(color: primary, width: 1.5),
         ),
-        hintStyle: GoogleFonts.notoSans(fontSize: 14, color: muted),
+        hintStyle: TextStyle(fontFamily: 'NotoSans', fontSize: 14, color: muted),
         prefixIconColor: muted,
       ),
       dividerTheme: DividerThemeData(color: border, thickness: 0.5, space: 0),

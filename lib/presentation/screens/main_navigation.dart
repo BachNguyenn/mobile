@@ -7,9 +7,9 @@ import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/grammar/presentation/screens/grammar_library_screen.dart';
 import 'package:mobile/features/home/presentation/screens/home_page.dart';
 import 'package:mobile/features/kanji/presentation/screens/kanji_library_screen.dart';
-import 'package:mobile/features/learning/presentation/providers/learning_path_provider.dart';
+import 'package:mobile/features/learning/application/providers/learning_path_provider.dart';
 import 'package:mobile/features/learning/presentation/screens/learning_path_screen.dart';
-import 'package:mobile/features/settings/presentation/providers/settings_provider.dart';
+import 'package:mobile/features/settings/application/providers/settings_provider.dart';
 import 'package:mobile/features/vocabulary/presentation/screens/vocabulary_library_screen.dart';
 
 class MainNavigation extends ConsumerStatefulWidget {

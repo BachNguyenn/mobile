@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:mobile/features/auth/domain/entities/auth_failure.dart';
+import 'package:mobile/features/auth/application/providers/auth_provider.dart';
 import 'package:mobile/features/auth/presentation/screens/register_screen.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
@@ -55,7 +55,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref.read(authRepositoryProvider).signInWithGoogle();
     } catch (e) {
       if (!mounted) return;
-      _showError('Đăng nhập Google thất bại: $e');
+      _showError(_messageForGoogleSignInError(e));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -110,7 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.sp4),
-                      Text(
+                      const Text(
                         'Tiếp tục lộ trình học tiếng Nhật của bạn.',
                         style: AppTypography.caption,
                       ),
@@ -229,35 +229,45 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   }
 
   String _messageForSignInError(Object error) {
-    if (error is! FirebaseAuthException) return 'Đăng nhập thất bại';
+    if (error is! AuthFailure) return 'Đăng nhập thất bại';
     switch (error.code) {
-      case 'user-not-found':
+      case AuthFailureCode.userNotFound:
         return 'Không tìm thấy tài khoản với email này.';
-      case 'wrong-password':
-      case 'invalid-credential':
+      case AuthFailureCode.wrongPassword:
+      case AuthFailureCode.invalidCredential:
         return 'Email hoặc mật khẩu không đúng.';
-      case 'invalid-email':
+      case AuthFailureCode.invalidEmail:
         return 'Địa chỉ email không hợp lệ.';
-      case 'user-disabled':
+      case AuthFailureCode.userDisabled:
         return 'Tài khoản này đã bị vô hiệu hóa.';
-      case 'too-many-requests':
+      case AuthFailureCode.tooManyRequests:
         return 'Quá nhiều lần thử. Vui lòng thử lại sau.';
-      case 'network-request-failed':
+      case AuthFailureCode.networkRequestFailed:
         return 'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
       default:
-        return 'Lỗi: ${error.message ?? error.code}';
+        return 'Đăng nhập thất bại';
     }
   }
 
+  String _messageForGoogleSignInError(Object error) {
+    if (error is! AuthFailure) return 'Đăng nhập Google thất bại';
+    return switch (error.code) {
+      AuthFailureCode.canceled => 'Đăng nhập Google đã bị hủy.',
+      AuthFailureCode.networkRequestFailed =>
+        'Lỗi kết nối mạng. Vui lòng kiểm tra internet.',
+      _ => 'Đăng nhập Google thất bại',
+    };
+  }
+
   String _messageForGuestError(Object error) {
-    if (error is! FirebaseAuthException) return 'Đăng nhập khách thất bại';
-    if (error.code == 'operation-not-allowed') {
+    if (error is! AuthFailure) return 'Đăng nhập khách thất bại';
+    if (error.code == AuthFailureCode.operationNotAllowed) {
       return 'Tính năng đăng nhập khách chưa được bật.';
     }
-    if (error.code == 'network-request-failed') {
+    if (error.code == AuthFailureCode.networkRequestFailed) {
       return 'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
     }
-    return 'Lỗi: ${error.message ?? error.code}';
+    return 'Đăng nhập khách thất bại';
   }
 
   void _showError(String message) {

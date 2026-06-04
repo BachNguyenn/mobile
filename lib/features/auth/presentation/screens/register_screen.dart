@@ -1,10 +1,10 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/features/auth/presentation/providers/auth_provider.dart';
+import 'package:mobile/features/auth/application/providers/auth_provider.dart';
+import 'package:mobile/features/auth/domain/entities/auth_failure.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
 
@@ -94,7 +94,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         ),
                       ),
                       const SizedBox(height: AppSpacing.sp4),
-                      Text(
+                      const Text(
                         'Đăng ký để lưu tiến độ học và ôn tập SRS.',
                         style: AppTypography.caption,
                       ),
@@ -244,20 +244,20 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
   }
 
   String _messageForRegisterError(Object error) {
-    if (error is! FirebaseAuthException) return 'Đăng ký thất bại';
+    if (error is! AuthFailure) return 'Đăng ký thất bại';
     switch (error.code) {
-      case 'email-already-in-use':
+      case AuthFailureCode.emailAlreadyInUse:
         return 'Email này đã được sử dụng. Hãy thử đăng nhập.';
-      case 'invalid-email':
+      case AuthFailureCode.invalidEmail:
         return 'Địa chỉ email không hợp lệ.';
-      case 'weak-password':
+      case AuthFailureCode.weakPassword:
         return 'Mật khẩu quá yếu. Hãy dùng ít nhất 6 ký tự.';
-      case 'operation-not-allowed':
+      case AuthFailureCode.operationNotAllowed:
         return 'Đăng ký email chưa được bật trong Firebase Console.';
-      case 'network-request-failed':
+      case AuthFailureCode.networkRequestFailed:
         return 'Lỗi kết nối mạng. Vui lòng kiểm tra internet.';
       default:
-        return 'Lỗi: ${error.message ?? error.code}';
+        return 'Đăng ký thất bại';
     }
   }
 

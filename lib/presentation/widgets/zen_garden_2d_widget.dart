@@ -265,6 +265,75 @@ class _MiniGardenPainter extends CustomPainter {
   final int streak;
   final double animationValue;
 
+  // Cached Paint objects to avoid reallocation in paint loop
+  late final Paint sandPaint = Paint()
+    ..color = AppColors.gardenSandDark.withValues(alpha: 0.4)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 0.8;
+
+  late final Paint arcPaint = Paint()
+    ..color = AppColors.gardenSandDark.withValues(alpha: 0.25)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 0.6;
+
+  late final Paint mainStonePaint = Paint()
+    ..color = AppColors.slateMuted.withValues(alpha: 0.35)
+    ..style = PaintingStyle.fill;
+
+  late final Paint highlightPaint = Paint()
+    ..color = AppColors.white.withValues(alpha: 0.2)
+    ..style = PaintingStyle.fill;
+
+  late final Paint waterPaint = Paint()
+    ..color = AppColors.waterBlue.withValues(alpha: 0.2)
+    ..style = PaintingStyle.stroke
+    ..strokeWidth = 2.5
+    ..strokeCap = StrokeCap.round;
+
+  late final Paint dotPaint = Paint()
+    ..color = AppColors.waterBlue.withValues(alpha: 0.3)
+    ..style = PaintingStyle.fill;
+
+  late final Paint trunkPaint = Paint()
+    ..color = AppColors.terracotta.withValues(alpha: 0.5)
+    ..strokeWidth = 2.5
+    ..strokeCap = StrokeCap.round;
+
+  late final Paint trunkThinPaint = Paint()
+    ..color = AppColors.terracotta.withValues(alpha: 0.5)
+    ..strokeWidth = 1.5
+    ..strokeCap = StrokeCap.round;
+
+  late final Paint canopyPaint = Paint()
+    ..color = AppColors.mossGreen.withValues(alpha: 0.35)
+    ..style = PaintingStyle.fill;
+
+  late final Paint plantTrunkPaint = Paint()
+    ..color = AppColors.terracotta.withValues(alpha: 0.4)
+    ..strokeWidth = 1.5
+    ..strokeCap = StrokeCap.round;
+
+  late final Paint plantLeafPaint = Paint()
+    ..style = PaintingStyle.fill;
+
+  late final Paint plantFlowerPaint = Paint()
+    ..style = PaintingStyle.fill;
+
+  late final Paint plantCenterPaint = Paint()
+    ..color = AppColors.sunGold.withValues(alpha: 0.5)
+    ..style = PaintingStyle.fill;
+
+  late final Paint plantStonePaint = Paint()
+    ..style = PaintingStyle.fill;
+
+  late final Paint plantBambooPaint = Paint()
+    ..strokeWidth = 1.5
+    ..strokeCap = StrokeCap.round;
+
+  late final Paint sakuraPaint = Paint()
+    ..color = AppColors.sakura.withValues(alpha: 0.25)
+    ..style = PaintingStyle.fill;
+
   _MiniGardenPainter({
     required this.garden,
     required this.streak,
@@ -296,11 +365,6 @@ class _MiniGardenPainter extends CustomPainter {
   }
 
   void _drawRakedSand(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.gardenSandDark.withValues(alpha: 0.4)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.8;
-
     // Concentric ellipses centered slightly right
     final cx = size.width * 0.55;
     final cy = size.height * 0.5;
@@ -310,15 +374,9 @@ class _MiniGardenPainter extends CustomPainter {
       final ry = i * 12.0;
       canvas.drawOval(
         Rect.fromCenter(center: Offset(cx, cy), width: rx * 2, height: ry * 2),
-        paint,
+        sandPaint,
       );
     }
-
-    // Additional arc lines at left side
-    final arcPaint = Paint()
-      ..color = AppColors.gardenSandDark.withValues(alpha: 0.25)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 0.6;
 
     for (var i = 0; i < 5; i++) {
       final path = Path();
@@ -330,10 +388,6 @@ class _MiniGardenPainter extends CustomPainter {
   }
 
   void _drawStones(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.slateMuted.withValues(alpha: 0.35)
-      ..style = PaintingStyle.fill;
-
     // Main stone
     canvas.drawOval(
       Rect.fromCenter(
@@ -341,13 +395,10 @@ class _MiniGardenPainter extends CustomPainter {
         width: 22,
         height: 14,
       ),
-      paint,
+      mainStonePaint,
     );
 
     // Stone highlight
-    final highlightPaint = Paint()
-      ..color = AppColors.white.withValues(alpha: 0.2)
-      ..style = PaintingStyle.fill;
     canvas.drawOval(
       Rect.fromCenter(
         center: Offset(size.width * 0.54, size.height * 0.46),
@@ -365,7 +416,7 @@ class _MiniGardenPainter extends CustomPainter {
           width: 14,
           height: 10,
         ),
-        paint,
+        mainStonePaint,
       );
     }
 
@@ -377,19 +428,13 @@ class _MiniGardenPainter extends CustomPainter {
           width: 10,
           height: 7,
         ),
-        paint,
+        mainStonePaint,
       );
     }
   }
 
   void _drawWaterStream(Canvas canvas, Size size) {
     final shimmer = sin(animationValue * 2 * pi) * 3;
-
-    final waterPaint = Paint()
-      ..color = AppColors.waterBlue.withValues(alpha: 0.2)
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
 
     final path = Path();
     path.moveTo(size.width * 0.08, size.height * 0.35 + shimmer);
@@ -403,11 +448,6 @@ class _MiniGardenPainter extends CustomPainter {
     );
     canvas.drawPath(path, waterPaint);
 
-    // Shimmer dots on water
-    final dotPaint = Paint()
-      ..color = AppColors.waterBlue.withValues(alpha: 0.3)
-      ..style = PaintingStyle.fill;
-
     final dotX = size.width * (0.15 + animationValue * 0.25);
     final dotY = size.height * 0.38 + sin(animationValue * pi * 2) * 4;
     canvas.drawCircle(Offset(dotX, dotY), 1.5, dotPaint);
@@ -417,30 +457,20 @@ class _MiniGardenPainter extends CustomPainter {
     final baseX = size.width * 0.18;
     final baseY = size.height * 0.7;
 
-    // Trunk
-    final trunkPaint = Paint()
-      ..color = AppColors.terracotta.withValues(alpha: 0.5)
-      ..strokeWidth = 2.5
-      ..strokeCap = StrokeCap.round;
-
     canvas.drawLine(
       Offset(baseX, baseY),
       Offset(baseX - 2, baseY - 20),
       trunkPaint,
     );
 
-    // Branch
     canvas.drawLine(
       Offset(baseX - 2, baseY - 15),
       Offset(baseX + 8, baseY - 22),
-      trunkPaint..strokeWidth = 1.5,
+      trunkThinPaint,
     );
 
     // Canopy (grows with streak)
     final canopySize = 10.0 + min(streak.toDouble(), 12.0);
-    final canopyPaint = Paint()
-      ..color = AppColors.mossGreen.withValues(alpha: 0.35)
-      ..style = PaintingStyle.fill;
 
     canvas.drawOval(
       Rect.fromCenter(
@@ -472,34 +502,30 @@ class _MiniGardenPainter extends CustomPainter {
       case 'zen_bonsai':
       case 'bonsai':
         color = AppColors.mossDark;
-        // Mini tree
-        final trunkPaint = Paint()
-          ..color = AppColors.terracotta.withValues(alpha: 0.4)
-          ..strokeWidth = 1.5
-          ..strokeCap = StrokeCap.round;
-        canvas.drawLine(Offset(x, y), Offset(x, y - 8), trunkPaint);
+        canvas.drawLine(Offset(x, y), Offset(x, y - 8), plantTrunkPaint);
         canvas.drawCircle(
           Offset(x, y - 10),
           5.0 + plant.level,
-          Paint()..color = color.withValues(alpha: 0.3),
+          plantLeafPaint..color = color.withValues(alpha: 0.3),
         );
         break;
       case 'zen_sakura':
       case 'flower':
         color = AppColors.sakura;
         // Flower dots
+        plantFlowerPaint.color = color.withValues(alpha: 0.5);
         for (var i = 0; i < 4; i++) {
           final angle = i * pi / 2;
           canvas.drawCircle(
             Offset(x + cos(angle) * 3, y + sin(angle) * 3),
             2,
-            Paint()..color = color.withValues(alpha: 0.5),
+            plantFlowerPaint,
           );
         }
         canvas.drawCircle(
           Offset(x, y),
           1.5,
-          Paint()..color = AppColors.sunGold.withValues(alpha: 0.5),
+          plantCenterPaint,
         );
         break;
       case 'zen_stone':
@@ -511,26 +537,20 @@ class _MiniGardenPainter extends CustomPainter {
             width: 8.0 + plant.level,
             height: 5.0 + plant.level * 0.5,
           ),
-          Paint()..color = color.withValues(alpha: 0.25),
+          plantStonePaint..color = color.withValues(alpha: 0.25),
         );
         break;
       default:
         color = AppColors.bambooGreen;
         // Bamboo sticks
-        final stickPaint = Paint()
-          ..color = color.withValues(alpha: 0.4)
-          ..strokeWidth = 1.5
-          ..strokeCap = StrokeCap.round;
-        canvas.drawLine(Offset(x, y), Offset(x, y - 12), stickPaint);
-        canvas.drawLine(Offset(x + 3, y), Offset(x + 3, y - 10), stickPaint);
+        plantBambooPaint.color = color.withValues(alpha: 0.4);
+        canvas.drawLine(Offset(x, y), Offset(x, y - 12), plantBambooPaint);
+        canvas.drawLine(Offset(x + 3, y), Offset(x + 3, y - 10), plantBambooPaint);
     }
   }
 
   void _drawSakuraPetals(Canvas canvas, Size size) {
     final rng = Random(42); // Deterministic for consistency
-    final paint = Paint()
-      ..color = AppColors.sakura.withValues(alpha: 0.25)
-      ..style = PaintingStyle.fill;
 
     for (var i = 0; i < 6; i++) {
       final baseX = rng.nextDouble() * size.width;
@@ -545,7 +565,7 @@ class _MiniGardenPainter extends CustomPainter {
           width: 3 + rng.nextDouble() * 2,
           height: 2 + rng.nextDouble(),
         ),
-        paint,
+        sakuraPaint,
       );
     }
   }
@@ -554,6 +574,6 @@ class _MiniGardenPainter extends CustomPainter {
   bool shouldRepaint(_MiniGardenPainter oldDelegate) {
     return oldDelegate.garden != garden ||
         oldDelegate.streak != streak ||
-        oldDelegate.animationValue != animationValue;
+        (oldDelegate.animationValue - animationValue).abs() > 0.015;
   }
 }

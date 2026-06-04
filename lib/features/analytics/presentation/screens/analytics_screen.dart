@@ -3,15 +3,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_spacing.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../grammar/presentation/providers/grammar_library_provider.dart';
-import '../../../kanji/presentation/providers/kanji_library_provider.dart';
-import '../../../auth/presentation/providers/auth_provider.dart';
-import '../providers/analytics_provider.dart';
+import '../../../grammar/application/providers/grammar_library_provider.dart';
+import '../../../kanji/application/providers/kanji_library_provider.dart';
+import '../../../auth/application/providers/auth_provider.dart';
+import '../../application/providers/analytics_provider.dart';
 import '../widgets/analytics_stat_card.dart';
 import '../widgets/analytics_heatmap.dart';
 import '../widgets/analytics_jlpt_progress.dart';
 import '../../../review/domain/entities/review_item.dart';
-import '../../../vocabulary/presentation/providers/vocabulary_library_provider.dart';
+import '../../../vocabulary/application/providers/vocabulary_library_provider.dart';
 import '../../../../presentation/navigation/app_routes.dart';
 import '../../../../shared/widgets/app_page_background.dart';
 import '../../../../shared/widgets/app_card.dart';
@@ -29,7 +29,7 @@ class AnalyticsScreen extends ConsumerWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hồ sơ học tập', style: AppTypography.headingM),
+        title: const Text('Hồ sơ học tập', style: AppTypography.headingM),
         backgroundColor: AppColors.cream.withValues(alpha: 0.94),
         surfaceTintColor: Colors.transparent,
       ),
@@ -43,7 +43,7 @@ class AnalyticsScreen extends ConsumerWidget {
                 _ProfileSummaryCard(
                   name: user?.displayName ?? 'Zen Learner',
                   email: user?.email ?? '',
-                  photoUrl: user?.photoURL,
+                  photoUrl: user?.photoUrl,
                   data: data,
                 ),
                 const SizedBox(height: AppSpacing.sp24),

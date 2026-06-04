@@ -195,9 +195,9 @@ class _ReadingCard extends StatelessWidget {
                   tooltip: 'Phát âm',
                   onPressed: () async {
                     try {
-                      await ref.read(audioServiceProvider).speakJapanese(
-                            content,
-                          );
+                      await ref
+                          .read(audioServiceProvider)
+                          .speakJapanese(content);
                     } catch (_) {}
                   },
                   icon: const Icon(Icons.volume_up_rounded, size: 18),

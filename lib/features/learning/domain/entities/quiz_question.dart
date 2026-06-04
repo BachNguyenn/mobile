@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
 import 'package:mobile/features/kanji/domain/entities/kanji_card.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
@@ -41,7 +40,6 @@ class GrammarQuizPayload extends QuizPayload {
   const GrammarQuizPayload(this.grammarPoint);
 }
 
-@immutable
 class QuizQuestion {
   final String id;
   final QuizType type;

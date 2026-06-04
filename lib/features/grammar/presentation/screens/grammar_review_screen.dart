@@ -4,8 +4,8 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
-import 'package:mobile/features/grammar/presentation/providers/grammar_library_provider.dart';
-import 'package:mobile/features/grammar/presentation/providers/grammar_review_provider.dart';
+import 'package:mobile/features/grammar/application/providers/grammar_library_provider.dart';
+import 'package:mobile/features/grammar/application/providers/grammar_review_provider.dart';
 import 'package:mobile/features/review/presentation/widgets/review_rating_buttons.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
@@ -200,7 +200,7 @@ class _GrammarReviewScreenState extends ConsumerState<GrammarReviewScreen> {
 
   PreferredSizeWidget _buildAppBar(double progress) {
     return AppBar(
-      title: Text('Ôn ngữ pháp', style: AppTypography.headingM),
+      title: const Text('Ôn ngữ pháp', style: AppTypography.headingM),
       backgroundColor: AppColors.cream.withValues(alpha: 0.94),
       foregroundColor: AppColors.slateGrey,
       surfaceTintColor: Colors.transparent,

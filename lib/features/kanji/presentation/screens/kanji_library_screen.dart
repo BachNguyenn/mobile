@@ -30,7 +30,6 @@ class KanjiLibraryScreen extends ConsumerWidget {
     final searchResults = ref.watch(kanjiSearchResultsProvider(query));
 
     return Scaffold(
-      backgroundColor: AppColors.white,
       body: AppPageBackground(
         child: SafeArea(
           bottom: false,
@@ -54,13 +53,13 @@ class KanjiLibraryScreen extends ConsumerWidget {
                     horizontal: AppSpacing.sp16,
                   ),
                   child: _KanjiHeroCard(
-                    progress: progressAsync.valueOrNull ?? ModuleProgress.empty,
-                    dueTotal: totalDueAsync.valueOrNull ?? 0,
-                    dueLoaded: dueCardsAsync.valueOrNull?.length ?? 0,
+                    progress: progressAsync.value ?? ModuleProgress.empty,
+                    dueTotal: totalDueAsync.value ?? 0,
+                    dueLoaded: dueCardsAsync.value?.length ?? 0,
                     isLoading:
                         progressAsync.isLoading || totalDueAsync.isLoading,
                     onReview: () =>
-                        _startReview(context, dueCardsAsync.valueOrNull),
+                        _startReview(context, dueCardsAsync.value),
                     onNewLesson: () => _openLearningPath(context),
                   ),
                 ),
@@ -82,7 +81,7 @@ class KanjiLibraryScreen extends ConsumerWidget {
                     AppSpacing.sp8,
                   ),
                   child: _KanjiSectionHeader(
-                    count: searchResults.valueOrNull?.length,
+                    count: searchResults.value?.length,
                     query: query,
                   ),
                 ),
@@ -178,10 +177,10 @@ class _KanjiTopBar extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppColors.navySoft,
+            color: AppColors.resolve(AppColors.navySoft, context),
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           ),
-          child: const Icon(Icons.translate_rounded, color: AppColors.navy),
+          child: Icon(Icons.translate_rounded, color: AppColors.resolve(AppColors.navy, context)),
         ),
         const SizedBox(width: AppSpacing.sp12),
         Expanded(
@@ -191,7 +190,7 @@ class _KanjiTopBar extends StatelessWidget {
               Text(
                 'Chữ Hán',
                 style: AppTypography.headingM.copyWith(
-                  color: AppColors.navyDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
@@ -200,7 +199,7 @@ class _KanjiTopBar extends StatelessWidget {
                     ? 'Tất cả cấp độ JLPT'
                     : 'Đang học JLPT N$selectedLevel',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -234,16 +233,26 @@ class _KanjiHeroCard extends StatelessWidget {
     final percent = progress.total == 0
         ? 0.0
         : progress.percentage.clamp(0.0, 1.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.navyDark, AppColors.navy, AppColors.slateGrey],
+        gradient: LinearGradient(
+          colors: isDark
+              ? [const Color(0xFF1F2544), const Color(0xFF151A30)]
+              : AppColors.resolveColors([
+                  AppColors.navyDark,
+                  AppColors.navy,
+                  AppColors.slateGrey,
+                ], context),
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        border: isDark
+            ? Border.all(color: const Color(0xFF353F6C).withValues(alpha: 0.4))
+            : null,
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -456,14 +465,14 @@ class _HeroActionButton extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: filled ? AppColors.navy : AppColors.white,
+                color: filled ? const Color(0xFF293156) : AppColors.white,
                 size: 18,
               ),
               const SizedBox(width: AppSpacing.sp8),
               Text(
                 label,
                 style: AppTypography.label.copyWith(
-                  color: filled ? AppColors.navy : AppColors.white,
+                  color: filled ? const Color(0xFF293156) : AppColors.white,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -504,15 +513,15 @@ class _KanjiLevelRail extends StatelessWidget {
             onSelected: (_) =>
                 onChanged(selected && level != null ? null : level),
             labelStyle: AppTypography.label.copyWith(
-              color: selected ? AppColors.white : AppColors.navyDark,
+              color: selected ? AppColors.white : Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
-            backgroundColor: AppColors.white,
-            selectedColor: AppColors.leafGreen,
+            backgroundColor: Theme.of(context).cardColor,
+            selectedColor: AppColors.resolve(AppColors.leafGreen, context),
             side: BorderSide(
               color: selected
-                  ? AppColors.leafGreen
-                  : AppColors.slateLight.withValues(alpha: 0.35),
+                  ? AppColors.resolve(AppColors.leafGreen, context)
+                  : AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.35),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
@@ -542,7 +551,7 @@ class _KanjiSectionHeader extends StatelessWidget {
               Text(
                 hasQuery ? 'Kết quả tìm kiếm' : 'Bảng chữ Hán',
                 style: AppTypography.headingS.copyWith(
-                  color: AppColors.navyDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: AppSpacing.sp4),
@@ -551,7 +560,7 @@ class _KanjiSectionHeader extends StatelessWidget {
                     ? 'Các chữ khớp với "$query".'
                     : 'Chạm vào thẻ để xem âm đọc, nghĩa và ví dụ.',
                 style: AppTypography.bodyS.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                 ),
               ),
             ],
@@ -563,13 +572,13 @@ class _KanjiSectionHeader extends StatelessWidget {
             vertical: AppSpacing.sp8,
           ),
           decoration: BoxDecoration(
-            color: AppColors.navySoft,
+            color: AppColors.resolve(AppColors.navySoft, context),
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           ),
           child: Text(
             count == null ? '...' : '$count chữ',
             style: AppTypography.label.copyWith(
-              color: AppColors.navy,
+              color: AppColors.resolve(AppColors.navy, context),
               fontWeight: FontWeight.w800,
             ),
           ),

@@ -46,6 +46,7 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final hasQuery = _query.trim().isNotEmpty;
     final shouldSearch = _shouldSearch(_query);
     final kanjiResults = shouldSearch
@@ -61,16 +62,19 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
         ? ref.watch(sentenceSearchResultsProvider(_query))
         : const AsyncValue<List<Sentence>>.data([]);
 
+    final resolvedCream = AppColors.resolve(AppColors.cream, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
         title: Text(
           'Tra cứu',
-          style: AppTypography.headingS.copyWith(color: AppColors.navyDark),
+          style: AppTypography.headingS.copyWith(color: resolvedNavyDark),
         ),
-        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        backgroundColor: resolvedCream.withValues(alpha: 0.94),
         surfaceTintColor: Colors.transparent,
-        foregroundColor: AppColors.slateGrey,
+        foregroundColor: AppColors.resolve(AppColors.slateGrey, context),
         elevation: 0,
       ),
       body: AppPageBackground(
@@ -105,9 +109,9 @@ class _DictionaryScreenState extends ConsumerState<DictionaryScreen> {
               else if (!shouldSearch)
                 const AppEmptyState(
                   icon: Icons.search_rounded,
-                  title: 'Nháº­p thÃªm má»™t chÃºt',
+                  title: 'Nhập thêm một chút',
                   message:
-                      'TÃ¬m tá»« 2 kÃ½ tá»± trá»Ÿ lÃªn, hoáº·c nháº­p trá»±c tiáº¿p má»™t kanji/kana.',
+                      'Tìm từ 2 ký tự trở lên, hoặc nhập trực tiếp một kanji/kana.',
                 )
               else ...[
                 _AsyncSection(
@@ -234,22 +238,28 @@ class _SearchPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedInk = AppColors.resolve(AppColors.ink, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedNavySoft = AppColors.resolve(AppColors.navySoft, context);
+    final resolvedNavy = AppColors.resolve(AppColors.navy, context);
+
     return AppCard(
-      color: AppColors.white,
-      borderColor: AppColors.leafGreen.withValues(alpha: 0.16),
-      shadowColor: AppColors.ink.withValues(alpha: 0.035),
+      color: Theme.of(context).cardColor,
+      borderColor: resolvedLeafGreen.withValues(alpha: 0.16),
+      shadowColor: resolvedInk.withValues(alpha: 0.035),
       child: TextField(
         controller: controller,
         autofocus: true,
         onChanged: onChanged,
         style: AppTypography.bodyM.copyWith(
-          color: AppColors.navyDark,
+          color: resolvedNavyDark,
           fontWeight: FontWeight.w700,
         ),
         decoration: InputDecoration(
           filled: true,
-          fillColor: AppColors.navySoft.withValues(alpha: 0.52),
-          prefixIcon: const Icon(Icons.search_rounded, color: AppColors.navy),
+          fillColor: resolvedNavySoft.withValues(alpha: 0.52),
+          prefixIcon: Icon(Icons.search_rounded, color: resolvedNavy),
           suffixIcon: query.isEmpty
               ? null
               : IconButton(
@@ -258,7 +268,9 @@ class _SearchPanel extends StatelessWidget {
                   onPressed: onClear,
                 ),
           hintText: 'Kanji, từ vựng, ngữ pháp, câu ví dụ...',
-          hintStyle: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
+          hintStyle: AppTypography.bodyS.copyWith(
+            color: AppColors.resolve(AppColors.slateMuted, context),
+          ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             borderSide: BorderSide.none,
@@ -329,14 +341,16 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
     return Row(
       children: [
-        Icon(icon, color: color, size: 18),
+        Icon(icon, color: resolvedColor, size: 18),
         const SizedBox(width: AppSpacing.sp8),
         Text(
           title,
           style: AppTypography.bodyMBold.copyWith(
-            color: AppColors.navyDark,
+            color: resolvedNavyDark,
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -366,13 +380,14 @@ class _DictionaryTile extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sp8),
       child: AppCard(
         padding: const EdgeInsets.all(AppSpacing.sp12),
-        color: AppColors.white,
-        borderColor: color.withValues(alpha: 0.14),
-        shadowColor: color.withValues(alpha: 0.035),
+        color: Theme.of(context).cardColor,
+        borderColor: resolvedColor.withValues(alpha: 0.14),
+        shadowColor: resolvedColor.withValues(alpha: 0.035),
         onTap: onTap,
         child: Row(
           children: [
@@ -380,10 +395,10 @@ class _DictionaryTile extends ConsumerWidget {
               width: 42,
               height: 42,
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.10),
+                color: resolvedColor.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusM),
               ),
-              child: Icon(icon, color: color, size: 21),
+              child: Icon(icon, color: resolvedColor, size: 21),
             ),
             const SizedBox(width: AppSpacing.sp12),
             Expanded(
@@ -395,7 +410,7 @@ class _DictionaryTile extends ConsumerWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.bodyMBold.copyWith(
-                      color: AppColors.ink,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -424,8 +439,8 @@ class _DictionaryTile extends ConsumerWidget {
                 },
                 icon: const Icon(Icons.volume_up_rounded, size: 18),
                 style: IconButton.styleFrom(
-                  backgroundColor: color.withValues(alpha: 0.10),
-                  foregroundColor: color,
+                  backgroundColor: resolvedColor.withValues(alpha: 0.10),
+                  foregroundColor: resolvedColor,
                 ),
               ),
             ],
@@ -433,7 +448,7 @@ class _DictionaryTile extends ConsumerWidget {
             Text(
               trailing,
               style: AppTypography.labelS.copyWith(
-                color: color,
+                color: resolvedColor,
                 fontWeight: FontWeight.w900,
               ),
             ),

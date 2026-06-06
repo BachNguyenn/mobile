@@ -18,23 +18,22 @@ class ReviewRatingButtons extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.28)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.04),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        border: Border.all(color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.28)),
+        boxShadow: AppColors.softShadow(
+          context,
+          color: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.04),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
       ),
       child: Column(
         children: [
           Text(
             'Bạn nhớ thẻ này thế nào?',
             style: AppTypography.label.copyWith(
-              color: AppColors.ink,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -103,9 +102,10 @@ class _RatingButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Expanded(
       child: Material(
-        color: color.withValues(alpha: 0.10),
+        color: resolvedColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
         child: InkWell(
           onTap: enabled ? () => onRate(rating) : null,
@@ -114,7 +114,7 @@ class _RatingButton extends StatelessWidget {
             height: 48,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-              border: Border.all(color: color.withValues(alpha: 0.24)),
+              border: Border.all(color: resolvedColor.withValues(alpha: 0.24)),
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -122,7 +122,7 @@ class _RatingButton extends StatelessWidget {
                 Icon(
                   icon,
                   size: 18,
-                  color: enabled ? color : AppColors.slateMuted,
+                  color: enabled ? resolvedColor : AppColors.resolve(AppColors.slateMuted, context),
                 ),
                 const SizedBox(height: 2),
                 Text(
@@ -130,7 +130,7 @@ class _RatingButton extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.labelS.copyWith(
-                    color: enabled ? color : AppColors.slateMuted,
+                    color: enabled ? resolvedColor : AppColors.resolve(AppColors.slateMuted, context),
                     fontWeight: FontWeight.w900,
                   ),
                 ),

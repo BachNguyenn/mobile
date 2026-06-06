@@ -65,7 +65,7 @@ class _PlacementTestScreenState extends ConsumerState<PlacementTestScreen> {
       appBar: AppBar(
         title: const Text('Kiểm tra năng lực'),
         centerTitle: true,
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
       ),
       body: AppPageBackground(
@@ -210,7 +210,11 @@ class _IntroView extends StatelessWidget {
       children: [
         AppCard(
           padding: EdgeInsets.zero,
-          gradient: AppColors.brandLeafGradient,
+          gradient: LinearGradient(
+            colors: AppColors.resolveColors(AppColors.brandLeafGradient.colors, context),
+            begin: AppColors.brandLeafGradient.begin,
+            end: AppColors.brandLeafGradient.end,
+          ),
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.sp24),
             child: Column(
@@ -324,8 +328,8 @@ class _QuestionView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                 child: LinearProgressIndicator(
                   value: progress,
-                  color: AppColors.mossGreen,
-                  backgroundColor: AppColors.creamDark,
+                  color: AppColors.resolve(AppColors.mossGreen, context),
+                  backgroundColor: AppColors.resolve(AppColors.creamDark, context),
                   minHeight: 10,
                 ),
               ),
@@ -334,7 +338,7 @@ class _QuestionView extends StatelessWidget {
             Text(
               '${index + 1}/$total',
               style: AppTypography.bodyMBold.copyWith(
-                color: AppColors.navy,
+                color: AppColors.resolve(AppColors.navy, context),
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -343,7 +347,7 @@ class _QuestionView extends StatelessWidget {
         const SizedBox(height: AppSpacing.sp20),
         AppCard(
           padding: const EdgeInsets.all(AppSpacing.sp24),
-          color: AppColors.white,
+          color: Theme.of(context).cardColor,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -352,7 +356,7 @@ class _QuestionView extends StatelessWidget {
               Text(
                 'Câu ${index + 1}',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -360,7 +364,7 @@ class _QuestionView extends StatelessWidget {
               Text(
                 question.prompt,
                 style: AppTypography.headingL.copyWith(
-                  color: AppColors.navyDark,
+                  color: AppColors.resolve(AppColors.navyDark, context),
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -410,7 +414,11 @@ class _ResultView extends StatelessWidget {
       children: [
         AppCard(
           padding: const EdgeInsets.all(AppSpacing.sp24),
-          gradient: AppColors.brandLeafGradient,
+          gradient: LinearGradient(
+            colors: AppColors.resolveColors(AppColors.brandLeafGradient.colors, context),
+            begin: AppColors.brandLeafGradient.begin,
+            end: AppColors.brandLeafGradient.end,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -438,7 +446,7 @@ class _ResultView extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AppSpacing.sp16),
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusL),
                 ),
                 child: Row(
@@ -450,8 +458,8 @@ class _ResultView extends StatelessWidget {
                         ),
                         child: LinearProgressIndicator(
                           value: percent,
-                          color: AppColors.mossGreen,
-                          backgroundColor: AppColors.creamDark,
+                          color: AppColors.resolve(AppColors.mossGreen, context),
+                          backgroundColor: AppColors.resolve(AppColors.creamDark, context),
                           minHeight: 10,
                         ),
                       ),
@@ -460,7 +468,7 @@ class _ResultView extends StatelessWidget {
                     Text(
                       '$score/$maxScore',
                       style: AppTypography.bodyMBold.copyWith(
-                        color: AppColors.navy,
+                        color: AppColors.resolve(AppColors.navy, context),
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -483,9 +491,9 @@ class _ResultView extends StatelessWidget {
           label: const Text('Làm lại bài kiểm tra'),
           style: OutlinedButton.styleFrom(
             minimumSize: const Size.fromHeight(52),
-            foregroundColor: AppColors.navy,
+            foregroundColor: AppColors.resolve(AppColors.navy, context),
             side: BorderSide(
-              color: AppColors.slateLight.withValues(alpha: 0.6),
+              color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.6),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusM),
@@ -505,7 +513,7 @@ class _ChecklistCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
-      color: AppColors.white,
+      color: Theme.of(context).cardColor,
       child: Column(
         children: items
             .map(
@@ -517,14 +525,14 @@ class _ChecklistCard extends StatelessWidget {
                     Container(
                       width: 28,
                       height: 28,
-                      decoration: const BoxDecoration(
-                        color: AppColors.navySoft,
+                      decoration: BoxDecoration(
+                        color: AppColors.resolve(AppColors.navySoft, context),
                         shape: BoxShape.circle,
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.check_rounded,
                         size: 17,
-                        color: AppColors.mossGreen,
+                        color: AppColors.resolve(AppColors.mossGreen, context),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sp12),
@@ -552,10 +560,12 @@ class _SoftPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = isLight ? AppColors.white : AppColors.mossGreen;
+    final foreground = isLight
+        ? AppColors.white
+        : AppColors.resolve(AppColors.mossGreen, context);
     final background = isLight
         ? AppColors.white.withValues(alpha: 0.13)
-        : AppColors.creamDark;
+        : AppColors.resolve(AppColors.creamDark, context);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -568,7 +578,8 @@ class _SoftPill extends StatelessWidget {
         border: Border.all(
           color: isLight
               ? AppColors.white.withValues(alpha: 0.16)
-              : AppColors.slateLight.withValues(alpha: 0.35),
+              : AppColors.resolve(AppColors.slateLight, context)
+                  .withValues(alpha: 0.35),
         ),
       ),
       child: Row(
@@ -612,12 +623,12 @@ class _AnswerButton extends StatelessWidget {
         ? AppColors.success
         : revealWrong
         ? AppColors.error
-        : AppColors.slateLight.withValues(alpha: 0.45);
+        : AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.45);
     final background = revealCorrect
         ? AppColors.success.withValues(alpha: 0.10)
         : revealWrong
         ? AppColors.error.withValues(alpha: 0.10)
-        : AppColors.white;
+        : Theme.of(context).cardColor;
     final icon = revealCorrect
         ? Icons.check_circle_rounded
         : revealWrong
@@ -627,7 +638,7 @@ class _AnswerButton extends StatelessWidget {
         ? AppColors.success
         : revealWrong
         ? AppColors.error
-        : AppColors.slateMuted;
+        : AppColors.resolve(AppColors.slateMuted, context);
 
     return Material(
       color: Colors.transparent,
@@ -649,7 +660,7 @@ class _AnswerButton extends StatelessWidget {
                 child: Text(
                   label,
                   style: AppTypography.bodyMBold.copyWith(
-                    color: AppColors.navyDark,
+                    color: AppColors.resolve(AppColors.navyDark, context),
                     fontWeight: FontWeight.w700,
                   ),
                 ),

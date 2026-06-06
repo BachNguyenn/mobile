@@ -199,10 +199,15 @@ class _GrammarReviewScreenState extends ConsumerState<GrammarReviewScreen> {
   }
 
   PreferredSizeWidget _buildAppBar(double progress) {
+    final resolvedCream = AppColors.resolve(AppColors.cream, context);
+    final resolvedSlateGrey = AppColors.resolve(AppColors.slateGrey, context);
+    final resolvedCreamDark = AppColors.resolve(AppColors.creamDark, context);
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+
     return AppBar(
       title: const Text('Ôn ngữ pháp', style: AppTypography.headingM),
-      backgroundColor: AppColors.cream.withValues(alpha: 0.94),
-      foregroundColor: AppColors.slateGrey,
+      backgroundColor: resolvedCream.withValues(alpha: 0.94),
+      foregroundColor: resolvedSlateGrey,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       bottom: PreferredSize(
@@ -210,8 +215,8 @@ class _GrammarReviewScreenState extends ConsumerState<GrammarReviewScreen> {
         child: LinearProgressIndicator(
           value: progress,
           minHeight: 8,
-          backgroundColor: AppColors.creamDark,
-          valueColor: const AlwaysStoppedAnimation<Color>(AppColors.leafGreen),
+          backgroundColor: resolvedCreamDark,
+          valueColor: AlwaysStoppedAnimation<Color>(resolvedLeafGreen),
         ),
       ),
     );
@@ -237,14 +242,14 @@ class _GrammarReviewHeader extends StatelessWidget {
           child: Text(
             '$current/$total câu',
             style: AppTypography.bodyMBold.copyWith(
-              color: AppColors.ink,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
         ),
         JlptLevelBadge(
           level: question.grammar.jlptLevel,
-          color: AppColors.leafGreen,
+          color: AppColors.resolve(AppColors.leafGreen, context),
         ),
       ],
     );
@@ -259,18 +264,23 @@ class _GrammarPromptCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final example = question.example;
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedSlateMuted = AppColors.resolve(AppColors.slateMuted, context);
+    final resolvedLeafDark = AppColors.resolve(AppColors.leafDark, context);
+    final resolvedSlateGrey = AppColors.resolve(AppColors.slateGrey, context);
 
     return AppCard(
-      color: AppColors.white,
-      borderColor: AppColors.leafGreen.withValues(alpha: 0.16),
-      shadowColor: AppColors.leafGreen.withValues(alpha: 0.06),
+      color: Theme.of(context).cardColor,
+      borderColor: resolvedLeafGreen.withValues(alpha: 0.16),
+      shadowColor: resolvedLeafGreen.withValues(alpha: 0.06),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             question.grammar.title,
             style: AppTypography.headingM.copyWith(
-              color: AppColors.navyDark,
+              color: resolvedNavyDark,
               fontWeight: FontWeight.w800,
             ),
             textAlign: TextAlign.center,
@@ -281,7 +291,7 @@ class _GrammarPromptCard extends StatelessWidget {
               example.jp,
               key: grammarReviewExampleKey,
               style: AppTypography.kanjiDisplay.copyWith(
-                color: AppColors.ink,
+                color: Theme.of(context).colorScheme.onSurface,
                 fontSize: 28,
               ),
               textAlign: TextAlign.center,
@@ -291,7 +301,7 @@ class _GrammarPromptCard extends StatelessWidget {
               Text(
                 example.romaji,
                 style: AppTypography.label.copyWith(
-                  color: AppColors.slateMuted,
+                  color: resolvedSlateMuted,
                   fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.center,
@@ -301,7 +311,7 @@ class _GrammarPromptCard extends StatelessWidget {
             Text(
               question.hint!,
               key: grammarReviewExampleKey,
-              style: AppTypography.headingS.copyWith(color: AppColors.leafDark),
+              style: AppTypography.headingS.copyWith(color: resolvedLeafDark),
               textAlign: TextAlign.center,
             ),
           ],
@@ -309,7 +319,7 @@ class _GrammarPromptCard extends StatelessWidget {
           Text(
             question.prompt,
             style: AppTypography.bodyMBold.copyWith(
-              color: AppColors.slateGrey,
+              color: resolvedSlateGrey,
               fontWeight: FontWeight.w800,
             ),
             textAlign: TextAlign.center,
@@ -369,25 +379,30 @@ class _GrammarOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+
     final Color borderColor;
     final Color backgroundColor;
     final IconData? icon;
 
     if (isAnswerChecked && isCorrect) {
-      borderColor = AppColors.leafGreen;
-      backgroundColor = AppColors.leafGreen.withValues(alpha: 0.10);
+      borderColor = resolvedLeafGreen;
+      backgroundColor = resolvedLeafGreen.withValues(alpha: 0.10);
       icon = Icons.check_circle_rounded;
     } else if (isAnswerChecked && isSelected) {
-      borderColor = AppColors.terracotta;
-      backgroundColor = AppColors.terracotta.withValues(alpha: 0.08);
+      borderColor = resolvedTerracotta;
+      backgroundColor = resolvedTerracotta.withValues(alpha: 0.08);
       icon = Icons.info_rounded;
     } else if (isSelected) {
-      borderColor = AppColors.leafGreen;
-      backgroundColor = AppColors.leafGreen.withValues(alpha: 0.08);
+      borderColor = resolvedLeafGreen;
+      backgroundColor = resolvedLeafGreen.withValues(alpha: 0.08);
       icon = Icons.radio_button_checked_rounded;
     } else {
-      borderColor = AppColors.slateLight.withValues(alpha: 0.42);
-      backgroundColor = AppColors.white;
+      borderColor = resolvedSlateLight.withValues(alpha: 0.42);
+      backgroundColor = Theme.of(context).cardColor;
       icon = null;
     }
 
@@ -411,7 +426,7 @@ class _GrammarOptionTile extends StatelessWidget {
                 child: Text(
                   option,
                   style: AppTypography.bodyM.copyWith(
-                    color: AppColors.navyDark,
+                    color: resolvedNavyDark,
                     fontWeight: isSelected || isCorrect
                         ? FontWeight.w800
                         : FontWeight.w600,
@@ -444,13 +459,18 @@ class _GrammarAnswerPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final example = question.example;
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedInk = AppColors.resolve(AppColors.ink, context);
+    final resolvedSlateGrey = AppColors.resolve(AppColors.slateGrey, context);
 
     return AppCard(
       key: grammarReviewAnswerPanelKey,
-      color: AppColors.white,
-      borderColor: (isCorrect ? AppColors.leafGreen : AppColors.terracotta)
+      color: Theme.of(context).cardColor,
+      borderColor: (isCorrect ? resolvedLeafGreen : resolvedTerracotta)
           .withValues(alpha: 0.34),
-      shadowColor: AppColors.ink.withValues(alpha: 0.04),
+      shadowColor: resolvedInk.withValues(alpha: 0.04),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -458,14 +478,14 @@ class _GrammarAnswerPanel extends StatelessWidget {
             children: [
               Icon(
                 isCorrect ? Icons.check_circle_rounded : Icons.info_rounded,
-                color: isCorrect ? AppColors.leafGreen : AppColors.terracotta,
+                color: isCorrect ? resolvedLeafGreen : resolvedTerracotta,
               ),
               const SizedBox(width: AppSpacing.sp8),
               Expanded(
                 child: Text(
                   isCorrect ? 'Đúng rồi' : 'Đáp án đúng',
                   style: AppTypography.headingS.copyWith(
-                    color: AppColors.navyDark,
+                    color: resolvedNavyDark,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -476,7 +496,7 @@ class _GrammarAnswerPanel extends StatelessWidget {
           Text(
             question.answer,
             style: AppTypography.bodyMBold.copyWith(
-              color: AppColors.ink,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -484,7 +504,7 @@ class _GrammarAnswerPanel extends StatelessWidget {
             const SizedBox(height: AppSpacing.sp8),
             Text(
               'Bạn chọn: $selectedAnswer',
-              style: AppTypography.bodyS.copyWith(color: AppColors.terracotta),
+              style: AppTypography.bodyS.copyWith(color: resolvedTerracotta),
             ),
           ],
           if (question.hint != null) ...[
@@ -500,7 +520,7 @@ class _GrammarAnswerPanel extends StatelessWidget {
             Text(
               question.explanation!,
               style: AppTypography.bodyS.copyWith(
-                color: AppColors.slateGrey,
+                color: resolvedSlateGrey,
                 height: 1.45,
               ),
             ),
@@ -519,22 +539,26 @@ class _InfoBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedNavySoft = AppColors.resolve(AppColors.navySoft, context);
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: AppColors.navySoft.withValues(alpha: 0.68),
+        color: resolvedNavySoft.withValues(alpha: 0.68),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 18, color: AppColors.leafGreen),
+          Icon(icon, size: 18, color: resolvedLeafGreen),
           const SizedBox(width: AppSpacing.sp8),
           Expanded(
             child: Text(
               text,
-              style: AppTypography.bodyS.copyWith(color: AppColors.navyDark),
+              style: AppTypography.bodyS.copyWith(color: resolvedNavyDark),
             ),
           ),
         ],

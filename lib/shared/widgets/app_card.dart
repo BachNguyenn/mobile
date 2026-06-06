@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
@@ -24,24 +25,74 @@ class AppCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final radius = BorderRadius.circular(AppSpacing.radiusL);
+    final useThemedCardColor = color == null || color == AppColors.white;
+
+    final resolvedColor = useThemedCardColor
+        ? theme.cardColor
+        : color is CupertinoDynamicColor
+        ? CupertinoDynamicColor.resolve(color as CupertinoDynamicColor, context)
+        : color;
+    final resolvedBorderColor = borderColor is CupertinoDynamicColor
+        ? CupertinoDynamicColor.resolve(
+            borderColor as CupertinoDynamicColor,
+            context,
+          )
+        : borderColor;
+    final resolvedShadowColor = shadowColor is CupertinoDynamicColor
+        ? CupertinoDynamicColor.resolve(
+            shadowColor as CupertinoDynamicColor,
+            context,
+          )
+        : shadowColor;
+
+    Gradient? resolvedGradient = gradient;
+    if (gradient is LinearGradient) {
+      final linear = gradient as LinearGradient;
+      resolvedGradient = LinearGradient(
+        colors: linear.colors.map((c) {
+          if (c is CupertinoDynamicColor) {
+            return CupertinoDynamicColor.resolve(c, context);
+          }
+          return c;
+        }).toList(),
+        begin: linear.begin,
+        end: linear.end,
+        stops: linear.stops,
+        tileMode: linear.tileMode,
+        transform: linear.transform,
+      );
+    }
+
     final content = AnimatedContainer(
       duration: const Duration(milliseconds: 180),
       padding: padding,
       decoration: BoxDecoration(
-        color: gradient == null ? color ?? Theme.of(context).cardColor : null,
-        gradient: gradient,
+        color: resolvedGradient == null
+            ? resolvedColor ?? Theme.of(context).cardColor
+            : null,
+        gradient: resolvedGradient,
         borderRadius: radius,
         border: Border.all(
-          color: borderColor ?? AppColors.slateLight.withValues(alpha: 0.26),
+          color:
+              resolvedBorderColor ??
+              theme.colorScheme.outlineVariant.withValues(
+                alpha: isDark ? 0.50 : 0.35,
+              ),
         ),
-        boxShadow: [
-          BoxShadow(
-            color: shadowColor ?? AppColors.ink.withValues(alpha: 0.055),
-            blurRadius: 24,
-            offset: const Offset(0, 12),
-          ),
-        ],
+        boxShadow: isDark
+            ? []
+            : [
+                BoxShadow(
+                  color:
+                      resolvedShadowColor ??
+                      Colors.black.withValues(alpha: 0.055),
+                  blurRadius: 24,
+                  offset: const Offset(0, 12),
+                ),
+              ],
       ),
       child: child,
     );

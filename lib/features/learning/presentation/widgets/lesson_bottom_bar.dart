@@ -36,28 +36,31 @@ class LessonBottomBar extends StatelessWidget {
               ? Icons.arrow_forward_rounded
               : Icons.fact_check_rounded,
           label: isStudy ? 'Tiếp tục' : 'Kiểm tra',
-          color: AppColors.leafGreen,
+          color: AppColors.resolve(AppColors.leafGreen, context),
           onPressed: canCheck ? onCheck : null,
         ),
       );
     }
 
     final isStudy = currentQ.inputMode == QuizInputMode.study;
-    final color = isStudy
-        ? AppColors.leafGreen
-        : state.isCorrect
-        ? AppColors.leafGreen
-        : AppColors.terracotta;
+    final color = AppColors.resolve(
+      isStudy
+          ? AppColors.leafGreen
+          : state.isCorrect
+              ? AppColors.leafGreen
+              : AppColors.terracotta,
+      context,
+    );
     final message = isStudy
         ? 'Đã sẵn sàng luyện tập'
         : state.isCorrect
-        ? 'Chính xác'
-        : 'Chưa đúng';
+            ? 'Chính xác'
+            : 'Chưa đúng';
     final icon = isStudy
         ? Icons.auto_stories_rounded
         : state.isCorrect
-        ? Icons.check_circle_rounded
-        : Icons.info_rounded;
+            ? Icons.check_circle_rounded
+            : Icons.info_rounded;
 
     return _BarSurface(
       child: Column(
@@ -123,9 +126,9 @@ class _PrimaryLessonButton extends StatelessWidget {
         icon: Icon(icon, size: 20),
         label: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
         style: FilledButton.styleFrom(
-          backgroundColor: color,
+          backgroundColor: AppColors.resolve(color, context),
           foregroundColor: AppColors.white,
-          disabledBackgroundColor: AppColors.slateLight,
+          disabledBackgroundColor: AppColors.resolve(AppColors.slateLight, context),
           disabledForegroundColor: AppColors.white.withValues(alpha: 0.74),
           textStyle: AppTypography.bodyMBold.copyWith(
             fontWeight: FontWeight.w900,
@@ -156,19 +159,18 @@ class _BarSurface extends StatelessWidget {
           AppSpacing.sp16,
         ),
         decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.96),
+          color: Theme.of(context).cardColor.withValues(alpha: 0.96),
           border: Border(
             top: BorderSide(
-              color: AppColors.slateLight.withValues(alpha: 0.32),
+              color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.32),
             ),
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.ink.withValues(alpha: 0.06),
-              blurRadius: 18,
-              offset: const Offset(0, -8),
-            ),
-          ],
+          boxShadow: AppColors.softShadow(
+            context,
+            color: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.06),
+            blurRadius: 18,
+            offset: const Offset(0, -8),
+          ),
         ),
         child: child,
       ),

@@ -20,18 +20,18 @@ class ReviewHandwritingArea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedAccent = AppColors.resolve(accent, context);
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: accent.withValues(alpha: 0.22)),
-        boxShadow: [
-          BoxShadow(
-            color: accent.withValues(alpha: 0.06),
-            blurRadius: 20,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        border: Border.all(color: resolvedAccent.withValues(alpha: 0.22)),
+        boxShadow: AppColors.softShadow(
+          context,
+          color: resolvedAccent.withValues(alpha: 0.06),
+          blurRadius: 20,
+          offset: const Offset(0, 10),
+        ),
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),

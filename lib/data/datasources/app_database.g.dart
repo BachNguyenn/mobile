@@ -116,6 +116,108 @@ class $KanjiCardTableTable extends KanjiCardTable
     requiredDuringInsert: false,
     defaultValue: const Constant('[]'),
   );
+  static const VerificationMeta _strokePathsJsonMeta = const VerificationMeta(
+    'strokePathsJson',
+  );
+  @override
+  late final GeneratedColumn<String> strokePathsJson = GeneratedColumn<String>(
+    'stroke_paths_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _strokeCountMeta = const VerificationMeta(
+    'strokeCount',
+  );
+  @override
+  late final GeneratedColumn<int> strokeCount = GeneratedColumn<int>(
+    'stroke_count',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _gradeMeta = const VerificationMeta('grade');
+  @override
+  late final GeneratedColumn<int> grade = GeneratedColumn<int>(
+    'grade',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _frequencyMeta = const VerificationMeta(
+    'frequency',
+  );
+  @override
+  late final GeneratedColumn<int> frequency = GeneratedColumn<int>(
+    'frequency',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _radicalNumberMeta = const VerificationMeta(
+    'radicalNumber',
+  );
+  @override
+  late final GeneratedColumn<int> radicalNumber = GeneratedColumn<int>(
+    'radical_number',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _radicalNamesJsonMeta = const VerificationMeta(
+    'radicalNamesJson',
+  );
+  @override
+  late final GeneratedColumn<String> radicalNamesJson = GeneratedColumn<String>(
+    'radical_names_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _nanoriJsonMeta = const VerificationMeta(
+    'nanoriJson',
+  );
+  @override
+  late final GeneratedColumn<String> nanoriJson = GeneratedColumn<String>(
+    'nanori_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _variantsJsonMeta = const VerificationMeta(
+    'variantsJson',
+  );
+  @override
+  late final GeneratedColumn<String> variantsJson = GeneratedColumn<String>(
+    'variants_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
+  static const VerificationMeta _queryCodesJsonMeta = const VerificationMeta(
+    'queryCodesJson',
+  );
+  @override
+  late final GeneratedColumn<String> queryCodesJson = GeneratedColumn<String>(
+    'query_codes_json',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+    defaultValue: const Constant('[]'),
+  );
   static const VerificationMeta _stabilityMeta = const VerificationMeta(
     'stability',
   );
@@ -204,6 +306,15 @@ class $KanjiCardTableTable extends KanjiCardTable
     radicalsJson,
     mnemonic,
     relatedWordsJson,
+    strokePathsJson,
+    strokeCount,
+    grade,
+    frequency,
+    radicalNumber,
+    radicalNamesJson,
+    nanoriJson,
+    variantsJson,
+    queryCodesJson,
     stability,
     difficulty,
     lastReview,
@@ -294,6 +405,78 @@ class $KanjiCardTableTable extends KanjiCardTable
         relatedWordsJson.isAcceptableOrUnknown(
           data['related_words_json']!,
           _relatedWordsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('stroke_paths_json')) {
+      context.handle(
+        _strokePathsJsonMeta,
+        strokePathsJson.isAcceptableOrUnknown(
+          data['stroke_paths_json']!,
+          _strokePathsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('stroke_count')) {
+      context.handle(
+        _strokeCountMeta,
+        strokeCount.isAcceptableOrUnknown(
+          data['stroke_count']!,
+          _strokeCountMeta,
+        ),
+      );
+    }
+    if (data.containsKey('grade')) {
+      context.handle(
+        _gradeMeta,
+        grade.isAcceptableOrUnknown(data['grade']!, _gradeMeta),
+      );
+    }
+    if (data.containsKey('frequency')) {
+      context.handle(
+        _frequencyMeta,
+        frequency.isAcceptableOrUnknown(data['frequency']!, _frequencyMeta),
+      );
+    }
+    if (data.containsKey('radical_number')) {
+      context.handle(
+        _radicalNumberMeta,
+        radicalNumber.isAcceptableOrUnknown(
+          data['radical_number']!,
+          _radicalNumberMeta,
+        ),
+      );
+    }
+    if (data.containsKey('radical_names_json')) {
+      context.handle(
+        _radicalNamesJsonMeta,
+        radicalNamesJson.isAcceptableOrUnknown(
+          data['radical_names_json']!,
+          _radicalNamesJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('nanori_json')) {
+      context.handle(
+        _nanoriJsonMeta,
+        nanoriJson.isAcceptableOrUnknown(data['nanori_json']!, _nanoriJsonMeta),
+      );
+    }
+    if (data.containsKey('variants_json')) {
+      context.handle(
+        _variantsJsonMeta,
+        variantsJson.isAcceptableOrUnknown(
+          data['variants_json']!,
+          _variantsJsonMeta,
+        ),
+      );
+    }
+    if (data.containsKey('query_codes_json')) {
+      context.handle(
+        _queryCodesJsonMeta,
+        queryCodesJson.isAcceptableOrUnknown(
+          data['query_codes_json']!,
+          _queryCodesJsonMeta,
         ),
       );
     }
@@ -390,6 +573,42 @@ class $KanjiCardTableTable extends KanjiCardTable
         DriftSqlType.string,
         data['${effectivePrefix}related_words_json'],
       )!,
+      strokePathsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}stroke_paths_json'],
+      )!,
+      strokeCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}stroke_count'],
+      ),
+      grade: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}grade'],
+      ),
+      frequency: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}frequency'],
+      ),
+      radicalNumber: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}radical_number'],
+      ),
+      radicalNamesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}radical_names_json'],
+      )!,
+      nanoriJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}nanori_json'],
+      )!,
+      variantsJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}variants_json'],
+      )!,
+      queryCodesJson: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}query_codes_json'],
+      )!,
       stability: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}stability'],
@@ -438,6 +657,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
   final String radicalsJson;
   final String? mnemonic;
   final String relatedWordsJson;
+  final String strokePathsJson;
+  final int? strokeCount;
+  final int? grade;
+  final int? frequency;
+  final int? radicalNumber;
+  final String radicalNamesJson;
+  final String nanoriJson;
+  final String variantsJson;
+  final String queryCodesJson;
   final double stability;
   final double difficulty;
   final DateTime? lastReview;
@@ -456,6 +684,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     required this.radicalsJson,
     this.mnemonic,
     required this.relatedWordsJson,
+    required this.strokePathsJson,
+    this.strokeCount,
+    this.grade,
+    this.frequency,
+    this.radicalNumber,
+    required this.radicalNamesJson,
+    required this.nanoriJson,
+    required this.variantsJson,
+    required this.queryCodesJson,
     required this.stability,
     required this.difficulty,
     this.lastReview,
@@ -481,6 +718,23 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
       map['mnemonic'] = Variable<String>(mnemonic);
     }
     map['related_words_json'] = Variable<String>(relatedWordsJson);
+    map['stroke_paths_json'] = Variable<String>(strokePathsJson);
+    if (!nullToAbsent || strokeCount != null) {
+      map['stroke_count'] = Variable<int>(strokeCount);
+    }
+    if (!nullToAbsent || grade != null) {
+      map['grade'] = Variable<int>(grade);
+    }
+    if (!nullToAbsent || frequency != null) {
+      map['frequency'] = Variable<int>(frequency);
+    }
+    if (!nullToAbsent || radicalNumber != null) {
+      map['radical_number'] = Variable<int>(radicalNumber);
+    }
+    map['radical_names_json'] = Variable<String>(radicalNamesJson);
+    map['nanori_json'] = Variable<String>(nanoriJson);
+    map['variants_json'] = Variable<String>(variantsJson);
+    map['query_codes_json'] = Variable<String>(queryCodesJson);
     map['stability'] = Variable<double>(stability);
     map['difficulty'] = Variable<double>(difficulty);
     if (!nullToAbsent || lastReview != null) {
@@ -509,6 +763,23 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
           ? const Value.absent()
           : Value(mnemonic),
       relatedWordsJson: Value(relatedWordsJson),
+      strokePathsJson: Value(strokePathsJson),
+      strokeCount: strokeCount == null && nullToAbsent
+          ? const Value.absent()
+          : Value(strokeCount),
+      grade: grade == null && nullToAbsent
+          ? const Value.absent()
+          : Value(grade),
+      frequency: frequency == null && nullToAbsent
+          ? const Value.absent()
+          : Value(frequency),
+      radicalNumber: radicalNumber == null && nullToAbsent
+          ? const Value.absent()
+          : Value(radicalNumber),
+      radicalNamesJson: Value(radicalNamesJson),
+      nanoriJson: Value(nanoriJson),
+      variantsJson: Value(variantsJson),
+      queryCodesJson: Value(queryCodesJson),
       stability: Value(stability),
       difficulty: Value(difficulty),
       lastReview: lastReview == null && nullToAbsent
@@ -537,6 +808,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
       radicalsJson: serializer.fromJson<String>(json['radicalsJson']),
       mnemonic: serializer.fromJson<String?>(json['mnemonic']),
       relatedWordsJson: serializer.fromJson<String>(json['relatedWordsJson']),
+      strokePathsJson: serializer.fromJson<String>(json['strokePathsJson']),
+      strokeCount: serializer.fromJson<int?>(json['strokeCount']),
+      grade: serializer.fromJson<int?>(json['grade']),
+      frequency: serializer.fromJson<int?>(json['frequency']),
+      radicalNumber: serializer.fromJson<int?>(json['radicalNumber']),
+      radicalNamesJson: serializer.fromJson<String>(json['radicalNamesJson']),
+      nanoriJson: serializer.fromJson<String>(json['nanoriJson']),
+      variantsJson: serializer.fromJson<String>(json['variantsJson']),
+      queryCodesJson: serializer.fromJson<String>(json['queryCodesJson']),
       stability: serializer.fromJson<double>(json['stability']),
       difficulty: serializer.fromJson<double>(json['difficulty']),
       lastReview: serializer.fromJson<DateTime?>(json['lastReview']),
@@ -560,6 +840,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
       'radicalsJson': serializer.toJson<String>(radicalsJson),
       'mnemonic': serializer.toJson<String?>(mnemonic),
       'relatedWordsJson': serializer.toJson<String>(relatedWordsJson),
+      'strokePathsJson': serializer.toJson<String>(strokePathsJson),
+      'strokeCount': serializer.toJson<int?>(strokeCount),
+      'grade': serializer.toJson<int?>(grade),
+      'frequency': serializer.toJson<int?>(frequency),
+      'radicalNumber': serializer.toJson<int?>(radicalNumber),
+      'radicalNamesJson': serializer.toJson<String>(radicalNamesJson),
+      'nanoriJson': serializer.toJson<String>(nanoriJson),
+      'variantsJson': serializer.toJson<String>(variantsJson),
+      'queryCodesJson': serializer.toJson<String>(queryCodesJson),
       'stability': serializer.toJson<double>(stability),
       'difficulty': serializer.toJson<double>(difficulty),
       'lastReview': serializer.toJson<DateTime?>(lastReview),
@@ -581,6 +870,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     String? radicalsJson,
     Value<String?> mnemonic = const Value.absent(),
     String? relatedWordsJson,
+    String? strokePathsJson,
+    Value<int?> strokeCount = const Value.absent(),
+    Value<int?> grade = const Value.absent(),
+    Value<int?> frequency = const Value.absent(),
+    Value<int?> radicalNumber = const Value.absent(),
+    String? radicalNamesJson,
+    String? nanoriJson,
+    String? variantsJson,
+    String? queryCodesJson,
     double? stability,
     double? difficulty,
     Value<DateTime?> lastReview = const Value.absent(),
@@ -599,6 +897,17 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     radicalsJson: radicalsJson ?? this.radicalsJson,
     mnemonic: mnemonic.present ? mnemonic.value : this.mnemonic,
     relatedWordsJson: relatedWordsJson ?? this.relatedWordsJson,
+    strokePathsJson: strokePathsJson ?? this.strokePathsJson,
+    strokeCount: strokeCount.present ? strokeCount.value : this.strokeCount,
+    grade: grade.present ? grade.value : this.grade,
+    frequency: frequency.present ? frequency.value : this.frequency,
+    radicalNumber: radicalNumber.present
+        ? radicalNumber.value
+        : this.radicalNumber,
+    radicalNamesJson: radicalNamesJson ?? this.radicalNamesJson,
+    nanoriJson: nanoriJson ?? this.nanoriJson,
+    variantsJson: variantsJson ?? this.variantsJson,
+    queryCodesJson: queryCodesJson ?? this.queryCodesJson,
     stability: stability ?? this.stability,
     difficulty: difficulty ?? this.difficulty,
     lastReview: lastReview.present ? lastReview.value : this.lastReview,
@@ -625,6 +934,29 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
       relatedWordsJson: data.relatedWordsJson.present
           ? data.relatedWordsJson.value
           : this.relatedWordsJson,
+      strokePathsJson: data.strokePathsJson.present
+          ? data.strokePathsJson.value
+          : this.strokePathsJson,
+      strokeCount: data.strokeCount.present
+          ? data.strokeCount.value
+          : this.strokeCount,
+      grade: data.grade.present ? data.grade.value : this.grade,
+      frequency: data.frequency.present ? data.frequency.value : this.frequency,
+      radicalNumber: data.radicalNumber.present
+          ? data.radicalNumber.value
+          : this.radicalNumber,
+      radicalNamesJson: data.radicalNamesJson.present
+          ? data.radicalNamesJson.value
+          : this.radicalNamesJson,
+      nanoriJson: data.nanoriJson.present
+          ? data.nanoriJson.value
+          : this.nanoriJson,
+      variantsJson: data.variantsJson.present
+          ? data.variantsJson.value
+          : this.variantsJson,
+      queryCodesJson: data.queryCodesJson.present
+          ? data.queryCodesJson.value
+          : this.queryCodesJson,
       stability: data.stability.present ? data.stability.value : this.stability,
       difficulty: data.difficulty.present
           ? data.difficulty.value
@@ -654,6 +986,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
           ..write('radicalsJson: $radicalsJson, ')
           ..write('mnemonic: $mnemonic, ')
           ..write('relatedWordsJson: $relatedWordsJson, ')
+          ..write('strokePathsJson: $strokePathsJson, ')
+          ..write('strokeCount: $strokeCount, ')
+          ..write('grade: $grade, ')
+          ..write('frequency: $frequency, ')
+          ..write('radicalNumber: $radicalNumber, ')
+          ..write('radicalNamesJson: $radicalNamesJson, ')
+          ..write('nanoriJson: $nanoriJson, ')
+          ..write('variantsJson: $variantsJson, ')
+          ..write('queryCodesJson: $queryCodesJson, ')
           ..write('stability: $stability, ')
           ..write('difficulty: $difficulty, ')
           ..write('lastReview: $lastReview, ')
@@ -666,7 +1007,7 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     id,
     kanji,
     meanings,
@@ -677,6 +1018,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     radicalsJson,
     mnemonic,
     relatedWordsJson,
+    strokePathsJson,
+    strokeCount,
+    grade,
+    frequency,
+    radicalNumber,
+    radicalNamesJson,
+    nanoriJson,
+    variantsJson,
+    queryCodesJson,
     stability,
     difficulty,
     lastReview,
@@ -684,7 +1034,7 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
     reps,
     lapses,
     state,
-  );
+  ]);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -699,6 +1049,15 @@ class KanjiCardData extends DataClass implements Insertable<KanjiCardData> {
           other.radicalsJson == this.radicalsJson &&
           other.mnemonic == this.mnemonic &&
           other.relatedWordsJson == this.relatedWordsJson &&
+          other.strokePathsJson == this.strokePathsJson &&
+          other.strokeCount == this.strokeCount &&
+          other.grade == this.grade &&
+          other.frequency == this.frequency &&
+          other.radicalNumber == this.radicalNumber &&
+          other.radicalNamesJson == this.radicalNamesJson &&
+          other.nanoriJson == this.nanoriJson &&
+          other.variantsJson == this.variantsJson &&
+          other.queryCodesJson == this.queryCodesJson &&
           other.stability == this.stability &&
           other.difficulty == this.difficulty &&
           other.lastReview == this.lastReview &&
@@ -719,6 +1078,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
   final Value<String> radicalsJson;
   final Value<String?> mnemonic;
   final Value<String> relatedWordsJson;
+  final Value<String> strokePathsJson;
+  final Value<int?> strokeCount;
+  final Value<int?> grade;
+  final Value<int?> frequency;
+  final Value<int?> radicalNumber;
+  final Value<String> radicalNamesJson;
+  final Value<String> nanoriJson;
+  final Value<String> variantsJson;
+  final Value<String> queryCodesJson;
   final Value<double> stability;
   final Value<double> difficulty;
   final Value<DateTime?> lastReview;
@@ -738,6 +1106,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     this.radicalsJson = const Value.absent(),
     this.mnemonic = const Value.absent(),
     this.relatedWordsJson = const Value.absent(),
+    this.strokePathsJson = const Value.absent(),
+    this.strokeCount = const Value.absent(),
+    this.grade = const Value.absent(),
+    this.frequency = const Value.absent(),
+    this.radicalNumber = const Value.absent(),
+    this.radicalNamesJson = const Value.absent(),
+    this.nanoriJson = const Value.absent(),
+    this.variantsJson = const Value.absent(),
+    this.queryCodesJson = const Value.absent(),
     this.stability = const Value.absent(),
     this.difficulty = const Value.absent(),
     this.lastReview = const Value.absent(),
@@ -758,6 +1135,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     this.radicalsJson = const Value.absent(),
     this.mnemonic = const Value.absent(),
     this.relatedWordsJson = const Value.absent(),
+    this.strokePathsJson = const Value.absent(),
+    this.strokeCount = const Value.absent(),
+    this.grade = const Value.absent(),
+    this.frequency = const Value.absent(),
+    this.radicalNumber = const Value.absent(),
+    this.radicalNamesJson = const Value.absent(),
+    this.nanoriJson = const Value.absent(),
+    this.variantsJson = const Value.absent(),
+    this.queryCodesJson = const Value.absent(),
     this.stability = const Value.absent(),
     this.difficulty = const Value.absent(),
     this.lastReview = const Value.absent(),
@@ -783,6 +1169,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     Expression<String>? radicalsJson,
     Expression<String>? mnemonic,
     Expression<String>? relatedWordsJson,
+    Expression<String>? strokePathsJson,
+    Expression<int>? strokeCount,
+    Expression<int>? grade,
+    Expression<int>? frequency,
+    Expression<int>? radicalNumber,
+    Expression<String>? radicalNamesJson,
+    Expression<String>? nanoriJson,
+    Expression<String>? variantsJson,
+    Expression<String>? queryCodesJson,
     Expression<double>? stability,
     Expression<double>? difficulty,
     Expression<DateTime>? lastReview,
@@ -803,6 +1198,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
       if (radicalsJson != null) 'radicals_json': radicalsJson,
       if (mnemonic != null) 'mnemonic': mnemonic,
       if (relatedWordsJson != null) 'related_words_json': relatedWordsJson,
+      if (strokePathsJson != null) 'stroke_paths_json': strokePathsJson,
+      if (strokeCount != null) 'stroke_count': strokeCount,
+      if (grade != null) 'grade': grade,
+      if (frequency != null) 'frequency': frequency,
+      if (radicalNumber != null) 'radical_number': radicalNumber,
+      if (radicalNamesJson != null) 'radical_names_json': radicalNamesJson,
+      if (nanoriJson != null) 'nanori_json': nanoriJson,
+      if (variantsJson != null) 'variants_json': variantsJson,
+      if (queryCodesJson != null) 'query_codes_json': queryCodesJson,
       if (stability != null) 'stability': stability,
       if (difficulty != null) 'difficulty': difficulty,
       if (lastReview != null) 'last_review': lastReview,
@@ -825,6 +1229,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     Value<String>? radicalsJson,
     Value<String?>? mnemonic,
     Value<String>? relatedWordsJson,
+    Value<String>? strokePathsJson,
+    Value<int?>? strokeCount,
+    Value<int?>? grade,
+    Value<int?>? frequency,
+    Value<int?>? radicalNumber,
+    Value<String>? radicalNamesJson,
+    Value<String>? nanoriJson,
+    Value<String>? variantsJson,
+    Value<String>? queryCodesJson,
     Value<double>? stability,
     Value<double>? difficulty,
     Value<DateTime?>? lastReview,
@@ -845,6 +1258,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
       radicalsJson: radicalsJson ?? this.radicalsJson,
       mnemonic: mnemonic ?? this.mnemonic,
       relatedWordsJson: relatedWordsJson ?? this.relatedWordsJson,
+      strokePathsJson: strokePathsJson ?? this.strokePathsJson,
+      strokeCount: strokeCount ?? this.strokeCount,
+      grade: grade ?? this.grade,
+      frequency: frequency ?? this.frequency,
+      radicalNumber: radicalNumber ?? this.radicalNumber,
+      radicalNamesJson: radicalNamesJson ?? this.radicalNamesJson,
+      nanoriJson: nanoriJson ?? this.nanoriJson,
+      variantsJson: variantsJson ?? this.variantsJson,
+      queryCodesJson: queryCodesJson ?? this.queryCodesJson,
       stability: stability ?? this.stability,
       difficulty: difficulty ?? this.difficulty,
       lastReview: lastReview ?? this.lastReview,
@@ -889,6 +1311,33 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
     if (relatedWordsJson.present) {
       map['related_words_json'] = Variable<String>(relatedWordsJson.value);
     }
+    if (strokePathsJson.present) {
+      map['stroke_paths_json'] = Variable<String>(strokePathsJson.value);
+    }
+    if (strokeCount.present) {
+      map['stroke_count'] = Variable<int>(strokeCount.value);
+    }
+    if (grade.present) {
+      map['grade'] = Variable<int>(grade.value);
+    }
+    if (frequency.present) {
+      map['frequency'] = Variable<int>(frequency.value);
+    }
+    if (radicalNumber.present) {
+      map['radical_number'] = Variable<int>(radicalNumber.value);
+    }
+    if (radicalNamesJson.present) {
+      map['radical_names_json'] = Variable<String>(radicalNamesJson.value);
+    }
+    if (nanoriJson.present) {
+      map['nanori_json'] = Variable<String>(nanoriJson.value);
+    }
+    if (variantsJson.present) {
+      map['variants_json'] = Variable<String>(variantsJson.value);
+    }
+    if (queryCodesJson.present) {
+      map['query_codes_json'] = Variable<String>(queryCodesJson.value);
+    }
     if (stability.present) {
       map['stability'] = Variable<double>(stability.value);
     }
@@ -929,6 +1378,15 @@ class KanjiCardTableCompanion extends UpdateCompanion<KanjiCardData> {
           ..write('radicalsJson: $radicalsJson, ')
           ..write('mnemonic: $mnemonic, ')
           ..write('relatedWordsJson: $relatedWordsJson, ')
+          ..write('strokePathsJson: $strokePathsJson, ')
+          ..write('strokeCount: $strokeCount, ')
+          ..write('grade: $grade, ')
+          ..write('frequency: $frequency, ')
+          ..write('radicalNumber: $radicalNumber, ')
+          ..write('radicalNamesJson: $radicalNamesJson, ')
+          ..write('nanoriJson: $nanoriJson, ')
+          ..write('variantsJson: $variantsJson, ')
+          ..write('queryCodesJson: $queryCodesJson, ')
           ..write('stability: $stability, ')
           ..write('difficulty: $difficulty, ')
           ..write('lastReview: $lastReview, ')
@@ -3567,6 +4025,15 @@ typedef $$KanjiCardTableTableCreateCompanionBuilder =
       Value<String> radicalsJson,
       Value<String?> mnemonic,
       Value<String> relatedWordsJson,
+      Value<String> strokePathsJson,
+      Value<int?> strokeCount,
+      Value<int?> grade,
+      Value<int?> frequency,
+      Value<int?> radicalNumber,
+      Value<String> radicalNamesJson,
+      Value<String> nanoriJson,
+      Value<String> variantsJson,
+      Value<String> queryCodesJson,
       Value<double> stability,
       Value<double> difficulty,
       Value<DateTime?> lastReview,
@@ -3588,6 +4055,15 @@ typedef $$KanjiCardTableTableUpdateCompanionBuilder =
       Value<String> radicalsJson,
       Value<String?> mnemonic,
       Value<String> relatedWordsJson,
+      Value<String> strokePathsJson,
+      Value<int?> strokeCount,
+      Value<int?> grade,
+      Value<int?> frequency,
+      Value<int?> radicalNumber,
+      Value<String> radicalNamesJson,
+      Value<String> nanoriJson,
+      Value<String> variantsJson,
+      Value<String> queryCodesJson,
       Value<double> stability,
       Value<double> difficulty,
       Value<DateTime?> lastReview,
@@ -3654,6 +4130,51 @@ class $$KanjiCardTableTableFilterComposer
 
   ColumnFilters<String> get relatedWordsJson => $composableBuilder(
     column: $table.relatedWordsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get strokePathsJson => $composableBuilder(
+    column: $table.strokePathsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get strokeCount => $composableBuilder(
+    column: $table.strokeCount,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get grade => $composableBuilder(
+    column: $table.grade,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get radicalNumber => $composableBuilder(
+    column: $table.radicalNumber,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get radicalNamesJson => $composableBuilder(
+    column: $table.radicalNamesJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get nanoriJson => $composableBuilder(
+    column: $table.nanoriJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get variantsJson => $composableBuilder(
+    column: $table.variantsJson,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get queryCodesJson => $composableBuilder(
+    column: $table.queryCodesJson,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -3752,6 +4273,51 @@ class $$KanjiCardTableTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get strokePathsJson => $composableBuilder(
+    column: $table.strokePathsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get strokeCount => $composableBuilder(
+    column: $table.strokeCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get grade => $composableBuilder(
+    column: $table.grade,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get frequency => $composableBuilder(
+    column: $table.frequency,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get radicalNumber => $composableBuilder(
+    column: $table.radicalNumber,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get radicalNamesJson => $composableBuilder(
+    column: $table.radicalNamesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get nanoriJson => $composableBuilder(
+    column: $table.nanoriJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get variantsJson => $composableBuilder(
+    column: $table.variantsJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get queryCodesJson => $composableBuilder(
+    column: $table.queryCodesJson,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get stability => $composableBuilder(
     column: $table.stability,
     builder: (column) => ColumnOrderings(column),
@@ -3833,6 +4399,47 @@ class $$KanjiCardTableTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get strokePathsJson => $composableBuilder(
+    column: $table.strokePathsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get strokeCount => $composableBuilder(
+    column: $table.strokeCount,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get grade =>
+      $composableBuilder(column: $table.grade, builder: (column) => column);
+
+  GeneratedColumn<int> get frequency =>
+      $composableBuilder(column: $table.frequency, builder: (column) => column);
+
+  GeneratedColumn<int> get radicalNumber => $composableBuilder(
+    column: $table.radicalNumber,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get radicalNamesJson => $composableBuilder(
+    column: $table.radicalNamesJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get nanoriJson => $composableBuilder(
+    column: $table.nanoriJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get variantsJson => $composableBuilder(
+    column: $table.variantsJson,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get queryCodesJson => $composableBuilder(
+    column: $table.queryCodesJson,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<double> get stability =>
       $composableBuilder(column: $table.stability, builder: (column) => column);
 
@@ -3904,6 +4511,15 @@ class $$KanjiCardTableTableTableManager
                 Value<String> radicalsJson = const Value.absent(),
                 Value<String?> mnemonic = const Value.absent(),
                 Value<String> relatedWordsJson = const Value.absent(),
+                Value<String> strokePathsJson = const Value.absent(),
+                Value<int?> strokeCount = const Value.absent(),
+                Value<int?> grade = const Value.absent(),
+                Value<int?> frequency = const Value.absent(),
+                Value<int?> radicalNumber = const Value.absent(),
+                Value<String> radicalNamesJson = const Value.absent(),
+                Value<String> nanoriJson = const Value.absent(),
+                Value<String> variantsJson = const Value.absent(),
+                Value<String> queryCodesJson = const Value.absent(),
                 Value<double> stability = const Value.absent(),
                 Value<double> difficulty = const Value.absent(),
                 Value<DateTime?> lastReview = const Value.absent(),
@@ -3923,6 +4539,15 @@ class $$KanjiCardTableTableTableManager
                 radicalsJson: radicalsJson,
                 mnemonic: mnemonic,
                 relatedWordsJson: relatedWordsJson,
+                strokePathsJson: strokePathsJson,
+                strokeCount: strokeCount,
+                grade: grade,
+                frequency: frequency,
+                radicalNumber: radicalNumber,
+                radicalNamesJson: radicalNamesJson,
+                nanoriJson: nanoriJson,
+                variantsJson: variantsJson,
+                queryCodesJson: queryCodesJson,
                 stability: stability,
                 difficulty: difficulty,
                 lastReview: lastReview,
@@ -3944,6 +4569,15 @@ class $$KanjiCardTableTableTableManager
                 Value<String> radicalsJson = const Value.absent(),
                 Value<String?> mnemonic = const Value.absent(),
                 Value<String> relatedWordsJson = const Value.absent(),
+                Value<String> strokePathsJson = const Value.absent(),
+                Value<int?> strokeCount = const Value.absent(),
+                Value<int?> grade = const Value.absent(),
+                Value<int?> frequency = const Value.absent(),
+                Value<int?> radicalNumber = const Value.absent(),
+                Value<String> radicalNamesJson = const Value.absent(),
+                Value<String> nanoriJson = const Value.absent(),
+                Value<String> variantsJson = const Value.absent(),
+                Value<String> queryCodesJson = const Value.absent(),
                 Value<double> stability = const Value.absent(),
                 Value<double> difficulty = const Value.absent(),
                 Value<DateTime?> lastReview = const Value.absent(),
@@ -3963,6 +4597,15 @@ class $$KanjiCardTableTableTableManager
                 radicalsJson: radicalsJson,
                 mnemonic: mnemonic,
                 relatedWordsJson: relatedWordsJson,
+                strokePathsJson: strokePathsJson,
+                strokeCount: strokeCount,
+                grade: grade,
+                frequency: frequency,
+                radicalNumber: radicalNumber,
+                radicalNamesJson: radicalNamesJson,
+                nanoriJson: nanoriJson,
+                variantsJson: variantsJson,
+                queryCodesJson: queryCodesJson,
                 stability: stability,
                 difficulty: difficulty,
                 lastReview: lastReview,

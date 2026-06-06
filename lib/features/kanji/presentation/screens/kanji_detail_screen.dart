@@ -5,6 +5,7 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/kanji/domain/entities/kanji_card.dart';
+import 'package:mobile/features/kanji/presentation/widgets/kanji_stroke_order_view.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
 import 'package:mobile/shared/widgets/jlpt_level_badge.dart';
@@ -16,16 +17,20 @@ class KanjiDetailScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
-        foregroundColor: AppColors.slateGrey,
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.colorScheme.onSurface,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
         title: Text(
           'Chi tiết chữ Hán',
-          style: AppTypography.headingS.copyWith(color: AppColors.navyDark),
+          style: AppTypography.headingS.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
         ),
       ),
       body: AppPageBackground(
@@ -40,6 +45,12 @@ class KanjiDetailScreen extends ConsumerWidget {
           children: [
             _KanjiHeroCard(kanji: kanji),
             const SizedBox(height: AppSpacing.sp16),
+            KanjiStrokeOrderView(
+              strokePaths: kanji.strokePaths,
+              strokeCount: kanji.strokeCount,
+            ),
+            const SizedBox(height: AppSpacing.sp16),
+
             _InfoCard(
               title: 'Ý nghĩa',
               content: kanji.meanings,
@@ -79,6 +90,15 @@ class KanjiDetailScreen extends ConsumerWidget {
                 color: AppColors.sunGold,
               ),
             ],
+            if (kanji.radicalNames.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sp16),
+              _ListCard(
+                title: 'Tên bộ',
+                items: kanji.radicalNames,
+                icon: Icons.account_tree_outlined,
+                color: AppColors.sunGold,
+              ),
+            ],
             if (kanji.mnemonic?.isNotEmpty ?? false) ...[
               const SizedBox(height: AppSpacing.sp16),
               _InfoCard(
@@ -97,8 +117,16 @@ class KanjiDetailScreen extends ConsumerWidget {
                 color: AppColors.waterBlue,
               ),
             ],
-            const SizedBox(height: AppSpacing.sp16),
-            _ReviewNote(nextReview: kanji.nextReview),
+            if (kanji.nanori.isNotEmpty) ...[
+              const SizedBox(height: AppSpacing.sp16),
+              _ListCard(
+                title: 'Nanori',
+                items: kanji.nanori,
+                icon: Icons.badge_rounded,
+                color: AppColors.leafGreen,
+              ),
+            ],
+
           ],
         ),
       ),
@@ -153,6 +181,8 @@ class _KanjiHeroCard extends StatelessWidget {
   }
 }
 
+
+
 class _ReadingCard extends StatelessWidget {
   final WidgetRef ref;
   final String title;
@@ -170,14 +200,16 @@ class _ReadingCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final resolvedColor = AppColors.resolve(color, context);
+
     return AppCard(
-      color: AppColors.white,
-      borderColor: color.withValues(alpha: 0.14),
-      shadowColor: color.withValues(alpha: 0.035),
+      borderColor: resolvedColor.withValues(alpha: 0.14),
+      shadowColor: resolvedColor.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CardLabel(icon: icon, label: title, color: color),
+          _CardLabel(icon: icon, label: title, color: resolvedColor),
           const SizedBox(height: AppSpacing.sp12),
           Row(
             children: [
@@ -185,7 +217,7 @@ class _ReadingCard extends StatelessWidget {
                 child: Text(
                   content.isEmpty ? '---' : content,
                   style: AppTypography.bodyL.copyWith(
-                    color: AppColors.ink,
+                    color: theme.colorScheme.onSurface,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -202,8 +234,8 @@ class _ReadingCard extends StatelessWidget {
                   },
                   icon: const Icon(Icons.volume_up_rounded, size: 18),
                   style: IconButton.styleFrom(
-                    backgroundColor: color.withValues(alpha: 0.10),
-                    foregroundColor: color,
+                    backgroundColor: resolvedColor.withValues(alpha: 0.10),
+                    foregroundColor: resolvedColor,
                   ),
                 ),
             ],
@@ -229,19 +261,21 @@ class _InfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final resolvedColor = AppColors.resolve(color, context);
+
     return AppCard(
-      color: AppColors.white,
-      borderColor: color.withValues(alpha: 0.14),
-      shadowColor: color.withValues(alpha: 0.035),
+      borderColor: resolvedColor.withValues(alpha: 0.14),
+      shadowColor: resolvedColor.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CardLabel(icon: icon, label: title, color: color),
+          _CardLabel(icon: icon, label: title, color: resolvedColor),
           const SizedBox(height: AppSpacing.sp12),
           Text(
             content.isEmpty ? '---' : content,
             style: AppTypography.bodyL.copyWith(
-              color: AppColors.ink,
+              color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -266,14 +300,14 @@ class _ListCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return AppCard(
-      color: AppColors.white,
-      borderColor: color.withValues(alpha: 0.14),
-      shadowColor: color.withValues(alpha: 0.035),
+      borderColor: resolvedColor.withValues(alpha: 0.14),
+      shadowColor: resolvedColor.withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _CardLabel(icon: icon, label: title, color: color),
+          _CardLabel(icon: icon, label: title, color: resolvedColor),
           const SizedBox(height: AppSpacing.sp12),
           Wrap(
             spacing: AppSpacing.sp8,
@@ -286,13 +320,13 @@ class _ListCard extends StatelessWidget {
                     vertical: 6,
                   ),
                   decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.10),
+                    color: resolvedColor.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                   ),
                   child: Text(
                     item,
                     style: AppTypography.label.copyWith(
-                      color: color,
+                      color: resolvedColor,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -305,39 +339,7 @@ class _ListCard extends StatelessWidget {
   }
 }
 
-class _ReviewNote extends StatelessWidget {
-  final DateTime nextReview;
 
-  const _ReviewNote({required this.nextReview});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppCard(
-      color: AppColors.white,
-      borderColor: AppColors.leafGreen.withValues(alpha: 0.14),
-      shadowColor: AppColors.leafGreen.withValues(alpha: 0.035),
-      child: Row(
-        children: [
-          const Icon(Icons.event_available_rounded, color: AppColors.leafGreen),
-          const SizedBox(width: AppSpacing.sp12),
-          Expanded(
-            child: Text(
-              'Lần ôn tiếp theo: ${_formatDate(nextReview)}',
-              style: AppTypography.bodyM.copyWith(
-                color: AppColors.slateGrey,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDate(DateTime date) {
-    return '${date.day}/${date.month}/${date.year}';
-  }
-}
 
 class _CardLabel extends StatelessWidget {
   final IconData icon;
@@ -352,14 +354,15 @@ class _CardLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Row(
       children: [
-        Icon(icon, color: color, size: 18),
+        Icon(icon, color: resolvedColor, size: 18),
         const SizedBox(width: AppSpacing.sp8),
         Text(
           label,
           style: AppTypography.bodyMBold.copyWith(
-            color: color,
+            color: resolvedColor,
             fontWeight: FontWeight.w900,
           ),
         ),

@@ -25,20 +25,25 @@ class HeroHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isWarning = overdueCount > 5;
+    final gradient = isWarning
+        ? AppColors.heroWarningGradient
+        : AppColors.heroGradient;
+    final resolvedGradient = LinearGradient(
+      colors: AppColors.resolveColors(gradient.colors, context),
+      begin: gradient.begin,
+      end: gradient.end,
+    );
 
     return Container(
       decoration: BoxDecoration(
-        gradient: isWarning
-            ? AppColors.heroWarningGradient
-            : AppColors.heroGradient,
+        gradient: resolvedGradient,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.navyDark.withValues(alpha: 0.20),
-            blurRadius: 28,
-            offset: const Offset(0, 16),
-          ),
-        ],
+        boxShadow: AppColors.softShadow(
+          context,
+          color: AppColors.resolve(AppColors.navyDark, context).withValues(alpha: 0.20),
+          blurRadius: 28,
+          offset: const Offset(0, 16),
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -47,6 +52,7 @@ class HeroHeader extends StatelessWidget {
             child: CustomPaint(
               painter: _InkCirclePainter(
                 color: AppColors.white.withValues(alpha: 0.10),
+                leafColor: AppColors.resolve(AppColors.leafLight, context),
               ),
             ),
           ),
@@ -229,6 +235,7 @@ class _HeroStatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
@@ -239,7 +246,7 @@ class _HeroStatTile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: color),
+          Icon(icon, size: 16, color: resolvedColor),
           const SizedBox(height: AppSpacing.sp4),
           Text(
             value,
@@ -275,6 +282,7 @@ class _PrimaryHeroButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedZenBlue = AppColors.resolve(AppColors.zenBlue, context);
     return Material(
       color: AppColors.white,
       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
@@ -287,7 +295,7 @@ class _PrimaryHeroButton extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: AppColors.zenBlue, size: 22),
+              Icon(icon, color: resolvedZenBlue, size: 22),
               const SizedBox(width: AppSpacing.sp8),
               Flexible(
                 child: Text(
@@ -295,7 +303,7 @@ class _PrimaryHeroButton extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.bodyMBold.copyWith(
-                    color: AppColors.zenBlue,
+                    color: resolvedZenBlue,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -342,8 +350,9 @@ class _SecondaryHeroButton extends StatelessWidget {
 
 class _InkCirclePainter extends CustomPainter {
   final Color color;
+  final Color leafColor;
 
-  const _InkCirclePainter({required this.color});
+  const _InkCirclePainter({required this.color, required this.leafColor});
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -360,7 +369,7 @@ class _InkCirclePainter extends CustomPainter {
     canvas.drawArc(rect, 0.30, 4.9, false, paint);
 
     final leafPaint = Paint()
-      ..color = AppColors.leafLight.withValues(alpha: 0.16)
+      ..color = leafColor.withValues(alpha: 0.16)
       ..style = PaintingStyle.fill;
     final leaf = Path()
       ..moveTo(size.width * 0.80, size.height * 0.05)
@@ -381,6 +390,6 @@ class _InkCirclePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _InkCirclePainter oldDelegate) {
-    return oldDelegate.color != color;
+    return oldDelegate.color != color || oldDelegate.leafColor != leafColor;
   }
 }

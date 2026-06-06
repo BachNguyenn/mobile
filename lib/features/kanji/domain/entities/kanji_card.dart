@@ -14,6 +14,15 @@ class KanjiCard extends Equatable implements SrsItem {
   final String radicalsJson;
   final String? mnemonic;
   final String relatedWordsJson;
+  final String strokePathsJson;
+  final int? strokeCount;
+  final int? grade;
+  final int? frequency;
+  final int? radicalNumber;
+  final String radicalNamesJson;
+  final String nanoriJson;
+  final String variantsJson;
+  final String queryCodesJson;
 
   // SRS data
   @override
@@ -42,6 +51,15 @@ class KanjiCard extends Equatable implements SrsItem {
     this.radicalsJson = '[]',
     this.mnemonic,
     this.relatedWordsJson = '[]',
+    this.strokePathsJson = '[]',
+    this.strokeCount,
+    this.grade,
+    this.frequency,
+    this.radicalNumber,
+    this.radicalNamesJson = '[]',
+    this.nanoriJson = '[]',
+    this.variantsJson = '[]',
+    this.queryCodesJson = '[]',
     this.stability = 0.0,
     this.difficulty = 0.0,
     this.lastReview,
@@ -53,6 +71,15 @@ class KanjiCard extends Equatable implements SrsItem {
 
   List<String> get radicals => _decodeStringList(radicalsJson);
   List<String> get relatedWords => _decodeStringList(relatedWordsJson);
+  List<String> get strokePaths => _decodeStringList(
+    strokePathsJson == '[]' && strokeData != null
+        ? strokeData!
+        : strokePathsJson,
+  );
+  List<String> get radicalNames => _decodeStringList(radicalNamesJson);
+  List<String> get nanori => _decodeStringList(nanoriJson);
+  List<String> get variants => _decodeStringList(variantsJson);
+  List<String> get queryCodes => _decodeStringList(queryCodesJson);
 
   @override
   List<Object?> get props => [
@@ -66,6 +93,15 @@ class KanjiCard extends Equatable implements SrsItem {
     radicalsJson,
     mnemonic,
     relatedWordsJson,
+    strokePathsJson,
+    strokeCount,
+    grade,
+    frequency,
+    radicalNumber,
+    radicalNamesJson,
+    nanoriJson,
+    variantsJson,
+    queryCodesJson,
     stability,
     difficulty,
     lastReview,
@@ -86,6 +122,15 @@ class KanjiCard extends Equatable implements SrsItem {
     String? radicalsJson,
     String? mnemonic,
     String? relatedWordsJson,
+    String? strokePathsJson,
+    int? strokeCount,
+    int? grade,
+    int? frequency,
+    int? radicalNumber,
+    String? radicalNamesJson,
+    String? nanoriJson,
+    String? variantsJson,
+    String? queryCodesJson,
     double? stability,
     double? difficulty,
     DateTime? lastReview,
@@ -105,6 +150,15 @@ class KanjiCard extends Equatable implements SrsItem {
       radicalsJson: radicalsJson ?? this.radicalsJson,
       mnemonic: mnemonic ?? this.mnemonic,
       relatedWordsJson: relatedWordsJson ?? this.relatedWordsJson,
+      strokePathsJson: strokePathsJson ?? this.strokePathsJson,
+      strokeCount: strokeCount ?? this.strokeCount,
+      grade: grade ?? this.grade,
+      frequency: frequency ?? this.frequency,
+      radicalNumber: radicalNumber ?? this.radicalNumber,
+      radicalNamesJson: radicalNamesJson ?? this.radicalNamesJson,
+      nanoriJson: nanoriJson ?? this.nanoriJson,
+      variantsJson: variantsJson ?? this.variantsJson,
+      queryCodesJson: queryCodesJson ?? this.queryCodesJson,
       stability: stability ?? this.stability,
       difficulty: difficulty ?? this.difficulty,
       lastReview: lastReview ?? this.lastReview,

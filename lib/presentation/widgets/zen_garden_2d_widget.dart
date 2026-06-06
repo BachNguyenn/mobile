@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
-import '../../domain/entities/zen_garden.dart';
+import '../../features/garden/domain/entities/zen_garden.dart';
 
 /// Compact 2D Zen Garden widget hiển thị trên Home screen.
 ///
@@ -74,6 +74,13 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
 
   @override
   Widget build(BuildContext context) {
+    final resolvedInk = AppColors.resolve(AppColors.ink, context);
+    final resolvedMossDark = AppColors.resolve(AppColors.mossDark, context);
+    final resolvedMossGreen = AppColors.resolve(AppColors.mossGreen, context);
+    final resolvedSlateMuted = AppColors.resolve(AppColors.slateMuted, context);
+    final resolvedSlateGrey = AppColors.resolve(AppColors.slateGrey, context);
+    final resolvedCreamDark = AppColors.resolve(AppColors.creamDark, context);
+
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
@@ -85,13 +92,12 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
             color: AppColors.gardenSandDark.withValues(alpha: 0.6),
             width: 1,
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.ink.withValues(alpha: 0.06),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
+          boxShadow: AppColors.softShadow(
+            context,
+            color: resolvedInk.withValues(alpha: 0.06),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+          ),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
@@ -109,6 +115,11 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                               garden: widget.garden,
                               streak: widget.streak,
                               animationValue: _shimmerController.value,
+                              slateMuted: resolvedSlateMuted,
+                              mossGreen: resolvedMossGreen,
+                              mossDark: resolvedMossDark,
+                              slateGrey: resolvedSlateGrey,
+                              creamDark: resolvedCreamDark,
                             ),
                           );
                         },
@@ -119,6 +130,11 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                           garden: widget.garden,
                           streak: widget.streak,
                           animationValue: 0,
+                          slateMuted: resolvedSlateMuted,
+                          mossGreen: resolvedMossGreen,
+                          mossDark: resolvedMossDark,
+                          slateGrey: resolvedSlateGrey,
+                          creamDark: resolvedCreamDark,
                         ),
                       ),
               ),
@@ -132,13 +148,13 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                     Icon(
                       Icons.park_rounded,
                       size: 16,
-                      color: AppColors.mossDark.withValues(alpha: 0.7),
+                      color: resolvedMossDark.withValues(alpha: 0.7),
                     ),
                     const SizedBox(width: AppSpacing.sp4),
                     Text(
                       'Khu vườn Zen',
                       style: AppTypography.label.copyWith(
-                        color: AppColors.mossDark.withValues(alpha: 0.7),
+                        color: resolvedMossDark.withValues(alpha: 0.7),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -156,25 +172,25 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                     vertical: AppSpacing.sp4,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.mossGreen.withValues(alpha: 0.15),
+                    color: resolvedMossGreen.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                     border: Border.all(
-                      color: AppColors.mossGreen.withValues(alpha: 0.3),
+                      color: resolvedMossGreen.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.auto_awesome,
                         size: 12,
-                        color: AppColors.mossGreen,
+                        color: resolvedMossGreen,
                       ),
                       const SizedBox(width: 3),
                       Text(
                         '${widget.garden.exp} EXP',
                         style: AppTypography.labelS.copyWith(
-                          color: AppColors.mossGreen,
+                          color: resolvedMossGreen,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -193,7 +209,7 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                     Text(
                       widget.missionHint ?? 'Chạm để khám phá',
                       style: AppTypography.labelS.copyWith(
-                        color: AppColors.slateMuted.withValues(alpha: 0.6),
+                        color: resolvedSlateMuted.withValues(alpha: 0.6),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
@@ -202,7 +218,7 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                     Icon(
                       Icons.arrow_forward_ios_rounded,
                       size: 10,
-                      color: AppColors.slateMuted.withValues(alpha: 0.4),
+                      color: resolvedSlateMuted.withValues(alpha: 0.4),
                     ),
                   ],
                 ),
@@ -217,7 +233,7 @@ class _ZenGarden2DWidgetState extends State<ZenGarden2DWidget>
                     _buildMiniStat(
                       Icons.eco_rounded,
                       '${widget.garden.plants.length}',
-                      AppColors.mossGreen,
+                      resolvedMossGreen,
                     ),
                     const SizedBox(width: AppSpacing.sp8),
                     _buildMiniStat(
@@ -265,6 +281,12 @@ class _MiniGardenPainter extends CustomPainter {
   final int streak;
   final double animationValue;
 
+  final Color slateMuted;
+  final Color mossGreen;
+  final Color mossDark;
+  final Color slateGrey;
+  final Color creamDark;
+
   // Cached Paint objects to avoid reallocation in paint loop
   late final Paint sandPaint = Paint()
     ..color = AppColors.gardenSandDark.withValues(alpha: 0.4)
@@ -277,7 +299,7 @@ class _MiniGardenPainter extends CustomPainter {
     ..strokeWidth = 0.6;
 
   late final Paint mainStonePaint = Paint()
-    ..color = AppColors.slateMuted.withValues(alpha: 0.35)
+    ..color = slateMuted.withValues(alpha: 0.35)
     ..style = PaintingStyle.fill;
 
   late final Paint highlightPaint = Paint()
@@ -305,7 +327,7 @@ class _MiniGardenPainter extends CustomPainter {
     ..strokeCap = StrokeCap.round;
 
   late final Paint canopyPaint = Paint()
-    ..color = AppColors.mossGreen.withValues(alpha: 0.35)
+    ..color = mossGreen.withValues(alpha: 0.35)
     ..style = PaintingStyle.fill;
 
   late final Paint plantTrunkPaint = Paint()
@@ -313,18 +335,15 @@ class _MiniGardenPainter extends CustomPainter {
     ..strokeWidth = 1.5
     ..strokeCap = StrokeCap.round;
 
-  late final Paint plantLeafPaint = Paint()
-    ..style = PaintingStyle.fill;
+  late final Paint plantLeafPaint = Paint()..style = PaintingStyle.fill;
 
-  late final Paint plantFlowerPaint = Paint()
-    ..style = PaintingStyle.fill;
+  late final Paint plantFlowerPaint = Paint()..style = PaintingStyle.fill;
 
   late final Paint plantCenterPaint = Paint()
     ..color = AppColors.sunGold.withValues(alpha: 0.5)
     ..style = PaintingStyle.fill;
 
-  late final Paint plantStonePaint = Paint()
-    ..style = PaintingStyle.fill;
+  late final Paint plantStonePaint = Paint()..style = PaintingStyle.fill;
 
   late final Paint plantBambooPaint = Paint()
     ..strokeWidth = 1.5
@@ -338,6 +357,11 @@ class _MiniGardenPainter extends CustomPainter {
     required this.garden,
     required this.streak,
     required this.animationValue,
+    required this.slateMuted,
+    required this.mossGreen,
+    required this.mossDark,
+    required this.slateGrey,
+    required this.creamDark,
   });
 
   @override
@@ -501,7 +525,7 @@ class _MiniGardenPainter extends CustomPainter {
     switch (plant.type) {
       case 'zen_bonsai':
       case 'bonsai':
-        color = AppColors.mossDark;
+        color = mossDark;
         canvas.drawLine(Offset(x, y), Offset(x, y - 8), plantTrunkPaint);
         canvas.drawCircle(
           Offset(x, y - 10),
@@ -522,15 +546,11 @@ class _MiniGardenPainter extends CustomPainter {
             plantFlowerPaint,
           );
         }
-        canvas.drawCircle(
-          Offset(x, y),
-          1.5,
-          plantCenterPaint,
-        );
+        canvas.drawCircle(Offset(x, y), 1.5, plantCenterPaint);
         break;
       case 'zen_stone':
       case 'stone':
-        color = AppColors.slateGrey;
+        color = slateGrey;
         canvas.drawOval(
           Rect.fromCenter(
             center: Offset(x, y),
@@ -545,7 +565,11 @@ class _MiniGardenPainter extends CustomPainter {
         // Bamboo sticks
         plantBambooPaint.color = color.withValues(alpha: 0.4);
         canvas.drawLine(Offset(x, y), Offset(x, y - 12), plantBambooPaint);
-        canvas.drawLine(Offset(x + 3, y), Offset(x + 3, y - 10), plantBambooPaint);
+        canvas.drawLine(
+          Offset(x + 3, y),
+          Offset(x + 3, y - 10),
+          plantBambooPaint,
+        );
     }
   }
 
@@ -574,6 +598,11 @@ class _MiniGardenPainter extends CustomPainter {
   bool shouldRepaint(_MiniGardenPainter oldDelegate) {
     return oldDelegate.garden != garden ||
         oldDelegate.streak != streak ||
-        (oldDelegate.animationValue - animationValue).abs() > 0.015;
+        (oldDelegate.animationValue - animationValue).abs() > 0.015 ||
+        oldDelegate.slateMuted != slateMuted ||
+        oldDelegate.mossGreen != mossGreen ||
+        oldDelegate.mossDark != mossDark ||
+        oldDelegate.slateGrey != slateGrey ||
+        oldDelegate.creamDark != creamDark;
   }
 }

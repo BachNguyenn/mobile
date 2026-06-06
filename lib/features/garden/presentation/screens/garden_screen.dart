@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/domain/entities/zen_garden.dart';
+import 'package:mobile/features/garden/domain/entities/zen_garden.dart';
 import 'package:mobile/features/garden/application/providers/garden_mission_provider.dart';
 import 'package:mobile/features/garden/application/providers/garden_provider.dart';
 import 'package:mobile/features/garden/presentation/models/garden_mission_style.dart';
@@ -53,7 +53,7 @@ class _GardenScreenState extends ConsumerState<GardenScreen>
       appBar: AppBar(
         title: Text(
           'Khu vườn Zen',
-          style: AppTypography.headingM.copyWith(color: AppColors.navyDark),
+          style: AppTypography.headingM.copyWith(color: AppColors.resolve(AppColors.navyDark, context)),
         ),
         backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
@@ -63,13 +63,13 @@ class _GardenScreenState extends ConsumerState<GardenScreen>
           _ResourcePill(
             icon: Icons.water_drop_rounded,
             value: garden.water.toString(),
-            color: AppColors.waterBlue,
+            color: AppColors.resolve(AppColors.waterBlue, context),
           ),
           const SizedBox(width: AppSpacing.sp8),
           _ResourcePill(
             icon: Icons.wb_sunny_rounded,
             value: garden.sunlight.toString(),
-            color: AppColors.sunGold,
+            color: AppColors.resolve(AppColors.sunGold, context),
           ),
           const SizedBox(width: AppSpacing.sp16),
         ],
@@ -603,25 +603,26 @@ class _ResourcePill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp12,
         vertical: AppSpacing.sp8,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
+        color: resolvedColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(color: color.withValues(alpha: 0.16)),
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.16)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: color),
+          Icon(icon, size: 16, color: resolvedColor),
           const SizedBox(width: AppSpacing.sp4),
           Text(
             value,
             style: AppTypography.label.copyWith(
-              color: AppColors.navyDark,
+              color: AppColors.resolve(AppColors.navyDark, context),
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -648,17 +649,18 @@ class _GardenOverviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp12),
-      decoration: _glassDecoration().copyWith(
-        color: AppColors.white.withValues(alpha: 0.84),
-        border: Border.all(color: AppColors.white.withValues(alpha: 0.64)),
-      ),
+      decoration: _glassDecoration(context),
       child: Row(
         children: [
           Container(
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              gradient: AppColors.brandLeafGradient,
+              gradient: LinearGradient(
+                colors: AppColors.resolveColors(AppColors.brandLeafGradient.colors, context),
+                begin: AppColors.brandLeafGradient.begin,
+                end: AppColors.brandLeafGradient.end,
+              ),
               borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             ),
             child: Center(
@@ -680,7 +682,7 @@ class _GardenOverviewCard extends StatelessWidget {
                       child: Text(
                         'Vườn cấp $level',
                         style: AppTypography.bodyMBold.copyWith(
-                          color: AppColors.navyDark,
+                          color: AppColors.resolve(AppColors.navyDark, context),
                         ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -689,7 +691,7 @@ class _GardenOverviewCard extends StatelessWidget {
                     Text(
                       '${garden.exp} exp',
                       style: AppTypography.labelS.copyWith(
-                        color: AppColors.leafDark,
+                        color: AppColors.resolve(AppColors.leafDark, context),
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -701,9 +703,9 @@ class _GardenOverviewCard extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: levelProgress,
                     minHeight: 6,
-                    backgroundColor: AppColors.creamDark,
-                    valueColor: const AlwaysStoppedAnimation<Color>(
-                      AppColors.leafGreen,
+                    backgroundColor: AppColors.resolve(AppColors.creamDark, context),
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      AppColors.resolve(AppColors.leafGreen, context),
                     ),
                   ),
                 ),
@@ -712,14 +714,14 @@ class _GardenOverviewCard extends StatelessWidget {
                   data: (summary) => Text(
                     '${summary.completedCount}/${summary.missions.length} nhiệm vụ hôm nay',
                     style: AppTypography.labelS.copyWith(
-                      color: AppColors.slateMuted,
+                      color: AppColors.resolve(AppColors.slateMuted, context),
                       fontWeight: FontWeight.w700,
                     ),
                   ),
                   loading: () => Text(
                     'Đang tải nhiệm vụ...',
                     style: AppTypography.labelS.copyWith(
-                      color: AppColors.slateMuted,
+                      color: AppColors.resolve(AppColors.slateMuted, context),
                     ),
                   ),
                   error: (_, _) => Text(
@@ -801,6 +803,7 @@ class _CompactMissionStrip extends StatelessWidget {
     return missions.when(
       data: (summary) {
         final mission = summary.nextMission ?? summary.missions.first;
+        final resolvedMissionColor = AppColors.resolve(mission.color, context);
         return Material(
           color: Colors.transparent,
           child: InkWell(
@@ -812,10 +815,10 @@ class _CompactMissionStrip extends StatelessWidget {
                 vertical: AppSpacing.sp8,
               ),
               decoration: BoxDecoration(
-                color: AppColors.white.withValues(alpha: 0.82),
+                color: AppColors.resolve(AppColors.glassBg, context),
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                 border: Border.all(
-                  color: AppColors.white.withValues(alpha: 0.62),
+                  color: AppColors.resolve(AppColors.glassStroke, context),
                 ),
               ),
               child: Row(
@@ -824,10 +827,10 @@ class _CompactMissionStrip extends StatelessWidget {
                     width: 32,
                     height: 32,
                     decoration: BoxDecoration(
-                      color: mission.color.withValues(alpha: 0.12),
+                      color: resolvedMissionColor.withValues(alpha: 0.12),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(mission.icon, color: mission.color, size: 18),
+                    child: Icon(mission.icon, color: resolvedMissionColor, size: 18),
                   ),
                   const SizedBox(width: AppSpacing.sp8),
                   Expanded(
@@ -840,7 +843,7 @@ class _CompactMissionStrip extends StatelessWidget {
                               ? 'Nhiệm vụ đã xong'
                               : mission.title,
                           style: AppTypography.label.copyWith(
-                            color: AppColors.navyDark,
+                            color: AppColors.resolve(AppColors.navyDark, context),
                             fontWeight: FontWeight.w800,
                           ),
                           maxLines: 1,
@@ -854,9 +857,9 @@ class _CompactMissionStrip extends StatelessWidget {
                           child: LinearProgressIndicator(
                             value: mission.progress,
                             minHeight: 4,
-                            backgroundColor: AppColors.creamDark,
+                            backgroundColor: AppColors.resolve(AppColors.creamDark, context),
                             valueColor: AlwaysStoppedAnimation<Color>(
-                              mission.color,
+                              resolvedMissionColor,
                             ),
                           ),
                         ),
@@ -867,7 +870,7 @@ class _CompactMissionStrip extends StatelessWidget {
                   Text(
                     '${mission.current}/${mission.target}',
                     style: AppTypography.labelS.copyWith(
-                      color: mission.color,
+                      color: resolvedMissionColor,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -906,6 +909,7 @@ class _GardenActionBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Tooltip(
       message: label,
       child: Material(
@@ -918,11 +922,11 @@ class _GardenActionBubble extends StatelessWidget {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.white.withValues(alpha: 0.86),
+              color: AppColors.resolve(AppColors.glassBg, context),
               shape: BoxShape.circle,
-              border: Border.all(color: color.withValues(alpha: 0.18)),
+              border: Border.all(color: resolvedColor.withValues(alpha: 0.18)),
             ),
-            child: Center(child: Icon(icon, color: color, size: 22)),
+            child: Center(child: Icon(icon, color: resolvedColor, size: 22)),
           ),
         ),
       ),
@@ -940,7 +944,7 @@ class _EmptyGardenCard extends StatelessWidget {
     return Container(
       width: min(MediaQuery.of(context).size.width - 72, 270.0),
       padding: const EdgeInsets.all(AppSpacing.sp12),
-      decoration: _glassDecoration(),
+      decoration: _glassDecoration(context),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -948,7 +952,11 @@ class _EmptyGardenCard extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              gradient: AppColors.mossGradient,
+              gradient: LinearGradient(
+                colors: AppColors.resolveColors(AppColors.mossGradient.colors, context),
+                begin: AppColors.mossGradient.begin,
+                end: AppColors.mossGradient.end,
+              ),
               borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             ),
             child: const Icon(
@@ -959,13 +967,13 @@ class _EmptyGardenCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.sp8),
           Text(
             'Bắt đầu khu vườn của bạn',
-            style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+            style: AppTypography.bodyMBold.copyWith(color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sp4),
           Text(
             'Chạm nền hoặc mở shop để đặt vật phẩm.',
-            style: AppTypography.label.copyWith(color: AppColors.slateGrey),
+            style: AppTypography.label.copyWith(color: AppColors.resolve(AppColors.slateGrey, context)),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sp8),
@@ -1019,7 +1027,7 @@ class _ShopSheet extends ConsumerWidget {
                     Text(
                       group,
                       style: AppTypography.bodyMBold.copyWith(
-                        color: AppColors.ink,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sp8),
@@ -1099,6 +1107,7 @@ class _ShopCatalogTile extends StatelessWidget {
     final canAfford =
         garden.water >= item.waterCost && garden.sunlight >= item.sunCost;
     final canBuy = isUnlocked && canAfford && hasAsset;
+    final resolvedItemColor = AppColors.resolve(item.color, context);
 
     return Material(
       color: Colors.transparent,
@@ -1109,10 +1118,10 @@ class _ShopCatalogTile extends StatelessWidget {
           padding: const EdgeInsets.all(AppSpacing.sp12),
           decoration: BoxDecoration(
             color: canBuy
-                ? AppColors.white
-                : AppColors.creamDark.withValues(alpha: 0.72),
+                ? Theme.of(context).cardColor
+                : AppColors.resolve(AppColors.creamDark, context).withValues(alpha: 0.72),
             borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-            border: Border.all(color: item.color.withValues(alpha: 0.14)),
+            border: Border.all(color: resolvedItemColor.withValues(alpha: 0.14)),
           ),
           child: Row(
             children: [
@@ -1120,7 +1129,7 @@ class _ShopCatalogTile extends StatelessWidget {
                 width: 56,
                 height: 56,
                 decoration: BoxDecoration(
-                  color: item.color.withValues(alpha: 0.10),
+                  color: resolvedItemColor.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusM),
                   image: item.assetPath == null
                       ? null
@@ -1134,7 +1143,7 @@ class _ShopCatalogTile extends StatelessWidget {
                         ),
                 ),
                 child: item.assetPath == null
-                    ? Icon(item.icon, color: item.color)
+                    ? Icon(item.icon, color: resolvedItemColor)
                     : null,
               ),
               const SizedBox(width: AppSpacing.sp12),
@@ -1149,8 +1158,8 @@ class _ShopCatalogTile extends StatelessWidget {
                             item.name,
                             style: AppTypography.bodyMBold.copyWith(
                               color: isUnlocked
-                                  ? AppColors.ink
-                                  : AppColors.slateMuted,
+                                  ? AppColors.resolve(AppColors.ink, context)
+                                  : AppColors.resolve(AppColors.slateMuted, context),
                             ),
                           ),
                         ),
@@ -1164,7 +1173,7 @@ class _ShopCatalogTile extends StatelessWidget {
                     Text(
                       item.description,
                       style: AppTypography.label.copyWith(
-                        color: AppColors.slateMuted,
+                        color: AppColors.resolve(AppColors.slateMuted, context),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sp8),
@@ -1173,14 +1182,14 @@ class _ShopCatalogTile extends StatelessWidget {
                         _CostChip(
                           icon: Icons.water_drop_rounded,
                           value: item.waterCost.toString(),
-                          color: AppColors.waterBlue,
+                          color: AppColors.resolve(AppColors.waterBlue, context),
                           isEnough: garden.water >= item.waterCost,
                         ),
                         const SizedBox(width: AppSpacing.sp8),
                         _CostChip(
                           icon: Icons.wb_sunny_rounded,
                           value: item.sunCost.toString(),
-                          color: AppColors.sunGold,
+                          color: AppColors.resolve(AppColors.sunGold, context),
                           isEnough: garden.sunlight >= item.sunCost,
                         ),
                       ],
@@ -1191,7 +1200,7 @@ class _ShopCatalogTile extends StatelessWidget {
               const SizedBox(width: AppSpacing.sp8),
               Icon(
                 canBuy ? Icons.add_circle_rounded : Icons.lock_rounded,
-                color: canBuy ? item.color : AppColors.slateMuted,
+                color: canBuy ? resolvedItemColor : AppColors.resolve(AppColors.slateMuted, context),
               ),
             ],
           ),
@@ -1242,15 +1251,16 @@ class _MissionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(mission.color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 10,
         vertical: AppSpacing.sp8,
       ),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: mission.color.withValues(alpha: 0.14)),
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.14)),
       ),
       child: Row(
         children: [
@@ -1258,10 +1268,10 @@ class _MissionTile extends StatelessWidget {
             width: 34,
             height: 34,
             decoration: BoxDecoration(
-              color: mission.color.withValues(alpha: 0.12),
+              color: resolvedColor.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(AppSpacing.radiusS),
             ),
-            child: Icon(mission.icon, color: mission.color, size: 20),
+            child: Icon(mission.icon, color: resolvedColor, size: 20),
           ),
           const SizedBox(width: 10),
           Expanded(
@@ -1271,14 +1281,14 @@ class _MissionTile extends StatelessWidget {
               children: [
                 Text(
                   mission.title,
-                  style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+                  style: AppTypography.bodyMBold.copyWith(color: Theme.of(context).colorScheme.onSurface),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
                   mission.subtitle,
                   style: AppTypography.labelS.copyWith(
-                    color: AppColors.slateMuted,
+                    color: AppColors.resolve(AppColors.slateMuted, context),
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -1289,8 +1299,8 @@ class _MissionTile extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: mission.progress,
                     minHeight: 5,
-                    backgroundColor: AppColors.creamDark,
-                    valueColor: AlwaysStoppedAnimation<Color>(mission.color),
+                    backgroundColor: AppColors.resolve(AppColors.creamDark, context),
+                    valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
                   ),
                 ),
               ],
@@ -1305,15 +1315,15 @@ class _MissionTile extends StatelessWidget {
                     ? Icons.check_circle_rounded
                     : Icons.radio_button_unchecked_rounded,
                 color: mission.isComplete
-                    ? AppColors.success
-                    : AppColors.slateMuted,
+                    ? AppColors.resolve(AppColors.success, context)
+                    : AppColors.resolve(AppColors.slateMuted, context),
                 size: 20,
               ),
               const SizedBox(height: 2),
               Text(
                 '${mission.current}/${mission.target}',
                 style: AppTypography.labelS.copyWith(
-                  color: mission.color,
+                  color: resolvedColor,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -1351,10 +1361,10 @@ class _BottomPanel extends StatelessWidget {
         ),
         padding: const EdgeInsets.all(AppSpacing.sp16),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(AppSpacing.radiusL),
           border: Border.all(
-            color: AppColors.slateLight.withValues(alpha: 0.22),
+            color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.22),
           ),
         ),
         child: Column(
@@ -1367,19 +1377,19 @@ class _BottomPanel extends StatelessWidget {
                 height: 4,
                 margin: const EdgeInsets.only(bottom: AppSpacing.sp12),
                 decoration: BoxDecoration(
-                  color: AppColors.slateLight,
+                  color: AppColors.resolve(AppColors.slateLight, context),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
             ),
             Text(
               title,
-              style: AppTypography.headingM.copyWith(color: AppColors.ink),
+              style: AppTypography.headingM.copyWith(color: Theme.of(context).colorScheme.onSurface),
             ),
             const SizedBox(height: AppSpacing.sp4),
             Text(
               subtitle,
-              style: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
+              style: AppTypography.bodyS.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
             ),
             const SizedBox(height: AppSpacing.sp12),
             Flexible(fit: FlexFit.loose, child: child),
@@ -1450,11 +1460,20 @@ class _SmallLockBadge extends StatelessWidget {
   }
 }
 
-BoxDecoration _glassDecoration() {
+BoxDecoration _glassDecoration(BuildContext context) {
   return BoxDecoration(
-    color: AppColors.white.withValues(alpha: 0.84),
+    color: AppColors.resolve(AppColors.glassBg, context),
     borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-    border: Border.all(color: AppColors.white.withValues(alpha: 0.50)),
+    border: Border.all(color: AppColors.resolve(AppColors.glassStroke, context)),
+    boxShadow: Theme.of(context).brightness == Brightness.dark
+        ? []
+        : [
+            BoxShadow(
+              color: AppColors.resolve(AppColors.glassShadow, context),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
+          ],
   );
 }
 

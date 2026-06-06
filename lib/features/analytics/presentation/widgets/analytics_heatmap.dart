@@ -80,7 +80,7 @@ class AnalyticsHeatmap extends StatelessWidget {
                               decoration: BoxDecoration(
                                 color: isFuture
                                     ? Colors.transparent
-                                    : _getColorForCount(count),
+                                    : _getColorForCount(count, context),
                                 borderRadius: BorderRadius.circular(2),
                               ),
                             );
@@ -143,12 +143,13 @@ class AnalyticsHeatmap extends StatelessWidget {
     }
   }
 
-  Color _getColorForCount(int count) {
-    if (count == 0) return AppColors.creamDark;
-    if (count < 10) return AppColors.mossGreen.withValues(alpha: 0.3);
-    if (count < 20) return AppColors.mossGreen.withValues(alpha: 0.6);
-    if (count < 30) return AppColors.mossGreen.withValues(alpha: 0.85);
-    return AppColors.mossGreen;
+  Color _getColorForCount(int count, BuildContext context) {
+    if (count == 0) return AppColors.resolve(AppColors.creamDark, context);
+    final baseColor = AppColors.resolve(AppColors.mossGreen, context);
+    if (count < 10) return baseColor.withValues(alpha: 0.3);
+    if (count < 20) return baseColor.withValues(alpha: 0.6);
+    if (count < 30) return baseColor.withValues(alpha: 0.85);
+    return baseColor;
   }
 }
 
@@ -161,15 +162,18 @@ class _LegendBox extends StatelessWidget {
   Widget build(BuildContext context) {
     Color color;
     if (count == 0) {
-      color = AppColors.creamDark;
-    } else if (count < 10) {
-      color = AppColors.mossGreen.withValues(alpha: 0.3);
-    } else if (count < 20) {
-      color = AppColors.mossGreen.withValues(alpha: 0.6);
-    } else if (count < 30) {
-      color = AppColors.mossGreen.withValues(alpha: 0.85);
+      color = AppColors.resolve(AppColors.creamDark, context);
     } else {
-      color = AppColors.mossGreen;
+      final baseColor = AppColors.resolve(AppColors.mossGreen, context);
+      if (count < 10) {
+        color = baseColor.withValues(alpha: 0.3);
+      } else if (count < 20) {
+        color = baseColor.withValues(alpha: 0.6);
+      } else if (count < 30) {
+        color = baseColor.withValues(alpha: 0.85);
+      } else {
+        color = baseColor;
+      }
     }
 
     return Container(

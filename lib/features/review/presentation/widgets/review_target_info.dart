@@ -16,13 +16,13 @@ class ReviewTargetInfo extends StatelessWidget {
         children: [
           Text(
             card.meanings,
-            style: AppTypography.headingL.copyWith(color: AppColors.ink),
+            style: AppTypography.headingL.copyWith(color: Theme.of(context).colorScheme.onSurface),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSpacing.sp8),
           Text(
             '${card.onyomi} / ${card.kunyomi}',
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            style: AppTypography.bodyM.copyWith(color: AppColors.resolve(AppColors.slateGrey, context)),
           ),
         ],
       ),

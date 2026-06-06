@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/application/controllers/lesson_controller.dart';
 import 'package:mobile/features/learning/presentation/screens/lesson_result_screen.dart';
 import 'package:mobile/features/learning/presentation/widgets/lesson_bottom_bar.dart';
@@ -50,9 +50,9 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     });
 
     if (state.isLoading) {
-      return const Scaffold(
-        backgroundColor: AppColors.white,
-        body: AppPageBackground(
+      return Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.surface,
+        body: const AppPageBackground(
           child: AppLoadingIndicator(color: AppColors.leafGreen),
         ),
       );
@@ -60,7 +60,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
 
     if (state.questions.isEmpty) {
       return Scaffold(
-        backgroundColor: AppColors.white,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         appBar: _buildAppBar(),
         body: const AppPageBackground(
           child: AppEmptyState(
@@ -75,7 +75,7 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
     final spec = _LessonDetailSpec.fromLesson(widget.lesson);
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: _buildAppBar(),
       body: AppPageBackground(
         child: SafeArea(
@@ -129,14 +129,16 @@ class _LessonDetailScreenState extends ConsumerState<LessonDetailScreen> {
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      backgroundColor: AppColors.cream.withValues(alpha: 0.94),
-      foregroundColor: AppColors.slateGrey,
+      backgroundColor: AppColors.resolve(AppColors.cream, context).withValues(alpha: 0.94),
+      foregroundColor: AppColors.resolve(AppColors.slateGrey, context),
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: false,
       title: Text(
         'Bài mới',
-        style: AppTypography.headingS.copyWith(color: AppColors.navyDark),
+        style: AppTypography.headingS.copyWith(
+          color: AppColors.resolve(AppColors.navyDark, context),
+        ),
       ),
     );
   }
@@ -158,19 +160,19 @@ class _LessonProgressHeader extends StatelessWidget {
     final total = state.questions.length;
     final current = total == 0 ? 0 : state.currentIndex + 1;
 
+    final resolvedColor = AppColors.resolve(spec.color, context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: spec.color.withValues(alpha: 0.16)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.045),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.16)),
+        boxShadow: AppColors.softShadow(
+          context,
+          color: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.045),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -181,10 +183,10 @@ class _LessonProgressHeader extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: spec.color.withValues(alpha: 0.12),
+                  color: resolvedColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusM),
                 ),
-                child: Icon(spec.icon, color: spec.color, size: 22),
+                child: Icon(spec.icon, color: resolvedColor, size: 22),
               ),
               const SizedBox(width: AppSpacing.sp12),
               Expanded(
@@ -196,7 +198,7 @@ class _LessonProgressHeader extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.headingS.copyWith(
-                        color: AppColors.navyDark,
+                        color: AppColors.resolve(AppColors.navyDark, context),
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -204,7 +206,7 @@ class _LessonProgressHeader extends StatelessWidget {
                     Text(
                       'JLPT N${lesson.level} • ${spec.label}',
                       style: AppTypography.label.copyWith(
-                        color: AppColors.slateMuted,
+                        color: AppColors.resolve(AppColors.slateMuted, context),
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -212,7 +214,7 @@ class _LessonProgressHeader extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: AppSpacing.sp12),
-              _ProgressBadge(current: current, total: total, color: spec.color),
+              _ProgressBadge(current: current, total: total, color: resolvedColor),
             ],
           ),
           const SizedBox(height: AppSpacing.sp16),
@@ -221,8 +223,8 @@ class _LessonProgressHeader extends StatelessWidget {
             child: LinearProgressIndicator(
               value: state.progress,
               minHeight: 8,
-              backgroundColor: AppColors.creamDark,
-              valueColor: AlwaysStoppedAnimation<Color>(spec.color),
+              backgroundColor: AppColors.resolve(AppColors.creamDark, context),
+              valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
             ),
           ),
         ],
@@ -244,19 +246,20 @@ class _ProgressBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp12,
         vertical: AppSpacing.sp8,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
+        color: resolvedColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Text(
         '$current/$total',
         style: AppTypography.label.copyWith(
-          color: color,
+          color: resolvedColor,
           fontWeight: FontWeight.w900,
         ),
       ),

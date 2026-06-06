@@ -35,10 +35,13 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (widget.items.isEmpty) {
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+          backgroundColor: Colors.transparent,
+          foregroundColor: theme.colorScheme.onSurface,
           surfaceTintColor: Colors.transparent,
           elevation: 0,
         ),
@@ -76,10 +79,10 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Ôn tập SRS', style: AppTypography.headingS),
-        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: AppColors.ink,
+        foregroundColor: theme.colorScheme.onSurface,
       ),
       body: AppPageBackground(
         child: Padding(
@@ -162,9 +165,10 @@ class _ReviewCompleteView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final nextPlan = ref.watch(dailyStudyPlanProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: theme.colorScheme.surface,
       body: AppPageBackground(
         child: SafeArea(
           child: Padding(
@@ -264,7 +268,7 @@ class _ReviewNextActionCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final next = plan.valueOrNull;
+    final next = plan.value;
     if (next == null) {
       return const AppCard(
         child: SizedBox(
@@ -276,10 +280,12 @@ class _ReviewNextActionCard extends ConsumerWidget {
       );
     }
 
+    final leafGreen = AppColors.resolve(AppColors.leafGreen, context);
+
     return AppCard(
       onTap: () => openDailyStudyPlan(context, ref, next),
-      color: AppColors.leafGreen.withValues(alpha: 0.08),
-      borderColor: AppColors.leafGreen.withValues(alpha: 0.18),
+      color: leafGreen.withValues(alpha: 0.08),
+      borderColor: leafGreen.withValues(alpha: 0.18),
       child: Row(
         children: [
           const Icon(Icons.auto_awesome_rounded, color: AppColors.leafGreen),
@@ -299,7 +305,7 @@ class _ReviewNextActionCard extends ConsumerWidget {
                   next.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+                  style: AppTypography.bodyMBold.copyWith(color: Theme.of(context).colorScheme.onSurface),
                 ),
                 Text(
                   next.reason,
@@ -395,7 +401,7 @@ class _ReviewPrompt extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final accent = _ReviewVisuals.accent(item.type);
+    final accent = AppColors.resolve(_ReviewVisuals.accent(item.type), context);
     final isKanji = item.type == ReviewItemType.kanji;
     final isKnowledgePrompt =
         item.type == ReviewItemType.vocabulary ||
@@ -459,7 +465,7 @@ class _ReviewPrompt extends ConsumerWidget {
                             ? AppTypography.kanjiHero
                             : AppTypography.headingL)
                         .copyWith(
-                          color: AppColors.ink,
+                          color: Theme.of(context).colorScheme.onSurface,
                           fontSize: isKanji
                               ? 42
                               : isKnowledgePrompt
@@ -504,25 +510,26 @@ class _TypeMiniPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedAccent = AppColors.resolve(accent, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp8,
         vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
-        color: accent.withValues(alpha: 0.10),
+        color: resolvedAccent.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(color: accent.withValues(alpha: 0.14)),
+        border: Border.all(color: resolvedAccent.withValues(alpha: 0.14)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(_ReviewVisuals.icon(item.type), color: accent, size: 14),
+          Icon(_ReviewVisuals.icon(item.type), color: resolvedAccent, size: 14),
           const SizedBox(width: AppSpacing.sp4),
           Text(
             _ReviewVisuals.label(item.type),
             style: AppTypography.labelS.copyWith(
-              color: accent,
+              color: resolvedAccent,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -663,16 +670,17 @@ class _ReviewWorkspaceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedAccent = AppColors.resolve(accent, context);
     return Row(
       children: [
         Container(
           width: 34,
           height: 34,
           decoration: BoxDecoration(
-            color: accent.withValues(alpha: 0.10),
+            color: resolvedAccent.withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(AppSpacing.radiusS),
           ),
-          child: Icon(icon, color: accent, size: 18),
+          child: Icon(icon, color: resolvedAccent, size: 18),
         ),
         const SizedBox(width: AppSpacing.sp8),
         Expanded(
@@ -682,7 +690,7 @@ class _ReviewWorkspaceHeader extends StatelessWidget {
               Text(
                 title,
                 style: AppTypography.bodyMBold.copyWith(
-                  color: AppColors.ink,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                   height: 1.2,
                 ),
@@ -692,7 +700,7 @@ class _ReviewWorkspaceHeader extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.label.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                   fontWeight: FontWeight.w600,
                 ),
               ),
@@ -724,7 +732,8 @@ class _KanjiReviewBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isCorrect = state.recognizedText == item.answer;
-    final accent = _ReviewVisuals.accent(item.type);
+    final resolvedAccent = AppColors.resolve(_ReviewVisuals.accent(item.type), context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
 
     return Column(
       children: [
@@ -732,7 +741,7 @@ class _KanjiReviewBody extends StatelessWidget {
           icon: Icons.brush_rounded,
           title: 'Viết chữ Hán',
           subtitle: 'Viết vào ô rồi kiểm tra nét nhận diện',
-          accent: accent,
+          accent: resolvedAccent,
         ),
         const SizedBox(height: AppSpacing.sp12),
         Expanded(
@@ -742,13 +751,13 @@ class _KanjiReviewBody extends StatelessWidget {
                 canvasKey: canvasKey,
                 onDrawingChanged: controller.onDrawingChanged,
                 onClear: controller.resetCanvas,
-                accent: accent,
+                accent: resolvedAccent,
               ),
               if (state.showAnswer)
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColors.white.withValues(alpha: 0.92),
+                      color: Theme.of(context).cardColor.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(AppSpacing.radiusL),
                     ),
                     child: Center(
@@ -760,7 +769,7 @@ class _KanjiReviewBody extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 112,
                               fontFamily: 'Serif',
-                              color: isCorrect ? accent : AppColors.terracotta,
+                              color: isCorrect ? resolvedAccent : resolvedTerracotta,
                             ),
                           ),
                           if (state.recognizedText != null)
@@ -768,8 +777,8 @@ class _KanjiReviewBody extends StatelessWidget {
                               'Bạn viết: ${state.recognizedText}',
                               style: AppTypography.bodyM.copyWith(
                                 color: isCorrect
-                                    ? accent
-                                    : AppColors.terracotta,
+                                    ? resolvedAccent
+                                    : resolvedTerracotta,
                               ),
                             ),
                         ],
@@ -784,8 +793,8 @@ class _KanjiReviewBody extends StatelessWidget {
                   tooltip: 'Xóa nét viết',
                   icon: const Icon(Icons.refresh_rounded),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppColors.white.withValues(alpha: 0.88),
-                    foregroundColor: accent,
+                    backgroundColor: Theme.of(context).cardColor.withValues(alpha: 0.88),
+                    foregroundColor: resolvedAccent,
                   ),
                   onPressed: () {
                     canvasKey.currentState?.clear();
@@ -820,7 +829,9 @@ class _KnowledgeReviewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final accent = _ReviewVisuals.accent(item.type);
+    final resolvedAccent = AppColors.resolve(_ReviewVisuals.accent(item.type), context);
+    final resolvedSlateMuted = AppColors.resolve(AppColors.slateMuted, context);
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
 
     // ── Show Answer State ──────────────────────────────────
     if (state.showAnswer) {
@@ -835,7 +846,7 @@ class _KnowledgeReviewBody extends StatelessWidget {
             icon: Icons.checklist_rounded,
             title: 'Chọn đáp án',
             subtitle: 'Chọn một phương án rồi kiểm tra',
-            accent: accent,
+            accent: resolvedAccent,
           ),
           const SizedBox(height: AppSpacing.sp12),
           Expanded(
@@ -849,14 +860,14 @@ class _KnowledgeReviewBody extends StatelessWidget {
                 return AppCard(
                   onTap: () => onSelectChoice(choice),
                   color: isSelected
-                      ? accent.withValues(alpha: 0.10)
-                      : AppColors.white,
-                  borderColor: isSelected
-                      ? accent
-                      : AppColors.slateLight.withValues(alpha: 0.35),
-                  shadowColor: isSelected
-                      ? accent.withValues(alpha: 0.06)
-                      : AppColors.ink.withValues(alpha: 0.03),
+                       ? resolvedAccent.withValues(alpha: 0.10)
+                       : Theme.of(context).cardColor,
+                   borderColor: isSelected
+                       ? resolvedAccent
+                       : AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.35),
+                   shadowColor: isSelected
+                       ? resolvedAccent.withValues(alpha: 0.06)
+                       : AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.03),
                   padding: const EdgeInsets.all(AppSpacing.sp12),
                   child: Row(
                     children: [
@@ -864,7 +875,7 @@ class _KnowledgeReviewBody extends StatelessWidget {
                         width: 30,
                         height: 30,
                         decoration: BoxDecoration(
-                          color: (isSelected ? accent : AppColors.slateMuted)
+                          color: (isSelected ? resolvedAccent : resolvedSlateMuted)
                               .withValues(alpha: isSelected ? 0.14 : 0.08),
                           borderRadius: BorderRadius.circular(
                             AppSpacing.radiusS,
@@ -874,7 +885,7 @@ class _KnowledgeReviewBody extends StatelessWidget {
                           isSelected
                               ? Icons.check_rounded
                               : Icons.radio_button_unchecked_rounded,
-                          color: isSelected ? accent : AppColors.slateMuted,
+                          color: isSelected ? resolvedAccent : resolvedSlateMuted,
                           size: 18,
                         ),
                       ),
@@ -883,7 +894,7 @@ class _KnowledgeReviewBody extends StatelessWidget {
                         child: Text(
                           choice,
                           style: AppTypography.bodyM.copyWith(
-                            color: isSelected ? accent : AppColors.ink,
+                            color: isSelected ? resolvedAccent : Theme.of(context).colorScheme.onSurface,
                             fontWeight: isSelected
                                 ? FontWeight.w800
                                 : FontWeight.w600,
@@ -909,25 +920,25 @@ class _KnowledgeReviewBody extends StatelessWidget {
             icon: Icons.keyboard_rounded,
             title: 'Gõ nghĩa',
             subtitle: 'Tự nhớ trước khi xem đáp án',
-            accent: accent,
+            accent: resolvedAccent,
           ),
           const SizedBox(height: AppSpacing.sp12),
           Expanded(
             child: Center(
               child: AppCard(
-                color: AppColors.white,
-                borderColor: accent.withValues(alpha: 0.16),
-                shadowColor: accent.withValues(alpha: 0.05),
+                color: Theme.of(context).cardColor,
+                borderColor: resolvedAccent.withValues(alpha: 0.16),
+                shadowColor: resolvedAccent.withValues(alpha: 0.05),
                 padding: const EdgeInsets.all(AppSpacing.sp16),
                 child: TextField(
                   onChanged: onTypedAnswer,
                   textInputAction: TextInputAction.done,
-                  style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+                  style: AppTypography.bodyMBold.copyWith(color: Theme.of(context).colorScheme.onSurface),
                   decoration: InputDecoration(
                     filled: true,
-                    fillColor: AppColors.creamDark.withValues(alpha: 0.36),
+                    fillColor: AppColors.resolve(AppColors.creamDark, context).withValues(alpha: 0.36),
                     hintText: 'Nhập đáp án...',
-                    prefixIcon: Icon(Icons.keyboard_rounded, color: accent),
+                    prefixIcon: Icon(Icons.keyboard_rounded, color: resolvedAccent),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
                       borderSide: BorderSide.none,
@@ -935,12 +946,12 @@ class _KnowledgeReviewBody extends StatelessWidget {
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
                       borderSide: BorderSide(
-                        color: AppColors.slateLight.withValues(alpha: 0.3),
+                        color: resolvedSlateLight.withValues(alpha: 0.3),
                       ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-                      borderSide: BorderSide(color: accent, width: 1.5),
+                      borderSide: BorderSide(color: resolvedAccent, width: 1.5),
                     ),
                   ),
                 ),
@@ -958,7 +969,7 @@ class _KnowledgeReviewBody extends StatelessWidget {
           icon: Icons.psychology_alt_rounded,
           title: 'Tự nhớ đáp án',
           subtitle: 'Nói thầm câu trả lời rồi lật gợi ý nếu cần',
-          accent: accent,
+          accent: resolvedAccent,
         ),
         const SizedBox(height: AppSpacing.sp12),
         Expanded(child: _FlipCard(item: item)),
@@ -1045,25 +1056,25 @@ class _FlipCardState extends State<_FlipCard>
 
   Widget _buildFront() {
     final isGrammar = widget.item.type == ReviewItemType.grammar;
-    final accent = _ReviewVisuals.accent(widget.item.type);
+    final resolvedAccent = AppColors.resolve(_ReviewVisuals.accent(widget.item.type), context);
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.sp20),
-      color: accent.withValues(alpha: 0.08),
-      borderColor: accent.withValues(alpha: 0.18),
-      shadowColor: accent.withValues(alpha: 0.06),
+      color: resolvedAccent.withValues(alpha: 0.08),
+      borderColor: resolvedAccent.withValues(alpha: 0.18),
+      shadowColor: resolvedAccent.withValues(alpha: 0.06),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(
             Icons.touch_app_rounded,
-            color: accent.withValues(alpha: 0.72),
+            color: resolvedAccent.withValues(alpha: 0.72),
             size: 32,
           ),
           const SizedBox(height: AppSpacing.sp12),
           Text(
             isGrammar ? 'Tự nhớ ý nghĩa trước' : 'Chạm để xem gợi ý',
-            style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+            style: AppTypography.bodyMBold.copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: AppSpacing.sp4),
           Text(
@@ -1080,13 +1091,13 @@ class _FlipCardState extends State<_FlipCard>
 
   Widget _buildBack() {
     final isGrammar = widget.item.type == ReviewItemType.grammar;
-    final accent = _ReviewVisuals.accent(widget.item.type);
+    final resolvedAccent = AppColors.resolve(_ReviewVisuals.accent(widget.item.type), context);
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.sp20),
-      color: AppColors.white,
-      borderColor: accent.withValues(alpha: 0.22),
-      shadowColor: accent.withValues(alpha: 0.08),
+      color: Theme.of(context).cardColor,
+      borderColor: resolvedAccent.withValues(alpha: 0.22),
+      shadowColor: resolvedAccent.withValues(alpha: 0.08),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -1094,7 +1105,7 @@ class _FlipCardState extends State<_FlipCard>
             Text(
               'Gợi ý, chưa phải đáp án',
               style: AppTypography.label.copyWith(
-                color: accent,
+                color: resolvedAccent,
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -1103,7 +1114,7 @@ class _FlipCardState extends State<_FlipCard>
           if (widget.item.grammar?.formation.isNotEmpty ?? false) ...[
             Text(
               widget.item.grammar!.formation,
-              style: AppTypography.bodyMBold.copyWith(color: accent),
+              style: AppTypography.bodyMBold.copyWith(color: resolvedAccent),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AppSpacing.sp12),
@@ -1160,16 +1171,19 @@ class _AnswerReveal extends ConsumerWidget {
     final showSpeaker =
         item.type == ReviewItemType.vocabulary ||
         item.type == ReviewItemType.sentence;
-    final accent = isCorrect
-        ? _ReviewVisuals.accent(item.type)
-        : AppColors.terracotta;
+    final resolvedAccent = AppColors.resolve(
+      isCorrect ? _ReviewVisuals.accent(item.type) : AppColors.terracotta,
+      context,
+    );
+    final resolvedWaterBlue = AppColors.resolve(AppColors.waterBlue, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
 
     return Center(
       child: AppCard(
         padding: const EdgeInsets.all(AppSpacing.sp16),
-        color: accent.withValues(alpha: 0.08),
-        borderColor: accent.withValues(alpha: 0.24),
-        shadowColor: accent.withValues(alpha: 0.05),
+        color: resolvedAccent.withValues(alpha: 0.08),
+        borderColor: resolvedAccent.withValues(alpha: 0.24),
+        shadowColor: resolvedAccent.withValues(alpha: 0.05),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -1178,7 +1192,7 @@ class _AnswerReveal extends ConsumerWidget {
               children: [
                 Icon(
                   isCorrect ? Icons.check_circle_rounded : Icons.info_rounded,
-                  color: accent,
+                  color: resolvedAccent,
                   size: 36,
                 ),
                 if (showSpeaker) ...[
@@ -1188,10 +1202,10 @@ class _AnswerReveal extends ConsumerWidget {
                     onPressed: () => _speak(ref),
                     icon: const Icon(Icons.volume_up_rounded, size: 20),
                     style: IconButton.styleFrom(
-                      backgroundColor: AppColors.waterBlue.withValues(
+                      backgroundColor: resolvedWaterBlue.withValues(
                         alpha: 0.12,
                       ),
-                      foregroundColor: AppColors.waterBlue,
+                      foregroundColor: resolvedWaterBlue,
                     ),
                   ),
                 ],
@@ -1203,7 +1217,7 @@ class _AnswerReveal extends ConsumerWidget {
                   ? 'Ý nghĩa: ${item.answer}'
                   : item.answer,
               style: AppTypography.headingS.copyWith(
-                color: AppColors.ink,
+                color: Theme.of(context).colorScheme.onSurface,
                 height: 1.25,
               ),
               textAlign: TextAlign.center,
@@ -1212,7 +1226,7 @@ class _AnswerReveal extends ConsumerWidget {
               const SizedBox(height: AppSpacing.sp8),
               Text(
                 'Bạn gõ: ${state.typedAnswer}',
-                style: AppTypography.bodyM.copyWith(color: accent),
+                style: AppTypography.bodyM.copyWith(color: resolvedAccent),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -1230,10 +1244,10 @@ class _AnswerReveal extends ConsumerWidget {
                 width: double.infinity,
                 padding: const EdgeInsets.all(AppSpacing.sp12),
                 decoration: BoxDecoration(
-                  color: AppColors.terracotta.withValues(alpha: 0.08),
+                  color: resolvedTerracotta.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                   border: Border.all(
-                    color: AppColors.terracotta.withValues(alpha: 0.2),
+                    color: resolvedTerracotta.withValues(alpha: 0.2),
                   ),
                 ),
                 child: Text(

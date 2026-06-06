@@ -1,10 +1,9 @@
-import 'package:drift/drift.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/app/bootstrap/database_initializer_provider.dart';
-import 'package:mobile/core/providers/database_provider.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/grammar/application/providers/grammar_repository_provider.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
+import 'package:mobile/features/home/domain/repositories/study_insight_repository.dart';
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
 import 'package:mobile/features/home/application/providers/home_progress_provider.dart';
 import 'package:mobile/features/kanji/application/providers/kanji_repository_provider.dart';
@@ -13,6 +12,7 @@ import 'package:mobile/features/learning/application/providers/learning_path_pro
 import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/features/review/application/providers/study_event_provider.dart';
 import 'package:mobile/features/settings/application/providers/settings_provider.dart';
+import 'package:mobile/features/settings/domain/entities/app_settings.dart';
 import 'package:mobile/features/vocabulary/application/providers/vocabulary_repository_provider.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
 
@@ -20,31 +20,15 @@ final dailyStudyCoachProvider = Provider<DailyStudyCoach>((ref) {
   return const DailyStudyCoach();
 });
 
+final studyInsightRepositoryProvider = Provider<StudyInsightRepository>((ref) {
+  throw UnimplementedError('studyInsightRepositoryProvider must be overridden');
+});
+
 final weakestStudyAreaProvider = FutureProvider<LearningCategory?>((ref) async {
   await ref.watch(databaseInitializerProvider.future);
   ref.watch(studyEventStreamProvider);
 
-  final db = ref.watch(databaseProvider);
-  final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
-  final thirtyDaysAgo = today.subtract(const Duration(days: 29));
-
-  // SQLite-level aggregation to find the weakest area
-  final row = await db.customSelect(
-    '''
-    SELECT item_type, 
-      AVG(CASE WHEN rating >= 3 THEN 1.0 ELSE 0.0 END) as success_rate
-    FROM review_log_table
-    WHERE review_time >= ?
-    GROUP BY item_type
-    ORDER BY success_rate ASC
-    LIMIT 1
-    ''',
-    variables: [Variable.withDateTime(thirtyDaysAgo)],
-  ).getSingleOrNull();
-
-  if (row == null) return null;
-  return _categoryFromAnalyticsType(row.read<String>('item_type'));
+  return ref.watch(studyInsightRepositoryProvider).findWeakestStudyArea();
 });
 
 final dailyStudyPlanProvider = FutureProvider<DailyStudyPlan>((ref) async {
@@ -52,7 +36,7 @@ final dailyStudyPlanProvider = FutureProvider<DailyStudyPlan>((ref) async {
   ref.watch(studyEventStreamProvider);
 
   final settings =
-      ref.watch(settingsProvider).valueOrNull ?? AppSettings.defaults;
+      ref.watch(settingsProvider).value ?? AppSettings.defaults;
   final level = settings.currentJlptLevel;
   final now = DateTime.now();
 
@@ -140,9 +124,15 @@ final dailyStudyPlanReviewItemsProvider =
         case LearningCategory.mixed:
           // Parallelize mixed review sub-queries
           final results = await Future.wait([
-            ref.read(kanjiRepositoryProvider).getDueCards(now, jlptLevel: plan.level, limit: 8),
-            ref.read(vocabularyRepositoryProvider).getDueVocabulary(now, jlptLevel: plan.level, limit: 8),
-            ref.read(grammarRepositoryProvider).getDueGrammar(jlptLevel: plan.level, limit: 4),
+            ref
+                .read(kanjiRepositoryProvider)
+                .getDueCards(now, jlptLevel: plan.level, limit: 8),
+            ref
+                .read(vocabularyRepositoryProvider)
+                .getDueVocabulary(now, jlptLevel: plan.level, limit: 8),
+            ref
+                .read(grammarRepositoryProvider)
+                .getDueGrammar(jlptLevel: plan.level, limit: 4),
           ]);
           final kanji = results[0] as List<KanjiCard>;
           final vocabulary = results[1] as List<Vocabulary>;
@@ -154,12 +144,3 @@ final dailyStudyPlanReviewItemsProvider =
           ];
       }
     });
-
-LearningCategory? _categoryFromAnalyticsType(String? type) {
-  return switch (type) {
-    'kanji' => LearningCategory.kanji,
-    'vocab' || 'vocabulary' => LearningCategory.vocabulary,
-    'grammar' => LearningCategory.grammar,
-    _ => null,
-  };
-}

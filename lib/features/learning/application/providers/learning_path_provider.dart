@@ -1,25 +1,17 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:mobile/app/bootstrap/database_initializer_provider.dart';
-import 'package:mobile/core/providers/database_provider.dart';
-import 'package:mobile/domain/entities/lesson.dart';
-import 'package:mobile/features/learning/data/repositories/learning_path_repository.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
+import 'package:mobile/features/learning/domain/repositories/learning_path_repository.dart';
 import 'package:mobile/features/settings/application/providers/settings_provider.dart';
+import 'package:mobile/features/settings/domain/entities/app_settings.dart';
 
 export 'package:mobile/features/learning/domain/entities/learning_category.dart';
 
-final learningPathDataProvider = FutureProvider<List<Map<String, dynamic>>>((
-  ref,
-) async {
-  return LearningPathRepository.loadPathDataFromAssets();
-});
-
 final learningPathRepositoryProvider = Provider<LearningPathRepository>((ref) {
-  return LearningPathRepository(
-    ref.watch(databaseProvider),
-    loadPathData: () => ref.read(learningPathDataProvider.future),
-  );
+  throw UnimplementedError('learningPathRepositoryProvider must be overridden');
 });
 
 final learningCategoryProvider = StateProvider<LearningCategory>(
@@ -27,7 +19,7 @@ final learningCategoryProvider = StateProvider<LearningCategory>(
 );
 
 final selectedLevelProvider = StateProvider<int>((ref) {
-  final settings = ref.watch(settingsProvider).valueOrNull;
+  final settings = ref.watch(settingsProvider).value;
   return settings?.currentJlptLevel ?? AppSettings.defaults.currentJlptLevel;
 });
 
@@ -37,7 +29,7 @@ final learningPathProvider =
       final category = ref.watch(learningCategoryProvider);
       final level = ref.watch(selectedLevelProvider);
       final settings =
-          ref.watch(settingsProvider).valueOrNull ?? AppSettings.defaults;
+          ref.watch(settingsProvider).value ?? AppSettings.defaults;
       ref.watch(databaseInitializerProvider);
       return LearningPathNotifier(
         repository,

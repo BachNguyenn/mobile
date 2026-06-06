@@ -24,11 +24,12 @@ class FeatureTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return AppCard(
       onTap: onTap,
       padding: const EdgeInsets.all(AppSpacing.sp16),
-      borderColor: color.withValues(alpha: 0.12),
-      shadowColor: color.withValues(alpha: 0.06),
+      borderColor: resolvedColor.withValues(alpha: 0.12),
+      shadowColor: resolvedColor.withValues(alpha: 0.06),
       child: SizedBox(
         height: 92,
         child: Stack(
@@ -42,7 +43,7 @@ class FeatureTile extends StatelessWidget {
                 height: 92,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: color.withValues(alpha: 0.09),
+                  color: resolvedColor.withValues(alpha: 0.09),
                 ),
               ),
             ),
@@ -55,20 +56,19 @@ class FeatureTile extends StatelessWidget {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        color.withValues(alpha: 0.95),
-                        color.withValues(alpha: 0.70),
+                        resolvedColor.withValues(alpha: 0.95),
+                        resolvedColor.withValues(alpha: 0.70),
                       ],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-                    boxShadow: [
-                      BoxShadow(
-                        color: color.withValues(alpha: 0.18),
-                        blurRadius: 12,
-                        offset: const Offset(0, 7),
-                      ),
-                    ],
+                    boxShadow: AppColors.softShadow(
+                      context,
+                      color: resolvedColor.withValues(alpha: 0.18),
+                      blurRadius: 12,
+                      offset: const Offset(0, 7),
+                    ),
                   ),
                   child: Icon(icon, color: AppColors.white, size: 23),
                 ),
@@ -78,7 +78,7 @@ class FeatureTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.bodyMBold.copyWith(
-                    color: AppColors.ink,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -98,13 +98,13 @@ class FeatureTile extends StatelessWidget {
                   ? Text(
                       trailing!,
                       style: AppTypography.label.copyWith(
-                        color: color,
+                        color: resolvedColor,
                         fontWeight: FontWeight.w800,
                       ),
                     )
                   : Icon(
                       Icons.arrow_forward_rounded,
-                      color: color.withValues(alpha: 0.72),
+                      color: resolvedColor.withValues(alpha: 0.72),
                       size: 20,
                     ),
             ),

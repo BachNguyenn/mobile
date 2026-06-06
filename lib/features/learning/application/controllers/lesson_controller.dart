@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/services/app_logger.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/domain/entities/quiz_question.dart';
 import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.dart';
 import 'package:mobile/features/learning/domain/services/lesson_question_generator.dart';
@@ -82,9 +82,13 @@ class LessonState {
   }
 }
 
-class LessonController extends FamilyNotifier<LessonState, Lesson> {
+class LessonController extends Notifier<LessonState> {
+  final Lesson arg;
+
+  LessonController(this.arg);
+
   @override
-  LessonState build(Lesson arg) {
+  LessonState build() {
     _initializeLesson();
     return LessonState(isLoading: true);
   }

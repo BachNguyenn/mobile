@@ -1,12 +1,16 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 class NotificationService {
-  final FlutterLocalNotificationsPlugin _notifications =
+  static final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
+  static bool _initialized = false;
 
   Future<void> init() async {
+    if (_initialized) return;
+
     tz.initializeTimeZones();
 
     const androidSettings = AndroidInitializationSettings(
@@ -19,7 +23,7 @@ class NotificationService {
       onDidReceiveNotificationResponse: (NotificationResponse response) {},
     );
 
-    // Request notification permission on Android 13+
+    // Android 13+ requires runtime permission before scheduled reminders work.
     final androidPlugin = _notifications
         .resolvePlatformSpecificImplementation<
           AndroidFlutterLocalNotificationsPlugin
@@ -27,10 +31,14 @@ class NotificationService {
     if (androidPlugin != null) {
       await androidPlugin.requestNotificationsPermission();
     }
+
+    _initialized = true;
   }
 
   /// Show an immediate test notification (useful for debugging).
   Future<void> showTestNotification() async {
+    await init();
+
     await _notifications.show(
       id: 99,
       title: 'Thông báo thử',
@@ -50,18 +58,20 @@ class NotificationService {
     required int hour,
     required int minute,
   }) async {
-    // Cancel existing reminder first
+    await init();
+
+    // Keep a single reminder slot so settings changes do not duplicate alarms.
     await cancelDailyReminder();
 
     await _notifications.zonedSchedule(
       id: 0,
-      title: 'Đến giờ học rồi 📚',
+      title: 'Đến giờ học rồi',
       body: 'Dành vài phút ôn tiếng Nhật hôm nay nhé.',
       scheduledDate: _nextInstanceOfTime(hour, minute),
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           'daily_reminder',
-          'Nhắc nhở hàng ngày',
+          'Nhắc nhở hằng ngày',
           channelDescription: 'Nhắc bạn học tiếng Nhật mỗi ngày',
           importance: Importance.max,
           priority: Priority.high,
@@ -72,8 +82,9 @@ class NotificationService {
     );
   }
 
-  Future<void> cancelDailyReminder() {
-    return _notifications.cancel(id: 0);
+  Future<void> cancelDailyReminder() async {
+    await init();
+    await _notifications.cancel(id: 0);
   }
 
   /// Returns the next occurrence of [hour]:[minute] in local timezone.
@@ -93,3 +104,7 @@ class NotificationService {
     return scheduled;
   }
 }
+
+final notificationServiceProvider = Provider<NotificationService>((ref) {
+  return NotificationService();
+});

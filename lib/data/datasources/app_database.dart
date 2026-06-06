@@ -24,6 +24,20 @@ class KanjiCardTable extends Table {
   TextColumn get mnemonic => text().nullable()();
   TextColumn get relatedWordsJson =>
       text().withDefault(const Constant('[]')).named('related_words_json')();
+  TextColumn get strokePathsJson =>
+      text().withDefault(const Constant('[]')).named('stroke_paths_json')();
+  IntColumn get strokeCount => integer().nullable().named('stroke_count')();
+  IntColumn get grade => integer().nullable()();
+  IntColumn get frequency => integer().nullable()();
+  IntColumn get radicalNumber => integer().nullable().named('radical_number')();
+  TextColumn get radicalNamesJson =>
+      text().withDefault(const Constant('[]')).named('radical_names_json')();
+  TextColumn get nanoriJson =>
+      text().withDefault(const Constant('[]')).named('nanori_json')();
+  TextColumn get variantsJson =>
+      text().withDefault(const Constant('[]')).named('variants_json')();
+  TextColumn get queryCodesJson =>
+      text().withDefault(const Constant('[]')).named('query_codes_json')();
   RealColumn get stability => real().withDefault(const Constant(0.0))();
   RealColumn get difficulty => real().withDefault(const Constant(0.0))();
   DateTimeColumn get lastReview => dateTime().nullable().named('last_review')();
@@ -131,7 +145,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.executor);
 
   @override
-  int get schemaVersion => 12;
+  int get schemaVersion => 13;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -265,6 +279,17 @@ class AppDatabase extends _$AppDatabase {
       if (from < 12) {
         await _createVocabularySearchTable();
         await _createGrammarSearchTable();
+      }
+      if (from < 13) {
+        await m.addColumn(kanjiCardTable, kanjiCardTable.strokePathsJson);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.strokeCount);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.grade);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.frequency);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.radicalNumber);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.radicalNamesJson);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.nanoriJson);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.variantsJson);
+        await m.addColumn(kanjiCardTable, kanjiCardTable.queryCodesJson);
       }
     },
   );
@@ -446,6 +471,15 @@ class AppDatabase extends _$AppDatabase {
     radicalsJson: d.radicalsJson,
     mnemonic: d.mnemonic,
     relatedWordsJson: d.relatedWordsJson,
+    strokePathsJson: d.strokePathsJson,
+    strokeCount: d.strokeCount,
+    grade: d.grade,
+    frequency: d.frequency,
+    radicalNumber: d.radicalNumber,
+    radicalNamesJson: d.radicalNamesJson,
+    nanoriJson: d.nanoriJson,
+    variantsJson: d.variantsJson,
+    queryCodesJson: d.queryCodesJson,
     stability: d.stability,
     difficulty: d.difficulty,
     lastReview: d.lastReview,
@@ -467,6 +501,15 @@ class AppDatabase extends _$AppDatabase {
         radicalsJson: Value(c.radicalsJson),
         mnemonic: Value(c.mnemonic),
         relatedWordsJson: Value(c.relatedWordsJson),
+        strokePathsJson: Value(c.strokePathsJson),
+        strokeCount: Value(c.strokeCount),
+        grade: Value(c.grade),
+        frequency: Value(c.frequency),
+        radicalNumber: Value(c.radicalNumber),
+        radicalNamesJson: Value(c.radicalNamesJson),
+        nanoriJson: Value(c.nanoriJson),
+        variantsJson: Value(c.variantsJson),
+        queryCodesJson: Value(c.queryCodesJson),
         stability: Value(c.stability),
         difficulty: Value(c.difficulty),
         lastReview: Value(c.lastReview),

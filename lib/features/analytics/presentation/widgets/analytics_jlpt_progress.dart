@@ -11,17 +11,18 @@ class AnalyticsJlptProgress extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return AppCard(
       padding: AppSpacing.cardPadding,
-      color: AppColors.white,
-      borderColor: AppColors.slateLight.withValues(alpha: 0.2),
-      shadowColor: AppColors.ink.withValues(alpha: 0.04),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Phân bổ theo JLPT',
-            style: AppTypography.headingS.copyWith(color: AppColors.ink),
+            style: AppTypography.headingS.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: AppSpacing.sp16),
           _JlptProgressRow(
@@ -68,7 +69,9 @@ class _JlptProgressRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final value = percent.clamp(0.0, 1.0).toDouble();
+    final resolvedColor = AppColors.resolve(color, context);
 
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sp12),
@@ -78,15 +81,17 @@ class _JlptProgressRow extends StatelessWidget {
             width: 32,
             child: Text(
               level,
-              style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+              style: AppTypography.bodyMBold.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ),
           const SizedBox(width: AppSpacing.sp12),
           Expanded(
             child: LinearProgressIndicator(
               value: value,
-              backgroundColor: color.withValues(alpha: 0.1),
-              color: color,
+              backgroundColor: resolvedColor.withValues(alpha: 0.1),
+              color: resolvedColor,
               borderRadius: BorderRadius.circular(10),
               minHeight: 8,
             ),

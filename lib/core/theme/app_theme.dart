@@ -40,32 +40,38 @@ abstract final class AppTheme {
       colorScheme: colorScheme,
       scaffoldBackgroundColor: surface,
       cardColor: card,
-      textTheme: baseTextTheme.apply(
-        fontFamily: 'NotoSansJP',
-        bodyColor: body,
-        displayColor: text,
-      ).copyWith(
-        headlineLarge: TextStyle(
-          fontFamily: 'NotoSerif',
-          fontSize: 24,
-          fontWeight: FontWeight.w700,
-          color: text,
-        ),
-        headlineMedium: TextStyle(
-          fontFamily: 'NotoSerif',
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: body,
-        ),
-        bodyLarge: TextStyle(fontSize: 16, color: body, fontFamily: 'NotoSansJP'),
-        bodyMedium: TextStyle(fontSize: 14, color: body, fontFamily: 'NotoSansJP'),
-        labelSmall: TextStyle(
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
-          color: muted,
-          fontFamily: 'NotoSansJP',
-        ),
-      ),
+      textTheme: baseTextTheme
+          .apply(fontFamily: 'NotoSansJP', bodyColor: body, displayColor: text)
+          .copyWith(
+            headlineLarge: TextStyle(
+              fontFamily: 'NotoSerif',
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: text,
+            ),
+            headlineMedium: TextStyle(
+              fontFamily: 'NotoSerif',
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+              color: body,
+            ),
+            bodyLarge: TextStyle(
+              fontSize: 16,
+              color: body,
+              fontFamily: 'NotoSansJP',
+            ),
+            bodyMedium: TextStyle(
+              fontSize: 14,
+              color: body,
+              fontFamily: 'NotoSansJP',
+            ),
+            labelSmall: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: muted,
+              fontFamily: 'NotoSansJP',
+            ),
+          ),
       appBarTheme: AppBarTheme(
         backgroundColor: isDark ? surface : AppColors.porcelain,
         foregroundColor: text,
@@ -192,7 +198,11 @@ abstract final class AppTheme {
           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
           borderSide: BorderSide(color: primary, width: 1.5),
         ),
-        hintStyle: TextStyle(fontFamily: 'NotoSans', fontSize: 14, color: muted),
+        hintStyle: TextStyle(
+          fontFamily: 'NotoSans',
+          fontSize: 14,
+          color: muted,
+        ),
         prefixIconColor: muted,
       ),
       dividerTheme: DividerThemeData(color: border, thickness: 0.5, space: 0),

@@ -15,20 +15,21 @@ class JlptLevelBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp8,
         vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
+        color: resolvedColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-        border: Border.all(color: color.withValues(alpha: 0.20)),
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.20)),
       ),
       child: Text(
         'N$level',
         style: AppTypography.labelS.copyWith(
-          color: color,
+          color: resolvedColor,
           fontWeight: FontWeight.w900,
         ),
       ),

@@ -4,15 +4,16 @@ import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:mobile/data/datasources/app_database.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
+import 'package:mobile/features/learning/domain/repositories/learning_path_repository.dart';
 
-class LearningPathRepository {
+class AssetLearningPathRepository implements LearningPathRepository {
   final AppDatabase _db;
   final Future<List<Map<String, dynamic>>> Function() _loadPathData;
 
-  LearningPathRepository(
+  AssetLearningPathRepository(
     this._db, {
     required Future<List<Map<String, dynamic>>> Function() loadPathData,
   }) : _loadPathData = loadPathData;
@@ -26,6 +27,7 @@ class LearningPathRepository {
     return compute(_decodePathData, jsonString);
   }
 
+  @override
   Future<List<Lesson>> getLessons({
     required LearningCategory category,
     required int level,
@@ -82,6 +84,7 @@ class LearningPathRepository {
     return _withUnlockState(sorted);
   }
 
+  @override
   Future<void> setLessonCompletion(String id, bool isCompleted) async {
     if (isCompleted) {
       await _db

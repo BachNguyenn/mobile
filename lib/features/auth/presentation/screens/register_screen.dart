@@ -53,15 +53,17 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        backgroundColor: AppColors.white,
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         leading: IconButton(
           onPressed: () => Navigator.pop(context),
           icon: const Icon(Icons.arrow_back_rounded),
-          color: AppColors.zenBlue,
+          color: AppColors.resolve(AppColors.zenBlue, context),
         ),
       ),
       body: AppPageBackground(
@@ -79,8 +81,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
               const SizedBox(height: AppSpacing.sp24),
               AppCard(
                 padding: const EdgeInsets.all(AppSpacing.sp20),
-                borderColor: AppColors.zenBlue.withValues(alpha: 0.12),
-                shadowColor: AppColors.zenBlue.withValues(alpha: 0.07),
+                borderColor: AppColors.resolve(AppColors.zenBlue, context).withValues(alpha: 0.12),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -89,7 +90,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                       Text(
                         'Tạo tài khoản',
                         style: AppTypography.headingM.copyWith(
-                          color: AppColors.ink,
+                          color: theme.colorScheme.onSurface,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -104,7 +105,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         style: AppTypography.bodyM.copyWith(
-                          color: AppColors.ink,
+                          color: theme.colorScheme.onSurface,
                         ),
                         decoration: _inputDecoration(
                           label: 'Email',
@@ -119,7 +120,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         obscureText: _obscurePassword,
                         textInputAction: TextInputAction.next,
                         style: AppTypography.bodyM.copyWith(
-                          color: AppColors.ink,
+                          color: theme.colorScheme.onSurface,
                         ),
                         decoration: _inputDecoration(
                           label: 'Mật khẩu',
@@ -149,7 +150,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => _handleRegister(),
                         style: AppTypography.bodyM.copyWith(
-                          color: AppColors.ink,
+                          color: theme.colorScheme.onSurface,
                         ),
                         decoration: _inputDecoration(
                           label: 'Xác nhận mật khẩu',
@@ -198,13 +199,13 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
                     TextSpan(
                       text: 'Đã có tài khoản? ',
                       style: AppTypography.bodyM.copyWith(
-                        color: AppColors.slateGrey,
+                        color: theme.colorScheme.onSurfaceVariant,
                       ),
                       children: [
                         TextSpan(
                           text: 'Đăng nhập',
                           style: AppTypography.bodyMBold.copyWith(
-                            color: AppColors.leafGreen,
+                            color: AppColors.resolve(AppColors.leafGreen, context),
                             fontWeight: FontWeight.w900,
                           ),
                         ),
@@ -229,7 +230,11 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      prefixIcon: Icon(icon, color: AppColors.zenBlue, size: 20),
+      prefixIcon: Icon(
+        icon,
+        color: AppColors.resolve(AppColors.zenBlue, context),
+        size: 20,
+      ),
       suffixIcon: suffixIcon,
     );
   }
@@ -279,16 +284,10 @@ class _RegisterHeader extends StatelessWidget {
           width: 88,
           height: 88,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(24),
-            border: Border.all(color: AppColors.navySoft),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.zenBlue.withValues(alpha: 0.10),
-                blurRadius: 24,
-                offset: const Offset(0, 12),
-              ),
-            ],
+            border: Border.all(color: AppColors.resolve(AppColors.navySoft, context)),
+            boxShadow: AppColors.softShadow(context),
           ),
           clipBehavior: Clip.antiAlias,
           child: Image.asset(
@@ -301,7 +300,7 @@ class _RegisterHeader extends StatelessWidget {
         Text(
           'Zen Japanese',
           style: AppTypography.headingL.copyWith(
-            color: AppColors.zenBlue,
+            color: AppColors.resolve(AppColors.zenBlue, context),
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -309,7 +308,7 @@ class _RegisterHeader extends StatelessWidget {
         Text(
           '登録して学び始めよう',
           style: AppTypography.japaneseQuote.copyWith(
-            color: AppColors.leafDark,
+            color: AppColors.resolve(AppColors.leafDark, context),
             fontWeight: FontWeight.w800,
             letterSpacing: 0,
           ),
@@ -327,12 +326,14 @@ class _VisibilityButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return IconButton(
       tooltip: isObscured ? 'Hiện mật khẩu' : 'Ẩn mật khẩu',
       onPressed: onPressed,
       icon: Icon(
         isObscured ? Icons.visibility_off_rounded : Icons.visibility_rounded,
-        color: AppColors.slateMuted,
+        color: theme.colorScheme.onSurfaceVariant,
         size: 20,
       ),
     );

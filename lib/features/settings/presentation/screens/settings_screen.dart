@@ -9,6 +9,8 @@ import 'package:mobile/features/auth/domain/entities/auth_user.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 import 'package:mobile/features/settings/application/providers/settings_provider.dart';
+import 'package:mobile/features/settings/domain/entities/app_settings.dart';
+import 'package:mobile/features/settings/domain/entities/app_theme_mode.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
@@ -21,18 +23,18 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authStateProvider);
     final settingsAsync = ref.watch(settingsProvider);
-    final user = authState.valueOrNull;
+    final user = authState.value;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Cài đặt',
           style: AppTypography.headingM.copyWith(
-            color: AppColors.zenBlue,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w900,
           ),
         ),
-        backgroundColor: AppColors.white.withValues(alpha: 0.98),
+        backgroundColor: Colors.transparent,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
       ),
@@ -129,22 +131,30 @@ class SettingsScreen extends ConsumerWidget {
                         style: AppTypography.caption,
                       ),
                       value: settings.dailyReminderEnabled,
-                      activeThumbColor: AppColors.mossGreen,
+                      activeThumbColor: AppColors.resolve(AppColors.mossGreen, context),
                       onChanged: (enabled) async {
                         await ref
                             .read(settingsProvider.notifier)
                             .updateDailyReminderEnabled(enabled);
-                        if (!enabled) {
-                          await NotificationService().cancelDailyReminder();
+                        final notificationService = ref.read(
+                          notificationServiceProvider,
+                        );
+                        if (enabled) {
+                          await notificationService.scheduleDailyReminder(
+                            hour: settings.reminderHour,
+                            minute: settings.reminderMinute,
+                          );
+                        } else {
+                          await notificationService.cancelDailyReminder();
                         }
                       },
                     ),
                     ListTile(
                       contentPadding: EdgeInsets.zero,
                       enabled: settings.dailyReminderEnabled,
-                      leading: const Icon(
+                      leading: Icon(
                         Icons.schedule_rounded,
-                        color: AppColors.mossGreen,
+                        color: AppColors.resolve(AppColors.mossGreen, context),
                       ),
                       title: const Text(
                         'Giờ nhắc học',
@@ -179,7 +189,7 @@ class SettingsScreen extends ConsumerWidget {
                         style: AppTypography.caption,
                       ),
                       value: settings.hapticsEnabled,
-                      activeThumbColor: AppColors.mossGreen,
+                      activeThumbColor: AppColors.resolve(AppColors.mossGreen, context),
                       onChanged: (enabled) {
                         ref
                             .read(settingsProvider.notifier)
@@ -244,7 +254,7 @@ class SettingsScreen extends ConsumerWidget {
         .read(settingsProvider.notifier)
         .updateReminderTime(hour: picked.hour, minute: picked.minute);
     if (settings.dailyReminderEnabled) {
-      await NotificationService().scheduleDailyReminder(
+      await ref.read(notificationServiceProvider).scheduleDailyReminder(
         hour: picked.hour,
         minute: picked.minute,
       );
@@ -284,6 +294,8 @@ class _SettingsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -295,7 +307,7 @@ class _SettingsSection extends StatelessWidget {
           child: Text(
             title,
             style: AppTypography.headingS.copyWith(
-              color: AppColors.ink,
+              color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -325,10 +337,11 @@ class _ProfileSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedZenBlue = AppColors.resolve(AppColors.zenBlue, context);
     return AppCard(
-      color: AppColors.zenBlue,
-      borderColor: AppColors.zenBlue,
-      shadowColor: AppColors.zenBlue.withValues(alpha: 0.14),
+      color: resolvedZenBlue,
+      borderColor: resolvedZenBlue,
+      shadowColor: resolvedZenBlue.withValues(alpha: 0.14),
       child: Row(
         children: [
           CircleAvatar(
@@ -391,31 +404,31 @@ class _ProfileSummaryCard extends StatelessWidget {
 }
 
 class _ThemeModeTile extends StatelessWidget {
-  final ThemeMode selected;
-  final ValueChanged<ThemeMode> onChanged;
+  final AppThemeMode selected;
+  final ValueChanged<AppThemeMode> onChanged;
 
   const _ThemeModeTile({required this.selected, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
-    return _SegmentedSetting<ThemeMode>(
+    return _SegmentedSetting<AppThemeMode>(
       title: 'Chế độ giao diện',
       subtitle: _themeLabel(selected),
       icon: Icons.contrast_rounded,
       selected: selected,
-      values: ThemeMode.values,
+      values: AppThemeMode.values,
       labelFor: _themeLabel,
       onChanged: onChanged,
     );
   }
 
-  String _themeLabel(ThemeMode mode) {
+  String _themeLabel(AppThemeMode mode) {
     switch (mode) {
-      case ThemeMode.system:
+      case AppThemeMode.system:
         return 'Hệ thống';
-      case ThemeMode.light:
+      case AppThemeMode.light:
         return 'Sáng';
-      case ThemeMode.dark:
+      case AppThemeMode.dark:
         return 'Tối';
     }
   }
@@ -488,6 +501,9 @@ class _SegmentedSetting<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final resolvedMossGreen = AppColors.resolve(AppColors.mossGreen, context);
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AppSpacing.sp8),
       child: Column(
@@ -495,7 +511,7 @@ class _SegmentedSetting<T> extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(icon, color: AppColors.mossGreen),
+              Icon(icon, color: resolvedMossGreen),
               const SizedBox(width: AppSpacing.sp12),
               Expanded(
                 child: Column(
@@ -517,19 +533,23 @@ class _SegmentedSetting<T> extends StatelessWidget {
               return ChoiceChip(
                 label: Text(labelFor(value)),
                 selected: isSelected,
-                selectedColor: AppColors.mossGreen.withValues(alpha: 0.18),
+                selectedColor: resolvedMossGreen.withValues(alpha: 0.18),
                 backgroundColor: Theme.of(context).cardColor,
                 showCheckmark: false,
                 labelStyle: AppTypography.label.copyWith(
-                  color: isSelected ? AppColors.mossGreen : AppColors.slateGrey,
+                  color: isSelected
+                      ? resolvedMossGreen
+                      : theme.colorScheme.onSurface,
                   fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                   side: BorderSide(
                     color: isSelected
-                        ? AppColors.mossGreen
-                        : AppColors.slateLight.withValues(alpha: 0.35),
+                        ? resolvedMossGreen
+                        : theme.colorScheme.outlineVariant.withValues(
+                            alpha: 0.55,
+                          ),
                   ),
                 ),
                 onSelected: (_) => onChanged(value),
@@ -552,9 +572,9 @@ class _CategoryPickerTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: const Icon(
+      leading: Icon(
         Icons.auto_stories_rounded,
-        color: AppColors.mossGreen,
+        color: AppColors.resolve(AppColors.mossGreen, context),
       ),
       title: const Text('Lộ trình mặc định', style: AppTypography.bodyMBold),
       subtitle: Text(_labelFor(selected), style: AppTypography.caption),
@@ -568,6 +588,8 @@ class _CategoryPickerTile extends StatelessWidget {
       context: context,
       backgroundColor: Colors.transparent,
       builder: (context) {
+        final theme = Theme.of(context);
+
         return Padding(
           padding: const EdgeInsets.all(AppSpacing.sp16),
           child: AppCard(
@@ -581,17 +603,17 @@ class _CategoryPickerTile extends StatelessWidget {
                   leading: Icon(
                     _iconFor(category),
                     color: isSelected
-                        ? AppColors.mossGreen
-                        : AppColors.slateMuted,
+                        ? AppColors.resolve(AppColors.mossGreen, context)
+                        : theme.colorScheme.onSurfaceVariant,
                   ),
                   title: Text(
                     _labelFor(category),
                     style: AppTypography.bodyMBold,
                   ),
                   trailing: isSelected
-                      ? const Icon(
+                      ? Icon(
                           Icons.check_rounded,
-                          color: AppColors.mossGreen,
+                          color: AppColors.resolve(AppColors.mossGreen, context),
                         )
                       : null,
                   onTap: () {
@@ -644,7 +666,7 @@ class _LearningGoalTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: const Icon(Icons.flag_rounded, color: AppColors.mossGreen),
+      leading: Icon(Icons.flag_rounded, color: AppColors.resolve(AppColors.mossGreen, context)),
       title: const Text('Mục tiêu học', style: AppTypography.bodyMBold),
       subtitle: Text(selected.label, style: AppTypography.caption),
       trailing: const Icon(Icons.chevron_right_rounded),
@@ -669,9 +691,9 @@ class _LearningGoalTile extends StatelessWidget {
                 return ListTile(
                   title: Text(goal.label, style: AppTypography.bodyMBold),
                   trailing: isSelected
-                      ? const Icon(
+                      ? Icon(
                           Icons.check_rounded,
-                          color: AppColors.mossGreen,
+                          color: AppColors.resolve(AppColors.mossGreen, context),
                         )
                       : null,
                   onTap: () {

@@ -5,7 +5,7 @@ import 'package:mobile/core/content/app_content_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
-import '../../domain/entities/zen_garden.dart';
+import '../../features/garden/domain/entities/zen_garden.dart';
 
 /// Header Vườn Zen cho SliverAppBar
 ///
@@ -32,7 +32,7 @@ class ZenGardenHeader extends ConsumerWidget {
   });
 
   String _motivation(WidgetRef ref) {
-    final motivations = ref.watch(appContentProvider).valueOrNull?.motivations;
+    final motivations = ref.watch(appContentProvider).value?.motivations;
     if (motivations == null || motivations.isEmpty) return '';
     final index = DateTime.now().day % motivations.length;
     return motivations[index];
@@ -86,7 +86,10 @@ class ZenGardenHeader extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: AppSpacing.sp4),
-                const Text('Hôm nay bạn muốn học gì?', style: AppTypography.headingL),
+                const Text(
+                  'Hôm nay bạn muốn học gì?',
+                  style: AppTypography.headingL,
+                ),
                 const SizedBox(height: AppSpacing.sp12),
 
                 if (motivation.isNotEmpty)

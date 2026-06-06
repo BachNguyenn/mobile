@@ -3,6 +3,13 @@
 Flutter app for Japanese study with JLPT libraries, sentence practice, SRS
 review, handwriting recognition, analytics, and a Zen garden reward loop.
 
+## Project Guide
+
+- [Project structure](docs/project_structure.md) explains each major folder and
+  where new code should live.
+- [Layered architecture](docs/layered_architecture.md) documents the
+  feature-first Clean Architecture boundaries used in `lib/`.
+
 ## Setup
 
 1. Install Flutter and platform toolchains.
@@ -22,6 +29,22 @@ flutter pub get
 ```bash
 flutter analyze --no-pub
 flutter test --no-pub
+```
+
+## Local Cleanup
+
+These files are generated locally and can be removed when the workspace needs a
+fresh start:
+
+```bash
+build/
+.dart_tool/
+.sandbox_appdata/
+.idea/
+*.iml
+.flutter
+.flutter_tool_state
+.flutter-plugins-dependencies
 ```
 
 ## Android Release Signing

@@ -187,10 +187,13 @@ class GrammarReviewQuestionGenerator {
   }
 }
 
-class GrammarReviewController
-    extends FamilyNotifier<GrammarReviewState, GrammarReviewDeck> {
+class GrammarReviewController extends Notifier<GrammarReviewState> {
+  final GrammarReviewDeck arg;
+
+  GrammarReviewController(this.arg);
+
   @override
-  GrammarReviewState build(GrammarReviewDeck arg) {
+  GrammarReviewState build() {
     final questions = const GrammarReviewQuestionGenerator().generate(
       items: arg.items,
       allGrammar: arg.allGrammar,

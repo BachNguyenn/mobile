@@ -30,14 +30,13 @@ class HomePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final progress = ref.watch(homeProgressProvider).valueOrNull;
+    final progress = ref.watch(homeProgressProvider).value;
     final dailyPlan = ref.watch(dailyStudyPlanProvider);
     final missions = ref.watch(gardenMissionProvider);
-    final user = ref.watch(authStateProvider).valueOrNull;
+    final user = ref.watch(authStateProvider).value;
     final data = progress ?? HomeProgress.empty;
 
     return Scaffold(
-      backgroundColor: AppColors.white,
       body: AppPageBackground(
         child: SafeArea(
           bottom: false,
@@ -97,7 +96,8 @@ class HomePage extends ConsumerWidget {
                     const SizedBox(height: AppSpacing.sp24),
                     RepaintBoundary(
                       child: _ZenGardenCard(
-                        onTap: () => Navigator.push(context, AppRoutes.garden()),
+                        onTap: () =>
+                            Navigator.push(context, AppRoutes.garden()),
                       ),
                     ),
                     const SizedBox(height: AppSpacing.sp24),
@@ -142,9 +142,9 @@ class _TopBar extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-            border: Border.all(color: AppColors.navySoft),
+            border: Border.all(color: AppColors.resolve(AppColors.navySoft, context)),
           ),
           clipBehavior: Clip.antiAlias,
           child: Image.asset(
@@ -163,14 +163,14 @@ class _TopBar extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.headingS.copyWith(
-                  color: AppColors.ink,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                 ),
               ),
               Text(
                 '日本語を少しずつ',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.leafDark,
+                  color: AppColors.resolve(AppColors.leafDark, context),
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -184,7 +184,7 @@ class _TopBar extends StatelessWidget {
             tooltip: 'Tìm kiếm',
             onPressed: () => Navigator.push(context, AppRoutes.dictionary()),
             icon: const Icon(Icons.search_rounded),
-            color: AppColors.zenBlue,
+            color: AppColors.resolve(AppColors.zenBlue, context),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints.tightFor(width: 44, height: 44),
             visualDensity: VisualDensity.compact,
@@ -224,18 +224,29 @@ class _DailyStudyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final percent = (progress.overallPercentage * 100).round();
-    final currentPlan = plan.valueOrNull;
+    final currentPlan = plan.value;
     final title = currentPlan?.title ?? 'Đang chọn phiên học';
     final subtitle =
         currentPlan?.subtitle ?? 'Đang chọn phiên học phù hợp cho bạn.';
     final compactReason =
         currentPlan?.reason.replaceFirst(' đến hạn', '') ??
         'Dựa trên tiến độ hiện tại';
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final resolvedZenBlue = AppColors.resolve(AppColors.zenBlue, context);
     return AppCard(
       onTap: currentPlan == null ? null : () => onTap(currentPlan),
-      color: AppColors.zenBlue,
-      borderColor: AppColors.zenBlue,
-      shadowColor: AppColors.zenBlue.withValues(alpha: 0.16),
+      color: isDark ? null : resolvedZenBlue,
+      borderColor: isDark
+          ? const Color(0xFF353F6C).withValues(alpha: 0.4)
+          : resolvedZenBlue,
+      gradient: isDark
+          ? const LinearGradient(
+              colors: [Color(0xFF1F2544), Color(0xFF151A30)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            )
+          : null,
+      shadowColor: isDark ? Colors.transparent : resolvedZenBlue.withValues(alpha: 0.16),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.sp16,
         AppSpacing.sp12,
@@ -422,23 +433,24 @@ class _ReviewStrip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
     return AppCard(
       onTap: onTap,
       padding: const EdgeInsets.all(AppSpacing.sp16),
-      borderColor: AppColors.leafGreen.withValues(alpha: 0.14),
-      shadowColor: AppColors.leafGreen.withValues(alpha: 0.05),
+      borderColor: resolvedLeafGreen.withValues(alpha: 0.14),
+      shadowColor: resolvedLeafGreen.withValues(alpha: 0.05),
       child: Row(
         children: [
           Container(
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppColors.leafGreen.withValues(alpha: 0.10),
+              color: resolvedLeafGreen.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.refresh_rounded,
-              color: AppColors.leafGreen,
+              color: resolvedLeafGreen,
             ),
           ),
           const SizedBox(width: AppSpacing.sp12),
@@ -453,7 +465,7 @@ class _ReviewStrip extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.bodyMBold.copyWith(
-                    color: AppColors.ink,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -466,7 +478,7 @@ class _ReviewStrip extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(Icons.arrow_forward_rounded, color: AppColors.leafGreen),
+          Icon(Icons.arrow_forward_rounded, color: resolvedLeafGreen),
         ],
       ),
     );
@@ -557,8 +569,9 @@ class _MenuTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Material(
-      color: AppColors.white,
+      color: Theme.of(context).cardColor,
       borderRadius: BorderRadius.circular(AppSpacing.radiusM),
       child: InkWell(
         onTap: onTap,
@@ -568,7 +581,9 @@ class _MenuTile extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             border: Border.all(
-              color: AppColors.slateLight.withValues(alpha: 0.32),
+              color:
+                  Theme.of(context).dividerTheme.color ??
+                  AppColors.slateLight.withValues(alpha: 0.32),
             ),
           ),
           child: Column(
@@ -578,10 +593,10 @@ class _MenuTile extends StatelessWidget {
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.10),
+                  color: resolvedColor.withValues(alpha: 0.10),
                   shape: BoxShape.circle,
                 ),
-                child: Icon(icon, color: color, size: 22),
+                child: Icon(icon, color: resolvedColor, size: 22),
               ),
               const SizedBox(height: AppSpacing.sp8),
               Text(
@@ -589,7 +604,7 @@ class _MenuTile extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: AppTypography.label.copyWith(
-                  color: AppColors.ink,
+                  color: Theme.of(context).colorScheme.onSurface,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -611,6 +626,7 @@ class _MissionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return missions.when(
       data: (summary) {
+        final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
         return AppCard(
           onTap: onTap,
           padding: const EdgeInsets.fromLTRB(
@@ -619,8 +635,8 @@ class _MissionCard extends StatelessWidget {
             AppSpacing.sp16,
             AppSpacing.sp12,
           ),
-          borderColor: AppColors.leafGreen.withValues(alpha: 0.14),
-          shadowColor: AppColors.leafGreen.withValues(alpha: 0.04),
+          borderColor: resolvedLeafGreen.withValues(alpha: 0.14),
+          shadowColor: resolvedLeafGreen.withValues(alpha: 0.04),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -630,7 +646,7 @@ class _MissionCard extends StatelessWidget {
                   Text(
                     'Nhiệm vụ hôm nay',
                     style: AppTypography.headingS.copyWith(
-                      color: AppColors.ink,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -638,7 +654,7 @@ class _MissionCard extends StatelessWidget {
                   Text(
                     '${summary.completedCount}/${summary.missions.length}',
                     style: AppTypography.label.copyWith(
-                      color: AppColors.leafGreen,
+                      color: resolvedLeafGreen,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -668,9 +684,10 @@ class _MissionRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(mission.color, context);
     return Row(
       children: [
-        Icon(mission.icon, color: mission.color, size: 21),
+        Icon(mission.icon, color: resolvedColor, size: 21),
         const SizedBox(width: AppSpacing.sp8),
         Expanded(
           child: Column(
@@ -684,7 +701,7 @@ class _MissionRow extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.bodyMBold.copyWith(
-                        color: AppColors.ink,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -693,7 +710,7 @@ class _MissionRow extends StatelessWidget {
                   Text(
                     '${mission.current}/${mission.target}',
                     style: AppTypography.label.copyWith(
-                      color: mission.color,
+                      color: resolvedColor,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -705,8 +722,8 @@ class _MissionRow extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: mission.progress,
                   minHeight: 5,
-                  backgroundColor: AppColors.creamDark,
-                  valueColor: AlwaysStoppedAnimation<Color>(mission.color),
+                  backgroundColor: AppColors.resolve(AppColors.creamDark, context),
+                  valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
                 ),
               ),
             ],
@@ -724,11 +741,20 @@ class _ZenGardenCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedZenBlue = AppColors.resolveColors([
+      AppColors.zenBlue,
+    ], context).first;
+    final overlayColor = isDark ? const Color(0xFF0F1222) : resolvedZenBlue;
+
     return AppCard(
       onTap: onTap,
       padding: EdgeInsets.zero,
-      borderColor: AppColors.leafGreen.withValues(alpha: 0.14),
-      shadowColor: AppColors.leafGreen.withValues(alpha: 0.06),
+      borderColor: isDark
+          ? const Color(0xFF3B6154).withValues(alpha: 0.4)
+          : resolvedLeafGreen.withValues(alpha: 0.14),
+      shadowColor: isDark ? Colors.transparent : resolvedLeafGreen.withValues(alpha: 0.06),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
         child: SizedBox(
@@ -747,9 +773,9 @@ class _ZenGardenCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      AppColors.zenBlue.withValues(alpha: 0.92),
-                      AppColors.zenBlue.withValues(alpha: 0.64),
-                      AppColors.zenBlue.withValues(alpha: 0.10),
+                      overlayColor.withValues(alpha: 0.92),
+                      overlayColor.withValues(alpha: 0.64),
+                      overlayColor.withValues(alpha: 0.10),
                     ],
                     begin: Alignment.centerLeft,
                     end: Alignment.centerRight,
@@ -887,12 +913,13 @@ class _ProgressRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final percent = (progress.percentage * 100).round();
+    final resolvedColor = AppColors.resolve(color, context);
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(AppSpacing.radiusS),
       child: Row(
         children: [
-          Icon(icon, color: color),
+          Icon(icon, color: resolvedColor),
           const SizedBox(width: AppSpacing.sp12),
           Expanded(
             child: Column(
@@ -901,7 +928,7 @@ class _ProgressRow extends StatelessWidget {
                 Text(
                   title,
                   style: AppTypography.bodyMBold.copyWith(
-                    color: AppColors.ink,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -911,8 +938,8 @@ class _ProgressRow extends StatelessWidget {
                   child: LinearProgressIndicator(
                     value: progress.percentage.clamp(0.0, 1.0).toDouble(),
                     minHeight: 6,
-                    backgroundColor: AppColors.creamDark,
-                    valueColor: AlwaysStoppedAnimation<Color>(color),
+                    backgroundColor: AppColors.resolve(AppColors.creamDark, context),
+                    valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
                   ),
                 ),
               ],
@@ -922,7 +949,7 @@ class _ProgressRow extends StatelessWidget {
           Text(
             '$percent%',
             style: AppTypography.label.copyWith(
-              color: color,
+              color: resolvedColor,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -946,15 +973,18 @@ class _SectionTitle extends StatelessWidget {
         Text(
           title,
           style: AppTypography.headingS.copyWith(
-            color: AppColors.ink,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w900,
           ),
         ),
         const SizedBox(height: AppSpacing.sp4),
-        Text(subtitle, style: AppTypography.caption),
+        Text(
+          subtitle,
+          style: AppTypography.caption.copyWith(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+          ),
+        ),
       ],
     );
   }
 }
-
-

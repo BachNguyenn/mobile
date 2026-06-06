@@ -28,6 +28,9 @@ class HandwritingCanvasState extends State<HandwritingCanvas> {
 
   @override
   Widget build(BuildContext context) {
+    final strokeColor = Theme.of(context).colorScheme.onSurface;
+    final guideColor = AppColors.resolve(AppColors.slateLight, context);
+
     return RepaintBoundary(
       child: GestureDetector(
         onPanStart: (details) {
@@ -51,6 +54,8 @@ class HandwritingCanvasState extends State<HandwritingCanvas> {
           painter: HandwritingPainter(
             strokes: _strokes,
             pointCount: _strokes.fold(0, (sum, s) => sum + s.length),
+            strokeColor: strokeColor,
+            guideColor: guideColor,
           ),
           size: Size.infinite,
         ),
@@ -73,15 +78,22 @@ class HandwritingCanvasState extends State<HandwritingCanvas> {
 class HandwritingPainter extends CustomPainter {
   final List<List<HandwritingPoint>> strokes;
   final int pointCount;
+  final Color strokeColor;
+  final Color guideColor;
 
-  HandwritingPainter({required this.strokes, required this.pointCount});
+  HandwritingPainter({
+    required this.strokes,
+    required this.pointCount,
+    required this.strokeColor,
+    required this.guideColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
     _drawGuides(canvas, size);
 
     final paint = Paint()
-      ..color = Colors.black87
+      ..color = strokeColor
       ..strokeCap = StrokeCap.round
       ..strokeJoin = StrokeJoin.round
       ..style = PaintingStyle.stroke
@@ -118,7 +130,7 @@ class HandwritingPainter extends CustomPainter {
 
   void _drawGuides(Canvas canvas, Size size) {
     final guidePaint = Paint()
-      ..color = AppColors.slateLight.withValues(alpha: 0.22)
+      ..color = guideColor.withValues(alpha: 0.22)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
@@ -134,7 +146,7 @@ class HandwritingPainter extends CustomPainter {
     );
 
     final diagonalPaint = Paint()
-      ..color = AppColors.slateLight.withValues(alpha: 0.12)
+      ..color = guideColor.withValues(alpha: 0.12)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
 
@@ -153,6 +165,8 @@ class HandwritingPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant HandwritingPainter oldDelegate) {
     return oldDelegate.pointCount != pointCount ||
-        oldDelegate.strokes.length != strokes.length;
+        oldDelegate.strokes.length != strokes.length ||
+        oldDelegate.strokeColor != strokeColor ||
+        oldDelegate.guideColor != guideColor;
   }
 }

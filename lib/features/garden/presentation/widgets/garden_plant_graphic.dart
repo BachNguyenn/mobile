@@ -1,7 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:mobile/core/theme/app_colors.dart';
-import 'package:mobile/domain/entities/zen_garden.dart';
+import 'package:mobile/features/garden/domain/entities/zen_garden.dart';
 
 /// Animated plant graphic with sway animation, sparkle effects,
 /// for the Zen Garden.

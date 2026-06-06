@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile/core/services/handwriting_service.dart';
 import 'package:mobile/core/theme/app_colors.dart';
@@ -88,7 +89,7 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
                 const SizedBox(height: AppSpacing.sp16),
                 Text(
                   grammar.title,
-                  style: AppTypography.headingL.copyWith(color: AppColors.ink),
+                  style: AppTypography.headingL.copyWith(color: Theme.of(context).colorScheme.onSurface),
                   textAlign: TextAlign.center,
                 ),
                 if (grammar.formation.isNotEmpty) ...[
@@ -191,20 +192,20 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
             textInputAction: TextInputAction.done,
             decoration: InputDecoration(
               filled: true,
-              fillColor: AppColors.white,
+              fillColor: Theme.of(context).cardColor,
               hintText: 'Nhập đáp án',
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppSpacing.radiusL),
                 borderSide: BorderSide(
-                  color: AppColors.slateLight.withValues(alpha: 0.5),
+                  color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.5),
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-                borderSide: const BorderSide(color: AppColors.mossGreen),
+                borderSide: BorderSide(color: AppColors.resolve(AppColors.mossGreen, context)),
               ),
             ),
-            style: AppTypography.bodyL.copyWith(color: AppColors.ink),
+            style: AppTypography.bodyL.copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
           if (widget.state.isAnswerChecked) ...[
             const SizedBox(height: AppSpacing.sp12),
@@ -240,19 +241,18 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
             children: [
               Container(
                 decoration: BoxDecoration(
-                  color: AppColors.white,
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(AppSpacing.radiusL),
                   border: Border.all(
-                    color: spec.accent.withValues(alpha: 0.25),
+                    color: AppColors.resolve(spec.accent, context).withValues(alpha: 0.25),
                     width: 2,
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.ink.withValues(alpha: 0.04),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
+                  boxShadow: AppColors.softShadow(
+                    context,
+                    color: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.04),
+                    blurRadius: 18,
+                    offset: const Offset(0, 8),
+                  ),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(AppSpacing.radiusL),
@@ -267,7 +267,7 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
                 Positioned.fill(
                   child: Container(
                     decoration: BoxDecoration(
-                      color: AppColors.white.withValues(alpha: 0.92),
+                      color: Theme.of(context).cardColor.withValues(alpha: 0.95),
                       borderRadius: BorderRadius.circular(AppSpacing.radiusL),
                     ),
                     child: Center(
@@ -279,9 +279,12 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
                             style: TextStyle(
                               fontSize: 116,
                               fontFamily: 'Serif',
-                              color: widget.state.isCorrect
-                                  ? AppColors.mossGreen
-                                  : AppColors.terracotta,
+                              color: AppColors.resolve(
+                                widget.state.isCorrect
+                                    ? AppColors.mossGreen
+                                    : AppColors.terracotta,
+                                context,
+                              ),
                             ),
                           ),
                           if (widget.state.recognizedText != null) ...[
@@ -289,9 +292,12 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
                             Text(
                               'Bạn đã viết: ${widget.state.recognizedText}',
                               style: AppTypography.bodyM.copyWith(
-                                color: widget.state.isCorrect
-                                    ? AppColors.mossGreen
-                                    : AppColors.terracotta,
+                                color: AppColors.resolve(
+                                  widget.state.isCorrect
+                                      ? AppColors.mossGreen
+                                      : AppColors.terracotta,
+                                  context,
+                                ),
                               ),
                             ),
                           ],
@@ -304,7 +310,7 @@ class _LessonQuizContentState extends State<LessonQuizContent> {
                               child: Text(
                                 question.explanation!,
                                 style: AppTypography.bodyS.copyWith(
-                                  color: AppColors.slateGrey,
+                                  color: AppColors.resolve(AppColors.slateGrey, context),
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -408,7 +414,10 @@ class _LessonVisualSpec {
         label: 'Từ vựng',
         icon: Icons.style_rounded,
         accent: AppColors.waterBlue,
-        tint: Color(0xFFF0F7FC),
+        tint: CupertinoDynamicColor.withBrightness(
+          color: Color(0xFFF0F7FC),
+          darkColor: Color(0xFF16203D),
+        ),
       ),
       QuizType.grammarStudy ||
       QuizType.grammarMeaning ||
@@ -417,7 +426,10 @@ class _LessonVisualSpec {
         label: 'Ngữ pháp',
         icon: Icons.account_tree_rounded,
         accent: AppColors.terracotta,
-        tint: Color(0xFFFCF2EC),
+        tint: CupertinoDynamicColor.withBrightness(
+          color: Color(0xFFFCF2EC),
+          darkColor: Color(0xFF2E1C1A),
+        ),
       ),
       QuizType.handwriting ||
       QuizType.meaning ||
@@ -426,7 +438,10 @@ class _LessonVisualSpec {
         label: 'Chữ Hán',
         icon: Icons.brush_rounded,
         accent: AppColors.mossGreen,
-        tint: Color(0xFFF2F6EF),
+        tint: CupertinoDynamicColor.withBrightness(
+          color: Color(0xFFF2F6EF),
+          darkColor: Color(0xFF1B2418),
+        ),
       ),
     };
   }
@@ -451,6 +466,8 @@ class _QuizHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final hasHint = question.hint?.isNotEmpty ?? false;
     final spec = _LessonVisualSpec.forType(question.type);
+    final resolvedAccent = AppColors.resolve(spec.accent, context);
+    final resolvedTint = AppColors.resolve(spec.tint, context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -458,9 +475,9 @@ class _QuizHeader extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(AppSpacing.sp16),
           decoration: BoxDecoration(
-            color: spec.tint,
+            color: resolvedTint,
             borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-            border: Border.all(color: spec.accent.withValues(alpha: 0.16)),
+            border: Border.all(color: resolvedAccent.withValues(alpha: 0.16)),
           ),
           child: Row(
             children: [
@@ -468,10 +485,10 @@ class _QuizHeader extends StatelessWidget {
                 width: 44,
                 height: 44,
                 decoration: BoxDecoration(
-                  color: spec.accent.withValues(alpha: 0.13),
+                  color: resolvedAccent.withValues(alpha: 0.13),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusM),
                 ),
-                child: Icon(spec.icon, color: spec.accent, size: 22),
+                child: Icon(spec.icon, color: resolvedAccent, size: 22),
               ),
               const SizedBox(width: AppSpacing.sp12),
               Expanded(
@@ -481,14 +498,14 @@ class _QuizHeader extends StatelessWidget {
                     Text(
                       title,
                       style: AppTypography.headingM.copyWith(
-                        color: AppColors.ink,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
                     const SizedBox(height: 2),
                     Text(
                       subtitle,
                       style: AppTypography.bodyS.copyWith(
-                        color: AppColors.slateGrey,
+                        color: AppColors.resolve(AppColors.slateGrey, context),
                       ),
                     ),
                   ],
@@ -549,7 +566,7 @@ class _PromptCard extends StatelessWidget {
                         ? AppTypography.kanjiHero
                         : AppTypography.headingL)
                     .copyWith(
-                      color: AppColors.ink,
+                      color: Theme.of(context).colorScheme.onSurface,
                       fontSize: isJapaneseDisplay ? (compact ? 40 : 56) : null,
                     ),
             textAlign: TextAlign.center,
@@ -619,19 +636,22 @@ class _OptionCard extends StatelessWidget {
     final showCorrect = isAnswerChecked && isCorrect;
     final showWrong = isAnswerChecked && isSelected && !isCorrect;
 
-    final stateColor = showCorrect
-        ? AppColors.mossGreen
-        : showWrong
-        ? AppColors.terracotta
-        : isSelected
-        ? spec.accent
-        : AppColors.slateMuted;
+    final stateColor = AppColors.resolve(
+      showCorrect
+          ? AppColors.mossGreen
+          : showWrong
+          ? AppColors.terracotta
+          : isSelected
+          ? spec.accent
+          : AppColors.slateMuted,
+      context,
+    );
     final bgColor = showCorrect || showWrong || isSelected
         ? stateColor.withValues(alpha: 0.1)
-        : AppColors.white;
+        : Theme.of(context).cardColor;
     final borderColor = showCorrect || showWrong || isSelected
         ? stateColor
-        : AppColors.slateLight.withValues(alpha: 0.55);
+        : AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.55);
 
     final IconData? trailingIcon = showCorrect
         ? Icons.check_circle_rounded
@@ -657,14 +677,14 @@ class _OptionCard extends StatelessWidget {
             color: bgColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusL),
             border: Border.all(color: borderColor, width: 1.5),
-            boxShadow: [
-              if (isSelected || showCorrect || showWrong)
-                BoxShadow(
-                  color: stateColor.withValues(alpha: 0.08),
-                  blurRadius: 14,
-                  offset: const Offset(0, 8),
-                ),
-            ],
+            boxShadow: (isSelected || showCorrect || showWrong)
+                ? AppColors.softShadow(
+                    context,
+                    color: stateColor.withValues(alpha: 0.08),
+                    blurRadius: 14,
+                    offset: const Offset(0, 8),
+                  )
+                : [],
           ),
           child: Row(
             children: [
@@ -680,7 +700,7 @@ class _OptionCard extends StatelessWidget {
                   style: AppTypography.bodyL.copyWith(
                     color: showCorrect || showWrong
                         ? stateColor
-                        : AppColors.slateGrey,
+                        : AppColors.resolve(AppColors.slateGrey, context),
                     fontWeight: FontWeight.w700,
                     fontFamily: _usesJapaneseFont(question.type)
                         ? 'Noto Sans JP'
@@ -720,18 +740,19 @@ class _OptionIndexBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       width: 34,
       height: 34,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: isActive ? color : color.withValues(alpha: 0.1),
+        color: isActive ? resolvedColor : resolvedColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
       ),
       child: Text(
         label,
         style: AppTypography.bodyMBold.copyWith(
-          color: isActive ? AppColors.white : color,
+          color: isActive ? AppColors.white : resolvedColor,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -752,21 +773,24 @@ class _FeedbackCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = isCorrect ? AppColors.mossGreen : AppColors.terracotta;
+    final resolvedColor = AppColors.resolve(
+      isCorrect ? AppColors.mossGreen : AppColors.terracotta,
+      context,
+    );
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
+        color: resolvedColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: color.withValues(alpha: 0.22)),
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.22)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
             isCorrect ? Icons.task_alt_rounded : Icons.info_rounded,
-            color: color,
+            color: resolvedColor,
             size: 22,
           ),
           const SizedBox(width: AppSpacing.sp12),
@@ -776,13 +800,13 @@ class _FeedbackCard extends StatelessWidget {
               children: [
                 Text(
                   isCorrect ? 'Giải thích' : 'Đáp án đúng: $answer',
-                  style: AppTypography.bodyMBold.copyWith(color: color),
+                  style: AppTypography.bodyMBold.copyWith(color: resolvedColor),
                 ),
                 const SizedBox(height: AppSpacing.sp8),
                 Text(
                   explanation,
                   style: AppTypography.bodyM.copyWith(
-                    color: AppColors.slateGrey,
+                    color: AppColors.resolve(AppColors.slateGrey, context),
                   ),
                 ),
               ],
@@ -820,7 +844,9 @@ class _HintCard extends StatelessWidget {
           Expanded(
             child: Text(
               text,
-              style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+              style: AppTypography.bodyM.copyWith(
+                color: AppColors.resolve(AppColors.slateGrey, context),
+              ),
             ),
           ),
         ],
@@ -855,7 +881,9 @@ class _InfoBlock extends StatelessWidget {
           const SizedBox(height: AppSpacing.sp12),
           Text(
             body,
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            style: AppTypography.bodyM.copyWith(
+              color: AppColors.resolve(AppColors.slateGrey, context),
+            ),
           ),
         ],
       ),
@@ -871,8 +899,9 @@ class _ExampleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return _SurfaceCard(
-      accent: color,
+      accent: resolvedColor,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -880,7 +909,7 @@ class _ExampleCard extends StatelessWidget {
             width: 4,
             height: 74,
             decoration: BoxDecoration(
-              color: color.withValues(alpha: 0.55),
+              color: resolvedColor.withValues(alpha: 0.55),
               borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
             ),
           ),
@@ -892,7 +921,7 @@ class _ExampleCard extends StatelessWidget {
                 Text(
                   example.jp,
                   style: AppTypography.bodyL.copyWith(
-                    color: AppColors.ink,
+                    color: Theme.of(context).colorScheme.onSurface,
                     fontFamily: 'Noto Sans JP',
                     fontWeight: FontWeight.w600,
                   ),
@@ -902,7 +931,7 @@ class _ExampleCard extends StatelessWidget {
                   Text(
                     example.romaji,
                     style: AppTypography.labelS.copyWith(
-                      color: AppColors.slateMuted,
+                      color: AppColors.resolve(AppColors.slateMuted, context),
                     ),
                   ),
                 ],
@@ -911,7 +940,7 @@ class _ExampleCard extends StatelessWidget {
                   Text(
                     example.en,
                     style: AppTypography.bodyM.copyWith(
-                      color: AppColors.slateGrey,
+                      color: AppColors.resolve(AppColors.slateGrey, context),
                     ),
                   ),
                 ],
@@ -932,6 +961,7 @@ class _PatternPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(
@@ -939,14 +969,14 @@ class _PatternPanel extends StatelessWidget {
         horizontal: AppSpacing.sp16,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: resolvedColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.2)),
       ),
       child: Text(
         text,
         style: AppTypography.bodyL.copyWith(
-          color: color,
+          color: resolvedColor,
           fontWeight: FontWeight.w700,
         ),
         textAlign: TextAlign.center,
@@ -968,24 +998,25 @@ class _LessonPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp12,
         vertical: 6,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.1),
+        color: resolvedColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: color),
+          Icon(icon, size: 14, color: resolvedColor),
           const SizedBox(width: 6),
           Text(
             label,
             style: AppTypography.label.copyWith(
-              color: color,
+              color: resolvedColor,
               fontWeight: FontWeight.w700,
             ),
           ),
@@ -1010,12 +1041,12 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: color, size: 18),
+        Icon(icon, color: AppColors.resolve(color, context), size: 18),
         const SizedBox(width: AppSpacing.sp8),
         Text(
           label,
           style: AppTypography.bodyMBold.copyWith(
-            color: AppColors.slateGrey,
+            color: AppColors.resolve(AppColors.slateGrey, context),
             fontWeight: FontWeight.w700,
           ),
         ),
@@ -1033,22 +1064,22 @@ class _SurfaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final borderColor = accent ?? AppColors.slateLight;
+    final resolvedAccent = AppColors.resolve(accent ?? AppColors.slateLight, context);
+    final resolvedTint = tint != null ? AppColors.resolve(tint!, context) : Theme.of(context).cardColor;
 
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp20),
       decoration: BoxDecoration(
-        color: tint ?? AppColors.white,
+        color: resolvedTint,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: borderColor.withValues(alpha: 0.18)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.ink.withValues(alpha: 0.04),
-            blurRadius: 18,
-            offset: const Offset(0, 8),
-          ),
-        ],
+        border: Border.all(color: resolvedAccent.withValues(alpha: 0.18)),
+        boxShadow: AppColors.softShadow(
+          context,
+          color: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.04),
+          blurRadius: 18,
+          offset: const Offset(0, 8),
+        ),
       ),
       child: child,
     );

@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mobile/core/providers/database_provider.dart';
-import 'package:mobile/domain/entities/zen_garden.dart';
-import 'package:mobile/features/garden/data/repositories/garden_repository.dart';
+import 'package:flutter_riverpod/legacy.dart';
+import 'package:mobile/features/garden/domain/entities/zen_garden.dart';
+import 'package:mobile/features/garden/domain/repositories/garden_repository.dart';
 import 'package:mobile/features/review/application/providers/study_event_provider.dart';
 
 final gardenRepositoryProvider = Provider<GardenRepository>((ref) {
-  return GardenRepository(ref.watch(databaseProvider));
+  throw UnimplementedError('gardenRepositoryProvider must be overridden');
 });
 
 final gardenProvider = StateNotifierProvider<GardenNotifier, ZenGarden>((ref) {

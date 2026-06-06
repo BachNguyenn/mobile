@@ -39,10 +39,10 @@ class _KanjiGridItemState extends State<KanjiGridItem> {
         child: Ink(
           padding: const EdgeInsets.all(AppSpacing.sp12),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusL),
             border: Border.all(
-              color: AppColors.slateLight.withValues(alpha: 0.30),
+              color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.30),
             ),
           ),
           child: Stack(
@@ -98,7 +98,7 @@ class _KanjiCharacterFace extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: AppTypography.kanjiDisplay.copyWith(
-            color: AppColors.navyDark,
+            color: AppColors.resolve(AppColors.navyDark, context),
             fontSize: 46,
             height: 1.0,
           ),
@@ -107,16 +107,16 @@ class _KanjiCharacterFace extends StatelessWidget {
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.touch_app_rounded,
               size: 14,
-              color: AppColors.leafGreen,
+              color: AppColors.resolve(AppColors.leafGreen, context),
             ),
             const SizedBox(width: AppSpacing.sp4),
             Text(
               'xem nghĩa',
               style: AppTypography.labelS.copyWith(
-                color: AppColors.leafGreen,
+                color: AppColors.resolve(AppColors.leafGreen, context),
                 fontWeight: FontWeight.w800,
               ),
             ),
@@ -148,7 +148,7 @@ class _KanjiInfoFace extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
           textAlign: TextAlign.center,
           style: AppTypography.bodyMBold.copyWith(
-            color: AppColors.leafDark,
+            color: AppColors.resolve(AppColors.leafDark, context),
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -160,7 +160,7 @@ class _KanjiInfoFace extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
             style: AppTypography.label.copyWith(
-              color: AppColors.slateMuted,
+              color: AppColors.resolve(AppColors.slateMuted, context),
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -194,13 +194,13 @@ class _DetailButton extends StatelessWidget {
             width: 32,
             height: 32,
             decoration: BoxDecoration(
-              color: AppColors.navySoft,
+              color: AppColors.resolve(AppColors.navySoft, context),
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.navy.withValues(alpha: 0.08)),
+              border: Border.all(color: AppColors.resolve(AppColors.navy, context).withValues(alpha: 0.08)),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.chevron_right_rounded,
-              color: AppColors.navy,
+              color: AppColors.resolve(AppColors.navy, context),
               size: 19,
             ),
           ),

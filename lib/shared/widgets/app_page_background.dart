@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../../core/theme/app_colors.dart';
 
 class AppPageBackground extends StatelessWidget {
@@ -8,8 +8,21 @@ class AppPageBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = AppColors.pageGradient.colors.map((color) {
+      if (color is CupertinoDynamicColor) {
+        return CupertinoDynamicColor.resolve(color, context);
+      }
+      return color;
+    }).toList();
+
     return DecoratedBox(
-      decoration: const BoxDecoration(gradient: AppColors.pageGradient),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: colors,
+          begin: AppColors.pageGradient.begin,
+          end: AppColors.pageGradient.end,
+        ),
+      ),
       child: child,
     );
   }

@@ -69,6 +69,9 @@ class _LearningCardState extends State<LearningCard>
   @override
   Widget build(BuildContext context) {
     final percentage = (widget.progress * 100).toInt();
+    final resolvedZenBlue = AppColors.resolve(AppColors.zenBlue, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedAccentColor = AppColors.resolve(widget.accentColor, context);
 
     return GestureDetector(
       onTapDown: (_) => _pressController.forward(),
@@ -87,24 +90,18 @@ class _LearningCardState extends State<LearningCard>
             minHeight: AppSpacing.learningCardHeight,
           ),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             border: Border.all(
-              color: AppColors.zenBlue.withValues(alpha: 0.08),
+              color: resolvedZenBlue.withValues(alpha: 0.08),
               width: 1,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.navyDark.withValues(alpha: 0.05),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
-              ),
-              BoxShadow(
-                color: widget.accentColor.withValues(alpha: 0.05),
-                blurRadius: 24,
-                offset: const Offset(0, 10),
-              ),
-            ],
+            boxShadow: AppColors.softShadow(
+              context,
+              color: resolvedNavyDark.withValues(alpha: 0.05),
+              blurRadius: 20,
+              offset: const Offset(0, 8),
+            ),
           ),
           child: Row(
             children: [
@@ -114,8 +111,8 @@ class _LearningCardState extends State<LearningCard>
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     colors: [
-                      widget.accentColor,
-                      widget.accentColor.withValues(alpha: 0.4),
+                      resolvedAccentColor,
+                      resolvedAccentColor.withValues(alpha: 0.4),
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
@@ -148,8 +145,8 @@ class _LearningCardState extends State<LearningCard>
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  widget.accentColor.withValues(alpha: 0.14),
-                                  widget.accentColor.withValues(alpha: 0.07),
+                                  resolvedAccentColor.withValues(alpha: 0.14),
+                                  resolvedAccentColor.withValues(alpha: 0.07),
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -157,20 +154,17 @@ class _LearningCardState extends State<LearningCard>
                               borderRadius: BorderRadius.circular(
                                 AppSpacing.radiusS,
                               ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: widget.accentColor.withValues(
-                                    alpha: 0.08,
-                                  ),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                              boxShadow: AppColors.softShadow(
+                                context,
+                                color: resolvedAccentColor.withValues(alpha: 0.08),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
                             ),
                             child: Icon(
                               widget.icon,
                               size: 24,
-                              color: widget.accentColor,
+                              color: resolvedAccentColor,
                             ),
                           ),
                           const SizedBox(width: AppSpacing.sp16),
@@ -180,7 +174,7 @@ class _LearningCardState extends State<LearningCard>
                               children: [
                                 _InfoBadge(
                                   label: widget.badge,
-                                  color: widget.accentColor,
+                                  color: resolvedAccentColor,
                                 ),
                                 const SizedBox(height: AppSpacing.sp8),
                                 Text(
@@ -204,7 +198,7 @@ class _LearningCardState extends State<LearningCard>
                               Text(
                                 '$percentage%',
                                 style: AppTypography.statNumber.copyWith(
-                                  color: widget.accentColor,
+                                  color: resolvedAccentColor,
                                   fontSize: 20,
                                 ),
                               ),
@@ -220,7 +214,7 @@ class _LearningCardState extends State<LearningCard>
                                 child: Icon(
                                   Icons.arrow_forward_ios_rounded,
                                   size: 12,
-                                  color: widget.accentColor.withValues(
+                                  color: resolvedAccentColor.withValues(
                                     alpha: 0.5,
                                   ),
                                 ),
@@ -241,7 +235,7 @@ class _LearningCardState extends State<LearningCard>
                                 for (final item in widget.highlights.take(2))
                                   _HighlightChip(
                                     label: item,
-                                    color: widget.accentColor,
+                                    color: resolvedAccentColor,
                                   ),
                               ],
                             ),
@@ -258,7 +252,7 @@ class _LearningCardState extends State<LearningCard>
                               Text(
                                 widget.metricValue,
                                 style: AppTypography.bodyMBold.copyWith(
-                                  color: widget.accentColor,
+                                  color: resolvedAccentColor,
                                 ),
                               ),
                             ],
@@ -268,7 +262,7 @@ class _LearningCardState extends State<LearningCard>
                       const SizedBox(height: AppSpacing.sp12),
                       _GradientAccentBar(
                         progress: widget.progress,
-                        color: widget.accentColor,
+                        color: resolvedAccentColor,
                       ),
                     ],
                   ),
@@ -325,13 +319,13 @@ class _HighlightChip extends StatelessWidget {
         vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
-        color: AppColors.creamDark.withValues(alpha: 0.72),
+        color: AppColors.resolve(AppColors.creamDark, context).withValues(alpha: 0.72),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Text(
         label,
         style: AppTypography.label.copyWith(
-          color: AppColors.ink,
+          color: Theme.of(context).colorScheme.onSurface,
           fontWeight: FontWeight.w600,
         ),
       ),
@@ -360,7 +354,7 @@ class _GradientAccentBar extends StatelessWidget {
               Container(
                 height: AppSpacing.progressBarHeight,
                 decoration: BoxDecoration(
-                  color: AppColors.creamDark,
+                  color: AppColors.resolve(AppColors.creamDark, context),
                   borderRadius: BorderRadius.circular(
                     AppSpacing.progressBarHeight / 2,
                   ),
@@ -395,12 +389,11 @@ class _GradientAccentBar extends StatelessWidget {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: AppColors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: color.withValues(alpha: 0.4),
-                          blurRadius: 4,
-                        ),
-                      ],
+                      boxShadow: AppColors.softShadow(
+                        context,
+                        color: color.withValues(alpha: 0.4),
+                        blurRadius: 4,
+                      ),
                     ),
                   ),
                 ),

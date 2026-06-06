@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:mobile/features/dictionary/presentation/screens/dictionary_screen.dart';
 import 'package:mobile/features/garden/presentation/screens/garden_screen.dart';

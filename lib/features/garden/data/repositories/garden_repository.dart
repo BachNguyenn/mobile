@@ -2,20 +2,15 @@ import 'dart:convert';
 
 import 'package:drift/drift.dart';
 import 'package:mobile/data/datasources/app_database.dart';
-import 'package:mobile/domain/entities/zen_garden.dart';
+import 'package:mobile/features/garden/domain/entities/zen_garden.dart';
+import 'package:mobile/features/garden/domain/repositories/garden_repository.dart';
 
-class GardenPurchaseResult {
-  final bool success;
-  final ZenGarden garden;
-
-  const GardenPurchaseResult({required this.success, required this.garden});
-}
-
-class GardenRepository {
+class DriftGardenRepository implements GardenRepository {
   final AppDatabase _db;
 
-  GardenRepository(this._db);
+  DriftGardenRepository(this._db);
 
+  @override
   Future<ZenGarden> loadGarden() async {
     final row = await _db.select(_db.zenGardenTable).getSingleOrNull();
     if (row == null) return _createInitialGarden();
@@ -52,6 +47,7 @@ class GardenRepository {
     );
   }
 
+  @override
   Future<GardenPurchaseResult> buyPlant(
     ZenGarden garden,
     String type,
@@ -81,6 +77,7 @@ class GardenRepository {
     return GardenPurchaseResult(success: true, garden: updatedGarden);
   }
 
+  @override
   Future<ZenGarden> updatePlantPosition(
     ZenGarden garden,
     String id,
@@ -102,6 +99,7 @@ class GardenRepository {
     return updatedGarden;
   }
 
+  @override
   Future<void> saveGarden(ZenGarden garden) async {
     await _db
         .update(_db.zenGardenTable)
@@ -119,6 +117,7 @@ class GardenRepository {
         );
   }
 
+  @override
   Future<int> getTodayStudyCount() async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
@@ -128,6 +127,7 @@ class GardenRepository {
     return row?.count ?? 0;
   }
 
+  @override
   Future<int> getTodayMaxCorrectStreak() async {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);

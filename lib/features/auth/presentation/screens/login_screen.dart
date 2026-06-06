@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
@@ -75,8 +76,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: theme.colorScheme.surface,
       body: AppPageBackground(
         child: SafeArea(
           child: ListView(
@@ -95,8 +98,10 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               const SizedBox(height: AppSpacing.sp32),
               AppCard(
                 padding: const EdgeInsets.all(AppSpacing.sp20),
-                borderColor: AppColors.zenBlue.withValues(alpha: 0.12),
-                shadowColor: AppColors.zenBlue.withValues(alpha: 0.07),
+                borderColor: AppColors.resolve(
+                  AppColors.zenBlue,
+                  context,
+                ).withValues(alpha: 0.12),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -105,7 +110,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       Text(
                         'Đăng nhập',
                         style: AppTypography.headingM.copyWith(
-                          color: AppColors.ink,
+                          color: theme.colorScheme.onSurface,
                           fontWeight: FontWeight.w900,
                         ),
                       ),
@@ -120,7 +125,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         keyboardType: TextInputType.emailAddress,
                         textInputAction: TextInputAction.next,
                         style: AppTypography.bodyM.copyWith(
-                          color: AppColors.ink,
+                          color: theme.colorScheme.onSurface,
                         ),
                         decoration: _inputDecoration(
                           label: 'Email',
@@ -136,7 +141,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         textInputAction: TextInputAction.done,
                         onFieldSubmitted: (_) => _handleEmailSignIn(),
                         style: AppTypography.bodyM.copyWith(
-                          color: AppColors.ink,
+                          color: theme.colorScheme.onSurface,
                         ),
                         decoration: _inputDecoration(
                           label: 'Mật khẩu',
@@ -153,7 +158,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               _obscurePassword
                                   ? Icons.visibility_off_rounded
                                   : Icons.visibility_rounded,
-                              color: AppColors.slateMuted,
+                              color: theme.colorScheme.onSurfaceVariant,
                               size: 20,
                             ),
                           ),
@@ -178,9 +183,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       TextButton(
                         onPressed: _isLoading ? null : _handleGuestSignIn,
                         child: Text(
-                          'Tiếp tục không đăng nhập',
+                          'Tiếp tục với tài khoản khách',
                           style: AppTypography.bodyM.copyWith(
-                            color: AppColors.slateMuted,
+                            color: theme.colorScheme.onSurfaceVariant,
                             decoration: TextDecoration.underline,
                           ),
                         ),
@@ -214,7 +219,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return InputDecoration(
       labelText: label,
       hintText: hint,
-      prefixIcon: Icon(icon, color: AppColors.zenBlue, size: 20),
+      prefixIcon: Icon(
+        icon,
+        color: AppColors.resolve(AppColors.zenBlue, context),
+        size: 20,
+      ),
       suffixIcon: suffixIcon,
     );
   }
@@ -290,22 +299,20 @@ class _AuthHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Column(
       children: [
         Container(
           width: 104,
           height: 104,
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: theme.cardColor,
             borderRadius: BorderRadius.circular(28),
-            border: Border.all(color: AppColors.navySoft),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.zenBlue.withValues(alpha: 0.10),
-                blurRadius: 28,
-                offset: const Offset(0, 14),
-              ),
-            ],
+            border: Border.all(
+              color: AppColors.resolve(AppColors.navySoft, context),
+            ),
+            boxShadow: AppColors.softShadow(context),
           ),
           clipBehavior: Clip.antiAlias,
           child: Image.asset(
@@ -319,7 +326,7 @@ class _AuthHeader extends StatelessWidget {
           title,
           textAlign: TextAlign.center,
           style: AppTypography.displayLarge.copyWith(
-            color: AppColors.zenBlue,
+            color: AppColors.resolve(AppColors.zenBlue, context),
             fontWeight: FontWeight.w900,
           ),
         ),
@@ -327,7 +334,7 @@ class _AuthHeader extends StatelessWidget {
         Text(
           subtitle,
           style: AppTypography.japaneseQuote.copyWith(
-            color: AppColors.leafDark,
+            color: AppColors.resolve(AppColors.leafDark, context),
             fontWeight: FontWeight.w800,
             letterSpacing: 0,
           ),
@@ -336,7 +343,9 @@ class _AuthHeader extends StatelessWidget {
         Text(
           description,
           textAlign: TextAlign.center,
-          style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+          style: AppTypography.bodyM.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -387,23 +396,10 @@ class _GoogleButton extends StatelessWidget {
       height: 52,
       child: OutlinedButton.icon(
         onPressed: onPressed,
-        icon: Container(
-          width: 24,
-          height: 24,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
-            border: Border.all(color: AppColors.slateLight),
-          ),
-          child: const Text(
-            'G',
-            style: TextStyle(
-              color: Colors.blue,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
+        icon: SvgPicture.asset(
+          'assets/images/google_logo.svg',
+          width: 20,
+          height: 20,
         ),
         label: const Text('Đăng nhập với Google'),
       ),
@@ -420,12 +416,20 @@ class _DividerLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const Expanded(child: Divider(color: AppColors.slateLight)),
+        Expanded(
+          child: Divider(
+            color: AppColors.resolve(AppColors.slateLight, context),
+          ),
+        ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp12),
           child: Text(label, style: AppTypography.caption),
         ),
-        const Expanded(child: Divider(color: AppColors.slateLight)),
+        Expanded(
+          child: Divider(
+            color: AppColors.resolve(AppColors.slateLight, context),
+          ),
+        ),
       ],
     );
   }
@@ -444,18 +448,22 @@ class _AuthSwitchLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Center(
       child: TextButton(
         onPressed: onTap,
         child: Text.rich(
           TextSpan(
             text: '$text ',
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            style: AppTypography.bodyM.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
             children: [
               TextSpan(
                 text: action,
                 style: AppTypography.bodyMBold.copyWith(
-                  color: AppColors.leafGreen,
+                  color: AppColors.resolve(AppColors.leafGreen, context),
                   fontWeight: FontWeight.w900,
                 ),
               ),

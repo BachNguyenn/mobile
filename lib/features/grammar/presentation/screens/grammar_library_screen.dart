@@ -30,7 +30,6 @@ class GrammarLibraryScreen extends ConsumerWidget {
     final totalDueAsync = ref.watch(totalDueGrammarCountProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.white,
       body: AppPageBackground(
         child: SafeArea(
           bottom: false,
@@ -54,13 +53,13 @@ class GrammarLibraryScreen extends ConsumerWidget {
                     horizontal: AppSpacing.sp16,
                   ),
                   child: _GrammarHeroCard(
-                    progress: progressAsync.valueOrNull ?? ModuleProgress.empty,
-                    dueTotal: totalDueAsync.valueOrNull ?? 0,
-                    dueLoaded: dueGrammarAsync.valueOrNull?.length ?? 0,
+                    progress: progressAsync.value ?? ModuleProgress.empty,
+                    dueTotal: totalDueAsync.value ?? 0,
+                    dueLoaded: dueGrammarAsync.value?.length ?? 0,
                     isLoading:
                         progressAsync.isLoading || totalDueAsync.isLoading,
                     onReview: () =>
-                        _startReview(context, dueGrammarAsync.valueOrNull),
+                        _startReview(context, dueGrammarAsync.value),
                     onNewLesson: () => _openLearningPath(context),
                     onSentencePractice: () =>
                         Navigator.push(context, AppRoutes.sentencePractice()),
@@ -99,7 +98,7 @@ class GrammarLibraryScreen extends ConsumerWidget {
                     AppSpacing.sp8,
                   ),
                   child: _GrammarSectionHeader(
-                    count: searchResults.valueOrNull?.length,
+                    count: searchResults.value?.length,
                     query: query,
                   ),
                 ),
@@ -194,10 +193,10 @@ class _GrammarTopBar extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppColors.leafGreen.withValues(alpha: 0.10),
+            color: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           ),
-          child: const Icon(Icons.edit_note_rounded, color: AppColors.leafDark),
+          child: Icon(Icons.edit_note_rounded, color: AppColors.resolve(AppColors.leafDark, context)),
         ),
         const SizedBox(width: AppSpacing.sp12),
         Expanded(
@@ -207,7 +206,7 @@ class _GrammarTopBar extends StatelessWidget {
               Text(
                 'Ngữ pháp',
                 style: AppTypography.headingM.copyWith(
-                  color: AppColors.navyDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
@@ -216,7 +215,7 @@ class _GrammarTopBar extends StatelessWidget {
                     ? 'Mẫu câu theo cấp độ JLPT'
                     : 'Đang học JLPT N$selectedLevel',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -252,16 +251,26 @@ class _GrammarHeroCard extends StatelessWidget {
     final percent = progress.total == 0
         ? 0.0
         : progress.percentage.clamp(0.0, 1.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.terracotta, AppColors.sunGold, AppColors.leafDark],
+        gradient: LinearGradient(
+          colors: isDark
+              ? [const Color(0xFF3E2319), const Color(0xFF2E2413)]
+              : AppColors.resolveColors([
+                  AppColors.terracotta,
+                  AppColors.sunGold,
+                  AppColors.leafDark,
+                ], context),
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        border: isDark
+            ? Border.all(color: const Color(0xFF5E3C2D).withValues(alpha: 0.4))
+            : null,
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -473,14 +482,14 @@ class _HeroActionButton extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: filled ? AppColors.navy : AppColors.white,
+                color: filled ? const Color(0xFF293156) : AppColors.white,
                 size: 18,
               ),
               const SizedBox(width: AppSpacing.sp8),
               Text(
                 label,
                 style: AppTypography.label.copyWith(
-                  color: filled ? AppColors.navy : AppColors.white,
+                  color: filled ? const Color(0xFF293156) : AppColors.white,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -549,18 +558,18 @@ class _GrammarSearchBox extends StatelessWidget {
     return TextField(
       onChanged: onChanged,
       style: AppTypography.bodyM.copyWith(
-        color: AppColors.navyDark,
+        color: Theme.of(context).colorScheme.onSurface,
         fontWeight: FontWeight.w700,
       ),
       decoration: InputDecoration(
         hintText: 'Tìm mẫu câu, ý nghĩa hoặc ví dụ...',
-        hintStyle: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
-        prefixIcon: const Icon(
+        hintStyle: AppTypography.bodyS.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
+        prefixIcon: Icon(
           Icons.search_rounded,
-          color: AppColors.leafGreen,
+          color: AppColors.resolve(AppColors.leafGreen, context),
         ),
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: Theme.of(context).cardColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           borderSide: BorderSide.none,
@@ -568,12 +577,12 @@ class _GrammarSearchBox extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           borderSide: BorderSide(
-            color: AppColors.slateLight.withValues(alpha: 0.32),
+            color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.32),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-          borderSide: const BorderSide(color: AppColors.leafGreen, width: 1.4),
+          borderSide: BorderSide(color: AppColors.resolve(AppColors.leafGreen, context), width: 1.4),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sp16,
@@ -615,15 +624,15 @@ class _GrammarLevelRail extends StatelessWidget {
             onSelected: (_) =>
                 onChanged(selected && level != null ? null : level),
             labelStyle: AppTypography.label.copyWith(
-              color: selected ? AppColors.white : AppColors.navyDark,
+              color: selected ? AppColors.white : AppColors.resolve(AppColors.navyDark, context),
               fontWeight: FontWeight.w800,
             ),
-            backgroundColor: AppColors.white,
-            selectedColor: AppColors.leafGreen,
+            backgroundColor: Theme.of(context).cardColor,
+            selectedColor: AppColors.resolve(AppColors.leafGreen, context),
             side: BorderSide(
               color: selected
-                  ? AppColors.leafGreen
-                  : AppColors.slateLight.withValues(alpha: 0.35),
+                  ? AppColors.resolve(AppColors.leafGreen, context)
+                  : AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.35),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
@@ -653,7 +662,7 @@ class _GrammarSectionHeader extends StatelessWidget {
               Text(
                 hasQuery ? 'Kết quả tìm kiếm' : 'Mẫu ngữ pháp',
                 style: AppTypography.headingS.copyWith(
-                  color: AppColors.navyDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: AppSpacing.sp4),
@@ -662,7 +671,7 @@ class _GrammarSectionHeader extends StatelessWidget {
                     ? 'Các mẫu khớp với "$query".'
                     : 'Mở từng mẫu để xem cấu trúc, giải thích và ví dụ.',
                 style: AppTypography.bodyS.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                 ),
               ),
             ],
@@ -674,13 +683,13 @@ class _GrammarSectionHeader extends StatelessWidget {
             vertical: AppSpacing.sp8,
           ),
           decoration: BoxDecoration(
-            color: AppColors.navySoft,
+            color: AppColors.resolve(AppColors.navySoft, context),
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           ),
           child: Text(
             count == null ? '...' : '$count mẫu',
             style: AppTypography.label.copyWith(
-              color: AppColors.navy,
+              color: AppColors.resolve(AppColors.navy, context),
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -706,13 +715,13 @@ class _GrammarPatternCard extends StatelessWidget {
 
     return AppCard(
       padding: EdgeInsets.zero,
-      color: AppColors.white,
-      borderColor: AppColors.slateLight.withValues(alpha: 0.28),
-      shadowColor: AppColors.navyDark.withValues(alpha: 0.035),
+      color: Theme.of(context).cardColor,
+      borderColor: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.28),
+      shadowColor: AppColors.resolve(AppColors.navyDark, context).withValues(alpha: 0.035),
       child: Theme(
         data: Theme.of(context).copyWith(
           dividerColor: Colors.transparent,
-          splashColor: AppColors.leafGreen.withValues(alpha: 0.06),
+          splashColor: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.06),
         ),
         child: ExpansionTile(
           tilePadding: const EdgeInsets.fromLTRB(
@@ -736,7 +745,7 @@ class _GrammarPatternCard extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: AppTypography.headingS.copyWith(
-              color: AppColors.navyDark,
+              color: AppColors.resolve(AppColors.navyDark, context),
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -746,7 +755,7 @@ class _GrammarPatternCard extends StatelessWidget {
               grammar.shortExplanation,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
+              style: AppTypography.bodyS.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
             ),
           ),
           children: [
@@ -788,15 +797,15 @@ class _FormationBlock extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: AppColors.leafGreen.withValues(alpha: 0.08),
+        color: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: AppColors.leafGreen.withValues(alpha: 0.10)),
+        border: Border.all(color: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.10)),
       ),
       child: Text(
         text,
         textAlign: TextAlign.center,
         style: AppTypography.bodyL.copyWith(
-          color: AppColors.leafDark,
+          color: AppColors.resolve(AppColors.leafDark, context),
           fontWeight: FontWeight.w900,
         ),
       ),
@@ -821,7 +830,7 @@ class _ExplanationBlock extends StatelessWidget {
         Text(
           text,
           style: AppTypography.bodyM.copyWith(
-            color: AppColors.navyDark,
+            color: AppColors.resolve(AppColors.navyDark, context),
             height: 1.45,
           ),
         ),
@@ -841,7 +850,7 @@ class _ExampleBlock extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: AppColors.navySoft.withValues(alpha: 0.62),
+        color: AppColors.resolve(AppColors.navySoft, context).withValues(alpha: 0.62),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
       ),
       child: Column(
@@ -852,7 +861,7 @@ class _ExampleBlock extends StatelessWidget {
           Text(
             example.jp,
             style: AppTypography.bodyM.copyWith(
-              color: AppColors.navyDark,
+              color: AppColors.resolve(AppColors.navyDark, context),
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -861,7 +870,7 @@ class _ExampleBlock extends StatelessWidget {
             Text(
               example.romaji,
               style: AppTypography.label.copyWith(
-                color: AppColors.slateMuted,
+                color: AppColors.resolve(AppColors.slateMuted, context),
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -870,7 +879,7 @@ class _ExampleBlock extends StatelessWidget {
             const SizedBox(height: AppSpacing.sp4),
             Text(
               example.en,
-              style: AppTypography.label.copyWith(color: AppColors.slateMuted),
+              style: AppTypography.label.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
             ),
           ],
         ],
@@ -889,12 +898,12 @@ class _BlockLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.leafGreen, size: 17),
+        Icon(icon, color: AppColors.resolve(AppColors.leafGreen, context), size: 17),
         const SizedBox(width: AppSpacing.sp4),
         Text(
           label,
           style: AppTypography.labelS.copyWith(
-            color: AppColors.leafDark,
+            color: AppColors.resolve(AppColors.leafDark, context),
             fontWeight: FontWeight.w900,
           ),
         ),

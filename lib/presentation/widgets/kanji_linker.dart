@@ -22,6 +22,9 @@ class KanjiLinker extends ConsumerWidget {
       return Text(text, style: style);
     }
 
+    final resolvedMossGreen = AppColors.resolve(AppColors.mossGreen, context);
+    final defaultColor = Theme.of(context).colorScheme.onSurface;
+
     final List<InlineSpan> spans = [];
     int lastMatchEnd = 0;
 
@@ -52,10 +55,10 @@ class KanjiLinker extends ConsumerWidget {
             child: Text(
               kanjiChar,
               style: (style ?? const TextStyle()).copyWith(
-                color: AppColors.mossGreen,
+                color: resolvedMossGreen,
                 fontWeight: FontWeight.bold,
                 decoration: TextDecoration.underline,
-                decorationColor: AppColors.mossGreen.withValues(alpha: 0.3),
+                decorationColor: resolvedMossGreen.withValues(alpha: 0.3),
               ),
             ),
           ),
@@ -71,7 +74,7 @@ class KanjiLinker extends ConsumerWidget {
 
     return RichText(
       text: TextSpan(
-        style: style ?? const TextStyle(color: Color(0xFF2C3E50), fontSize: 16),
+        style: style ?? TextStyle(color: defaultColor, fontSize: 16),
         children: spans,
       ),
     );

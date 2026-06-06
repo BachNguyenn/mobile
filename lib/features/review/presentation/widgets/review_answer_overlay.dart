@@ -19,7 +19,7 @@ class ReviewAnswerOverlay extends StatelessWidget {
 
     return Positioned.fill(
       child: Container(
-        color: AppColors.white.withValues(alpha: 0.9),
+        color: Theme.of(context).cardColor.withValues(alpha: 0.95),
         child: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -28,7 +28,7 @@ class CollapsedTitle extends StatelessWidget {
         Text(
           'Trang chủ',
           style: AppTypography.headingS.copyWith(
-            color: AppColors.ink,
+            color: Theme.of(context).colorScheme.onSurface,
             fontWeight: FontWeight.w800,
           ),
         ),

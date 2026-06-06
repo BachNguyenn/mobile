@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/features/learning/application/providers/learning_path_provider.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/learning/presentation/screens/lesson_detail_screen.dart';
 import 'package:mobile/features/settings/application/providers/settings_provider.dart';
 import 'package:mobile/core/theme/app_colors.dart';
@@ -299,7 +299,7 @@ class _LearningPathAppBar extends ConsumerWidget {
     return SliverAppBar(
       floating: true,
       pinned: true,
-      backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+      backgroundColor: AppColors.resolve(AppColors.cream, context).withValues(alpha: 0.94),
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       centerTitle: true,
@@ -348,7 +348,11 @@ class _PlacementAppBarButton extends StatelessWidget {
           height: 38,
           padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sp12),
           decoration: BoxDecoration(
-            gradient: AppColors.brandLeafGradient,
+            gradient: LinearGradient(
+              colors: AppColors.resolveColors(AppColors.brandLeafGradient.colors, context),
+              begin: AppColors.brandLeafGradient.begin,
+              end: AppColors.brandLeafGradient.end,
+            ),
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
             border: Border.all(color: AppColors.white.withValues(alpha: 0.72)),
           ),
@@ -395,15 +399,19 @@ class _LearningOverviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = total == 0 ? 0.0 : completed / total;
     final current = currentLesson;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return AppCard(
       padding: EdgeInsets.zero,
-      gradient: const LinearGradient(
-        colors: [AppColors.navy, AppColors.terracotta, AppColors.leafGreen],
+      gradient: LinearGradient(
+        colors: isDark
+            ? [const Color(0xFF1F2544), const Color(0xFF3E2319), const Color(0xFF162721)]
+            : AppColors.resolveColors([AppColors.navy, AppColors.terracotta, AppColors.leafGreen], context),
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       ),
-      shadowColor: AppColors.navy.withValues(alpha: 0.16),
+      borderColor: isDark ? const Color(0xFF353F6C).withValues(alpha: 0.4) : null,
+      shadowColor: isDark ? Colors.transparent : AppColors.resolve(AppColors.navy, context).withValues(alpha: 0.16),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
         child: Stack(
@@ -549,7 +557,7 @@ class _LearningOverviewCard extends StatelessWidget {
                             icon: const Icon(Icons.arrow_forward_rounded),
                             style: IconButton.styleFrom(
                               backgroundColor: AppColors.white,
-                              foregroundColor: AppColors.navy,
+                              foregroundColor: isDark ? const Color(0xFF293156) : AppColors.navy,
                             ),
                           ),
                         ],
@@ -662,23 +670,26 @@ class _SkillMiniCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
+    final theme = Theme.of(context);
+
     return Expanded(
       child: Container(
         padding: const EdgeInsets.all(AppSpacing.sp12),
         decoration: BoxDecoration(
-          color: AppColors.white,
+          color: theme.cardColor,
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-          border: Border.all(color: color.withValues(alpha: 0.14)),
+          border: Border.all(color: resolvedColor.withValues(alpha: 0.14)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(icon, color: color, size: 20),
+            Icon(icon, color: resolvedColor, size: 20),
             const SizedBox(height: AppSpacing.sp8),
             Text(
               '$value',
               style: AppTypography.bodyMBold.copyWith(
-                color: AppColors.navyDark,
+                color: theme.colorScheme.onSurface,
                 fontWeight: FontWeight.w900,
               ),
             ),
@@ -687,7 +698,7 @@ class _SkillMiniCard extends StatelessWidget {
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: AppTypography.labelS.copyWith(
-                color: AppColors.slateMuted,
+                color: AppColors.resolve(AppColors.slateMuted, context),
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -721,11 +732,29 @@ class _FocusedLearningHero extends StatelessWidget {
   Widget build(BuildContext context) {
     final progress = total == 0 ? 0.0 : completed / total;
     final current = currentLesson;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final List<Color> gradientColors;
+    if (isDark) {
+      gradientColors = switch (spec.icon) {
+        Icons.menu_book_rounded => [const Color(0xFF233E35), const Color(0xFF162721)],
+        Icons.edit_note_rounded => [const Color(0xFF3E2319), const Color(0xFF2E2413)],
+        Icons.translate_rounded => [const Color(0xFF1F2544), const Color(0xFF151A30)],
+        _ => [const Color(0xFF1F2544), const Color(0xFF151A30)],
+      };
+    } else {
+      gradientColors = AppColors.resolveColors(spec.gradient.colors, context);
+    }
 
     return AppCard(
       padding: EdgeInsets.zero,
-      gradient: spec.gradient,
-      shadowColor: spec.accent.withValues(alpha: 0.14),
+      gradient: LinearGradient(
+        colors: gradientColors,
+        begin: spec.gradient.begin,
+        end: spec.gradient.end,
+      ),
+      borderColor: isDark ? const Color(0xFF353F6C).withValues(alpha: 0.4) : null,
+      shadowColor: isDark ? Colors.transparent : spec.accent.withValues(alpha: 0.14),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
         child: Stack(
@@ -873,7 +902,7 @@ class _FocusedLearningHero extends StatelessWidget {
                             icon: const Icon(Icons.arrow_forward_rounded),
                             style: IconButton.styleFrom(
                               backgroundColor: AppColors.white,
-                              foregroundColor: spec.accent,
+                              foregroundColor: isDark ? const Color(0xFF293156) : spec.accent,
                             ),
                           ),
                         ],
@@ -924,13 +953,16 @@ class _FocusedLessonCard extends StatelessWidget {
         ? 'Quiz'
         : 'Mở';
 
+    final resolvedCreamDark = AppColors.resolve(AppColors.creamDark, context);
+    final resolvedAccent = AppColors.resolve(accent, context);
+
     return AppCard(
       onTap: onTap,
       color: isLocked
-          ? AppColors.creamDark.withValues(alpha: 0.62)
-          : AppColors.white,
-      borderColor: accent.withValues(alpha: 0.16),
-      shadowColor: AppColors.navy.withValues(alpha: isLocked ? 0 : 0.045),
+          ? resolvedCreamDark.withValues(alpha: 0.62)
+          : Theme.of(context).cardColor,
+      borderColor: resolvedAccent.withValues(alpha: 0.16),
+      shadowColor: AppColors.resolve(AppColors.navy, context).withValues(alpha: isLocked ? 0 : 0.045),
       padding: const EdgeInsets.all(AppSpacing.sp16),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -940,11 +972,11 @@ class _FocusedLessonCard extends StatelessWidget {
             height: 52,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: accent.withValues(alpha: isLocked ? 0.12 : 0.14),
+              color: resolvedAccent.withValues(alpha: isLocked ? 0.12 : 0.14),
               borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-              border: Border.all(color: accent.withValues(alpha: 0.18)),
+              border: Border.all(color: resolvedAccent.withValues(alpha: 0.18)),
             ),
-            child: Icon(_iconForState(isLocked, isQuiz), color: accent),
+            child: Icon(_iconForState(isLocked, isQuiz), color: resolvedAccent),
           ),
           const SizedBox(width: AppSpacing.sp12),
           Expanded(
@@ -959,22 +991,23 @@ class _FocusedLessonCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: AppTypography.headingS.copyWith(
-                          color: isLocked
-                              ? AppColors.slateMuted
-                              : AppColors.navyDark,
+                          color: AppColors.resolve(
+                            isLocked ? AppColors.slateMuted : AppColors.navyDark,
+                            context,
+                          ),
                           fontWeight: FontWeight.w800,
                         ),
                       ),
                     ),
                     const SizedBox(width: AppSpacing.sp8),
-                    _StatusBadge(label: statusLabel, color: accent),
+                    _StatusBadge(label: statusLabel, color: resolvedAccent),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.sp4),
                 Text(
                   _description(isQuiz),
                   style: AppTypography.bodyS.copyWith(
-                    color: AppColors.slateMuted,
+                    color: AppColors.resolve(AppColors.slateMuted, context),
                     height: 1.35,
                   ),
                 ),
@@ -986,7 +1019,7 @@ class _FocusedLessonCard extends StatelessWidget {
                     _ContentChip(
                       icon: Icons.layers_rounded,
                       label: '${index + 1}/$total',
-                      color: accent,
+                      color: resolvedAccent,
                     ),
                     if (lesson.vocabIds.isNotEmpty)
                       _ContentChip(
@@ -1020,7 +1053,7 @@ class _FocusedLessonCard extends StatelessWidget {
           const SizedBox(width: AppSpacing.sp8),
           Icon(
             isLocked ? Icons.lock_rounded : Icons.chevron_right_rounded,
-            color: accent,
+            color: resolvedAccent,
           ),
         ],
       ),
@@ -1049,7 +1082,7 @@ class _LearningCategorySpec {
   final String itemUnit;
   final IconData icon;
   final Color accent;
-  final Gradient gradient;
+  final LinearGradient gradient;
 
   const _LearningCategorySpec({
     required this.heroTitle,
@@ -1143,14 +1176,16 @@ class _PathSectionHeader extends StatelessWidget {
         Text(
           title,
           style: AppTypography.headingM.copyWith(
-            color: AppColors.navyDark,
+            color: AppColors.resolve(AppColors.navyDark, context),
             fontWeight: FontWeight.w800,
           ),
         ),
         const SizedBox(height: AppSpacing.sp4),
         Text(
           subtitle,
-          style: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
+          style: AppTypography.bodyS.copyWith(
+            color: AppColors.resolve(AppColors.slateMuted, context),
+          ),
         ),
       ],
     );
@@ -1189,6 +1224,9 @@ class _MixedPathCard extends StatelessWidget {
         ? Icons.assignment_rounded
         : Icons.play_arrow_rounded;
 
+    final resolvedCreamDark = AppColors.resolve(AppColors.creamDark, context);
+    final resolvedAccent = AppColors.resolve(accent, context);
+
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sp12),
       child: Row(
@@ -1201,9 +1239,9 @@ class _MixedPathCard extends StatelessWidget {
                 height: 42,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: accent,
+                  color: resolvedAccent,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.white, width: 3),
+                  border: Border.all(color: Theme.of(context).scaffoldBackgroundColor, width: 3),
                 ),
                 child: Icon(icon, color: AppColors.white, size: 20),
               ),
@@ -1213,7 +1251,7 @@ class _MixedPathCard extends StatelessWidget {
                   height: 92,
                   margin: const EdgeInsets.symmetric(vertical: AppSpacing.sp4),
                   decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.20),
+                    color: resolvedAccent.withValues(alpha: 0.20),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                   ),
                 ),
@@ -1224,10 +1262,10 @@ class _MixedPathCard extends StatelessWidget {
             child: AppCard(
               onTap: onTap,
               color: isLocked
-                  ? AppColors.creamDark.withValues(alpha: 0.62)
-                  : AppColors.white,
-              borderColor: accent.withValues(alpha: 0.16),
-              shadowColor: AppColors.navy.withValues(
+                  ? resolvedCreamDark.withValues(alpha: 0.62)
+                  : Theme.of(context).cardColor,
+              borderColor: resolvedAccent.withValues(alpha: 0.16),
+              shadowColor: AppColors.resolve(AppColors.navy, context).withValues(
                 alpha: isLocked ? 0 : 0.05,
               ),
               padding: const EdgeInsets.all(AppSpacing.sp16),
@@ -1242,9 +1280,10 @@ class _MixedPathCard extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: AppTypography.headingS.copyWith(
-                            color: isLocked
-                                ? AppColors.slateMuted
-                                : AppColors.navyDark,
+                            color: AppColors.resolve(
+                              isLocked ? AppColors.slateMuted : AppColors.navyDark,
+                              context,
+                            ),
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -1258,7 +1297,7 @@ class _MixedPathCard extends StatelessWidget {
                             : isQuiz
                             ? 'Quiz'
                             : 'Học',
-                        color: accent,
+                        color: resolvedAccent,
                       ),
                     ],
                   ),
@@ -1268,7 +1307,7 @@ class _MixedPathCard extends StatelessWidget {
                         ? 'Kiểm tra lại các chặng vừa học.'
                         : 'Một chặng học ngắn, trộn đủ kỹ năng chính.',
                     style: AppTypography.bodyS.copyWith(
-                      color: AppColors.slateMuted,
+                      color: AppColors.resolve(AppColors.slateMuted, context),
                     ),
                   ),
                   const SizedBox(height: AppSpacing.sp12),
@@ -1320,19 +1359,20 @@ class _StatusBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp8,
         vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
+        color: resolvedColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Text(
         label,
         style: AppTypography.labelS.copyWith(
-          color: color,
+          color: resolvedColor,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -1353,24 +1393,25 @@ class _ContentChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp8,
         vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.08),
+        color: resolvedColor.withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: color),
+          Icon(icon, size: 13, color: resolvedColor),
           const SizedBox(width: AppSpacing.sp4),
           Text(
             label,
             style: AppTypography.labelS.copyWith(
-              color: color,
+              color: resolvedColor,
               fontWeight: FontWeight.w800,
             ),
           ),

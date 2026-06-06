@@ -1,12 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:mobile/app/bootstrap/database_initializer_provider.dart';
-import 'package:mobile/features/grammar/application/providers/grammar_repository_provider.dart';
-import 'package:mobile/features/sentence/data/repositories/sentence_repository_impl.dart';
 import 'package:mobile/features/sentence/domain/entities/sentence.dart';
 import 'package:mobile/features/sentence/domain/repositories/sentence_repository.dart';
 
 final sentenceRepositoryProvider = Provider<SentenceRepository>((ref) {
-  return SentenceRepositoryImpl(ref.watch(grammarRepositoryProvider));
+  throw UnimplementedError('sentenceRepositoryProvider must be overridden');
 });
 
 final sentenceSearchQueryProvider = StateProvider<String>((ref) => '');

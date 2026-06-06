@@ -61,10 +61,11 @@ class _SentencePracticeScreenState
   @override
   Widget build(BuildContext context) {
     final sentencesAsync = ref.watch(dueSentencePracticeProvider);
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: AppColors.white,
-      appBar: _buildAppBar(_progress),
+      backgroundColor: theme.colorScheme.surface,
+      appBar: _buildAppBar(context, _progress),
       body: AppPageBackground(
         child: sentencesAsync.when(
           data: (sentences) {
@@ -272,11 +273,13 @@ class _SentencePracticeScreenState
     );
   }
 
-  PreferredSizeWidget _buildAppBar(double progress) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, double progress) {
+    final theme = Theme.of(context);
+
     return AppBar(
       title: const Text('Luyện câu', style: AppTypography.headingM),
-      backgroundColor: AppColors.cream.withValues(alpha: 0.94),
-      foregroundColor: AppColors.slateGrey,
+      backgroundColor: Colors.transparent,
+      foregroundColor: theme.colorScheme.onSurface,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
       bottom: PreferredSize(
@@ -284,7 +287,7 @@ class _SentencePracticeScreenState
         child: LinearProgressIndicator(
           value: progress,
           minHeight: 8,
-          backgroundColor: AppColors.creamDark,
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
           valueColor: const AlwaysStoppedAnimation<Color>(AppColors.terracotta),
         ),
       ),
@@ -458,15 +461,17 @@ class _SentenceSessionSummary extends StatelessWidget {
         ? 0
         : ((correctCount / completedCount) * 100).round();
 
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+
     return AppCard(
       key: sentenceSessionSummaryKey,
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp12,
         vertical: AppSpacing.sp8,
       ),
-      color: AppColors.white,
-      borderColor: AppColors.slateLight.withValues(alpha: 0.22),
-      shadowColor: AppColors.ink.withValues(alpha: 0.035),
+      color: Theme.of(context).cardColor,
+      borderColor: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.22),
+      shadowColor: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -478,7 +483,7 @@ class _SentenceSessionSummary extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.bodyS.copyWith(
-                    color: AppColors.navyDark,
+                    color: resolvedNavyDark,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -486,7 +491,7 @@ class _SentenceSessionSummary extends StatelessWidget {
               Text(
                 '$completedCount/$totalCount',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.terracotta,
+                  color: AppColors.resolve(AppColors.terracotta, context),
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -498,7 +503,7 @@ class _SentenceSessionSummary extends StatelessWidget {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 4,
-              backgroundColor: AppColors.creamDark,
+              backgroundColor: AppColors.resolve(AppColors.creamDark, context),
               valueColor: const AlwaysStoppedAnimation<Color>(
                 AppColors.terracotta,
               ),
@@ -545,21 +550,22 @@ class _StudyMetricPill extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.10),
+        color: resolvedColor.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 13, color: color),
+          Icon(icon, size: 13, color: resolvedColor),
           const SizedBox(width: AppSpacing.sp4),
           Text(
             label,
             style: AppTypography.labelS.copyWith(
-              color: AppColors.navyDark,
+              color: AppColors.resolve(AppColors.navyDark, context),
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -584,19 +590,24 @@ class _SentenceLearningAid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedNavySoft = AppColors.resolve(AppColors.navySoft, context);
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.sp8),
-      color: AppColors.navySoft.withValues(alpha: 0.56),
-      borderColor: AppColors.slateLight.withValues(alpha: 0.20),
+      color: resolvedNavySoft.withValues(alpha: 0.56),
+      borderColor: resolvedSlateLight.withValues(alpha: 0.20),
       shadowColor: Colors.transparent,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.psychology_alt_rounded,
-                color: AppColors.terracotta,
+                color: resolvedTerracotta,
                 size: 16,
               ),
               const SizedBox(width: AppSpacing.sp4),
@@ -606,7 +617,7 @@ class _SentenceLearningAid extends StatelessWidget {
                   maxLines: showHint ? 2 : 1,
                   overflow: TextOverflow.ellipsis,
                   style: AppTypography.label.copyWith(
-                    color: AppColors.navyDark,
+                    color: resolvedNavyDark,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -622,9 +633,9 @@ class _SentenceLearningAid extends StatelessWidget {
                 ),
                 label: Text(showHint ? 'Ẩn gợi ý' : 'Gợi ý'),
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.terracotta,
+                  foregroundColor: resolvedTerracotta,
                   side: BorderSide(
-                    color: AppColors.terracotta.withValues(alpha: 0.34),
+                    color: resolvedTerracotta.withValues(alpha: 0.34),
                   ),
                   textStyle: AppTypography.label.copyWith(
                     fontWeight: FontWeight.w900,
@@ -687,14 +698,16 @@ class _SentenceSessionComplete extends StatelessWidget {
     final accuracy = completedCount == 0
         ? 0
         : ((correctCount / completedCount) * 100).round();
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
 
     return Center(
       child: AppCard(
         key: sentenceCompletionKey,
         padding: const EdgeInsets.all(AppSpacing.sp16),
-        color: AppColors.white,
-        borderColor: AppColors.leafGreen.withValues(alpha: 0.28),
-        shadowColor: AppColors.leafGreen.withValues(alpha: 0.08),
+        color: Theme.of(context).cardColor,
+        borderColor: resolvedLeafGreen.withValues(alpha: 0.28),
+        shadowColor: resolvedLeafGreen.withValues(alpha: 0.08),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -705,12 +718,12 @@ class _SentenceSessionComplete extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: AppColors.leafGreen.withValues(alpha: 0.12),
+                    color: resolvedLeafGreen.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.school_rounded,
-                    color: AppColors.leafGreen,
+                    color: resolvedLeafGreen,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sp12),
@@ -718,7 +731,7 @@ class _SentenceSessionComplete extends StatelessWidget {
                   child: Text(
                     'Hoàn thành phiên học',
                     style: AppTypography.headingS.copyWith(
-                      color: AppColors.navyDark,
+                      color: resolvedNavyDark,
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -758,19 +771,20 @@ class _SentenceHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp12,
         vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
-        color: AppColors.terracotta.withValues(alpha: 0.10),
+        color: resolvedTerracotta.withValues(alpha: 0.10),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Text(
         '$current/$total',
         style: AppTypography.label.copyWith(
-          color: AppColors.terracotta,
+          color: resolvedTerracotta,
           fontWeight: FontWeight.w900,
         ),
       ),
@@ -796,6 +810,10 @@ class _SentenceModePills extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+
     return SizedBox(
       height: 34,
       child: ListView.separated(
@@ -814,21 +832,21 @@ class _SentenceModePills extends StatelessWidget {
             avatar: Icon(
               icon,
               size: 16,
-              color: selected ? AppColors.white : AppColors.terracotta,
+              color: selected ? AppColors.white : resolvedTerracotta,
             ),
             label: Text(label),
             showCheckmark: false,
             onSelected: (_) => onChanged(value),
             labelStyle: AppTypography.label.copyWith(
-              color: selected ? AppColors.white : AppColors.navyDark,
+              color: selected ? AppColors.white : resolvedNavyDark,
               fontWeight: FontWeight.w800,
             ),
-            backgroundColor: AppColors.white,
-            selectedColor: AppColors.terracotta,
+            backgroundColor: Theme.of(context).cardColor,
+            selectedColor: resolvedTerracotta,
             side: BorderSide(
               color: selected
-                  ? AppColors.terracotta
-                  : AppColors.slateLight.withValues(alpha: 0.35),
+                  ? resolvedTerracotta
+                  : resolvedSlateLight.withValues(alpha: 0.35),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
@@ -863,12 +881,13 @@ class _SentencePromptCard extends StatelessWidget {
       SentencePracticeMode.typing => sentence.meaning,
     };
     final isJapanesePrompt = mode == SentencePracticeMode.readToMeaning;
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
 
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.sp8),
-      color: AppColors.white,
-      borderColor: AppColors.terracotta.withValues(alpha: 0.16),
-      shadowColor: AppColors.terracotta.withValues(alpha: 0.06),
+      color: Theme.of(context).cardColor,
+      borderColor: resolvedTerracotta.withValues(alpha: 0.16),
+      shadowColor: resolvedTerracotta.withValues(alpha: 0.06),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -884,13 +903,13 @@ class _SentencePromptCard extends StatelessWidget {
                     vertical: 3,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.terracotta.withValues(alpha: 0.10),
+                    color: resolvedTerracotta.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                   ),
                   child: Text(
                     sentence.sourceGrammarTitle!,
                     style: AppTypography.labelS.copyWith(
-                      color: AppColors.terracotta,
+                      color: resolvedTerracotta,
                     ),
                   ),
                 ),
@@ -908,7 +927,7 @@ class _SentencePromptCard extends StatelessWidget {
                       (isJapanesePrompt
                               ? AppTypography.headingM
                               : AppTypography.bodyMBold)
-                          .copyWith(color: AppColors.ink),
+                          .copyWith(color: Theme.of(context).colorScheme.onSurface),
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
@@ -921,10 +940,10 @@ class _SentencePromptCard extends StatelessWidget {
                   onPressed: () => onSpeak(sentence.text),
                   icon: const Icon(Icons.volume_up_rounded),
                   style: IconButton.styleFrom(
-                    backgroundColor: AppColors.terracotta.withValues(
+                    backgroundColor: resolvedTerracotta.withValues(
                       alpha: 0.10,
                     ),
-                    foregroundColor: AppColors.terracotta,
+                    foregroundColor: resolvedTerracotta,
                     minimumSize: const Size.square(34),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     visualDensity: VisualDensity.compact,
@@ -964,33 +983,38 @@ class _TypingInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedSlateMuted = AppColors.resolve(AppColors.slateMuted, context);
+
     return TextField(
       enabled: enabled,
       onChanged: onChanged,
       style: AppTypography.bodyM.copyWith(
-        color: AppColors.navyDark,
+        color: resolvedNavyDark,
         fontWeight: FontWeight.w700,
       ),
       decoration: InputDecoration(
         filled: true,
-        fillColor: AppColors.white,
+        fillColor: Theme.of(context).cardColor,
         hintText: 'Nhập câu tiếng Nhật...',
-        hintStyle: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
+        hintStyle: AppTypography.bodyS.copyWith(color: resolvedSlateMuted),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           borderSide: BorderSide(
-            color: AppColors.slateLight.withValues(alpha: 0.42),
+            color: resolvedSlateLight.withValues(alpha: 0.42),
           ),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           borderSide: BorderSide(
-            color: AppColors.slateLight.withValues(alpha: 0.42),
+            color: resolvedSlateLight.withValues(alpha: 0.42),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-          borderSide: const BorderSide(color: AppColors.terracotta, width: 1.4),
+          borderSide: BorderSide(color: resolvedTerracotta, width: 1.4),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sp12,
@@ -1066,25 +1090,30 @@ class _SentenceOptionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+
     final Color borderColor;
     final Color backgroundColor;
     final IconData? icon;
 
     if (isChecked && isCorrect) {
-      borderColor = AppColors.leafGreen;
-      backgroundColor = AppColors.leafGreen.withValues(alpha: 0.10);
+      borderColor = resolvedLeafGreen;
+      backgroundColor = resolvedLeafGreen.withValues(alpha: 0.10);
       icon = Icons.check_circle_rounded;
     } else if (isChecked && isSelected) {
-      borderColor = AppColors.terracotta;
-      backgroundColor = AppColors.terracotta.withValues(alpha: 0.08);
+      borderColor = resolvedTerracotta;
+      backgroundColor = resolvedTerracotta.withValues(alpha: 0.08);
       icon = Icons.info_rounded;
     } else if (isSelected) {
-      borderColor = AppColors.terracotta;
-      backgroundColor = AppColors.terracotta.withValues(alpha: 0.08);
+      borderColor = resolvedTerracotta;
+      backgroundColor = resolvedTerracotta.withValues(alpha: 0.08);
       icon = Icons.radio_button_checked_rounded;
     } else {
-      borderColor = AppColors.slateLight.withValues(alpha: 0.42);
-      backgroundColor = AppColors.white;
+      borderColor = resolvedSlateLight.withValues(alpha: 0.42);
+      backgroundColor = Theme.of(context).cardColor;
       icon = null;
     }
 
@@ -1111,7 +1140,7 @@ class _SentenceOptionTile extends StatelessWidget {
                 child: Text(
                   option,
                   style: AppTypography.bodyM.copyWith(
-                    color: AppColors.navyDark,
+                    color: resolvedNavyDark,
                     fontWeight: isSelected || isCorrect
                         ? FontWeight.w800
                         : FontWeight.w600,
@@ -1162,7 +1191,12 @@ class _SentenceAnswerPanel extends StatelessWidget {
       SentencePracticeMode.meaningToJapanese => sentence.text,
       SentencePracticeMode.typing => sentence.text,
     };
-    final accentColor = isCorrect ? AppColors.leafGreen : AppColors.terracotta;
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedInk = AppColors.resolve(AppColors.ink, context);
+
+    final accentColor = isCorrect ? resolvedLeafGreen : resolvedTerracotta;
     final userAnswer = mode == SentencePracticeMode.typing
         ? typedAnswer
         : selectedAnswer;
@@ -1170,9 +1204,9 @@ class _SentenceAnswerPanel extends StatelessWidget {
     return AppCard(
       key: isCorrect ? sentenceCorrectFeedbackKey : null,
       padding: const EdgeInsets.all(AppSpacing.sp12),
-      color: AppColors.white,
+      color: Theme.of(context).cardColor,
       borderColor: accentColor.withValues(alpha: 0.34),
-      shadowColor: AppColors.ink.withValues(alpha: 0.04),
+      shadowColor: resolvedInk.withValues(alpha: 0.04),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -1188,7 +1222,7 @@ class _SentenceAnswerPanel extends StatelessWidget {
                 child: Text(
                   isCorrect ? 'Chính xác' : 'Đáp án đúng',
                   style: AppTypography.headingS.copyWith(
-                    color: AppColors.navyDark,
+                    color: resolvedNavyDark,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -1197,7 +1231,7 @@ class _SentenceAnswerPanel extends StatelessWidget {
                 tooltip: 'Phát âm',
                 onPressed: onSpeak,
                 icon: const Icon(Icons.volume_up_rounded),
-                color: AppColors.terracotta,
+                color: resolvedTerracotta,
                 visualDensity: VisualDensity.compact,
                 constraints: const BoxConstraints.tightFor(
                   width: 36,
@@ -1210,7 +1244,7 @@ class _SentenceAnswerPanel extends StatelessWidget {
           Text(
             answer,
             style: AppTypography.bodyMBold.copyWith(
-              color: AppColors.ink,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -1218,7 +1252,7 @@ class _SentenceAnswerPanel extends StatelessWidget {
             const SizedBox(height: AppSpacing.sp4),
             Text(
               'Bạn chọn: $userAnswer',
-              style: AppTypography.bodyS.copyWith(color: AppColors.terracotta),
+              style: AppTypography.bodyS.copyWith(color: resolvedTerracotta),
             ),
           ],
           const SizedBox(height: AppSpacing.sp4),
@@ -1267,22 +1301,26 @@ class _InfoBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedNavySoft = AppColors.resolve(AppColors.navySoft, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp8),
       decoration: BoxDecoration(
-        color: AppColors.navySoft.withValues(alpha: 0.68),
+        color: resolvedNavySoft.withValues(alpha: 0.68),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, size: 16, color: AppColors.terracotta),
+          Icon(icon, size: 16, color: resolvedTerracotta),
           const SizedBox(width: AppSpacing.sp4),
           Expanded(
             child: Text(
               text,
-              style: AppTypography.bodyS.copyWith(color: AppColors.navyDark),
+              style: AppTypography.bodyS.copyWith(color: resolvedNavyDark),
             ),
           ),
         ],

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mobile/core/models/progress_models.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
 

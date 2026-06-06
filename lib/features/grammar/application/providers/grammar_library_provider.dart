@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 import 'package:mobile/app/bootstrap/database_initializer_provider.dart';
 import '../../domain/entities/grammar_point.dart';
 import 'grammar_repository_provider.dart';

@@ -6,7 +6,8 @@ import 'package:mobile/features/auth/domain/repositories/auth_repository.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
+  Future<void>? _googleSignInInitialization;
 
   @override
   Stream<AuthUser?> get authStateChanges =>
@@ -18,20 +19,27 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<AuthUser?> signInWithGoogle() async {
     try {
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        throw const AuthFailure(AuthFailureCode.canceled);
+      await _ensureGoogleSignInInitialized();
+      if (!_googleSignIn.supportsAuthenticate()) {
+        throw const AuthFailure(AuthFailureCode.operationNotAllowed);
       }
 
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      final AuthCredential credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
+      final googleUser = await _googleSignIn.authenticate();
+      final googleAuth = googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
         idToken: googleAuth.idToken,
       );
 
       final result = await _auth.signInWithCredential(credential);
       return _toDomainUser(result.user);
+    } on GoogleSignInException catch (error) {
+      if (error.code == GoogleSignInExceptionCode.canceled) {
+        throw const AuthFailure(AuthFailureCode.canceled);
+      }
+      throw AuthFailure(
+        AuthFailureCode.unknown,
+        message: error.description ?? error.code.name,
+      );
     } on FirebaseAuthException catch (error) {
       throw _mapFirebaseError(error);
     }
@@ -75,8 +83,13 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<void> signOut() async {
+    await _ensureGoogleSignInInitialized();
     await _googleSignIn.signOut();
     await _auth.signOut();
+  }
+
+  Future<void> _ensureGoogleSignInInitialized() {
+    return _googleSignInInitialization ??= _googleSignIn.initialize();
   }
 
   AuthUser? _toDomainUser(User? user) {

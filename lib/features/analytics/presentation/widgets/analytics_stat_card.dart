@@ -18,18 +18,19 @@ class AnalyticsStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return AppCard(
       padding: const EdgeInsets.all(AppSpacing.sp16),
-      color: AppColors.white,
-      borderColor: color.withValues(alpha: 0.18),
-      shadowColor: color.withValues(alpha: 0.05),
+      color: Theme.of(context).cardColor,
+      borderColor: resolvedColor.withValues(alpha: 0.18),
+      shadowColor: resolvedColor.withValues(alpha: 0.05),
       child: Column(
         children: [
-          Text(value, style: AppTypography.statNumber.copyWith(color: color)),
+          Text(value, style: AppTypography.statNumber.copyWith(color: resolvedColor)),
           const SizedBox(height: AppSpacing.sp4),
           Text(
             label,
-            style: AppTypography.label.copyWith(color: color),
+            style: AppTypography.label.copyWith(color: resolvedColor),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),

@@ -7,6 +7,7 @@ import '../../../grammar/application/providers/grammar_library_provider.dart';
 import '../../../kanji/application/providers/kanji_library_provider.dart';
 import '../../../auth/application/providers/auth_provider.dart';
 import '../../application/providers/analytics_provider.dart';
+import '../../domain/entities/analytics_data.dart';
 import '../widgets/analytics_stat_card.dart';
 import '../widgets/analytics_heatmap.dart';
 import '../widgets/analytics_jlpt_progress.dart';
@@ -25,12 +26,14 @@ class AnalyticsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final analyticsAsync = ref.watch(analyticsProvider);
-    final user = ref.watch(authStateProvider).valueOrNull;
+    final user = ref.watch(authStateProvider).value;
+    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Hồ sơ học tập', style: AppTypography.headingM),
-        backgroundColor: AppColors.cream.withValues(alpha: 0.94),
+        backgroundColor: Colors.transparent,
+        foregroundColor: theme.colorScheme.onSurface,
         surfaceTintColor: Colors.transparent,
       ),
       body: analyticsAsync.when(
@@ -207,7 +210,7 @@ class _ProfileSummaryCard extends StatelessWidget {
     return AppCard(
       gradient: AppColors.brandLeafGradient,
       borderColor: AppColors.white.withValues(alpha: 0.14),
-      shadowColor: AppColors.zenBlue.withValues(alpha: 0.18),
+      shadowColor: AppColors.resolve(AppColors.zenBlue, context).withValues(alpha: 0.18),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -333,20 +336,20 @@ class _RetentionInsightCard extends StatelessWidget {
 
     return AppCard(
       padding: AppSpacing.cardPadding,
-      color: AppColors.white,
-      borderColor: AppColors.slateLight.withValues(alpha: 0.2),
-      shadowColor: AppColors.navyDark.withValues(alpha: 0.035),
+      color: Theme.of(context).cardColor,
+      borderColor: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.2),
+      shadowColor: AppColors.resolve(AppColors.navyDark, context).withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Tỉ lệ nhớ theo cấp độ',
-            style: AppTypography.headingS.copyWith(color: AppColors.ink),
+            style: AppTypography.headingS.copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: AppSpacing.sp8),
           Text(
             'Điểm rơi hiện tại: $dropoutPoint',
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            style: AppTypography.bodyM.copyWith(color: AppColors.resolve(AppColors.slateGrey, context)),
           ),
           const SizedBox(height: AppSpacing.sp12),
           ...sortedKeys.map((key) {
@@ -356,7 +359,7 @@ class _RetentionInsightCard extends StatelessWidget {
               child: Text(
                 '$key: ${(value * 100).round()}%',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                 ),
               ),
             );
@@ -422,28 +425,28 @@ class _WeakAreaInsightCard extends StatelessWidget {
 
     return AppCard(
       padding: AppSpacing.cardPadding,
-      color: AppColors.white,
-      borderColor: AppColors.slateLight.withValues(alpha: 0.2),
-      shadowColor: AppColors.navyDark.withValues(alpha: 0.035),
+      color: Theme.of(context).cardColor,
+      borderColor: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.2),
+      shadowColor: AppColors.resolve(AppColors.navyDark, context).withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'Ưu tiên luyện tập',
-            style: AppTypography.headingS.copyWith(color: AppColors.ink),
+            style: AppTypography.headingS.copyWith(color: Theme.of(context).colorScheme.onSurface),
           ),
           const SizedBox(height: AppSpacing.sp8),
           Text(
             hasData
                 ? 'Mảng cần ưu tiên hiện tại: $area (độ chính xác $percent%).'
                 : 'Chưa có đủ dữ liệu ôn tập trong 30 ngày gần nhất để đề xuất.',
-            style: AppTypography.bodyM.copyWith(color: AppColors.slateGrey),
+            style: AppTypography.bodyM.copyWith(color: AppColors.resolve(AppColors.slateGrey, context)),
           ),
           if (hasData) ...[
             const SizedBox(height: AppSpacing.sp12),
             Text(
               'Gợi ý: tăng tần suất ôn mục này trong 3-5 ngày tới để cải thiện tỉ lệ nhớ.',
-              style: AppTypography.label.copyWith(color: AppColors.slateMuted),
+              style: AppTypography.label.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
             ),
             const SizedBox(height: AppSpacing.sp12),
             Align(

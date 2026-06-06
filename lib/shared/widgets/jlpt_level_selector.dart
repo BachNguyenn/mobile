@@ -19,6 +19,8 @@ class JlptLevelSelector extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return SizedBox(
       height: 44,
       child: ListView.separated(
@@ -38,15 +40,15 @@ class JlptLevelSelector extends StatelessWidget {
             onSelected: (_) =>
                 onChanged(selected && level != null ? null : level),
             labelStyle: AppTypography.label.copyWith(
-              color: selected ? AppColors.white : AppColors.navyDark,
+              color: selected ? AppColors.white : theme.colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
-            backgroundColor: AppColors.white,
+            backgroundColor: theme.cardColor,
             selectedColor: accentColor,
             side: BorderSide(
               color: selected
                   ? accentColor
-                  : AppColors.slateLight.withValues(alpha: 0.35),
+                  : theme.colorScheme.outlineVariant.withValues(alpha: 0.55),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusXL),

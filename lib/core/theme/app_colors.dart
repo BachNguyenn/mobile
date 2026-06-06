@@ -1,28 +1,65 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 abstract final class AppColors {
   static const Color white = Color(0xFFFFFFFF);
 
   // Brand palette from the app icon.
-  static const Color zenBlue = Color(0xFF293156);
+  static const Color zenBlue = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF293156),
+    darkColor: Color(0xFFAAB6E5),
+  );
   static const Color navy = zenBlue;
-  static const Color navyDark = Color(0xFF151C36);
-  static const Color navySoft = Color(0xFFF0F2F8);
-  static const Color leafGreen = Color(0xFF6E8E58);
-  static const Color leafLight = Color(0xFFB9C9A7);
-  static const Color leafDark = Color(0xFF49643D);
-  static const Color cream = Color(0xFFFFFFFF);
-  static const Color creamDark = Color(0xFFF2F4F0);
-  static const Color porcelain = Color(0xFFFBFCFA);
+  static const Color navyDark = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF151C36),
+    darkColor: Color(0xFFF1F4FA),
+  );
+  static const Color navySoft = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFF0F2F8),
+    darkColor: Color(0xFF1F263F),
+  );
+  static const Color leafGreen = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF6E8E58),
+    darkColor: Color(0xFFB9C9A7),
+  );
+  static const Color leafLight = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFB9C9A7),
+    darkColor: Color(0xFF6E8E58),
+  );
+  static const Color leafDark = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF49643D),
+    darkColor: Color(0xFFD3E2C6),
+  );
+  static const Color cream = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFFFFFFF),
+    darkColor: Color(0xFF111629),
+  );
+  static const Color creamDark = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFF2F4F0),
+    darkColor: Color(0xFF22283A),
+  );
+  static const Color porcelain = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFFBFCFA),
+    darkColor: Color(0xFF0F1322),
+  );
 
   // Backward-compatible aliases used across older screens.
   static const Color mossGreen = leafGreen;
   static const Color mossLight = leafLight;
   static const Color mossDark = leafDark;
   static const Color ink = navyDark;
-  static const Color slateGrey = Color(0xFF4E5668);
-  static const Color slateMuted = Color(0xFF8A92A3);
-  static const Color slateLight = Color(0xFFD5DAE3);
+  static const Color slateGrey = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF4E5668),
+    darkColor: Color(0xFFC7D0DA),
+  );
+  static const Color slateMuted = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFF8A92A3),
+    darkColor: Color(0xFF97A3AF),
+  );
+  static const Color slateLight = CupertinoDynamicColor.withBrightness(
+    color: Color(0xFFD5DAE3),
+    darkColor: Color(0xFF2A3146),
+  );
 
   static const Color terracotta = Color(0xFFC47D5A);
   static const Color sakura = Color(0xFFE8B4B8);
@@ -67,9 +104,18 @@ abstract final class AppColors {
   static const Color gardenSandDark = Color(0xFFD7CEBB);
   static const Color bambooGreen = Color(0xFF8FBC8F);
 
-  static Color get glassBg => white.withValues(alpha: 0.70);
-  static Color get glassStroke => white.withValues(alpha: 0.54);
-  static Color get glassShadow => navyDark.withValues(alpha: 0.10);
+  static const Color glassBg = CupertinoDynamicColor.withBrightness(
+    color: Color(0xB3FFFFFF),
+    darkColor: Color(0xB3111629),
+  );
+  static const Color glassStroke = CupertinoDynamicColor.withBrightness(
+    color: Color(0x8AFFFFFF),
+    darkColor: Color(0x8A22283A),
+  );
+  static const Color glassShadow = CupertinoDynamicColor.withBrightness(
+    color: Color(0x1A151C36),
+    darkColor: Color(0x1AF1F4FA),
+  );
 
   static const Color gardenGlow = Color(0xFFE8D5A3);
   static const Color lightRay = Color(0xFFFFF8E7);
@@ -88,7 +134,7 @@ abstract final class AppColors {
   );
 
   static const LinearGradient pageGradient = LinearGradient(
-    colors: [white, porcelain],
+    colors: [cream, porcelain],
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
   );
@@ -99,5 +145,45 @@ abstract final class AppColors {
     end: Alignment.bottomCenter,
   );
 
-  static Color get navPillBg => navySoft.withValues(alpha: 0.92);
+  static const Color navPillBg = CupertinoDynamicColor.withBrightness(
+    color: Color(0xEBF0F2F8),
+    darkColor: Color(0xEB1F263F),
+  );
+
+  static Color resolve(Color color, BuildContext context) {
+    if (color is CupertinoDynamicColor) {
+      return CupertinoDynamicColor.resolve(color, context);
+    }
+    return color;
+  }
+
+  static Color resolveWithAlpha(
+    Color color,
+    BuildContext context,
+    double alpha,
+  ) {
+    return resolve(color, context).withValues(alpha: alpha);
+  }
+
+  static List<Color> resolveColors(List<Color> colors, BuildContext context) {
+    return colors.map((color) => resolve(color, context)).toList();
+  }
+
+  /// Returns [shadow] only in light mode; dark backgrounds don't need drop shadows.
+  static List<BoxShadow> softShadow(
+    BuildContext context, {
+    Color? color,
+    double blurRadius = 12,
+    Offset offset = const Offset(0, 6),
+  }) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    if (isDark) return const [];
+    return [
+      BoxShadow(
+        color: color ?? const Color(0x0E000000),
+        blurRadius: blurRadius,
+        offset: offset,
+      ),
+    ];
+  }
 }

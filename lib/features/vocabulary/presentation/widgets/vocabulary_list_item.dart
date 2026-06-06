@@ -29,11 +29,15 @@ class _VocabularyListItemState extends ConsumerState<VocabularyListItem> {
         : null;
     final isNew = vocabulary.reps == 0;
 
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+    final resolvedNavyDark = AppColors.resolve(AppColors.navyDark, context);
+    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+
     return AppCard(
       padding: EdgeInsets.zero,
-      color: AppColors.white,
-      borderColor: AppColors.slateLight.withValues(alpha: 0.28),
-      shadowColor: AppColors.navyDark.withValues(alpha: 0.025),
+      color: Theme.of(context).cardColor,
+      borderColor: resolvedSlateLight.withValues(alpha: 0.28),
+      shadowColor: resolvedNavyDark.withValues(alpha: 0.025),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -61,7 +65,7 @@ class _VocabularyListItemState extends ConsumerState<VocabularyListItem> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: AppTypography.kanjiDisplay.copyWith(
-                                color: AppColors.navyDark,
+                                color: Theme.of(context).colorScheme.onSurface,
                                 fontSize: 28,
                                 height: 1.05,
                               ),
@@ -73,7 +77,7 @@ class _VocabularyListItemState extends ConsumerState<VocabularyListItem> {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: AppTypography.label.copyWith(
-                                  color: AppColors.slateMuted,
+                                  color: AppColors.resolve(AppColors.slateMuted, context),
                                   fontWeight: FontWeight.w800,
                                 ),
                               ),
@@ -86,7 +90,7 @@ class _VocabularyListItemState extends ConsumerState<VocabularyListItem> {
                                       ? Icons.visibility_off_rounded
                                       : Icons.touch_app_rounded,
                                   size: 14,
-                                  color: AppColors.leafGreen,
+                                  color: resolvedLeafGreen,
                                 ),
                                 const SizedBox(width: AppSpacing.sp4),
                                 Text(
@@ -94,7 +98,7 @@ class _VocabularyListItemState extends ConsumerState<VocabularyListItem> {
                                       ? 'Chạm để ẩn nghĩa'
                                       : 'Chạm từ để xem nghĩa',
                                   style: AppTypography.labelS.copyWith(
-                                    color: AppColors.leafGreen,
+                                    color: resolvedLeafGreen,
                                     fontWeight: FontWeight.w800,
                                   ),
                                 ),
@@ -155,10 +159,10 @@ class _VocabularyListItemState extends ConsumerState<VocabularyListItem> {
                     vertical: AppSpacing.sp8,
                   ),
                   decoration: BoxDecoration(
-                    color: AppColors.leafGreen.withValues(alpha: 0.08),
+                    color: resolvedLeafGreen.withValues(alpha: 0.08),
                     border: Border(
                       top: BorderSide(
-                        color: AppColors.leafGreen.withValues(alpha: 0.10),
+                        color: resolvedLeafGreen.withValues(alpha: 0.10),
                       ),
                     ),
                   ),
@@ -167,7 +171,7 @@ class _VocabularyListItemState extends ConsumerState<VocabularyListItem> {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: AppTypography.bodyMBold.copyWith(
-                      color: AppColors.leafDark,
+                      color: AppColors.resolve(AppColors.leafDark, context),
                       fontWeight: FontWeight.w900,
                     ),
                   ),
@@ -249,11 +253,11 @@ class _CircleIconButton extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: AppColors.navySoft,
+              color: AppColors.resolve(AppColors.navySoft, context),
               shape: BoxShape.circle,
-              border: Border.all(color: AppColors.navy.withValues(alpha: 0.08)),
+              border: Border.all(color: AppColors.resolve(AppColors.navy, context).withValues(alpha: 0.08)),
             ),
-            child: Icon(icon, color: AppColors.navy, size: 19),
+            child: Icon(icon, color: AppColors.resolve(AppColors.navy, context), size: 19),
           ),
         ),
       ),
@@ -269,13 +273,14 @@ class _MiniBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.sp8,
         vertical: AppSpacing.sp4,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.09),
+        color: resolvedColor.withValues(alpha: 0.09),
         borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       ),
       child: Text(
@@ -283,7 +288,7 @@ class _MiniBadge extends StatelessWidget {
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: AppTypography.labelS.copyWith(
-          color: color,
+          color: resolvedColor,
           fontWeight: FontWeight.w800,
         ),
       ),
@@ -298,11 +303,12 @@ class _ExampleBlock extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedNavy = AppColors.resolve(AppColors.navy, context);
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: AppColors.navySoft.withValues(alpha: 0.62),
+        color: AppColors.resolve(AppColors.navySoft, context).withValues(alpha: 0.62),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
       ),
       child: Column(
@@ -310,16 +316,16 @@ class _ExampleBlock extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(
+              Icon(
                 Icons.format_quote_rounded,
-                color: AppColors.navy,
+                color: resolvedNavy,
                 size: 17,
               ),
               const SizedBox(width: AppSpacing.sp4),
               Text(
                 'Ví dụ',
                 style: AppTypography.labelS.copyWith(
-                  color: AppColors.navy,
+                  color: resolvedNavy,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -331,7 +337,7 @@ class _ExampleBlock extends StatelessWidget {
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
             style: AppTypography.bodyS.copyWith(
-              color: AppColors.navyDark,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
           ),
@@ -341,7 +347,7 @@ class _ExampleBlock extends StatelessWidget {
               example.meaning,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: AppTypography.label.copyWith(color: AppColors.slateMuted),
+              style: AppTypography.label.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
             ),
           ],
         ],

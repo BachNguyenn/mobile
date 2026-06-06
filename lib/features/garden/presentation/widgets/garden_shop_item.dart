@@ -132,13 +132,12 @@ class _GardenShopItemState extends ConsumerState<GardenShopItem>
             border: Border.all(
               color: AppColors.slateLight.withValues(alpha: 0.2),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.ink.withValues(alpha: 0.04),
-                blurRadius: 8,
-                offset: const Offset(0, 3),
-              ),
-            ],
+            boxShadow: AppColors.softShadow(
+              context,
+              color: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.04),
+              blurRadius: 8,
+              offset: const Offset(0, 3),
+            ),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,

@@ -45,15 +45,14 @@ class ProfileAvatar extends ConsumerWidget {
             margin: const EdgeInsets.all(AppSpacing.sp16),
             padding: const EdgeInsets.all(AppSpacing.sp20),
             decoration: BoxDecoration(
-              color: AppColors.white,
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.zenBlue.withValues(alpha: 0.12),
-                  blurRadius: 30,
-                  offset: const Offset(0, -8),
-                ),
-              ],
+              boxShadow: AppColors.softShadow(
+                context,
+                color: AppColors.resolve(AppColors.zenBlue, context).withValues(alpha: 0.12),
+                blurRadius: 30,
+                offset: const Offset(0, -8),
+              ),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -63,7 +62,7 @@ class ProfileAvatar extends ConsumerWidget {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: AppSpacing.sp16),
                   decoration: BoxDecoration(
-                    color: AppColors.slateLight,
+                    color: AppColors.resolve(AppColors.slateLight, context),
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
@@ -80,7 +79,7 @@ class ProfileAvatar extends ConsumerWidget {
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             style: AppTypography.headingS.copyWith(
-                              color: AppColors.ink,
+                              color: Theme.of(context).colorScheme.onSurface,
                               fontWeight: FontWeight.w900,
                             ),
                           ),
@@ -162,9 +161,9 @@ class _UserAvatar extends StatelessWidget {
       height: size,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColors.navySoft,
+        color: AppColors.resolve(AppColors.navySoft, context),
         border: Border.all(
-          color: AppColors.zenBlue.withValues(alpha: 0.12),
+          color: AppColors.resolve(AppColors.zenBlue, context).withValues(alpha: 0.12),
           width: 1.5,
         ),
       ),
@@ -224,8 +223,9 @@ class _SheetButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = filled ? AppColors.white : color;
-    final background = filled ? color : AppColors.white;
+    final resolvedColor = AppColors.resolve(color, context);
+    final foreground = filled ? AppColors.white : resolvedColor;
+    final background = filled ? resolvedColor : Theme.of(context).cardColor;
 
     return SizedBox(
       width: double.infinity,
@@ -237,7 +237,7 @@ class _SheetButton extends StatelessWidget {
         style: OutlinedButton.styleFrom(
           backgroundColor: background,
           foregroundColor: foreground,
-          side: BorderSide(color: color.withValues(alpha: filled ? 0.0 : 0.28)),
+          side: BorderSide(color: resolvedColor.withValues(alpha: filled ? 0.0 : 0.28)),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           ),

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/legacy.dart';
 
 /// Sự kiện học tập — được emit mỗi khi user hoàn thành 1 thẻ ôn tập
 ///

@@ -10,8 +10,10 @@ class KanjiLevelSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final currentFilter = ref.watch(kanjiLevelFilterProvider);
     final levels = [null, 5, 4, 3, 2, 1];
+    final resolvedMoss = AppColors.resolve(AppColors.mossGreen, context);
 
     return SizedBox(
       height: 40,
@@ -34,18 +36,22 @@ class KanjiLevelSelector extends ConsumerWidget {
                     ? level
                     : null;
               },
-              selectedColor: AppColors.mossGreen.withValues(alpha: 0.2),
+              selectedColor: resolvedMoss.withValues(alpha: 0.2),
               labelStyle: AppTypography.label.copyWith(
-                color: isSelected ? AppColors.mossGreen : AppColors.slateGrey,
+                color: isSelected
+                    ? resolvedMoss
+                    : theme.colorScheme.onSurface,
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
-              backgroundColor: AppColors.white,
+              backgroundColor: theme.cardColor,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                 side: BorderSide(
                   color: isSelected
-                      ? AppColors.mossGreen
-                      : AppColors.slateLight.withValues(alpha: 0.3),
+                      ? resolvedMoss
+                      : theme.colorScheme.outlineVariant.withValues(
+                          alpha: 0.55,
+                        ),
                 ),
               ),
               showCheckmark: false,

@@ -24,15 +24,16 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
 
   @override
   ThemeData appBarTheme(BuildContext context) {
-    return Theme.of(context).copyWith(
-      appBarTheme: const AppBarTheme(
-        backgroundColor: AppColors.cream,
-        foregroundColor: AppColors.ink,
+    final theme = Theme.of(context);
+    return theme.copyWith(
+      appBarTheme: AppBarTheme(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        foregroundColor: theme.colorScheme.onSurface,
         elevation: 0,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.creamDark,
+        fillColor: theme.cardColor,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           borderSide: BorderSide.none,
@@ -41,7 +42,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
           horizontal: AppSpacing.sp16,
           vertical: AppSpacing.sp12,
         ),
-        hintStyle: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+        hintStyle: AppTypography.bodyM.copyWith(
+          color: theme.textTheme.bodySmall?.color,
+        ),
       ),
     );
   }
@@ -68,25 +71,25 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
   @override
   Widget buildResults(BuildContext context) {
     if (!_shouldSearch(query)) {
-      return _buildShortQueryState();
+      return _buildShortQueryState(context);
     }
-    return _buildSearchResults();
+    return _buildSearchResults(context);
   }
 
   @override
   Widget buildSuggestions(BuildContext context) {
     if (query.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(context);
     }
     if (!_shouldSearch(query)) {
-      return _buildShortQueryState();
+      return _buildShortQueryState(context);
     }
-    return _buildSearchResults();
+    return _buildSearchResults(context);
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(BuildContext context) {
     return Container(
-      color: AppColors.cream,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -94,12 +97,12 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
             Icon(
               Icons.search_rounded,
               size: 64,
-              color: AppColors.slateLight.withValues(alpha: 0.5),
+              color: Theme.of(context).dividerColor.withValues(alpha: 0.5),
             ),
             const SizedBox(height: AppSpacing.sp16),
             Text(
               'Nhập từ khóa để tìm kiếm',
-              style: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+              style: AppTypography.bodyM.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
             ),
             const SizedBox(height: AppSpacing.sp8),
             const Text(
@@ -112,13 +115,13 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
     );
   }
 
-  Widget _buildShortQueryState() {
+  Widget _buildShortQueryState(BuildContext context) {
     return Container(
-      color: AppColors.cream,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Center(
         child: Text(
-          'Nháº­p thÃªm kÃ½ tá»± Ä‘á»ƒ tÃ¬m nhanh hÆ¡n',
-          style: AppTypography.bodyM.copyWith(color: AppColors.slateMuted),
+          'Nhập thêm ký tự để tìm nhanh hơn',
+          style: AppTypography.bodyM.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
         ),
       ),
     );
@@ -130,9 +133,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
     return RegExp(r'[\u3040-\u30ff\u3400-\u9fff]').hasMatch(trimmed);
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(BuildContext context) {
     return Container(
-      color: AppColors.cream,
+      color: Theme.of(context).scaffoldBackgroundColor,
       child: Consumer(
         builder: (context, ref, _) {
           final results = ref.watch(kanjiSearchResultsProvider(query));
@@ -143,8 +146,8 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
 
           return results.when(
             data: (kanjis) {
-              final vocabulary = vocabularyResults.valueOrNull ?? [];
-              final grammar = grammarResults.valueOrNull ?? [];
+              final vocabulary = vocabularyResults.value ?? [];
+              final grammar = grammarResults.value ?? [];
 
               if (kanjis.isEmpty && vocabulary.isEmpty && grammar.isEmpty) {
                 return Center(
@@ -168,6 +171,8 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                 );
               }
 
+              final resolvedMossGreen = AppColors.resolve(AppColors.mossGreen, context);
+
               return ListView(
                 padding: AppSpacing.paddingAll16,
                 children: [
@@ -185,7 +190,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                             vertical: AppSpacing.sp4,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.mossGreen.withValues(alpha: 0.1),
+                            color: resolvedMossGreen.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(
                               AppSpacing.radiusXS,
                             ),
@@ -193,7 +198,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                           child: Text(
                             'Chữ Hán (${kanjis.length})',
                             style: AppTypography.label.copyWith(
-                              color: AppColors.mossGreen,
+                              color: resolvedMossGreen,
                               fontWeight: FontWeight.w600,
                             ),
                           ),
@@ -205,7 +210,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                   // Kanji results
                   ...kanjis
                       .take(20)
-                      .map((kanji) => _buildKanjiResultTile(kanji)),
+                      .map((kanji) => _buildKanjiResultTile(context, kanji)),
 
                   if (vocabulary.isNotEmpty) ...[
                     const SizedBox(height: AppSpacing.sp24),
@@ -217,6 +222,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                         .take(10)
                         .map(
                           (item) => _buildSimpleResultTile(
+                            context,
                             icon: Icons.menu_book_rounded,
                             title: item.word,
                             subtitle: '${item.reading} • ${item.meaning}',
@@ -235,6 +241,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                         .take(10)
                         .map(
                           (item) => _buildSimpleResultTile(
+                            context,
                             icon: Icons.edit_note_rounded,
                             title: item.title,
                             subtitle: item.shortExplanation,
@@ -257,14 +264,18 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
     );
   }
 
-  Widget _buildKanjiResultTile(dynamic kanji) {
+  Widget _buildKanjiResultTile(BuildContext context, dynamic kanji) {
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+    final resolvedMossLight = AppColors.resolve(AppColors.mossLight, context);
+    final resolvedMossDark = AppColors.resolve(AppColors.mossDark, context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sp8),
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.3)),
+        border: Border.all(color: resolvedSlateLight.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
@@ -273,7 +284,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: AppColors.creamDark,
+              color: AppColors.resolve(AppColors.creamDark, context),
               borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
             ),
             child: Center(
@@ -314,13 +325,13 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
               vertical: AppSpacing.sp4,
             ),
             decoration: BoxDecoration(
-              color: AppColors.mossLight.withValues(alpha: 0.15),
+              color: resolvedMossLight.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
             ),
             child: Text(
               'N${kanji.jlptLevel}',
               style: AppTypography.labelS.copyWith(
-                color: AppColors.mossDark,
+                color: resolvedMossDark,
                 fontWeight: FontWeight.w600,
               ),
             ),
@@ -356,20 +367,23 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
     );
   }
 
-  Widget _buildSimpleResultTile({
+  Widget _buildSimpleResultTile(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
     required Color color,
     required int jlptLevel,
   }) {
+    final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: AppSpacing.sp8),
       padding: AppSpacing.paddingAll16,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        border: Border.all(color: AppColors.slateLight.withValues(alpha: 0.3)),
+        border: Border.all(color: resolvedSlateLight.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [

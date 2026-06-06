@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
-import 'package:mobile/domain/entities/lesson.dart';
+import 'package:mobile/features/learning/domain/entities/lesson.dart';
 import 'package:mobile/features/home/application/providers/daily_study_plan_provider.dart';
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
 import 'package:mobile/features/home/presentation/navigation/daily_study_navigation.dart';
@@ -35,8 +35,10 @@ class LessonResultScreen extends ConsumerWidget {
     final accent = isStrong ? AppColors.sunGold : AppColors.leafGreen;
     final nextPlan = ref.watch(dailyStudyPlanProvider);
 
+    final resolvedAccent = AppColors.resolve(accent, context);
+
     return Scaffold(
-      backgroundColor: AppColors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: AppPageBackground(
         child: SafeArea(
           child: Padding(
@@ -52,20 +54,19 @@ class LessonResultScreen extends ConsumerWidget {
                         Container(
                           padding: const EdgeInsets.all(AppSpacing.sp24),
                           decoration: BoxDecoration(
-                            color: AppColors.white,
+                            color: Theme.of(context).cardColor,
                             borderRadius: BorderRadius.circular(
                               AppSpacing.radiusL,
                             ),
                             border: Border.all(
-                              color: accent.withValues(alpha: 0.18),
+                              color: resolvedAccent.withValues(alpha: 0.18),
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: AppColors.ink.withValues(alpha: 0.055),
-                                blurRadius: 24,
-                                offset: const Offset(0, 12),
-                              ),
-                            ],
+                            boxShadow: AppColors.softShadow(
+                              context,
+                              color: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.055),
+                              blurRadius: 24,
+                              offset: const Offset(0, 12),
+                            ),
                           ),
                           child: Column(
                             children: [
@@ -73,14 +74,14 @@ class LessonResultScreen extends ConsumerWidget {
                                 width: 76,
                                 height: 76,
                                 decoration: BoxDecoration(
-                                  color: accent.withValues(alpha: 0.12),
+                                  color: resolvedAccent.withValues(alpha: 0.12),
                                   shape: BoxShape.circle,
                                 ),
                                 child: Icon(
                                   isStrong
                                       ? Icons.emoji_events_rounded
                                       : Icons.auto_stories_rounded,
-                                  color: accent,
+                                  color: resolvedAccent,
                                   size: 42,
                                 ),
                               ),
@@ -88,7 +89,7 @@ class LessonResultScreen extends ConsumerWidget {
                               Text(
                                 'Hoàn thành bài học',
                                 style: AppTypography.headingL.copyWith(
-                                  color: AppColors.ink,
+                                  color: Theme.of(context).colorScheme.onSurface,
                                 ),
                                 textAlign: TextAlign.center,
                               ),
@@ -194,22 +195,23 @@ class _ResultStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.07),
+        color: resolvedColor.withValues(alpha: 0.07),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: color.withValues(alpha: 0.18)),
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.18)),
       ),
       child: Row(
         children: [
-          Icon(icon, color: color, size: 21),
+          Icon(icon, color: resolvedColor, size: 21),
           const SizedBox(width: AppSpacing.sp12),
           Expanded(
             child: Text(
               label,
               style: AppTypography.bodyM.copyWith(
-                color: AppColors.slateGrey,
+                color: AppColors.resolve(AppColors.slateGrey, context),
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -217,7 +219,7 @@ class _ResultStat extends StatelessWidget {
           Text(
             value,
             style: AppTypography.bodyMBold.copyWith(
-              color: AppColors.ink,
+              color: Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w900,
             ),
           ),
@@ -235,7 +237,7 @@ class _NextActionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final next = plan.valueOrNull;
+    final next = plan.value;
     if (next == null) {
       return const AppCard(
         child: SizedBox(
@@ -247,21 +249,23 @@ class _NextActionCard extends StatelessWidget {
       );
     }
 
+    final leafGreen = AppColors.resolve(AppColors.leafGreen, context);
+
     return AppCard(
-      color: AppColors.leafGreen.withValues(alpha: 0.08),
-      borderColor: AppColors.leafGreen.withValues(alpha: 0.18),
+      color: leafGreen.withValues(alpha: 0.08),
+      borderColor: leafGreen.withValues(alpha: 0.18),
       child: Row(
         children: [
           Container(
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: AppColors.leafGreen.withValues(alpha: 0.12),
+              color: leafGreen.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.auto_awesome_rounded,
-              color: AppColors.leafGreen,
+              color: leafGreen,
             ),
           ),
           const SizedBox(width: AppSpacing.sp12),
@@ -272,7 +276,7 @@ class _NextActionCard extends StatelessWidget {
                 Text(
                   'Tiếp theo',
                   style: AppTypography.label.copyWith(
-                    color: AppColors.leafGreen,
+                    color: leafGreen,
                     fontWeight: FontWeight.w900,
                   ),
                 ),
@@ -280,7 +284,7 @@ class _NextActionCard extends StatelessWidget {
                   next.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: AppTypography.bodyMBold.copyWith(color: AppColors.ink),
+                  style: AppTypography.bodyMBold.copyWith(color: Theme.of(context).colorScheme.onSurface),
                 ),
                 Text(
                   next.reason,
@@ -294,7 +298,7 @@ class _NextActionCard extends StatelessWidget {
           IconButton(
             onPressed: () => openDailyStudyPlan(context, ref, next),
             icon: const Icon(Icons.arrow_forward_rounded),
-            color: AppColors.leafGreen,
+            color: leafGreen,
           ),
         ],
       ),

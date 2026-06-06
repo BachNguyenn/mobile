@@ -31,7 +31,6 @@ class VocabularyLibraryScreen extends ConsumerWidget {
     final totalDueAsync = ref.watch(totalDueVocabularyCountProvider);
 
     return Scaffold(
-      backgroundColor: AppColors.white,
       body: AppPageBackground(
         child: SafeArea(
           bottom: false,
@@ -55,15 +54,15 @@ class VocabularyLibraryScreen extends ConsumerWidget {
                     horizontal: AppSpacing.sp16,
                   ),
                   child: _VocabularyHeroCard(
-                    progress: progressAsync.valueOrNull ?? ModuleProgress.empty,
-                    dueTotal: totalDueAsync.valueOrNull ?? 0,
-                    dueLoaded: dueVocabularyAsync.valueOrNull?.length ?? 0,
+                    progress: progressAsync.value ?? ModuleProgress.empty,
+                    dueTotal: totalDueAsync.value ?? 0,
+                    dueLoaded: dueVocabularyAsync.value?.length ?? 0,
                     isLoading:
                         progressAsync.isLoading || totalDueAsync.isLoading,
                     onReview: () => _startReview(
                       context,
-                      dueVocabularyAsync.valueOrNull,
-                      searchResults.valueOrNull,
+                      dueVocabularyAsync.value,
+                      searchResults.value,
                     ),
                     onNewLesson: () => _openLearningPath(context),
                   ),
@@ -97,7 +96,7 @@ class VocabularyLibraryScreen extends ConsumerWidget {
                     AppSpacing.sp8,
                   ),
                   child: _VocabularySectionHeader(
-                    count: searchResults.valueOrNull?.length,
+                    count: searchResults.value?.length,
                     query: query,
                   ),
                 ),
@@ -221,10 +220,10 @@ class _VocabularyTopBar extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppColors.navySoft,
+            color: AppColors.resolve(AppColors.navySoft, context),
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           ),
-          child: const Icon(Icons.menu_book_rounded, color: AppColors.navy),
+          child: Icon(Icons.menu_book_rounded, color: AppColors.resolve(AppColors.navy, context)),
         ),
         const SizedBox(width: AppSpacing.sp12),
         Expanded(
@@ -234,7 +233,7 @@ class _VocabularyTopBar extends StatelessWidget {
               Text(
                 'Từ vựng',
                 style: AppTypography.headingM.copyWith(
-                  color: AppColors.navyDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: 2),
@@ -243,7 +242,7 @@ class _VocabularyTopBar extends StatelessWidget {
                     ? 'Tất cả cấp độ JLPT'
                     : 'Đang học JLPT N$selectedLevel',
                 style: AppTypography.label.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                   fontWeight: FontWeight.w700,
                 ),
               ),
@@ -277,16 +276,25 @@ class _VocabularyHeroCard extends StatelessWidget {
     final learned = progress.learned;
     final total = progress.total;
     final percent = total == 0 ? 0.0 : progress.percentage.clamp(0.0, 1.0);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       padding: const EdgeInsets.all(AppSpacing.sp16),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          colors: [AppColors.waterBlue, AppColors.leafGreen],
+        gradient: LinearGradient(
+          colors: isDark
+              ? [const Color(0xFF233E35), const Color(0xFF162721)]
+              : AppColors.resolveColors([
+                  AppColors.waterBlue,
+                  AppColors.leafGreen,
+                ], context),
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
+        border: isDark
+            ? Border.all(color: const Color(0xFF3B6154).withValues(alpha: 0.4))
+            : null,
       ),
       clipBehavior: Clip.antiAlias,
       child: Stack(
@@ -496,14 +504,14 @@ class _HeroActionButton extends StatelessWidget {
             children: [
               Icon(
                 icon,
-                color: filled ? AppColors.navy : AppColors.white,
+                color: filled ? const Color(0xFF293156) : AppColors.white,
                 size: 18,
               ),
               const SizedBox(width: AppSpacing.sp8),
               Text(
                 label,
                 style: AppTypography.label.copyWith(
-                  color: filled ? AppColors.navy : AppColors.white,
+                  color: filled ? const Color(0xFF293156) : AppColors.white,
                   fontWeight: FontWeight.w800,
                 ),
               ),
@@ -546,15 +554,15 @@ class _VocabularyLevelRail extends StatelessWidget {
             onSelected: (_) =>
                 onChanged(selected && level != null ? null : level),
             labelStyle: AppTypography.label.copyWith(
-              color: selected ? AppColors.white : AppColors.navyDark,
+              color: selected ? AppColors.white : Theme.of(context).colorScheme.onSurface,
               fontWeight: FontWeight.w800,
             ),
-            backgroundColor: AppColors.white,
-            selectedColor: AppColors.leafGreen,
+            backgroundColor: Theme.of(context).cardColor,
+            selectedColor: AppColors.resolve(AppColors.leafGreen, context),
             side: BorderSide(
               color: selected
-                  ? AppColors.leafGreen
-                  : AppColors.slateLight.withValues(alpha: 0.35),
+                  ? AppColors.resolve(AppColors.leafGreen, context)
+                  : AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.35),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
@@ -584,7 +592,7 @@ class _VocabularySectionHeader extends StatelessWidget {
               Text(
                 hasQuery ? 'Kết quả tìm kiếm' : 'Thẻ từ vựng',
                 style: AppTypography.headingS.copyWith(
-                  color: AppColors.navyDark,
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: AppSpacing.sp4),
@@ -593,7 +601,7 @@ class _VocabularySectionHeader extends StatelessWidget {
                     ? 'Các từ khớp với "$query".'
                     : 'Quét nhanh từ, nghĩa tiếng Việt và câu ví dụ.',
                 style: AppTypography.bodyS.copyWith(
-                  color: AppColors.slateMuted,
+                  color: AppColors.resolve(AppColors.slateMuted, context),
                 ),
               ),
             ],
@@ -605,13 +613,13 @@ class _VocabularySectionHeader extends StatelessWidget {
             vertical: AppSpacing.sp8,
           ),
           decoration: BoxDecoration(
-            color: AppColors.navySoft,
+            color: AppColors.resolve(AppColors.navySoft, context),
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           ),
           child: Text(
             count == null ? '...' : '$count từ',
             style: AppTypography.label.copyWith(
-              color: AppColors.navy,
+              color: AppColors.resolve(AppColors.navy, context),
               fontWeight: FontWeight.w800,
             ),
           ),

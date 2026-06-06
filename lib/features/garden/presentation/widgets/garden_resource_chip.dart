@@ -17,31 +17,37 @@ class GardenResourceChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(color, context);
+    final resolvedGlassBg = AppColors.resolve(AppColors.glassBg, context);
+    final resolvedGlassShadow = AppColors.resolve(AppColors.glassShadow, context);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 12, horizontal: 4),
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.glassBg,
+        color: resolvedGlassBg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withValues(alpha: 0.2)),
-        boxShadow: [
-          BoxShadow(
-            color: color.withValues(alpha: 0.08),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-          BoxShadow(color: AppColors.glassShadow, blurRadius: 4),
-        ],
+        border: Border.all(color: resolvedColor.withValues(alpha: 0.2)),
+        boxShadow: Theme.of(context).brightness == Brightness.dark
+            ? []
+            : [
+                BoxShadow(
+                  color: resolvedColor.withValues(alpha: 0.08),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+                BoxShadow(color: resolvedGlassShadow, blurRadius: 4),
+              ],
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 16, color: color),
+          Icon(icon, size: 16, color: resolvedColor),
           const SizedBox(width: 6),
           Text(
             value,
             style: AppTypography.label.copyWith(
-              color: color,
+              color: resolvedColor,
               fontWeight: FontWeight.w700,
             ),
           ),

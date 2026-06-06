@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:mobile/features/kanji/presentation/screens/kanji_library_screen.
 import 'package:mobile/features/learning/application/providers/learning_path_provider.dart';
 import 'package:mobile/features/learning/presentation/screens/learning_path_screen.dart';
 import 'package:mobile/features/settings/application/providers/settings_provider.dart';
+import 'package:mobile/features/settings/domain/entities/app_settings.dart';
 import 'package:mobile/features/vocabulary/presentation/screens/vocabulary_library_screen.dart';
 
 class MainNavigation extends ConsumerStatefulWidget {
@@ -51,7 +53,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
 
   void _openTab(int index, {bool resetLearningCategory = true}) {
     if (index < 0 || index >= _navItems.length) return;
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     final targetLearningCategory = resetLearningCategory && index == 1
         ? settings?.defaultLearningCategory ?? LearningCategory.mixed
         : _learningCategory;
@@ -91,7 +93,7 @@ class _MainNavigationState extends ConsumerState<MainNavigation>
   }
 
   void _triggerHaptic() {
-    final settings = ref.read(settingsProvider).valueOrNull;
+    final settings = ref.read(settingsProvider).value;
     if (settings?.hapticsEnabled ?? AppSettings.defaults.hapticsEnabled) {
       HapticFeedback.selectionClick();
     }
@@ -212,80 +214,79 @@ class _PremiumBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final resolvedZenBlue = AppColors.resolve(AppColors.zenBlue, context);
+
     return Container(
       margin: const EdgeInsets.fromLTRB(
-        AppSpacing.sp20,
+        AppSpacing.sp16,
         0,
+        AppSpacing.sp16,
         AppSpacing.sp20,
-        AppSpacing.sp24,
       ),
-      height: 68,
+      height: 64,
       decoration: BoxDecoration(
-        color: AppColors.white.withValues(alpha: 0.96),
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        border: Border.all(color: AppColors.zenBlue.withValues(alpha: 0.10)),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.navyDark.withValues(alpha: 0.10),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-          BoxShadow(
-            color: AppColors.zenBlue.withValues(alpha: 0.06),
-            blurRadius: 18,
-            offset: const Offset(0, 6),
-          ),
-        ],
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final itemWidth = constraints.maxWidth / _navItems.length;
-            final pillWidth = (itemWidth - AppSpacing.sp8).clamp(48.0, 76.0);
+        borderRadius: BorderRadius.circular(24),
+        child: BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 16, sigmaY: 16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Theme.of(context).cardColor.withValues(alpha: isDark ? 0.82 : 0.90),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: isDark
+                    ? const Color(0xFF353F6C).withValues(alpha: 0.25)
+                    : resolvedZenBlue.withValues(alpha: 0.06),
+              ),
+            ),
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final itemWidth = constraints.maxWidth / _navItems.length;
+                const pillWidth = 20.0;
 
-            return Stack(
-              children: [
-                AnimatedBuilder(
-                  animation: pillController,
-                  builder: (context, _) {
-                    final currentPos = pillAnimation.value;
-                    final pillLeft =
-                        currentPos * itemWidth + (itemWidth - pillWidth) / 2;
+                return Stack(
+                  children: [
+                    AnimatedBuilder(
+                      animation: pillController,
+                      builder: (context, _) {
+                        final currentPos = pillAnimation.value;
+                        final pillLeft =
+                            currentPos * itemWidth + (itemWidth - pillWidth) / 2;
 
-                    return Positioned(
-                      left: pillLeft,
-                      top: 8,
-                      child: Container(
-                        width: pillWidth,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: AppColors.navPillBg,
-                          borderRadius: BorderRadius.circular(
-                            AppSpacing.radiusM,
+                        return Positioned(
+                          left: pillLeft,
+                          bottom: 5,
+                          child: Container(
+                            width: pillWidth,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              color: resolvedZenBlue,
+                              borderRadius: BorderRadius.circular(1.5),
+                            ),
                           ),
-                          border: Border.all(
-                            color: AppColors.zenBlue.withValues(alpha: 0.10),
+                        );
+                      },
+                    ),
+                    Row(
+                      children: List.generate(_navItems.length, (index) {
+                        return Expanded(
+                          child: _NavItem(
+                            data: _navItems[index],
+                            isSelected: selectedIndex == index,
+                            onTap: () => onItemTap(index),
                           ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-                Row(
-                  children: List.generate(_navItems.length, (index) {
-                    return Expanded(
-                      child: _NavItem(
-                        data: _navItems[index],
-                        isSelected: selectedIndex == index,
-                        onTap: () => onItemTap(index),
-                      ),
-                    );
-                  }),
-                ),
-              ],
-            );
-          },
+                        );
+                      }),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ),
         ),
       ),
     );
@@ -305,19 +306,24 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final resolvedZenBlue = AppColors.resolve(AppColors.zenBlue, context);
+    final resolvedSlateMuted = AppColors.resolve(AppColors.slateMuted, context);
+
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        splashColor: AppColors.zenBlue.withValues(alpha: 0.08),
+        splashColor: resolvedZenBlue.withValues(alpha: 0.08),
         highlightColor: Colors.transparent,
+        borderRadius: BorderRadius.circular(24),
         child: SizedBox(
-          height: 68,
+          height: 64,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 4),
               TweenAnimationBuilder<double>(
-                tween: Tween(begin: 1.0, end: isSelected ? 1.15 : 1.0),
+                tween: Tween(begin: 1.0, end: isSelected ? 1.10 : 1.0),
                 duration: const Duration(milliseconds: 250),
                 curve: Curves.easeOutBack,
                 builder: (context, scale, child) {
@@ -328,19 +334,17 @@ class _NavItem extends StatelessWidget {
                   child: Icon(
                     isSelected ? data.activeIcon : data.icon,
                     key: ValueKey('${data.label}_$isSelected'),
-                    size: 24,
-                    color: isSelected
-                        ? AppColors.zenBlue
-                        : AppColors.slateMuted,
+                    size: 22,
+                    color: isSelected ? resolvedZenBlue : resolvedSlateMuted,
                   ),
                 ),
               ),
-              const SizedBox(height: AppSpacing.sp4),
+              const SizedBox(height: 3),
               AnimatedDefaultTextStyle(
                 duration: const Duration(milliseconds: 200),
                 style: AppTypography.labelS.copyWith(
-                  color: isSelected ? AppColors.zenBlue : AppColors.slateMuted,
-                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                  color: isSelected ? resolvedZenBlue : resolvedSlateMuted,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
                   fontSize: 10,
                 ),
                 child: Text(
@@ -349,6 +353,7 @@ class _NavItem extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(height: 5),
             ],
           ),
         ),

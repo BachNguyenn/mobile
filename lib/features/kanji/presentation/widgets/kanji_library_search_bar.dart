@@ -34,6 +34,9 @@ class _KanjiLibrarySearchBarState extends ConsumerState<KanjiLibrarySearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final resolvedLeaf = AppColors.resolve(AppColors.leafGreen, context);
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.sp16,
@@ -44,18 +47,20 @@ class _KanjiLibrarySearchBarState extends ConsumerState<KanjiLibrarySearchBar> {
       child: TextField(
         onChanged: _onChanged,
         style: AppTypography.bodyM.copyWith(
-          color: AppColors.navyDark,
+          color: theme.colorScheme.onSurface,
           fontWeight: FontWeight.w700,
         ),
         decoration: InputDecoration(
           hintText: 'Tìm Hán tự, nghĩa hoặc cách đọc...',
-          hintStyle: AppTypography.bodyS.copyWith(color: AppColors.slateMuted),
-          prefixIcon: const Icon(
+          hintStyle: AppTypography.bodyS.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
+          prefixIcon: Icon(
             Icons.search_rounded,
-            color: AppColors.leafGreen,
+            color: resolvedLeaf,
           ),
           filled: true,
-          fillColor: AppColors.white,
+          fillColor: theme.cardColor,
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
             borderSide: BorderSide.none,
@@ -63,13 +68,13 @@ class _KanjiLibrarySearchBarState extends ConsumerState<KanjiLibrarySearchBar> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
             borderSide: BorderSide(
-              color: AppColors.slateLight.withValues(alpha: 0.32),
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.55),
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-            borderSide: const BorderSide(
-              color: AppColors.leafGreen,
+            borderSide: BorderSide(
+              color: resolvedLeaf,
               width: 1.4,
             ),
           ),

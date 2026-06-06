@@ -12,19 +12,20 @@ dependencies:
   cupertino_icons: ^1.0.8
   firebase_core: ^4.7.0
   firebase_auth: ^6.4.0
-  flutter_riverpod: 2.5.1
+  flutter_riverpod: ^3.3.1
   google_mlkit_digital_ink_recognition: ^0.14.2
   path_provider: ^2.1.5
   equatable: ^2.0.8
   drift: ^2.32.1
   sqlite3_flutter_libs: ^0.6.0+eol
   path: ^1.9.1
-  google_sign_in: 6.2.1
+  google_sign_in: ^7.2.0
   flutter_local_notifications: ^21.0.0
   flutter_tts: ^4.2.3
   path_drawing: ^1.0.1
   timezone: ^0.11.0
   shared_preferences: ^2.5.5
+  flutter_svg: ^2.1.0
 
 dev_dependencies:
   flutter_test:
@@ -46,11 +47,15 @@ flutter_launcher_icons:
   min_sdk_android: 21
 
 flutter_native_splash:
-  color: "#F0EDE8"
-  image: "assets/images/splash_logo_padded.png"
+  color: "#FFFFFF"
+  color_dark: "#0F1322"
+  image: "assets/images/splash_logo_compact.png"
+  image_dark: "assets/images/splash_logo_compact.png"
   android_12:
-    color: "#F0EDE8"
-    image: "assets/images/splash_logo_padded.png"
+    color: "#FFFFFF"
+    color_dark: "#0F1322"
+    image: "assets/images/splash_logo_compact.png"
+    image_dark: "assets/images/splash_logo_compact.png"
 
 flutter:
   uses-material-design: true
@@ -60,6 +65,7 @@ flutter:
     - assets/data/n3/
     - assets/data/n2/
     - assets/data/n1/
+    - assets/data/kanji_sources_manifest.json
     - assets/data/unified_path.json
     - assets/data/app_content.json
     - assets/images/

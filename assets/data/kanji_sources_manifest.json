@@ -1,0 +1,34 @@
+{
+  "generated_at": "2026-06-05T15:14:26.388943+00:00",
+  "sources": [
+    {
+      "name": "KANJIDIC2",
+      "role": "Kanji meanings, readings, radicals, stroke counts, grade, frequency, variants, query codes.",
+      "runtime_asset": false
+    },
+    {
+      "name": "KanjiVG",
+      "role": "SVG stroke paths normalized into compact stroke path arrays.",
+      "license": "Creative Commons Attribution-Share Alike 3.0",
+      "url": "http://kanjivg.tagaini.net",
+      "runtime_asset": false
+    }
+  ],
+  "output": {
+    "runtime_assets": [
+      "assets/data/n1/kanji.json",
+      "assets/data/n2/kanji.json",
+      "assets/data/n3/kanji.json",
+      "assets/data/n4/kanji.json",
+      "assets/data/n5/kanji.json"
+    ],
+    "raw_xml_svg_bundled": false,
+    "level_counts": {
+      "n1": 1207,
+      "n2": 371,
+      "n3": 368,
+      "n4": 181,
+      "n5": 103
+    }
+  }
+}

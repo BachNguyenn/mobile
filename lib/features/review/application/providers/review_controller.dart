@@ -62,9 +62,13 @@ class ReviewState {
   }
 }
 
-class ReviewController extends FamilyNotifier<ReviewState, List<ReviewItem>> {
+class ReviewController extends Notifier<ReviewState> {
+  final List<ReviewItem> arg;
+
+  ReviewController(this.arg);
+
   @override
-  ReviewState build(List<ReviewItem> arg) {
+  ReviewState build() {
     return ReviewState();
   }
 

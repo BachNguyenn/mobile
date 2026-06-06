@@ -218,6 +218,7 @@ class _ActionCardState extends State<_ActionCard>
 
   @override
   Widget build(BuildContext context) {
+    final resolvedColor = AppColors.resolve(widget.data.color, context);
     return GestureDetector(
       onTapDown: (_) => _pressController.forward(),
       onTapUp: (_) {
@@ -234,18 +235,17 @@ class _ActionCardState extends State<_ActionCard>
           height: 78,
           padding: const EdgeInsets.all(AppSpacing.sp12),
           decoration: BoxDecoration(
-            color: AppColors.white,
+            color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
             border: Border.all(
-              color: widget.data.color.withValues(alpha: 0.12),
+              color: resolvedColor.withValues(alpha: 0.12),
             ),
-            boxShadow: [
-              BoxShadow(
-                color: AppColors.navyDark.withValues(alpha: 0.05),
-                blurRadius: 18,
-                offset: const Offset(0, 8),
-              ),
-            ],
+            boxShadow: AppColors.softShadow(
+              context,
+              color: AppColors.resolve(AppColors.navyDark, context).withValues(alpha: 0.05),
+              blurRadius: 18,
+              offset: const Offset(0, 8),
+            ),
           ),
           child: Row(
             children: [
@@ -253,12 +253,12 @@ class _ActionCardState extends State<_ActionCard>
                 width: 42,
                 height: 42,
                 decoration: BoxDecoration(
-                  color: widget.data.color.withValues(alpha: 0.10),
+                  color: resolvedColor.withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(AppSpacing.radiusS),
                 ),
                 child: Icon(
                   widget.data.icon,
-                  color: widget.data.color,
+                  color: resolvedColor,
                   size: 22,
                 ),
               ),
@@ -273,7 +273,7 @@ class _ActionCardState extends State<_ActionCard>
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: AppTypography.bodyMBold.copyWith(
-                        color: AppColors.ink,
+                        color: Theme.of(context).colorScheme.onSurface,
                         fontWeight: FontWeight.w800,
                       ),
                     ),

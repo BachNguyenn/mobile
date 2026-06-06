@@ -9,6 +9,7 @@ import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
 import 'package:mobile/features/learning/application/providers/learning_path_provider.dart';
 import 'package:mobile/features/review/domain/entities/review_item.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
+import 'package:mobile/presentation/widgets/kanji_linker.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
@@ -193,10 +194,16 @@ class _GrammarTopBar extends StatelessWidget {
           width: 44,
           height: 44,
           decoration: BoxDecoration(
-            color: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.10),
+            color: AppColors.resolve(
+              AppColors.leafGreen,
+              context,
+            ).withValues(alpha: 0.10),
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
           ),
-          child: Icon(Icons.edit_note_rounded, color: AppColors.resolve(AppColors.leafDark, context)),
+          child: Icon(
+            Icons.edit_note_rounded,
+            color: AppColors.resolve(AppColors.leafDark, context),
+          ),
         ),
         const SizedBox(width: AppSpacing.sp12),
         Expanded(
@@ -563,7 +570,9 @@ class _GrammarSearchBox extends StatelessWidget {
       ),
       decoration: InputDecoration(
         hintText: 'Tìm mẫu câu, ý nghĩa hoặc ví dụ...',
-        hintStyle: AppTypography.bodyS.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
+        hintStyle: AppTypography.bodyS.copyWith(
+          color: AppColors.resolve(AppColors.slateMuted, context),
+        ),
         prefixIcon: Icon(
           Icons.search_rounded,
           color: AppColors.resolve(AppColors.leafGreen, context),
@@ -577,12 +586,18 @@ class _GrammarSearchBox extends StatelessWidget {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
           borderSide: BorderSide(
-            color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.32),
+            color: AppColors.resolve(
+              AppColors.slateLight,
+              context,
+            ).withValues(alpha: 0.32),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-          borderSide: BorderSide(color: AppColors.resolve(AppColors.leafGreen, context), width: 1.4),
+          borderSide: BorderSide(
+            color: AppColors.resolve(AppColors.leafGreen, context),
+            width: 1.4,
+          ),
         ),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sp16,
@@ -624,7 +639,9 @@ class _GrammarLevelRail extends StatelessWidget {
             onSelected: (_) =>
                 onChanged(selected && level != null ? null : level),
             labelStyle: AppTypography.label.copyWith(
-              color: selected ? AppColors.white : AppColors.resolve(AppColors.navyDark, context),
+              color: selected
+                  ? AppColors.white
+                  : AppColors.resolve(AppColors.navyDark, context),
               fontWeight: FontWeight.w800,
             ),
             backgroundColor: Theme.of(context).cardColor,
@@ -632,7 +649,10 @@ class _GrammarLevelRail extends StatelessWidget {
             side: BorderSide(
               color: selected
                   ? AppColors.resolve(AppColors.leafGreen, context)
-                  : AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.35),
+                  : AppColors.resolve(
+                      AppColors.slateLight,
+                      context,
+                    ).withValues(alpha: 0.35),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
@@ -716,12 +736,21 @@ class _GrammarPatternCard extends StatelessWidget {
     return AppCard(
       padding: EdgeInsets.zero,
       color: Theme.of(context).cardColor,
-      borderColor: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.28),
-      shadowColor: AppColors.resolve(AppColors.navyDark, context).withValues(alpha: 0.035),
+      borderColor: AppColors.resolve(
+        AppColors.slateLight,
+        context,
+      ).withValues(alpha: 0.28),
+      shadowColor: AppColors.resolve(
+        AppColors.navyDark,
+        context,
+      ).withValues(alpha: 0.035),
       child: Theme(
         data: Theme.of(context).copyWith(
           dividerColor: Colors.transparent,
-          splashColor: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.06),
+          splashColor: AppColors.resolve(
+            AppColors.leafGreen,
+            context,
+          ).withValues(alpha: 0.06),
         ),
         child: ExpansionTile(
           tilePadding: const EdgeInsets.fromLTRB(
@@ -755,7 +784,9 @@ class _GrammarPatternCard extends StatelessWidget {
               grammar.shortExplanation,
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-              style: AppTypography.bodyS.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
+              style: AppTypography.bodyS.copyWith(
+                color: AppColors.resolve(AppColors.slateMuted, context),
+              ),
             ),
           ),
           children: [
@@ -797,9 +828,17 @@ class _FormationBlock extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.08),
+        color: AppColors.resolve(
+          AppColors.leafGreen,
+          context,
+        ).withValues(alpha: 0.08),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        border: Border.all(color: AppColors.resolve(AppColors.leafGreen, context).withValues(alpha: 0.10)),
+        border: Border.all(
+          color: AppColors.resolve(
+            AppColors.leafGreen,
+            context,
+          ).withValues(alpha: 0.10),
+        ),
       ),
       child: Text(
         text,
@@ -850,7 +889,10 @@ class _ExampleBlock extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
-        color: AppColors.resolve(AppColors.navySoft, context).withValues(alpha: 0.62),
+        color: AppColors.resolve(
+          AppColors.navySoft,
+          context,
+        ).withValues(alpha: 0.62),
         borderRadius: BorderRadius.circular(AppSpacing.radiusM),
       ),
       child: Column(
@@ -858,8 +900,8 @@ class _ExampleBlock extends StatelessWidget {
         children: [
           const _BlockLabel(icon: Icons.format_quote_rounded, label: 'Ví dụ'),
           const SizedBox(height: AppSpacing.sp8),
-          Text(
-            example.jp,
+          KanjiLinker(
+            text: example.jp,
             style: AppTypography.bodyM.copyWith(
               color: AppColors.resolve(AppColors.navyDark, context),
               fontWeight: FontWeight.w800,
@@ -879,7 +921,9 @@ class _ExampleBlock extends StatelessWidget {
             const SizedBox(height: AppSpacing.sp4),
             Text(
               example.en,
-              style: AppTypography.label.copyWith(color: AppColors.resolve(AppColors.slateMuted, context)),
+              style: AppTypography.label.copyWith(
+                color: AppColors.resolve(AppColors.slateMuted, context),
+              ),
             ),
           ],
         ],
@@ -898,7 +942,11 @@ class _BlockLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: AppColors.resolve(AppColors.leafGreen, context), size: 17),
+        Icon(
+          icon,
+          color: AppColors.resolve(AppColors.leafGreen, context),
+          size: 17,
+        ),
         const SizedBox(width: AppSpacing.sp4),
         Text(
           label,

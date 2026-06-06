@@ -8,6 +8,7 @@ import 'package:mobile/features/learning/domain/services/quiz_answer_normalizer.
 import 'package:mobile/features/review/application/providers/study_event_provider.dart';
 import 'package:mobile/features/sentence/domain/entities/sentence.dart';
 import 'package:mobile/features/sentence/application/providers/sentence_provider.dart';
+import 'package:mobile/presentation/widgets/kanji_linker.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
@@ -470,8 +471,14 @@ class _SentenceSessionSummary extends StatelessWidget {
         vertical: AppSpacing.sp8,
       ),
       color: Theme.of(context).cardColor,
-      borderColor: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.22),
-      shadowColor: AppColors.resolve(AppColors.ink, context).withValues(alpha: 0.035),
+      borderColor: AppColors.resolve(
+        AppColors.slateLight,
+        context,
+      ).withValues(alpha: 0.22),
+      shadowColor: AppColors.resolve(
+        AppColors.ink,
+        context,
+      ).withValues(alpha: 0.035),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -721,10 +728,7 @@ class _SentenceSessionComplete extends StatelessWidget {
                     color: resolvedLeafGreen.withValues(alpha: 0.12),
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
-                    Icons.school_rounded,
-                    color: resolvedLeafGreen,
-                  ),
+                  child: Icon(Icons.school_rounded, color: resolvedLeafGreen),
                 ),
                 const SizedBox(width: AppSpacing.sp12),
                 Expanded(
@@ -921,17 +925,25 @@ class _SentencePromptCard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Flexible(
-                child: Text(
-                  prompt,
-                  style:
-                      (isJapanesePrompt
-                              ? AppTypography.headingM
-                              : AppTypography.bodyMBold)
-                          .copyWith(color: Theme.of(context).colorScheme.onSurface),
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  textAlign: TextAlign.center,
-                ),
+                child: isJapanesePrompt
+                    ? KanjiLinker(
+                        text: prompt,
+                        style: AppTypography.headingM.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      )
+                    : Text(
+                        prompt,
+                        style: AppTypography.bodyMBold.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: TextAlign.center,
+                      ),
               ),
               if (isJapanesePrompt) ...[
                 const SizedBox(width: AppSpacing.sp4),
@@ -940,9 +952,7 @@ class _SentencePromptCard extends StatelessWidget {
                   onPressed: () => onSpeak(sentence.text),
                   icon: const Icon(Icons.volume_up_rounded),
                   style: IconButton.styleFrom(
-                    backgroundColor: resolvedTerracotta.withValues(
-                      alpha: 0.10,
-                    ),
+                    backgroundColor: resolvedTerracotta.withValues(alpha: 0.10),
                     foregroundColor: resolvedTerracotta,
                     minimumSize: const Size.square(34),
                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -1241,13 +1251,21 @@ class _SentenceAnswerPanel extends StatelessWidget {
             ],
           ),
           const SizedBox(height: AppSpacing.sp4),
-          Text(
-            answer,
-            style: AppTypography.bodyMBold.copyWith(
-              color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
+          mode == SentencePracticeMode.readToMeaning
+              ? Text(
+                  answer,
+                  style: AppTypography.bodyMBold.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.w800,
+                  ),
+                )
+              : KanjiLinker(
+                  text: answer,
+                  style: AppTypography.bodyMBold.copyWith(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
           if (!isCorrect && userAnswer != null) ...[
             const SizedBox(height: AppSpacing.sp4),
             Text(

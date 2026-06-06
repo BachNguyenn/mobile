@@ -16,6 +16,7 @@ import 'package:mobile/features/sentence/presentation/screens/sentence_practice_
 import 'package:mobile/features/settings/presentation/screens/settings_screen.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
 import 'package:mobile/features/vocabulary/presentation/screens/vocabulary_detail_screen.dart';
+import 'package:mobile/features/weakness/presentation/screens/weakness_screen.dart';
 
 abstract final class AppRoutes {
   static MaterialPageRoute<void> analytics() {
@@ -74,5 +75,9 @@ abstract final class AppRoutes {
 
   static MaterialPageRoute<void> settings() {
     return MaterialPageRoute(builder: (_) => const SettingsScreen());
+  }
+
+  static MaterialPageRoute<void> weakness() {
+    return MaterialPageRoute(builder: (_) => const WeaknessScreen());
   }
 }

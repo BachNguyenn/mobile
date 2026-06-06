@@ -27,7 +27,12 @@ class HomeProgress {
   final ModuleProgress grammar;
   final int streak;
   final int overdueCount;
+  final int dueSoonCount;
   final int todayReviewed;
+  final int gardenExp;
+  final int gardenWater;
+  final int gardenSunlight;
+  final int gardenPlantCount;
 
   const HomeProgress({
     required this.kanji,
@@ -35,7 +40,12 @@ class HomeProgress {
     required this.grammar,
     required this.streak,
     required this.overdueCount,
+    this.dueSoonCount = 0,
     required this.todayReviewed,
+    this.gardenExp = 0,
+    this.gardenWater = 0,
+    this.gardenSunlight = 0,
+    this.gardenPlantCount = 0,
   });
 
   static const empty = HomeProgress(
@@ -44,7 +54,12 @@ class HomeProgress {
     grammar: ModuleProgress.empty,
     streak: 0,
     overdueCount: 0,
+    dueSoonCount: 0,
     todayReviewed: 0,
+    gardenExp: 0,
+    gardenWater: 0,
+    gardenSunlight: 0,
+    gardenPlantCount: 0,
   );
 
   /// Tổng % hoàn thành trung bình (chỉ tính module có dữ liệu)

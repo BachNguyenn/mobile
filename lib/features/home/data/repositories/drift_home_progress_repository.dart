@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:drift/drift.dart';
 import 'package:mobile/core/models/progress_models.dart';
 import 'package:mobile/data/datasources/app_database.dart';
@@ -11,6 +13,7 @@ class DriftHomeProgressRepository implements HomeProgressRepository {
   @override
   Future<HomeProgress> loadProgress() async {
     final now = DateTime.now();
+    final soon = now.add(const Duration(hours: 24));
 
     final row = await _db
         .customSelect(
@@ -23,9 +26,22 @@ class DriftHomeProgressRepository implements HomeProgressRepository {
         (SELECT COUNT(*) FROM grammar_table WHERE is_learned = 1) AS learned_grammar,
         (SELECT COUNT(*) FROM grammar_table) AS total_grammar,
         (SELECT COUNT(*) FROM kanji_card_table WHERE next_review <= ?) AS due_kanji,
-        (SELECT COUNT(*) FROM vocabulary_table WHERE next_review <= ?) AS due_vocab
+        (SELECT COUNT(*) FROM vocabulary_table WHERE next_review <= ?) AS due_vocab,
+        (SELECT COUNT(*) FROM kanji_card_table WHERE next_review > ? AND next_review <= ?) AS due_soon_kanji,
+        (SELECT COUNT(*) FROM vocabulary_table WHERE next_review > ? AND next_review <= ?) AS due_soon_vocab,
+        COALESCE((SELECT exp FROM zen_garden_table LIMIT 1), 0) AS garden_exp,
+        COALESCE((SELECT water FROM zen_garden_table LIMIT 1), 0) AS garden_water,
+        COALESCE((SELECT sunlight FROM zen_garden_table LIMIT 1), 0) AS garden_sunlight,
+        COALESCE((SELECT plants_json FROM zen_garden_table LIMIT 1), '[]') AS garden_plants_json
       ''',
-          variables: [Variable.withDateTime(now), Variable.withDateTime(now)],
+          variables: [
+            Variable.withDateTime(now),
+            Variable.withDateTime(now),
+            Variable.withDateTime(now),
+            Variable.withDateTime(soon),
+            Variable.withDateTime(now),
+            Variable.withDateTime(soon),
+          ],
         )
         .getSingle();
 
@@ -37,6 +53,9 @@ class DriftHomeProgressRepository implements HomeProgressRepository {
     final totalGrammar = row.read<int>('total_grammar');
     final overdueCount =
         row.read<int>('due_kanji') + row.read<int>('due_vocab');
+    final dueSoonCount =
+        row.read<int>('due_soon_kanji') + row.read<int>('due_soon_vocab');
+    final gardenPlantsJson = row.read<String>('garden_plants_json');
 
     final studyLogs =
         await (_db.select(_db.studyLogTable)..orderBy([
@@ -76,8 +95,22 @@ class DriftHomeProgressRepository implements HomeProgressRepository {
       ),
       streak: streak,
       overdueCount: overdueCount,
+      dueSoonCount: dueSoonCount,
       todayReviewed: todayReviewed,
+      gardenExp: row.read<int>('garden_exp'),
+      gardenWater: row.read<int>('garden_water'),
+      gardenSunlight: row.read<int>('garden_sunlight'),
+      gardenPlantCount: _countGardenPlants(gardenPlantsJson),
     );
+  }
+
+  int _countGardenPlants(String plantsJson) {
+    try {
+      final decoded = json.decode(plantsJson);
+      return decoded is List ? decoded.length : 0;
+    } on FormatException {
+      return 0;
+    }
   }
 
   int _calculateStreak(List<StudyLogTableData> logs, DateTime now) {

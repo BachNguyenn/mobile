@@ -11,6 +11,8 @@ import 'package:mobile/features/learning/domain/entities/learning_goal.dart';
 import 'package:mobile/features/settings/application/providers/settings_provider.dart';
 import 'package:mobile/features/settings/domain/entities/app_settings.dart';
 import 'package:mobile/features/settings/domain/entities/app_theme_mode.dart';
+import 'package:mobile/features/sync/application/providers/progress_sync_provider.dart';
+import 'package:mobile/features/sync/domain/entities/progress_sync_summary.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
 import 'package:mobile/shared/widgets/app_loading_indicator.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
@@ -131,7 +133,10 @@ class SettingsScreen extends ConsumerWidget {
                         style: AppTypography.caption,
                       ),
                       value: settings.dailyReminderEnabled,
-                      activeThumbColor: AppColors.resolve(AppColors.mossGreen, context),
+                      activeThumbColor: AppColors.resolve(
+                        AppColors.mossGreen,
+                        context,
+                      ),
                       onChanged: (enabled) async {
                         await ref
                             .read(settingsProvider.notifier)
@@ -189,7 +194,10 @@ class SettingsScreen extends ConsumerWidget {
                         style: AppTypography.caption,
                       ),
                       value: settings.hapticsEnabled,
-                      activeThumbColor: AppColors.resolve(AppColors.mossGreen, context),
+                      activeThumbColor: AppColors.resolve(
+                        AppColors.mossGreen,
+                        context,
+                      ),
                       onChanged: (enabled) {
                         ref
                             .read(settingsProvider.notifier)
@@ -217,6 +225,11 @@ class SettingsScreen extends ConsumerWidget {
                       onTap: () => _signOut(context, ref),
                     ),
                   ],
+                ),
+                const SizedBox(height: AppSpacing.sp16),
+                _SettingsSection(
+                  title: 'Đồng bộ',
+                  children: [_ProgressSyncTile(user: user)],
                 ),
               ],
             ),
@@ -254,10 +267,9 @@ class SettingsScreen extends ConsumerWidget {
         .read(settingsProvider.notifier)
         .updateReminderTime(hour: picked.hour, minute: picked.minute);
     if (settings.dailyReminderEnabled) {
-      await ref.read(notificationServiceProvider).scheduleDailyReminder(
-        hour: picked.hour,
-        minute: picked.minute,
-      );
+      await ref
+          .read(notificationServiceProvider)
+          .scheduleDailyReminder(hour: picked.hour, minute: picked.minute);
     }
   }
 
@@ -613,7 +625,10 @@ class _CategoryPickerTile extends StatelessWidget {
                   trailing: isSelected
                       ? Icon(
                           Icons.check_rounded,
-                          color: AppColors.resolve(AppColors.mossGreen, context),
+                          color: AppColors.resolve(
+                            AppColors.mossGreen,
+                            context,
+                          ),
                         )
                       : null,
                   onTap: () {
@@ -666,7 +681,10 @@ class _LearningGoalTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: EdgeInsets.zero,
-      leading: Icon(Icons.flag_rounded, color: AppColors.resolve(AppColors.mossGreen, context)),
+      leading: Icon(
+        Icons.flag_rounded,
+        color: AppColors.resolve(AppColors.mossGreen, context),
+      ),
       title: const Text('Mục tiêu học', style: AppTypography.bodyMBold),
       subtitle: Text(selected.label, style: AppTypography.caption),
       trailing: const Icon(Icons.chevron_right_rounded),
@@ -693,7 +711,10 @@ class _LearningGoalTile extends StatelessWidget {
                   trailing: isSelected
                       ? Icon(
                           Icons.check_rounded,
-                          color: AppColors.resolve(AppColors.mossGreen, context),
+                          color: AppColors.resolve(
+                            AppColors.mossGreen,
+                            context,
+                          ),
                         )
                       : null,
                   onTap: () {
@@ -707,5 +728,175 @@ class _LearningGoalTile extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _ProgressSyncTile extends ConsumerWidget {
+  final AuthUser? user;
+
+  const _ProgressSyncTile({required this.user});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final syncState = ref.watch(progressSyncControllerProvider);
+    final isBusy = syncState.isLoading;
+    final canSync = user != null;
+    final resolvedMossGreen = AppColors.resolve(AppColors.mossGreen, context);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sp8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.cloud_sync_rounded, color: resolvedMossGreen),
+              const SizedBox(width: AppSpacing.sp12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Sao lưu tiến độ',
+                      style: AppTypography.bodyMBold,
+                    ),
+                    Text(_statusLabel(syncState), style: AppTypography.caption),
+                  ],
+                ),
+              ),
+              if (isBusy)
+                const SizedBox.square(
+                  dimension: 22,
+                  child: CircularProgressIndicator(strokeWidth: 2),
+                )
+              else
+                IconButton(
+                  tooltip: 'Làm mới',
+                  onPressed: canSync
+                      ? () => ref
+                            .read(progressSyncControllerProvider.notifier)
+                            .refresh()
+                      : null,
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sp12),
+          Wrap(
+            spacing: AppSpacing.sp8,
+            runSpacing: AppSpacing.sp8,
+            children: [
+              FilledButton.icon(
+                onPressed: canSync && !isBusy
+                    ? () => _backup(context, ref)
+                    : null,
+                icon: const Icon(Icons.cloud_upload_rounded),
+                label: const Text('Sao lưu'),
+              ),
+              OutlinedButton.icon(
+                onPressed: canSync && !isBusy
+                    ? () => _confirmRestore(context, ref)
+                    : null,
+                icon: const Icon(Icons.cloud_download_rounded),
+                label: const Text('Khôi phục'),
+              ),
+            ],
+          ),
+          if (user?.isAnonymous ?? false) ...[
+            const SizedBox(height: AppSpacing.sp8),
+            Text(
+              'Tài khoản khách vẫn có thể sao lưu, nhưng nên liên kết Google/email trước khi đổi máy.',
+              style: AppTypography.caption.copyWith(color: AppColors.error),
+            ),
+          ] else if (!canSync) ...[
+            const SizedBox(height: AppSpacing.sp8),
+            const Text(
+              'Đăng nhập để sao lưu tiến độ lên cloud.',
+              style: AppTypography.caption,
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  String _statusLabel(AsyncValue<ProgressSyncSummary> state) {
+    if (state.isLoading) return 'Đang kiểm tra bản sao lưu...';
+    final error = state.error;
+    if (error != null) return 'Không kiểm tra được: $error';
+    final summary = state.value;
+    if (summary == null || !summary.hasCloudBackup) {
+      return 'Chưa có bản sao lưu cloud.';
+    }
+    final updatedAt = summary.cloudUpdatedAt;
+    final dateLabel = updatedAt == null
+        ? 'không rõ thời gian'
+        : _formatDateTime(updatedAt);
+    return 'Cloud: ${summary.totalSyncedItems} mục, cập nhật $dateLabel.';
+  }
+
+  Future<void> _backup(BuildContext context, WidgetRef ref) async {
+    await _runSyncAction(
+      context,
+      () => ref.read(progressSyncControllerProvider.notifier).backupNow(),
+    );
+  }
+
+  Future<void> _confirmRestore(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Khôi phục tiến độ?'),
+          content: const Text(
+            'Tiến độ local sẽ được cập nhật theo bản sao lưu cloud. Nội dung bài học hiện có vẫn được giữ nguyên.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Hủy'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Khôi phục'),
+            ),
+          ],
+        );
+      },
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    await _runSyncAction(
+      context,
+      () =>
+          ref.read(progressSyncControllerProvider.notifier).restoreFromCloud(),
+    );
+  }
+
+  Future<void> _runSyncAction(
+    BuildContext context,
+    Future<ProgressSyncResult> Function() action,
+  ) async {
+    try {
+      final result = await action();
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(result.message)));
+    } catch (error) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Đồng bộ thất bại: $error')));
+    }
+  }
+
+  String _formatDateTime(DateTime value) {
+    final local = value.toLocal();
+    final day = local.day.toString().padLeft(2, '0');
+    final month = local.month.toString().padLeft(2, '0');
+    final hour = local.hour.toString().padLeft(2, '0');
+    final minute = local.minute.toString().padLeft(2, '0');
+    return '$day/$month/${local.year} $hour:$minute';
   }
 }

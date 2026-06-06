@@ -9,9 +9,10 @@ import 'package:mobile/features/home/application/providers/home_progress_provide
 import 'package:mobile/features/home/domain/services/daily_study_coach.dart';
 import 'package:mobile/features/home/presentation/screens/home_page.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
+import 'package:mobile/features/weakness/application/providers/weakness_provider.dart';
 
 void main() {
-  testWidgets('renders daily study plan on home', (tester) async {
+  testWidgets('renders daily study plan and dashboard on home', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
@@ -35,6 +36,7 @@ void main() {
               maxCorrectStreak: 0,
             ),
           ),
+          weakItemsProvider.overrideWith((ref) async => const []),
         ],
         child: const MaterialApp(home: HomePage()),
       ),
@@ -47,6 +49,10 @@ void main() {
     expect(find.text('12 thẻ'), findsOneWidget);
     expect(find.text('12 mục'), findsOneWidget);
     expect(find.text('Bắt đầu ngay'), findsOneWidget);
+    expect(find.text('Dashboard cá nhân'), findsOneWidget);
+    expect(find.text('24h tới'), findsOneWidget);
+    expect(find.text('Test đầu vào'), findsOneWidget);
+    expect(find.text('2 cây đang lớn'), findsOneWidget);
   });
 }
 
@@ -66,5 +72,10 @@ const _progress = HomeProgress(
   ),
   streak: 3,
   overdueCount: 12,
+  dueSoonCount: 4,
   todayReviewed: 5,
+  gardenExp: 120,
+  gardenWater: 80,
+  gardenSunlight: 90,
+  gardenPlantCount: 2,
 );

@@ -4,8 +4,11 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../features/grammar/application/providers/grammar_library_provider.dart';
+import '../../features/kanji/domain/entities/kanji_card.dart';
 import '../../features/kanji/application/providers/kanji_library_provider.dart';
+import '../../features/kanji/presentation/screens/kanji_detail_screen.dart';
 import '../../features/vocabulary/application/providers/vocabulary_library_provider.dart';
+import '../../presentation/navigation/app_routes.dart';
 
 /// Global Search Delegate — tìm kiếm xuyên suốt Kanji, Từ vựng, Ngữ pháp
 ///
@@ -102,7 +105,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
             const SizedBox(height: AppSpacing.sp16),
             Text(
               'Nhập từ khóa để tìm kiếm',
-              style: AppTypography.bodyM.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
+              style: AppTypography.bodyM.copyWith(
+                color: Theme.of(context).textTheme.bodySmall?.color,
+              ),
             ),
             const SizedBox(height: AppSpacing.sp8),
             const Text(
@@ -121,7 +126,9 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
       child: Center(
         child: Text(
           'Nhập thêm ký tự để tìm nhanh hơn',
-          style: AppTypography.bodyM.copyWith(color: Theme.of(context).textTheme.bodySmall?.color),
+          style: AppTypography.bodyM.copyWith(
+            color: Theme.of(context).textTheme.bodySmall?.color,
+          ),
         ),
       ),
     );
@@ -171,7 +178,10 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                 );
               }
 
-              final resolvedMossGreen = AppColors.resolve(AppColors.mossGreen, context);
+              final resolvedMossGreen = AppColors.resolve(
+                AppColors.mossGreen,
+                context,
+              );
 
               return ListView(
                 padding: AppSpacing.paddingAll16,
@@ -225,9 +235,10 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                             context,
                             icon: Icons.menu_book_rounded,
                             title: item.word,
-                            subtitle: '${item.reading} • ${item.meaning}',
+                            subtitle: '${item.reading} · ${item.meaning}',
                             color: AppColors.waterBlue,
                             jlptLevel: item.jlptLevel,
+                            onTap: () => _openVocabulary(context, item),
                           ),
                         ),
                   ],
@@ -247,6 +258,7 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
                             subtitle: item.shortExplanation,
                             color: AppColors.sunGold,
                             jlptLevel: item.jlptLevel,
+                            onTap: () => _openGrammar(context, item),
                           ),
                         ),
                   ],
@@ -264,79 +276,90 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
     );
   }
 
-  Widget _buildKanjiResultTile(BuildContext context, dynamic kanji) {
+  Widget _buildKanjiResultTile(BuildContext context, KanjiCard kanji) {
     final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
     final resolvedMossLight = AppColors.resolve(AppColors.mossLight, context);
     final resolvedMossDark = AppColors.resolve(AppColors.mossDark, context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sp8),
-      padding: AppSpacing.paddingAll16,
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sp8),
+      child: Material(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        border: Border.all(color: resolvedSlateLight.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          // Kanji character
-          Container(
-            width: 48,
-            height: 48,
+        child: InkWell(
+          onTap: () => _openKanji(context, kanji),
+          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+          child: Container(
+            padding: AppSpacing.paddingAll16,
             decoration: BoxDecoration(
-              color: AppColors.resolve(AppColors.creamDark, context),
-              borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
-            ),
-            child: Center(
-              child: Text(
-                kanji.kanji,
-                style: AppTypography.kanjiDisplay.copyWith(fontSize: 24),
+              borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+              border: Border.all(
+                color: resolvedSlateLight.withValues(alpha: 0.3),
               ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.sp16),
-
-          // Meanings + readings
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Row(
               children: [
-                Text(
-                  kanji.meanings,
-                  style: AppTypography.bodyMBold,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                // Kanji character
+                Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.resolve(AppColors.creamDark, context),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+                  ),
+                  child: Center(
+                    child: Text(
+                      kanji.kanji,
+                      style: AppTypography.kanjiDisplay.copyWith(fontSize: 24),
+                    ),
+                  ),
                 ),
-                const SizedBox(height: AppSpacing.sp4),
-                Text(
-                  '${kanji.onyomi} / ${kanji.kunyomi}',
-                  style: AppTypography.caption,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                const SizedBox(width: AppSpacing.sp16),
+
+                // Meanings + readings
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        kanji.meanings,
+                        style: AppTypography.bodyMBold,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: AppSpacing.sp4),
+                      Text(
+                        '${kanji.onyomi} / ${kanji.kunyomi}',
+                        style: AppTypography.caption,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+
+                // JLPT badge
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sp8,
+                    vertical: AppSpacing.sp4,
+                  ),
+                  decoration: BoxDecoration(
+                    color: resolvedMossLight.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
+                  ),
+                  child: Text(
+                    'N${kanji.jlptLevel}',
+                    style: AppTypography.labelS.copyWith(
+                      color: resolvedMossDark,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
-
-          // JLPT badge
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sp8,
-              vertical: AppSpacing.sp4,
-            ),
-            decoration: BoxDecoration(
-              color: resolvedMossLight.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(AppSpacing.radiusXS),
-            ),
-            child: Text(
-              'N${kanji.jlptLevel}',
-              style: AppTypography.labelS.copyWith(
-                color: resolvedMossDark,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -374,50 +397,82 @@ class GlobalSearchDelegate extends SearchDelegate<String> {
     required String subtitle,
     required Color color,
     required int jlptLevel,
+    VoidCallback? onTap,
   }) {
     final resolvedSlateLight = AppColors.resolve(AppColors.slateLight, context);
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppSpacing.sp8),
-      padding: AppSpacing.paddingAll16,
-      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sp8),
+      child: Material(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        border: Border.all(color: resolvedSlateLight.withValues(alpha: 0.3)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color),
-          const SizedBox(width: AppSpacing.sp16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+          child: Container(
+            padding: AppSpacing.paddingAll16,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+              border: Border.all(
+                color: resolvedSlateLight.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
               children: [
-                Text(
-                  title,
-                  style: AppTypography.bodyMBold,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                Icon(icon, color: color),
+                const SizedBox(width: AppSpacing.sp16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: AppTypography.bodyMBold,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: AppSpacing.sp4),
+                      Text(
+                        subtitle,
+                        style: AppTypography.caption,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: AppSpacing.sp4),
                 Text(
-                  subtitle,
-                  style: AppTypography.caption,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+                  'N$jlptLevel',
+                  style: AppTypography.labelS.copyWith(
+                    color: color,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ],
             ),
           ),
-          Text(
-            'N$jlptLevel',
-            style: AppTypography.labelS.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-        ],
+        ),
       ),
     );
+  }
+
+  void _openKanji(BuildContext context, KanjiCard kanji) {
+    final navigator = Navigator.of(context);
+    close(context, kanji.kanji);
+    navigator.push(
+      MaterialPageRoute(builder: (_) => KanjiDetailScreen(kanji: kanji)),
+    );
+  }
+
+  void _openVocabulary(BuildContext context, dynamic vocabulary) {
+    final navigator = Navigator.of(context);
+    close(context, vocabulary.word);
+    navigator.push(AppRoutes.vocabularyDetail(vocabulary));
+  }
+
+  void _openGrammar(BuildContext context, dynamic grammar) {
+    final navigator = Navigator.of(context);
+    close(context, grammar.title);
+    navigator.push(AppRoutes.grammarReview([grammar]));
   }
 }

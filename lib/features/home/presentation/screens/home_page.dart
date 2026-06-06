@@ -15,6 +15,9 @@ import 'package:mobile/features/home/presentation/navigation/daily_study_navigat
 import 'package:mobile/features/home/presentation/widgets/profile_avatar.dart';
 import 'package:mobile/features/home/presentation/widgets/quick_action_chips.dart';
 import 'package:mobile/features/learning/domain/entities/learning_category.dart';
+import 'package:mobile/features/review/domain/entities/review_item.dart';
+import 'package:mobile/features/weakness/application/providers/weakness_provider.dart';
+import 'package:mobile/features/weakness/domain/entities/weakness_review_item.dart';
 import 'package:mobile/presentation/navigation/app_routes.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
@@ -33,6 +36,7 @@ class HomePage extends ConsumerWidget {
     final progress = ref.watch(homeProgressProvider).value;
     final dailyPlan = ref.watch(dailyStudyPlanProvider);
     final missions = ref.watch(gardenMissionProvider);
+    final weakItems = ref.watch(weakItemsProvider).value ?? const [];
     final user = ref.watch(authStateProvider).value;
     final data = progress ?? HomeProgress.empty;
 
@@ -53,7 +57,7 @@ class HomePage extends ConsumerWidget {
                 sliver: SliverList.list(
                   children: [
                     _TopBar(user: user),
-                    const SizedBox(height: AppSpacing.sp24),
+                    const SizedBox(height: AppSpacing.sp20),
                     _DailyStudyCard(
                       plan: dailyPlan,
                       progress: data,
@@ -64,49 +68,33 @@ class HomePage extends ConsumerWidget {
                         onOpenLearningCategory: onOpenLearningCategory,
                       ),
                     ),
-                    const SizedBox(height: AppSpacing.sp12),
-                    _ReviewStrip(
-                      overdueCount: data.overdueCount,
-                      todayReviewed: data.todayReviewed,
-                      streak: data.streak,
-                      onTap: () => openWeakAreaReview(context, ref),
-                    ),
-                    const SizedBox(height: AppSpacing.sp24),
-                    const _SectionTitle(
-                      title: 'Học nhanh',
-                      subtitle:
-                          'Chọn đúng phần cần học, không phải đi lòng vòng.',
-                    ),
-                    const SizedBox(height: AppSpacing.sp12),
-                    _LearningGrid(
-                      onVocabulary: () => onOpenTab?.call(2),
-                      onGrammar: () => onOpenTab?.call(3),
-                      onKanji: () => onOpenTab?.call(4),
-                      onQuiz: () => _openLearning(context),
-                      onMission: () =>
+                    const SizedBox(height: AppSpacing.sp16),
+                    _BentoDashboard(
+                      progress: data,
+                      weakItems: weakItems,
+                      onOpenWeakness: () =>
+                          Navigator.push(context, AppRoutes.weakness()),
+                      onOpenGarden: () =>
                           Navigator.push(context, AppRoutes.garden()),
-                      onProfile: () =>
+                    ),
+                    const SizedBox(height: AppSpacing.sp16),
+                    _QuickActionsBar(
+                      onOpenWeakness: () =>
+                          Navigator.push(context, AppRoutes.weakness()),
+                      onOpenPlacement: () =>
+                          Navigator.push(context, AppRoutes.placementTest()),
+                      onOpenSentencePractice: () =>
+                          Navigator.push(context, AppRoutes.sentencePractice()),
+                      onOpenGarden: () =>
+                          Navigator.push(context, AppRoutes.garden()),
+                      onOpenAnalytics: () =>
                           Navigator.push(context, AppRoutes.analytics()),
                     ),
-                    const SizedBox(height: AppSpacing.sp12),
+                    const SizedBox(height: AppSpacing.sp16),
                     _MissionCard(
                       missions: missions,
                       onTap: () => Navigator.push(context, AppRoutes.garden()),
                     ),
-                    const SizedBox(height: AppSpacing.sp24),
-                    RepaintBoundary(
-                      child: _ZenGardenCard(
-                        onTap: () =>
-                            Navigator.push(context, AppRoutes.garden()),
-                      ),
-                    ),
-                    const SizedBox(height: AppSpacing.sp24),
-                    const _SectionTitle(
-                      title: 'Tiến độ',
-                      subtitle: 'Ba mảng chính của lộ trình hiện tại.',
-                    ),
-                    const SizedBox(height: AppSpacing.sp12),
-                    _ProgressList(progress: data, onOpenTab: onOpenTab),
                   ],
                 ),
               ),
@@ -115,15 +103,6 @@ class HomePage extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  void _openLearning(BuildContext context) {
-    final callback = onOpenLearningCategory;
-    if (callback != null) {
-      callback(LearningCategory.mixed);
-    } else {
-      Navigator.push(context, AppRoutes.learningPath());
-    }
   }
 }
 
@@ -144,7 +123,9 @@ class _TopBar extends StatelessWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-            border: Border.all(color: AppColors.resolve(AppColors.navySoft, context)),
+            border: Border.all(
+              color: AppColors.resolve(AppColors.navySoft, context),
+            ),
           ),
           clipBehavior: Clip.antiAlias,
           child: Image.asset(
@@ -246,7 +227,9 @@ class _DailyStudyCard extends StatelessWidget {
               end: Alignment.bottomRight,
             )
           : null,
-      shadowColor: isDark ? Colors.transparent : resolvedZenBlue.withValues(alpha: 0.16),
+      shadowColor: isDark
+          ? Colors.transparent
+          : resolvedZenBlue.withValues(alpha: 0.16),
       padding: const EdgeInsets.fromLTRB(
         AppSpacing.sp16,
         AppSpacing.sp12,
@@ -418,193 +401,468 @@ class _DailyStudyPill extends StatelessWidget {
   }
 }
 
-class _ReviewStrip extends StatelessWidget {
-  final int overdueCount;
-  final int todayReviewed;
-  final int streak;
-  final VoidCallback onTap;
+class _BentoDashboard extends StatelessWidget {
+  final HomeProgress progress;
+  final List<WeaknessReviewItem> weakItems;
+  final VoidCallback onOpenWeakness;
+  final VoidCallback onOpenGarden;
 
-  const _ReviewStrip({
-    required this.overdueCount,
-    required this.todayReviewed,
-    required this.streak,
-    required this.onTap,
+  const _BentoDashboard({
+    required this.progress,
+    required this.weakItems,
+    required this.onOpenWeakness,
+    required this.onOpenGarden,
   });
 
   @override
   Widget build(BuildContext context) {
-    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
-    return AppCard(
-      onTap: onTap,
-      padding: const EdgeInsets.all(AppSpacing.sp16),
-      borderColor: resolvedLeafGreen.withValues(alpha: 0.14),
-      shadowColor: resolvedLeafGreen.withValues(alpha: 0.05),
-      child: Row(
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: resolvedLeafGreen.withValues(alpha: 0.10),
-              borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+    final resolvedBlue = AppColors.resolve(AppColors.zenBlue, context);
+    final resolvedGold = AppColors.resolve(AppColors.sunGold, context);
+    final resolvedGreen = AppColors.resolve(AppColors.leafGreen, context);
+    final resolvedTerracotta = AppColors.resolve(AppColors.terracotta, context);
+    
+    final weakKanji = _firstWeak(ReviewItemType.kanji);
+    final weakGrammar = _firstWeak(ReviewItemType.grammar);
+    final jlptPercent = (progress.overallPercentage * 100).round();
+    final todayHint = _getTodayHint();
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              'Dashboard cá nhân',
+              style: AppTypography.headingS.copyWith(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.w900,
+              ),
             ),
-            child: Icon(
-              Icons.refresh_rounded,
-              color: resolvedLeafGreen,
-            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sp4),
+        Text(
+          todayHint,
+          style: AppTypography.caption.copyWith(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
           ),
-          const SizedBox(width: AppSpacing.sp12),
-          Expanded(
+        ),
+        const SizedBox(height: AppSpacing.sp12),
+
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              flex: 3,
+              child: _BentoTile(
+                color: resolvedBlue,
+                onTap: onOpenWeakness,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.checklist_rtl_rounded, color: resolvedBlue, size: 20),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Thẻ ôn tập',
+                          style: AppTypography.labelS.copyWith(
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sp12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${progress.overdueCount}',
+                                style: AppTypography.headingM.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: resolvedBlue,
+                                ),
+                              ),
+                              Text(
+                                'Đến hạn',
+                                style: AppTypography.labelS.copyWith(
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(width: 1, height: 32, color: resolvedBlue.withValues(alpha: 0.1)),
+                        const SizedBox(width: AppSpacing.sp12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${progress.dueSoonCount}',
+                                style: AppTypography.headingM.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  color: AppColors.resolve(AppColors.waterBlue, context),
+                                ),
+                              ),
+                              Text(
+                                '24h tới',
+                                style: AppTypography.labelS.copyWith(
+                                  fontSize: 10,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sp8),
+            Expanded(
+              flex: 2,
+              child: _BentoTile(
+                color: resolvedTerracotta,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.local_fire_department_rounded, color: resolvedTerracotta, size: 20),
+                        const SizedBox(width: AppSpacing.sp4),
+                        Text(
+                          'Streak',
+                          style: AppTypography.labelS.copyWith(
+                            color: Theme.of(context).textTheme.bodySmall?.color,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sp8),
+                    Text(
+                      '${progress.streak} ngày',
+                      style: AppTypography.headingS.copyWith(
+                        fontWeight: FontWeight.w900,
+                        color: resolvedTerracotta,
+                        fontSize: 18,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'Đều đặn mỗi ngày!',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.labelS.copyWith(fontSize: 9),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: AppSpacing.sp8),
+
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: _BentoTile(
+                color: resolvedGreen,
+                onTap: onOpenGarden,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.yard_rounded, color: resolvedGreen, size: 18),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            progress.gardenPlantCount == 0 ? 'Vườn mới bắt đầu' : '${progress.gardenPlantCount} cây đang lớn',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: AppTypography.labelS.copyWith(
+                              fontWeight: FontWeight.w800,
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: AppSpacing.sp12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.water_drop_rounded, size: 12, color: AppColors.waterBlue),
+                            const SizedBox(width: 2),
+                            Text(
+                              'Nước ${progress.gardenWater}',
+                              style: AppTypography.labelS.copyWith(fontWeight: FontWeight.w900, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.wb_sunny_rounded, size: 12, color: AppColors.sunGold),
+                            const SizedBox(width: 2),
+                            Text(
+                              'Nắng ${progress.gardenSunlight}',
+                              style: AppTypography.labelS.copyWith(fontWeight: FontWeight.w900, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            const Icon(Icons.auto_awesome_rounded, size: 12, color: AppColors.sakura),
+                            const SizedBox(width: 2),
+                            Text(
+                              '${progress.gardenExp} XP · $jlptPercent%',
+                              style: AppTypography.labelS.copyWith(fontWeight: FontWeight.w900, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        if (weakKanji != null || weakGrammar != null) ...[
+          const SizedBox(height: AppSpacing.sp8),
+          _BentoTile(
+            color: resolvedGold,
+            onTap: onOpenWeakness,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  overdueCount > 0
-                      ? '$overdueCount thẻ đang chờ ôn'
-                      : 'Không có thẻ đến hạn',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.bodyMBold.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w900,
+                Row(
+                  children: [
+                    Icon(Icons.warning_amber_rounded, color: resolvedGold, size: 18),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Cần chú ý',
+                      style: AppTypography.labelS.copyWith(
+                        fontWeight: FontWeight.w800,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sp8),
+                if (weakKanji != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'Kanji hay sai: ${_displayText(weakKanji)}',
+                          style: AppTypography.bodyS.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          '${weakKanji.misses} lần sai',
+                          style: AppTypography.labelS.copyWith(color: resolvedTerracotta, fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                Text(
-                  'Đã ôn $todayReviewed hôm nay · streak $streak',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTypography.label,
-                ),
+                if (weakGrammar != null)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Grammar hay quên: ${_displayText(weakGrammar)}',
+                        style: AppTypography.bodyS.copyWith(fontWeight: FontWeight.bold),
+                      ),
+                      Text(
+                        '${weakGrammar.misses} lần sai',
+                        style: AppTypography.labelS.copyWith(color: resolvedTerracotta, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
               ],
             ),
           ),
-          Icon(Icons.arrow_forward_rounded, color: resolvedLeafGreen),
         ],
+      ],
+    );
+  }
+
+  String _getTodayHint() {
+    if (progress.overdueCount > 0) {
+      return 'Ưu tiên ôn ${progress.overdueCount} thẻ đang chờ.';
+    }
+    if (progress.dueSoonCount > 0) {
+      return '${progress.dueSoonCount} thẻ sẽ đến hạn trong 24 giờ tới.';
+    }
+    return 'Không có nợ ôn, có thể học bài mới hoặc luyện câu.';
+  }
+
+  WeaknessReviewItem? _firstWeak(ReviewItemType type) {
+    for (final item in weakItems) {
+      if (item.type == type) return item;
+    }
+    return null;
+  }
+
+  String _displayText(WeaknessReviewItem item) {
+    final review = item.reviewItem;
+    switch (item.type) {
+      case ReviewItemType.kanji:
+        return review.kanji?.kanji ?? review.answer;
+      case ReviewItemType.grammar:
+        return review.grammar?.title ?? review.answer;
+      case ReviewItemType.vocabulary:
+        return review.vocabulary?.word ?? review.prompt;
+      case ReviewItemType.sentence:
+        return review.sentence?.text ?? review.prompt;
+    }
+  }
+}
+
+class _BentoTile extends StatelessWidget {
+  final Color color;
+  final Widget child;
+  final VoidCallback? onTap;
+
+  const _BentoTile({
+    required this.color,
+    required this.child,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return AppCard(
+      onTap: onTap,
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.sp16,
+        vertical: AppSpacing.sp12,
       ),
+      borderColor: color.withValues(alpha: isDark ? 0.25 : 0.14),
+      shadowColor: color.withValues(alpha: 0.04),
+      child: child,
     );
   }
 }
 
-class _LearningGrid extends StatelessWidget {
-  final VoidCallback? onVocabulary;
-  final VoidCallback? onGrammar;
-  final VoidCallback? onKanji;
-  final VoidCallback onQuiz;
-  final VoidCallback onMission;
-  final VoidCallback onProfile;
+class _QuickActionsBar extends StatelessWidget {
+  final VoidCallback onOpenWeakness;
+  final VoidCallback onOpenPlacement;
+  final VoidCallback onOpenSentencePractice;
+  final VoidCallback onOpenGarden;
+  final VoidCallback onOpenAnalytics;
 
-  const _LearningGrid({
-    this.onVocabulary,
-    this.onGrammar,
-    this.onKanji,
-    required this.onQuiz,
-    required this.onMission,
-    required this.onProfile,
+  const _QuickActionsBar({
+    required this.onOpenWeakness,
+    required this.onOpenPlacement,
+    required this.onOpenSentencePractice,
+    required this.onOpenGarden,
+    required this.onOpenAnalytics,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GridView.count(
-      padding: EdgeInsets.zero,
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 3,
-      crossAxisSpacing: AppSpacing.sp8,
-      mainAxisSpacing: AppSpacing.sp8,
-      childAspectRatio: 3 / 2.7,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _MenuTile(
-          title: 'Từ vựng',
-          icon: Icons.menu_book_rounded,
-          color: AppColors.zenBlue,
-          onTap: onVocabulary,
+        Text(
+          'Lối tắt',
+          style: AppTypography.headingS.copyWith(
+            color: Theme.of(context).colorScheme.onSurface,
+            fontWeight: FontWeight.w900,
+          ),
         ),
-        _MenuTile(
-          title: 'Ngữ pháp',
-          icon: Icons.edit_note_rounded,
-          color: AppColors.leafGreen,
-          onTap: onGrammar,
-        ),
-        _MenuTile(
-          title: 'Chữ Hán',
-          icon: Icons.translate_rounded,
-          color: AppColors.waterBlue,
-          onTap: onKanji,
-        ),
-        _MenuTile(
-          title: 'Quiz',
-          icon: Icons.quiz_rounded,
-          color: AppColors.zenBlue,
-          onTap: onQuiz,
-        ),
-        _MenuTile(
-          title: 'Vườn',
-          icon: Icons.flag_rounded,
-          color: AppColors.leafGreen,
-          onTap: onMission,
-        ),
-        _MenuTile(
-          title: 'Hồ sơ',
-          icon: Icons.insights_rounded,
-          color: AppColors.slateGrey,
-          onTap: onProfile,
+        const SizedBox(height: AppSpacing.sp8),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          physics: const BouncingScrollPhysics(),
+          child: Row(
+            children: [
+              _ActionChip(
+                icon: Icons.fact_check_rounded,
+                label: 'Test đầu vào',
+                onTap: onOpenPlacement,
+              ),
+              const SizedBox(width: AppSpacing.sp8),
+              _ActionChip(
+                icon: Icons.record_voice_over_rounded,
+                label: 'Luyện câu',
+                onTap: onOpenSentencePractice,
+              ),
+              const SizedBox(width: AppSpacing.sp8),
+              _ActionChip(
+                icon: Icons.yard_rounded,
+                label: 'Vườn',
+                onTap: onOpenGarden,
+              ),
+              const SizedBox(width: AppSpacing.sp8),
+              _ActionChip(
+                icon: Icons.psychology_alt_rounded,
+                label: 'Điểm yếu',
+                onTap: onOpenWeakness,
+              ),
+              const SizedBox(width: AppSpacing.sp8),
+              _ActionChip(
+                icon: Icons.insights_rounded,
+                label: 'Hồ sơ',
+                onTap: onOpenAnalytics,
+              ),
+            ],
+          ),
         ),
       ],
     );
   }
 }
 
-class _MenuTile extends StatelessWidget {
-  final String title;
+class _ActionChip extends StatelessWidget {
   final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
+  final String label;
+  final VoidCallback onTap;
 
-  const _MenuTile({
-    required this.title,
+  const _ActionChip({
     required this.icon,
-    required this.color,
-    this.onTap,
+    required this.label,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    final resolvedColor = AppColors.resolve(color, context);
+    final resolvedBlue = AppColors.resolve(AppColors.zenBlue, context);
     return Material(
-      color: Theme.of(context).cardColor,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusM),
+      color: resolvedBlue.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.sp12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(AppSpacing.radiusM),
-            border: Border.all(
-              color:
-                  Theme.of(context).dividerTheme.color ??
-                  AppColors.slateLight.withValues(alpha: 0.32),
-            ),
+        borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.sp16,
+            vertical: 10,
           ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  color: resolvedColor.withValues(alpha: 0.10),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(icon, color: resolvedColor, size: 22),
-              ),
-              const SizedBox(height: AppSpacing.sp8),
+              Icon(icon, size: 18, color: resolvedBlue),
+              const SizedBox(width: 6),
               Text(
-                title,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+                label,
                 style: AppTypography.label.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
+                  color: resolvedBlue,
                   fontWeight: FontWeight.w900,
                 ),
               ),
@@ -626,7 +884,10 @@ class _MissionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return missions.when(
       data: (summary) {
-        final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
+        final resolvedLeafGreen = AppColors.resolve(
+          AppColors.leafGreen,
+          context,
+        );
         return AppCard(
           onTap: onTap,
           padding: const EdgeInsets.fromLTRB(
@@ -722,266 +983,14 @@ class _MissionRow extends StatelessWidget {
                 child: LinearProgressIndicator(
                   value: mission.progress,
                   minHeight: 5,
-                  backgroundColor: AppColors.resolve(AppColors.creamDark, context),
+                  backgroundColor: AppColors.resolve(
+                    AppColors.creamDark,
+                    context,
+                  ),
                   valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
                 ),
               ),
             ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-class _ZenGardenCard extends StatelessWidget {
-  final VoidCallback onTap;
-
-  const _ZenGardenCard({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    final resolvedLeafGreen = AppColors.resolve(AppColors.leafGreen, context);
-    final resolvedZenBlue = AppColors.resolveColors([
-      AppColors.zenBlue,
-    ], context).first;
-    final overlayColor = isDark ? const Color(0xFF0F1222) : resolvedZenBlue;
-
-    return AppCard(
-      onTap: onTap,
-      padding: EdgeInsets.zero,
-      borderColor: isDark
-          ? const Color(0xFF3B6154).withValues(alpha: 0.4)
-          : resolvedLeafGreen.withValues(alpha: 0.14),
-      shadowColor: isDark ? Colors.transparent : resolvedLeafGreen.withValues(alpha: 0.06),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-        child: SizedBox(
-          height: 148,
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              Image.asset(
-                'assets/images/zen_bonsai.webp',
-                fit: BoxFit.cover,
-                alignment: Alignment.centerRight,
-                cacheWidth: 720,
-                filterQuality: FilterQuality.medium,
-              ),
-              DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      overlayColor.withValues(alpha: 0.92),
-                      overlayColor.withValues(alpha: 0.64),
-                      overlayColor.withValues(alpha: 0.10),
-                    ],
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(AppSpacing.sp16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Khu vườn Zen',
-                          style: AppTypography.headingS.copyWith(
-                            color: AppColors.white,
-                            fontWeight: FontWeight.w900,
-                          ),
-                        ),
-                        const SizedBox(height: AppSpacing.sp4),
-                        SizedBox(
-                          width: 190,
-                          child: Text(
-                            'Hoàn thành nhiệm vụ để nuôi khu vườn học tập.',
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: AppTypography.bodyS.copyWith(
-                              color: AppColors.white.withValues(alpha: 0.78),
-                              height: 1.25,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AppSpacing.sp12,
-                        vertical: AppSpacing.sp4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.white.withValues(alpha: 0.14),
-                        borderRadius: BorderRadius.circular(
-                          AppSpacing.radiusXL,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            'Mở vườn',
-                            style: AppTypography.label.copyWith(
-                              color: AppColors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                          const SizedBox(width: AppSpacing.sp4),
-                          const Icon(
-                            Icons.arrow_forward_rounded,
-                            color: AppColors.white,
-                            size: 16,
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _ProgressList extends StatelessWidget {
-  final HomeProgress progress;
-  final TabSwitchCallback? onOpenTab;
-
-  const _ProgressList({required this.progress, this.onOpenTab});
-
-  @override
-  Widget build(BuildContext context) {
-    return AppCard(
-      padding: const EdgeInsets.all(AppSpacing.sp16),
-      child: Column(
-        children: [
-          _ProgressRow(
-            title: 'Từ vựng',
-            icon: Icons.menu_book_rounded,
-            color: AppColors.zenBlue,
-            progress: progress.vocabulary,
-            onTap: () => onOpenTab?.call(2),
-          ),
-          const Divider(height: AppSpacing.sp24),
-          _ProgressRow(
-            title: 'Ngữ pháp',
-            icon: Icons.edit_note_rounded,
-            color: AppColors.leafGreen,
-            progress: progress.grammar,
-            onTap: () => onOpenTab?.call(3),
-          ),
-          const Divider(height: AppSpacing.sp24),
-          _ProgressRow(
-            title: 'Chữ Hán',
-            icon: Icons.translate_rounded,
-            color: AppColors.waterBlue,
-            progress: progress.kanji,
-            onTap: () => onOpenTab?.call(4),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProgressRow extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final Color color;
-  final ModuleProgress progress;
-  final VoidCallback onTap;
-
-  const _ProgressRow({
-    required this.title,
-    required this.icon,
-    required this.color,
-    required this.progress,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final percent = (progress.percentage * 100).round();
-    final resolvedColor = AppColors.resolve(color, context);
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-      child: Row(
-        children: [
-          Icon(icon, color: resolvedColor),
-          const SizedBox(width: AppSpacing.sp12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: AppTypography.bodyMBold.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: AppSpacing.sp4),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-                  child: LinearProgressIndicator(
-                    value: progress.percentage.clamp(0.0, 1.0).toDouble(),
-                    minHeight: 6,
-                    backgroundColor: AppColors.resolve(AppColors.creamDark, context),
-                    valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: AppSpacing.sp12),
-          Text(
-            '$percent%',
-            style: AppTypography.label.copyWith(
-              color: resolvedColor,
-              fontWeight: FontWeight.w900,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _SectionTitle extends StatelessWidget {
-  final String title;
-  final String subtitle;
-
-  const _SectionTitle({required this.title, required this.subtitle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: AppTypography.headingS.copyWith(
-            color: Theme.of(context).colorScheme.onSurface,
-            fontWeight: FontWeight.w900,
-          ),
-        ),
-        const SizedBox(height: AppSpacing.sp4),
-        Text(
-          subtitle,
-          style: AppTypography.caption.copyWith(
-            color: Theme.of(context).textTheme.bodyMedium?.color,
           ),
         ),
       ],

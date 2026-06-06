@@ -16,6 +16,7 @@ import 'firebase_options.dart';
 import 'presentation/screens/main_navigation.dart';
 import 'package:mobile/features/auth/presentation/screens/login_screen.dart';
 import 'core/services/notification_service.dart';
+import 'presentation/widgets/mini_dictionary_overlay.dart';
 import 'shared/widgets/app_empty_state.dart';
 import 'shared/widgets/app_page_background.dart';
 
@@ -66,6 +67,8 @@ class MyApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider).value;
     final effectiveSettings = settings ?? AppSettings.defaults;
+    final firebaseReady = ref.watch(firebaseInitProvider).hasValue;
+    final user = firebaseReady ? ref.watch(authStateProvider).value : null;
 
     final brightness = effectiveSettings.themeMode.resolveBrightness(context);
 
@@ -73,6 +76,7 @@ class MyApp extends ConsumerWidget {
       data: CupertinoThemeData(brightness: brightness),
       child: MaterialApp(
         title: 'Zen Japanese',
+        navigatorKey: globalNavigatorKey,
         debugShowCheckedModeBanner: false,
         theme: AppTheme.light,
         darkTheme: AppTheme.dark,
@@ -83,7 +87,10 @@ class MyApp extends ConsumerWidget {
             data: mediaQuery.copyWith(
               textScaler: TextScaler.linear(effectiveSettings.fontScale),
             ),
-            child: child ?? const SizedBox.shrink(),
+            child: MiniDictionaryOverlay(
+              enabled: user != null,
+              child: child ?? const SizedBox.shrink(),
+            ),
           );
         },
         home: const AuthWrapper(),

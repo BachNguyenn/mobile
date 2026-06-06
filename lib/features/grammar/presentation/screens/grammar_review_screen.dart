@@ -6,6 +6,7 @@ import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/grammar/domain/entities/grammar_point.dart';
 import 'package:mobile/features/grammar/application/providers/grammar_library_provider.dart';
 import 'package:mobile/features/grammar/application/providers/grammar_review_provider.dart';
+import 'package:mobile/presentation/widgets/kanji_linker.dart';
 import 'package:mobile/features/review/presentation/widgets/review_rating_buttons.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_empty_state.dart';
@@ -287,8 +288,8 @@ class _GrammarPromptCard extends StatelessWidget {
           ),
           const SizedBox(height: AppSpacing.sp12),
           if (example != null && example.jp.isNotEmpty) ...[
-            Text(
-              example.jp,
+            KanjiLinker(
+              text: example.jp,
               key: grammarReviewExampleKey,
               style: AppTypography.kanjiDisplay.copyWith(
                 color: Theme.of(context).colorScheme.onSurface,

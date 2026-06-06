@@ -6,9 +6,25 @@ import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/kanji/domain/entities/kanji_card.dart';
 import 'package:mobile/features/kanji/presentation/widgets/kanji_stroke_order_view.dart';
+import 'package:mobile/features/vocabulary/application/providers/vocabulary_repository_provider.dart';
+import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
+import 'package:mobile/presentation/navigation/app_routes.dart';
+import 'package:mobile/presentation/widgets/kanji_linker.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
 import 'package:mobile/shared/widgets/jlpt_level_badge.dart';
+
+final _relatedVocabularyProvider =
+    FutureProvider.family<List<Vocabulary>, String>((ref, kanji) async {
+      final repository = ref.watch(vocabularyRepositoryProvider);
+      final results = await repository.searchVocabulary(kanji, limit: 16);
+      final compounds = results
+          .where((item) => item.word.contains(kanji))
+          .toList(growable: false);
+      return compounds.isEmpty
+          ? results.take(8).toList(growable: false)
+          : compounds;
+    });
 
 class KanjiDetailScreen extends ConsumerWidget {
   final KanjiCard kanji;
@@ -18,6 +34,9 @@ class KanjiDetailScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final relatedVocabulary = ref.watch(
+      _relatedVocabularyProvider(kanji.kanji),
+    );
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -117,6 +136,17 @@ class KanjiDetailScreen extends ConsumerWidget {
                 color: AppColors.waterBlue,
               ),
             ],
+            relatedVocabulary.when(
+              data: (items) {
+                if (items.isEmpty) return const SizedBox.shrink();
+                return Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.sp16),
+                  child: _RelatedVocabularyCard(items: items),
+                );
+              },
+              loading: () => const SizedBox.shrink(),
+              error: (_, _) => const SizedBox.shrink(),
+            ),
             if (kanji.nanori.isNotEmpty) ...[
               const SizedBox(height: AppSpacing.sp16),
               _ListCard(
@@ -126,7 +156,6 @@ class KanjiDetailScreen extends ConsumerWidget {
                 color: AppColors.leafGreen,
               ),
             ],
-
           ],
         ),
       ),
@@ -180,8 +209,6 @@ class _KanjiHeroCard extends StatelessWidget {
     );
   }
 }
-
-
 
 class _ReadingCard extends StatelessWidget {
   final WidgetRef ref;
@@ -339,7 +366,137 @@ class _ListCard extends StatelessWidget {
   }
 }
 
+class _RelatedVocabularyCard extends StatelessWidget {
+  final List<Vocabulary> items;
 
+  const _RelatedVocabularyCard({required this.items});
+
+  @override
+  Widget build(BuildContext context) {
+    final resolvedWaterBlue = AppColors.resolve(AppColors.waterBlue, context);
+
+    return AppCard(
+      borderColor: resolvedWaterBlue.withValues(alpha: 0.14),
+      shadowColor: resolvedWaterBlue.withValues(alpha: 0.035),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _CardLabel(
+            icon: Icons.hub_rounded,
+            label: 'Từ ghép & ví dụ',
+            color: resolvedWaterBlue,
+          ),
+          const SizedBox(height: AppSpacing.sp12),
+          for (final item in items.take(8)) ...[
+            _RelatedVocabularyRow(item: item, color: resolvedWaterBlue),
+            if (item != items.take(8).last)
+              const Divider(height: AppSpacing.sp20),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _RelatedVocabularyRow extends StatelessWidget {
+  final Vocabulary item;
+  final Color color;
+
+  const _RelatedVocabularyRow({required this.item, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final example = item.exampleSentences.isNotEmpty
+        ? item.exampleSentences.first
+        : null;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+        onTap: () => Navigator.push(context, AppRoutes.vocabularyDetail(item)),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: AppSpacing.sp4),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      item.word,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: AppTypography.bodyMBold.copyWith(
+                        color: Theme.of(context).colorScheme.onSurface,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sp8),
+                  Text(
+                    'N${item.jlptLevel}',
+                    style: AppTypography.labelS.copyWith(
+                      color: color,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ],
+              ),
+              if (item.reading.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(item.reading, style: AppTypography.caption),
+              ],
+              const SizedBox(height: AppSpacing.sp4),
+              Text(
+                item.meaning,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: AppTypography.bodyS.copyWith(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              if (example != null) ...[
+                const SizedBox(height: AppSpacing.sp8),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(AppSpacing.sp8),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(AppSpacing.radiusS),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      KanjiLinker(
+                        text: example.text,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: AppTypography.bodyS.copyWith(
+                          color: Theme.of(context).colorScheme.onSurface,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                      if (example.meaning.isNotEmpty) ...[
+                        const SizedBox(height: AppSpacing.sp4),
+                        Text(
+                          example.meaning,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: AppTypography.caption,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _CardLabel extends StatelessWidget {
   final IconData icon;

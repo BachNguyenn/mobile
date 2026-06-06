@@ -5,6 +5,7 @@ import 'package:mobile/core/theme/app_colors.dart';
 import 'package:mobile/core/theme/app_spacing.dart';
 import 'package:mobile/core/theme/app_typography.dart';
 import 'package:mobile/features/vocabulary/domain/entities/vocabulary.dart';
+import 'package:mobile/presentation/widgets/kanji_linker.dart';
 import 'package:mobile/shared/widgets/app_card.dart';
 import 'package:mobile/shared/widgets/app_page_background.dart';
 import 'package:mobile/shared/widgets/jlpt_level_badge.dart';
@@ -286,8 +287,8 @@ class _ExampleBlock extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            example.text,
+          KanjiLinker(
+            text: example.text,
             style: AppTypography.bodyL.copyWith(
               color: theme.colorScheme.onSurface,
               fontWeight: FontWeight.w800,

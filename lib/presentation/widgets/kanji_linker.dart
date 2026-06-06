@@ -1,82 +1,121 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../features/kanji/application/providers/kanji_repository_provider.dart';
-import '../../features/kanji/presentation/screens/kanji_detail_screen.dart';
-import '../../core/theme/app_colors.dart';
+import 'package:mobile/core/theme/app_colors.dart';
+import 'package:mobile/features/kanji/application/providers/kanji_repository_provider.dart';
+import 'package:mobile/features/kanji/presentation/screens/kanji_detail_screen.dart';
 
-/// Một widget tự động tìm các ký tự Kanji trong chuỗi [text]
-/// và biến chúng thành link có thể nhấn được để xem chi tiết.
-class KanjiLinker extends ConsumerWidget {
+class KanjiLinker extends ConsumerStatefulWidget {
   final String text;
   final TextStyle? style;
+  final int? maxLines;
+  final TextOverflow overflow;
+  final TextAlign textAlign;
 
-  const KanjiLinker({super.key, required this.text, this.style});
+  const KanjiLinker({
+    super.key,
+    required this.text,
+    this.style,
+    this.maxLines,
+    this.overflow = TextOverflow.clip,
+    this.textAlign = TextAlign.start,
+  });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // Regex cho dải Kanji chuẩn: [一-龯]
-    final regex = RegExp(r'[\u4e00-\u9faf]');
-    final matches = regex.allMatches(text);
+  ConsumerState<KanjiLinker> createState() => _KanjiLinkerState();
+}
 
+class _KanjiLinkerState extends ConsumerState<KanjiLinker> {
+  final List<TapGestureRecognizer> _recognizers = [];
+
+  @override
+  void dispose() {
+    _disposeRecognizers();
+    super.dispose();
+  }
+
+  void _disposeRecognizers() {
+    for (final recognizer in _recognizers) {
+      recognizer.dispose();
+    }
+    _recognizers.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    _disposeRecognizers();
+    final matches = RegExp(r'[\u4e00-\u9faf]').allMatches(widget.text);
     if (matches.isEmpty) {
-      return Text(text, style: style);
+      return Text(
+        widget.text,
+        style: widget.style,
+        maxLines: widget.maxLines,
+        overflow: widget.overflow,
+        textAlign: widget.textAlign,
+      );
     }
 
     final resolvedMossGreen = AppColors.resolve(AppColors.mossGreen, context);
     final defaultColor = Theme.of(context).colorScheme.onSurface;
-
-    final List<InlineSpan> spans = [];
-    int lastMatchEnd = 0;
+    final spans = <InlineSpan>[];
+    var lastMatchEnd = 0;
 
     for (final match in matches) {
-      // Thêm phần text bình thường trước Kanji
       if (match.start > lastMatchEnd) {
-        spans.add(TextSpan(text: text.substring(lastMatchEnd, match.start)));
+        spans.add(
+          TextSpan(text: widget.text.substring(lastMatchEnd, match.start)),
+        );
       }
 
-      // Thêm Kanji dưới dạng WidgetSpan (để có thể GestureDetector)
-      final kanjiChar = text.substring(match.start, match.end);
+      final kanjiChar = widget.text.substring(match.start, match.end);
+      final recognizer = TapGestureRecognizer()
+        ..onTap = () => _openKanji(context, kanjiChar);
+      _recognizers.add(recognizer);
+
       spans.add(
-        WidgetSpan(
-          alignment: PlaceholderAlignment.middle,
-          child: GestureDetector(
-            onTap: () async {
-              final repo = ref.read(kanjiRepositoryProvider);
-              final kanjiCard = await repo.getCardByKanji(kanjiChar);
-              if (kanjiCard != null && context.mounted) {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => KanjiDetailScreen(kanji: kanjiCard),
-                  ),
-                );
-              }
-            },
-            child: Text(
-              kanjiChar,
-              style: (style ?? const TextStyle()).copyWith(
-                color: resolvedMossGreen,
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.underline,
-                decorationColor: resolvedMossGreen.withValues(alpha: 0.3),
-              ),
-            ),
+        TextSpan(
+          text: kanjiChar,
+          recognizer: recognizer,
+          style: (widget.style ?? const TextStyle()).copyWith(
+            color: resolvedMossGreen,
+            fontWeight: FontWeight.bold,
+            decoration: TextDecoration.underline,
+            decorationColor: resolvedMossGreen.withValues(alpha: 0.3),
           ),
         ),
       );
       lastMatchEnd = match.end;
     }
 
-    // Thêm phần text còn lại sau Kanji cuối cùng
-    if (lastMatchEnd < text.length) {
-      spans.add(TextSpan(text: text.substring(lastMatchEnd)));
+    if (lastMatchEnd < widget.text.length) {
+      spans.add(TextSpan(text: widget.text.substring(lastMatchEnd)));
     }
 
-    return RichText(
-      text: TextSpan(
-        style: style ?? TextStyle(color: defaultColor, fontSize: 16),
+    return Text.rich(
+      TextSpan(
+        style: widget.style ?? TextStyle(color: defaultColor, fontSize: 16),
         children: spans,
       ),
+      maxLines: widget.maxLines,
+      overflow: widget.overflow,
+      textAlign: widget.textAlign,
     );
+  }
+
+  Future<void> _openKanji(BuildContext context, String kanjiChar) async {
+    final repo = ref.read(kanjiRepositoryProvider);
+    final kanjiCard = await repo.getCardByKanji(kanjiChar);
+    if (kanjiCard != null && context.mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => KanjiDetailScreen(kanji: kanjiCard)),
+      );
+      return;
+    }
+
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text('Chưa có dữ liệu cho $kanjiChar')));
   }
 }

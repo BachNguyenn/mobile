@@ -21,8 +21,12 @@ import 'package:mobile/features/sentence/data/repositories/sentence_repository_i
 import 'package:mobile/features/settings/application/providers/settings_provider.dart';
 import 'package:mobile/features/settings/data/repositories/shared_preferences_settings_repository.dart';
 import 'package:mobile/features/settings/domain/entities/app_settings.dart';
+import 'package:mobile/features/sync/application/providers/progress_sync_provider.dart';
+import 'package:mobile/features/sync/data/repositories/firestore_progress_sync_repository.dart';
 import 'package:mobile/features/vocabulary/application/providers/vocabulary_repository_provider.dart';
 import 'package:mobile/features/vocabulary/data/repositories/vocabulary_repository_impl.dart';
+import 'package:mobile/features/weakness/application/providers/weakness_provider.dart';
+import 'package:mobile/features/weakness/data/repositories/drift_weakness_repository.dart';
 
 /// Application composition root.
 ///
@@ -59,11 +63,25 @@ List<Override> get appRepositoryOverrides {
     settingsRepositoryProvider.overrideWithValue(
       SharedPreferencesSettingsRepository(),
     ),
+    progressSyncRepositoryProvider.overrideWith(
+      (ref) => FirestoreProgressSyncRepository(
+        ref.watch(databaseProvider),
+        ref.watch(settingsRepositoryProvider),
+      ),
+    ),
     studyInsightRepositoryProvider.overrideWith(
       (ref) => DriftStudyInsightRepository(ref.watch(databaseProvider)),
     ),
     vocabularyRepositoryProvider.overrideWith(
       (ref) => VocabularyRepositoryImpl(ref.watch(databaseProvider)),
+    ),
+    weaknessRepositoryProvider.overrideWith(
+      (ref) => DriftWeaknessRepository(
+        ref.watch(databaseProvider),
+        ref.watch(kanjiRepositoryProvider),
+        ref.watch(vocabularyRepositoryProvider),
+        ref.watch(grammarRepositoryProvider),
+      ),
     ),
   ];
 }

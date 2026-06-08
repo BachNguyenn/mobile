@@ -16,7 +16,7 @@ class ReviewRatingButtons extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp12),
+      padding: const EdgeInsets.all(AppSpacing.sp8),
       decoration: BoxDecoration(
         color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
@@ -37,7 +37,7 @@ class ReviewRatingButtons extends StatelessWidget {
               fontWeight: FontWeight.w900,
             ),
           ),
-          const SizedBox(height: AppSpacing.sp12),
+          const SizedBox(height: AppSpacing.sp8),
           Row(
             children: [
               _RatingButton(
@@ -111,7 +111,7 @@ class _RatingButton extends StatelessWidget {
           onTap: enabled ? () => onRate(rating) : null,
           borderRadius: BorderRadius.circular(AppSpacing.radiusS),
           child: Container(
-            height: 48,
+            height: 40,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(AppSpacing.radiusS),
               border: Border.all(color: resolvedColor.withValues(alpha: 0.24)),
@@ -124,7 +124,7 @@ class _RatingButton extends StatelessWidget {
                   size: 18,
                   color: enabled ? resolvedColor : AppColors.resolve(AppColors.slateMuted, context),
                 ),
-                const SizedBox(height: 2),
+                const SizedBox(height: 1),
                 Text(
                   label,
                   maxLines: 1,

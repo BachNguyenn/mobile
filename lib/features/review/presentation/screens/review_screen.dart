@@ -100,9 +100,9 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                 total: widget.items.length,
                 item: item,
               ),
-              const SizedBox(height: AppSpacing.sp12),
+              const SizedBox(height: AppSpacing.sp8),
               _ReviewPrompt(item: item),
-              const SizedBox(height: AppSpacing.sp12),
+              const SizedBox(height: AppSpacing.sp8),
               Expanded(
                 child: item.usesHandwriting
                     ? _KanjiReviewBody(
@@ -118,7 +118,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
                         onTypedAnswer: controller.setTypedAnswer,
                       ),
               ),
-              const SizedBox(height: AppSpacing.sp16),
+              const SizedBox(height: AppSpacing.sp8),
               if (!state.showAnswer)
                 PrimaryButton(
                   icon: Icons.fact_check_rounded,
@@ -412,7 +412,7 @@ class _ReviewPrompt extends ConsumerWidget {
       color: accent.withValues(alpha: 0.08),
       borderColor: accent.withValues(alpha: 0.18),
       shadowColor: accent.withValues(alpha: 0.06),
-      padding: const EdgeInsets.all(AppSpacing.sp16),
+      padding: const EdgeInsets.all(AppSpacing.sp12),
       child: Stack(
         children: [
           Positioned(
@@ -457,7 +457,7 @@ class _ReviewPrompt extends ConsumerWidget {
                   ],
                 ],
               ),
-              const SizedBox(height: AppSpacing.sp12),
+              const SizedBox(height: AppSpacing.sp8),
               Text(
                 item.prompt,
                 style:
@@ -467,10 +467,10 @@ class _ReviewPrompt extends ConsumerWidget {
                         .copyWith(
                           color: Theme.of(context).colorScheme.onSurface,
                           fontSize: isKanji
-                              ? 42
+                              ? 30
                               : isKnowledgePrompt
-                              ? 32
-                              : 24,
+                              ? 22
+                              : 20,
                           height: 1.16,
                         ),
                 textAlign: TextAlign.center,
@@ -555,7 +555,7 @@ class _ReviewSessionHeader extends StatelessWidget {
     final progress = current / total;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp16),
+      padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
         gradient: _ReviewVisuals.gradient(item.type),
         borderRadius: BorderRadius.circular(AppSpacing.radiusL),
@@ -578,8 +578,8 @@ class _ReviewSessionHeader extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    width: 38,
-                    height: 38,
+                    width: 28,
+                    height: 28,
                     decoration: BoxDecoration(
                       color: AppColors.white.withValues(alpha: 0.14),
                       borderRadius: BorderRadius.circular(AppSpacing.radiusS),
@@ -587,7 +587,7 @@ class _ReviewSessionHeader extends StatelessWidget {
                     child: Icon(
                       _ReviewVisuals.icon(item.type),
                       color: AppColors.white,
-                      size: 20,
+                      size: 16,
                     ),
                   ),
                   const SizedBox(width: AppSpacing.sp8),
@@ -635,7 +635,7 @@ class _ReviewSessionHeader extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.sp12),
+              const SizedBox(height: AppSpacing.sp8),
               ClipRRect(
                 borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
                 child: LinearProgressIndicator(
@@ -673,38 +673,16 @@ class _ReviewWorkspaceHeader extends StatelessWidget {
     final resolvedAccent = AppColors.resolve(accent, context);
     return Row(
       children: [
-        Container(
-          width: 34,
-          height: 34,
-          decoration: BoxDecoration(
-            color: resolvedAccent.withValues(alpha: 0.10),
-            borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-          ),
-          child: Icon(icon, color: resolvedAccent, size: 18),
-        ),
+        Icon(icon, color: resolvedAccent, size: 18),
         const SizedBox(width: AppSpacing.sp8),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: AppTypography.bodyMBold.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface,
-                  fontWeight: FontWeight.w900,
-                  height: 1.2,
-                ),
-              ),
-              Text(
-                subtitle,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.label.copyWith(
-                  color: AppColors.resolve(AppColors.slateMuted, context),
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+          child: Text(
+            title,
+            style: AppTypography.bodyMBold.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+              fontWeight: FontWeight.w900,
+              height: 1.2,
+            ),
           ),
         ),
       ],

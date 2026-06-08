@@ -459,14 +459,16 @@ class _FontScaleTile extends StatelessWidget {
       subtitle: _labelFor(selected),
       icon: Icons.format_size_rounded,
       selected: selected,
-      values: const [0.9, 1.0, 1.15],
+      values: const [0.8, 0.85, 0.9, 1.0, 1.15],
       labelFor: _labelFor,
       onChanged: onChanged,
     );
   }
 
   String _labelFor(double scale) {
-    if (scale < 1.0) return 'Nhỏ';
+    if (scale <= 0.8) return 'Rất nhỏ';
+    if (scale <= 0.85) return 'Khá nhỏ';
+    if (scale <= 0.9) return 'Nhỏ';
     if (scale > 1.0) return 'Lớn';
     return 'Mặc định';
   }

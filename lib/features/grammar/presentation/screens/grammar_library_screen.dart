@@ -261,7 +261,7 @@ class _GrammarHeroCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.sp16),
+      padding: const EdgeInsets.all(AppSpacing.sp12),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: isDark
@@ -310,39 +310,31 @@ class _GrammarHeroCard extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: AppSpacing.sp8),
-              Text(
-                'Nắm mẫu câu, xem ví dụ và luyện lại những điểm chưa chắc.',
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: AppTypography.bodyS.copyWith(
-                  color: AppColors.white.withValues(alpha: 0.78),
-                ),
-              ),
               const SizedBox(height: AppSpacing.sp12),
               Row(
                 children: [
-                  _HeroStat(value: '${progress.learned}', label: 'đã học'),
-                  const SizedBox(width: AppSpacing.sp8),
-                  _HeroStat(value: '${progress.total}', label: 'tổng mẫu'),
-                  const SizedBox(width: AppSpacing.sp8),
-                  _HeroStat(
-                    value: isLoading ? '...' : '$dueLoaded',
-                    label: 'sẵn sàng',
+                  Expanded(
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
+                      child: LinearProgressIndicator(
+                        value: percent,
+                        minHeight: 6,
+                        backgroundColor: AppColors.white.withValues(alpha: 0.16),
+                        valueColor: const AlwaysStoppedAnimation<Color>(
+                          AppColors.sunGold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.sp12),
+                  Text(
+                    '${progress.learned}/${progress.total} (${isLoading ? '...' : dueLoaded} sẵn sàng)',
+                    style: AppTypography.label.copyWith(
+                      color: AppColors.white.withValues(alpha: 0.9),
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ],
-              ),
-              const SizedBox(height: AppSpacing.sp12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(AppSpacing.radiusXL),
-                child: LinearProgressIndicator(
-                  value: percent,
-                  minHeight: 6,
-                  backgroundColor: AppColors.white.withValues(alpha: 0.16),
-                  valueColor: const AlwaysStoppedAnimation<Color>(
-                    AppColors.sunGold,
-                  ),
-                ),
               ),
               const SizedBox(height: AppSpacing.sp12),
               Row(
@@ -411,46 +403,7 @@ class _HeroBadge extends StatelessWidget {
   }
 }
 
-class _HeroStat extends StatelessWidget {
-  final String value;
-  final String label;
 
-  const _HeroStat({required this.value, required this.label});
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.all(AppSpacing.sp8),
-        decoration: BoxDecoration(
-          color: AppColors.white.withValues(alpha: 0.12),
-          borderRadius: BorderRadius.circular(AppSpacing.radiusS),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              value,
-              style: AppTypography.bodyMBold.copyWith(
-                color: AppColors.white,
-                fontSize: 16,
-                height: 1.2,
-              ),
-            ),
-            const SizedBox(height: 2),
-            Text(
-              label,
-              style: AppTypography.labelS.copyWith(
-                color: AppColors.white.withValues(alpha: 0.72),
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 class _HeroActionButton extends StatelessWidget {
   final IconData icon;

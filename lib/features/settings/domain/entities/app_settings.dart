@@ -35,7 +35,7 @@ class AppSettings {
     hapticsEnabled: true,
     themeMode: AppThemeMode.system,
     appLanguage: 'vi',
-    fontScale: 1.0,
+    fontScale: 0.9,
     learningGoal: LearningGoal.jlpt,
     currentJlptLevel: 5,
   );

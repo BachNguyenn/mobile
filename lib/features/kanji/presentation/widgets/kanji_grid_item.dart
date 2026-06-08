@@ -41,9 +41,6 @@ class _KanjiGridItemState extends State<KanjiGridItem> {
           decoration: BoxDecoration(
             color: Theme.of(context).cardColor,
             borderRadius: BorderRadius.circular(AppSpacing.radiusL),
-            border: Border.all(
-              color: AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.30),
-            ),
           ),
           child: Stack(
             children: [
@@ -56,8 +53,8 @@ class _KanjiGridItemState extends State<KanjiGridItem> {
                 ),
               ),
               Positioned(
-                top: -2,
-                right: -2,
+                top: 0,
+                right: 0,
                 child: _DetailButton(kanji: kanji),
               ),
               Center(
@@ -93,14 +90,16 @@ class _KanjiCharacterFace extends StatelessWidget {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        Text(
-          kanji,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: AppTypography.kanjiDisplay.copyWith(
-            color: AppColors.resolve(AppColors.navyDark, context),
-            fontSize: 46,
-            height: 1.0,
+        _KanjiGridBackground(
+          child: Text(
+            kanji,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: AppTypography.kanjiDisplay.copyWith(
+              color: AppColors.resolve(AppColors.navyDark, context),
+              fontSize: 36,
+              height: 1.0,
+            ),
           ),
         ),
         const SizedBox(height: AppSpacing.sp8),
@@ -198,14 +197,74 @@ class _DetailButton extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.resolve(AppColors.navy, context).withValues(alpha: 0.08)),
             ),
-            child: Icon(
-              Icons.chevron_right_rounded,
-              color: AppColors.resolve(AppColors.navy, context),
-              size: 19,
+            child: Center(
+              child: Icon(
+                Icons.chevron_right_rounded,
+                color: AppColors.resolve(AppColors.navy, context),
+                size: 19,
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class _KanjiGridBackground extends StatelessWidget {
+  final Widget child;
+
+  const _KanjiGridBackground({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final gridColor = AppColors.resolve(AppColors.slateLight, context).withValues(alpha: 0.20);
+
+    return SizedBox(
+      width: 60,
+      height: 60,
+      child: CustomPaint(
+        painter: _KanjiGridPainter(color: gridColor),
+        child: Center(child: child),
+      ),
+    );
+  }
+}
+
+class _KanjiGridPainter extends CustomPainter {
+  final Color color;
+
+  const _KanjiGridPainter({required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..strokeWidth = 1.0
+      ..style = PaintingStyle.stroke;
+
+    const double dashWidth = 3.0;
+    const double dashSpace = 3.0;
+
+    // Draw horizontal dashed line in the middle
+    double startX = 0.0;
+    final y = size.height / 2;
+    while (startX < size.width) {
+      canvas.drawLine(Offset(startX, y), Offset(startX + dashWidth, y), paint);
+      startX += dashWidth + dashSpace;
+    }
+
+    // Draw vertical dashed line in the middle
+    double startY = 0.0;
+    final x = size.width / 2;
+    while (startY < size.height) {
+      canvas.drawLine(Offset(x, startY), Offset(x, startY + dashWidth), paint);
+      startY += dashWidth + dashSpace;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _KanjiGridPainter oldDelegate) {
+    return oldDelegate.color != color;
   }
 }
